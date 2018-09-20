@@ -1,0 +1,10 @@
+*.project
+*.html
+tests/
+*.pdf
+*.tex
+*.png
+*.tar.gz
+*.log
+*.Rcheck
+*.docx
