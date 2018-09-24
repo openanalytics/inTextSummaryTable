@@ -4,9 +4,9 @@
 \alias{convertSummaryStatisticsTableToFlextable}
 \title{Convert summary statistics table to flextable}
 \usage{
-convertSummaryStatisticsTableToFlextable(data, landscape = TRUE,
+convertSummaryStatisticsTableToFlextable(data, landscape = FALSE,
   margin = 1, title = "Table: Descriptive statistics",
-  byAcross = NULL, subtitle = NULL)
+  byAcross = NULL, subtitle = NULL, fontname = "Times")
 }
 \arguments{
 \item{data}{summary statistics table in long format,

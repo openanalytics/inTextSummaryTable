@@ -11,7 +11,7 @@ exportSummaryStatisticsTable <- function(data,
 	byAcross = NULL, byAcrossLab = getLabelVar(byAcross, labelVars = labelVars),
 	byWithin = NULL, 
 	labelVars = NULL, 
-	file = NULL, landscape = TRUE, 
+	file = NULL, landscape = FALSE, 
 	title = "Table: Descriptive statistics",
 	subtitle = NULL){
 
@@ -41,25 +41,25 @@ exportSummaryStatisticsTable <- function(data,
 	# to split table across pages
 	
 	# extract maximum width page and width of header and each row (in inches)
-	heightPage <- getDimPage(type = "height", landscape = landscape, margin = margin)
-	headerHeight <- sum(summaryTableFt$header$rowheights)
-	bodyHeights <- summaryTableFt$body$rowheights
+#	heightPage <- getDimPage(type = "height", landscape = landscape, margin = margin)
+#	headerHeight <- sum(summaryTableFt$header$rowheights)
+#	bodyHeights <- summaryTableFt$body$rowheights
 	
 	# extract rows where the table should be split
-	statsVar <- c("N", "Mean", "SD", "SE", "Median", "Min", "Max")
-	idxEndSection <- which(summaryTableLong$Statistic == statsVar[length(statsVar)]) # cut by section
-	bodyHeightsCumsum <- cumsum(bodyHeights)
-	heightPageForTable <- heightPage - headerHeight
-	breaks <- c(seq(from = 0, to = max(bodyHeightsCumsum), by = heightPageForTable), Inf)
-	idxSectionByPage <- findInterval(bodyHeightsCumsum[idxEndSection], breaks)
+#	statsVar <- c("N", "Mean", "SD", "SE", "Median", "Min", "Max")
+#	idxEndSection <- which(summaryTableLong$Statistic == statsVar[length(statsVar)]) # cut by section
+#	bodyHeightsCumsum <- cumsum(bodyHeights)
+#	heightPageForTable <- heightPage - headerHeight
+#	breaks <- c(seq(from = 0, to = max(bodyHeightsCumsum), by = heightPageForTable), Inf)
+#	idxSectionByPage <- findInterval(bodyHeightsCumsum[idxEndSection], breaks)
 	
-	# build the list of tables
-	summaryTableFtList <- lapply(unique(idxSectionByPage), function(i){
-		iRowStart <- ifelse(i == 1, 1, max(idxEndSection[which(idxSectionByPage == (i - 1))]) + 1)
-		iRowEnd <-  max(idxEndSection[which(idxSectionByPage == i)])
-		table <- summaryTableLong[seq.int(from = iRowStart, to = iRowEnd), ]
-		convertSummaryStatisticsTableToFlextableCustom(data = table)
-	})
+#	# build the list of tables
+#	summaryTableFtList <- lapply(unique(idxSectionByPage), function(i){
+#		iRowStart <- ifelse(i == 1, 1, max(idxEndSection[which(idxSectionByPage == (i - 1))]) + 1)
+#		iRowEnd <-  max(idxEndSection[which(idxSectionByPage == i)])
+#		table <- summaryTableLong[seq.int(from = iRowStart, to = iRowEnd), ]
+#		convertSummaryStatisticsTableToFlextableCustom(data = table)
+#	})
 
 	# include the tables in a Word document
 	if(!is.null(file)){	
@@ -67,11 +67,11 @@ exportSummaryStatisticsTable <- function(data,
 		doc <- read_docx()
 		if(landscape)	doc <- doc %>% body_end_section_landscape()
 		
-		for(i in seq_along(summaryTableFtList)){
-			doc <- doc %>% body_add_flextable(value = summaryTableFtList[[i]])
-			if(i != length(summaryTableFtList))
-				doc <- doc %>% body_add_break()
-		}
+#		for(i in seq_along(summaryTableFtList)){
+			doc <- doc %>% body_add_flextable(value = summaryTableFt)
+#			if(i != length(summaryTableFtList))
+#				doc <- doc %>% body_add_break()
+#		}
 		if(landscape){
 			doc <- doc %>%
 				# a paragraph needs to be included after the table otherwise the layout is not landscape
@@ -150,10 +150,11 @@ formatSummaryStatisticsForExport <- function(data,
 #' @importFrom stats setNames
 #' @author Laure Cougnaud
 convertSummaryStatisticsTableToFlextable <- function(data, 
-	landscape = TRUE, margin = 1,
+	landscape = FALSE, margin = 1,
 	title = "Table: Descriptive statistics",
-	byAcross = NULL,
-	subtitle = NULL
+	byAcross = NULL, 
+	subtitle = NULL,
+	fontname = "Times"
 	){
 	
 	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
@@ -191,6 +192,14 @@ convertSummaryStatisticsTableToFlextable <- function(data,
 	# set fontsize
 	ft <- fontsize(ft, size = 8, part = "all")
 	
+	# set header in bold
+	ft <- bold(ft, part = "header")
+	
+	# set font
+	ft <- ft %>%
+		font(fontname = fontname, part = "body") %>%
+		font(fontname = fontname, part = "header")
+	
 	# adjust to fit in document:
 	widthPage <- getDimPage(type = "width", landscape = landscape, margin = margin)
 	varFixed <- getNewCol(setdiff(c("Statistic", "Total"), colnames(data)))
@@ -203,7 +212,8 @@ convertSummaryStatisticsTableToFlextable <- function(data,
 	# borders
 	ft <- border_remove(ft) %>%
 		hline_top(border = fp_border(), part = "body") %>% 
-		hline_top(border = fp_border(), part = "header") %>%
+		hline_top(border = fp_border(), part = "header") %>% 
+		hline(border = fp_border(), part = "header") %>%
 		hline_bottom(border = fp_border(), part = "body")
 	
 	return(ft)
