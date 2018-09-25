@@ -117,14 +117,14 @@ parameter (`ADPP` dataset).
 ```{r}
 
 	summaryTable <- getSummaryStatisticsTable(
-		data = dataAll$ADLB,
+		data = subset(dataAll$ADLB, PARAMCD == "ALB"),
 		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
+		rowVarInCol = "AVISIT",
 		colVar = "TRTP",
-		var = "ANRIND",
+		var = "ANRIND", varIgnore = c(""),
 		labelVars = labelVars,
 		rowPadBase = 10
 	)
-
 
 ```
 

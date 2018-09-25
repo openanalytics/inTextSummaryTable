@@ -4,8 +4,9 @@
 \alias{computeSummaryStatistics}
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
-computeSummaryStatistics(data, var = "AVAL", colVar = NULL,
-  rowVar = NULL, subjectVar = "USUBJID")
+computeSummaryStatistics(data, var = "AVAL", varIgnore = NULL,
+  colVar = NULL, rowVar = NULL, subjectVar = "USUBJID",
+  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"))
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -22,9 +23,16 @@ grouping in row in the final table.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
+
+\item{type}{string with type of summary table: 'summaryTable' 
+(by default if \code{var} is numeric) or 'countTable'}
 }
 \value{
-data.frame with summary statistics in columns:
+data.frame of class 'countTable' or 'summaryTable',
+depending on the 'type' parameter with statistics in columns,
+either if \code{type} is:
+\itemize{
+\item{'summaryTable': }{
 \itemize{
 \item{'N': }{number of subjects}
 \item{'Mean': }{mean of \code{var}}
@@ -33,6 +41,15 @@ data.frame with summary statistics in columns:
 \item{'Median': }{median of \code{var}}
 \item{'Min': }{minimum of \code{var}}
 \item{'Max': }{maximum of \code{var}}
+\item{'Perc': }{percentage of subjects}
+}
+}
+\item{'countTable': }{
+\itemize{
+\item{'N': }{number of subjects}
+\item{'Perc': }{percentage of subjects}
+}
+}
 }
 }
 \description{

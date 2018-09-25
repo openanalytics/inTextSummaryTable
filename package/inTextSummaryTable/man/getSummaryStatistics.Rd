@@ -4,7 +4,8 @@
 \alias{getSummaryStatistics}
 \title{Get summary statistics of interest}
 \usage{
-getSummaryStatistics(data, var, subjectVar = "USUBJID")
+getSummaryStatistics(data, var, subjectVar = "USUBJID",
+  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"))
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -14,9 +15,15 @@ getSummaryStatistics(data, var, subjectVar = "USUBJID")
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
+
+\item{type}{string with type of summary table: 'summaryTable' 
+(by default if \code{var} is numeric) or 'countTable'}
 }
 \value{
-data.frame with summary statistics in columns:
+data.frame with summary statistics in columns,
+depending if \code{type} is:
+\itemize{
+\item{'summary': }{
 \itemize{
 \item{'N': }{number of subjects}
 \item{'Mean': }{mean of \code{var}}
@@ -25,6 +32,13 @@ data.frame with summary statistics in columns:
 \item{'Median': }{median of \code{var}}
 \item{'Min': }{minimum of \code{var}}
 \item{'Max': }{maximum of \code{var}}
+}
+}
+\item{'count': }{
+\itemize{
+\item{'N': }{number of subjects}
+}
+}
 }
 }
 \description{

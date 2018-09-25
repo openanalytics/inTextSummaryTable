@@ -6,7 +6,7 @@
 \usage{
 formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  colVar = NULL, labelVars = NULL)
+  rowVarInCol = NULL, colVar = NULL, labelVars = NULL)
 }
 \arguments{
 \item{rowVar}{character vector with variable(s) of \code{summaryTable}

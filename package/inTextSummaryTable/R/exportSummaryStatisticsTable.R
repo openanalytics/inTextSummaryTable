@@ -9,6 +9,7 @@
 #' @export
 exportSummaryStatisticsTable <- function(summaryTable, 
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVarInCol = NULL,
 	colVar = NULL, 
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
@@ -19,6 +20,7 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	summaryTableLong <- formatSummaryStatisticsForExport(
 		summaryTable = summaryTable,
 		rowVar = rowVar, rowVarLab = rowVarLab,
+		rowVarInCol = rowVarInCol,
 		colVar = colVar
 	)
 
@@ -71,7 +73,7 @@ exportSummaryStatisticsTable <- function(summaryTable,
 formatSummaryStatisticsForExport <- function(summaryTable,
 	rowVar = NULL, 
 	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-	rowVarInRow = rowVar,
+	rowVarInCol = NULL,
 	colVar = NULL,
 	labelVars = NULL
 	){
@@ -86,10 +88,9 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	})
 		
 	# convert from wide to long format
-	statsVar <- c("N", "Mean", "SD", "SE", "Median", "Min", "Max")
+#	statsVar <- c("N", "Mean", "SD", "SE", "Median", "Min", "Max")
 	dataLong <- melt(dataWithTotal, 
 		id.vars = c(rowVar, colVar),
-		measure.vars = statsVar,
 		value.name = "StatisticValue",
 		variable.name = "Statistic"
 	)
@@ -108,10 +109,11 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	}
 	
 	# if more than one rowVar, convert them to different rows
-	dataLong$rowPadding <- rowPadding <- length(rowVar)-1
-	rowVarFinal <- rowVar[length(rowVar)]
-	rowVarToModify <- rowVar[-length(rowVar)]
-	if(length(rowVarToModify)){
+	rowVarInRow <- setdiff(rowVar, rowVarInCol)
+	dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
+	rowVarFinal <- rowVarInRow[length(rowVarInRow)]
+	rowVarToModify <- rev(rowVarInRow[-length(rowVarInRow)])
+	if(length(rowVarToModify) > 0){
 		for(var in rowVarToModify){
 			rowPadding <- rowPadding - 1
 			varX <- dataLong[, var]
@@ -122,7 +124,7 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 			# extract labels of variable in final row column
 			dataLong[idxNewRow, rowVarFinal] <- varX[idxNewRow]
 			# and set to rest to NA
-			dataLong[idxNewRow, colnames(dataLong) != rowVarFinal] <- NA
+			dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
 			# save the padding for flextable
 			dataLong[idxNewRow, "rowPadding"] <- rowPadding
 			# remove the variable from the df
@@ -137,8 +139,16 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 		dataLong$rowPadding <- NULL
 	}else	padParams <- list()
 	
+	# extract horizontal lines
+	idxHLine <- which(diff(as.numeric(as.factor(dataLong[, rowVarFinal]))) != 0)
+	attributes(dataLong)$hlineParams <- list(
+		list(i = idxHLine, part = "body", j = 1:ncol(dataLong))
+	)
+	
 	# label header for rows
-	colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <- paste(rowVarLab, collapse = "\n")
+	colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
+		paste(rowVarLab[rowVarInRow], collapse = "_")
+	colnames(dataLong)[match(rowVarInCol, colnames(dataLong))] <- rowVarLab[rowVarInCol]
 	
 	# extract header (in case multiple 'colVar' specified)
 	header <- strsplit(colnames(dataLong), split = "_")
@@ -263,12 +273,17 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ft <- width(ft, j = varsOther, width = varsOtherWidth)
 	
 	# borders
+	bd <- fp_border()
 	ft <- border_remove(ft) %>%
-		hline_top(border = fp_border(), part = "body") %>% 
-		hline_bottom(border = fp_border(), part = "body") %>%
-		hline_top(border = fp_border(), part = "header") %>% 
-		hline(border = fp_border(), part = "header") 
-	
+		hline_top(border = bd, part = "body") %>% 
+		hline_bottom(border = bd, part = "body") %>%
+		hline_top(border = bd, part = "header") %>% 
+		hline(border = bd, part = "header") 
+
+	if(!is.null(attributes(summaryTable)$hlineParams))
+		for(hlineParams in attributes(summaryTable)$hlineParams)
+			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
+			
 	return(ft)
 	
 }

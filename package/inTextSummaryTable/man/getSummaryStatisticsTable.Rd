@@ -4,10 +4,11 @@
 \alias{getSummaryStatisticsTable}
 \title{Get summary statistics table}
 \usage{
-getSummaryStatisticsTable(data, var = "AVAL", rowVar = NULL,
+getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
+  labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  colVar = NULL, subjectVar = "USUBJID", labelVars = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 2,
+  rowVarInCol = NULL, colVar = NULL, subjectVar = "USUBJID",
+  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics",
   file = "summaryStatisticsTable.docx")
 }

@@ -6,26 +6,34 @@
 #' @export
 getSummaryStatisticsTable <- function(
 	data, 
-	var = "AVAL", 
+	var = "AVAL", varLab = getLabelVar(var, labelVars = labelVars), varIgnore = NULL,
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVarInCol = NULL,
 	colVar = NULL, 
 	subjectVar = "USUBJID",
 	labelVars = NULL, 
-	landscape = FALSE, 	margin = 1, rowPadBase = 2,
+	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
 	title = "Table: Descriptive statistics",
 	file = "summaryStatisticsTable.docx"){
 
 	summaryTable <- computeSummaryStatistics(
 		data = data,  
-		var = var, 
+		var = var, varIgnore = varIgnore,
 		colVar = colVar,
 		rowVar = rowVar,
 		subjectVar = subjectVar
 	)
 	
+	# in case of a count table, 'var' is a column
+	if(inherits(summaryTable, "countTable")){
+		rowVarInCol <- c(rowVarInCol, var)
+		rowVar <- c(rowVar, var)
+		rowVarLab <- c(rowVarLab, varLab)
+	}
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
 		rowVar = rowVar, rowVarLab = rowVarLab,
+		rowVarInCol = rowVarInCol,
 		colVar = colVar,
 		title = title,
 		labelVars = labelVars,
