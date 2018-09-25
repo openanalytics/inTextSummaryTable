@@ -72,14 +72,24 @@ package is used.
 
 # Patient summarized profile
 
+The main function is `getSummaryStatisticsTable`, which creates a in-text table
+of summary statistics for variable of interest and for specific
+grouping variable (`rowVar` and `colVar` for row/column variable(s)).
+By default, the summarized variable, specified via the
+`var` parameter is the `r labelVars["AVAL"]` (`AVAL` variable).
+
+Please find an example of the summary statistics of the _Pharmacokinetics_
+parameter (`ADPP` dataset).
+
 ```{r createMeanSEStats}
 
 	# create the summary table
 	# only CTrough in different visits
 	summaryTable <- getSummaryStatisticsTable(
 		data = dataAll$ADPP,
-		rowVar = "PARAMCD",
-		colVar = c("PARCAT1", "AVISIT")
+		rowVar = c("PARCAT1", "PARAM"),
+		colVar = "AVISIT",
+		labelVars = labelVars
 	)
 
 	# create the plot
@@ -94,7 +104,7 @@ package is used.
 	# format and export the table in Word format
 	ft <- exportSummaryStatisticsTable(
 		data = summaryTable, 
-		rowVar = "PARAMCD",
+		rowVar = "PARAM",
 		colVar = c("PARCAT1", "AVISIT"),
 		labelVars = labelVars,
 		file = "summaryStatisticsTable.docx"

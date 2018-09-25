@@ -1,79 +1,38 @@
-#' Get summary statistics for a specific dataset and variables of interest
-#' @param totalInclude logical, if TRUE (by default) and \code{by} is specified,
-#' include also the summary statistics for the entire dataset
-#' @param totalLabel string label for the column with the total,
-#' in case \code{totalInclude} is TRUE,
-#' 'total' by default.
-#' @param rowVar variable(s) of \code{data} used for
-#' grouping in row.
-#' @param colVar variable(s) of \code{data} used 
-#' for grouping in column. The total 
-#' for each subgroup across \code{rowVar} is computed.
-#' @inheritParams getSummaryStatistics
-#' @inherit getSummaryStatistics return
+#' Get summary statistics table
+#' @inheritParams computeSummaryStatistics
+#' @inheritParams exportSummaryStatisticsTable
+#' @inherit exportSummaryStatisticsTable return
 #' @author Laure Cougnaud
-#' @importFrom dplyr n_distinct
-#' @importFrom plyr ddply rbind.fill
 #' @export
-getSummaryStatisticsTable <- function(data,  
+getSummaryStatisticsTable <- function(
+	data, 
 	var = "AVAL", 
-	colVar = NULL,
-	rowVar = NULL,
+	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	colVar = NULL, 
 	subjectVar = "USUBJID",
-	totalLabel = "Total"
-){
+	labelVars = NULL, 
+	landscape = FALSE, 
+	title = "Table: Descriptive statistics",
+	file = "summaryStatisticsTable.docx"){
+
+	summaryTable <- computeSummaryStatistics(
+		data = data,  
+		var = var, 
+		colVar = colVar,
+		rowVar = rowVar,
+		subjectVar = subjectVar
+	)
 	
-	# get general statistics (by group if specified)
-	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
-		getSummaryStatistics(data = x, var = var)
-	})
+	ft <- exportSummaryStatisticsTable(
+		data = summaryTable, 
+		rowVar = rowVar, rowVarLab = rowVarLab,
+		colVar = colVar,
+		title = title,
+		labelVars = labelVars,
+		file = file, landscape = landscape
+	)
 	
-	# get statistics for the entire dataset
-	if(!is.null(colVar)){
-		summaryTableTotal <- ddply(data, colVar, function(x)
-			getSummaryStatistics(data = x, var = var)
-		)
-		summaryTableTotal[, rowVar] <- totalLabel
-		summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
-	}
-	
-	return(summaryTable)
-	
+	return(ft)
+
 }
 
-#' Get summary statistics of interest
-#' @param data data.frame with data
-#' @param var string, variable of \code{data} with variable to use,
-#' 'AVAL' by default
-#' @param subjectVar string, variable of \code{data} with subject ID,
-#' 'USUBJID' by default
-#' @return data.frame with summary statistics in columns:
-#' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'Mean': }{mean of \code{var}}
-#' \item{'SD': }{standard deviation of \code{var}}
-#' \item{'SE': }{standard error of \code{var}}
-#' \item{'Median': }{median of \code{var}}
-#' \item{'Min': }{minimum of \code{var}}
-#' \item{'Max': }{maximum of \code{var}}
-#' }
-#' @author Laure Cougnaud
-#' @importFrom stats na.omit median sd
-#' @export
-getSummaryStatistics <- function(data, var,
-	subjectVar = "USUBJID"){
-	
-	val <- data[, var]
-	res <- data.frame(
-		N = as.integer(n_distinct(data[, subjectVar])),
-		Mean = mean(val),
-		SD = sd(val),
-		SE = sd(val)/sqrt(length(val)),
-		Median = median(val),
-		Min = min(val),
-		Max = max(val)
-	)		
-	
-	return(res)
-	
-}

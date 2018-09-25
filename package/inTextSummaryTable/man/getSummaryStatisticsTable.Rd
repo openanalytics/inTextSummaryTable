@@ -2,48 +2,43 @@
 % Please edit documentation in R/getSummaryStatisticsTable.R
 \name{getSummaryStatisticsTable}
 \alias{getSummaryStatisticsTable}
-\title{Get summary statistics for a specific dataset and variables of interest}
+\title{Get summary statistics table}
 \usage{
-getSummaryStatisticsTable(data, var = "AVAL", colVar = NULL,
-  rowVar = NULL, subjectVar = "USUBJID", totalLabel = "Total")
+getSummaryStatisticsTable(data, var = "AVAL", rowVar = NULL,
+  rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+  colVar = NULL, subjectVar = "USUBJID", labelVars = NULL,
+  landscape = FALSE, title = "Table: Descriptive statistics",
+  file = "summaryStatisticsTable.docx")
 }
 \arguments{
-\item{data}{data.frame with data}
+\item{data}{data.frame with summary statistics to represent in the plot,
+e.g. produced with the \code{\link{computeSummaryStatistics}}}
 
 \item{var}{string, variable of \code{data} with variable to use,
 'AVAL' by default}
 
-\item{colVar}{variable(s) of \code{data} used 
-for grouping in column. The total 
-for each subgroup across \code{rowVar} is computed.}
+\item{rowVar}{character vector with variable(s) of \code{data}
+used for grouping in rows.}
 
-\item{rowVar}{variable(s) of \code{data} used for
-grouping in row.}
+\item{rowVarLab}{label for each variable of \code{rowVar}.}
+
+\item{colVar}{string with variable of \code{data} used for grouping in column.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
 
-\item{totalLabel}{string label for the column with the total,
-in case \code{totalInclude} is TRUE,
-'total' by default.}
+\item{labelVars}{named string with variable labels (names are the variable code)}
 
-\item{totalInclude}{logical, if TRUE (by default) and \code{by} is specified,
-include also the summary statistics for the entire dataset}
-}
-\value{
-data.frame with summary statistics in columns:
-\itemize{
-\item{'N': }{number of subjects}
-\item{'Mean': }{mean of \code{var}}
-\item{'SD': }{standard deviation of \code{var}}
-\item{'SE': }{standard error of \code{var}}
-\item{'Median': }{median of \code{var}}
-\item{'Min': }{minimum of \code{var}}
-\item{'Max': }{maximum of \code{var}}
-}
+\item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
+format}
+
+\item{title}{string with title for the table.
+Set to NULL if no title should be included.}
+
+\item{file}{string with path of the file where the table should be exported}
 }
 \description{
-Get summary statistics for a specific dataset and variables of interest
+Get summary statistics table
 }
 \author{
 Laure Cougnaud

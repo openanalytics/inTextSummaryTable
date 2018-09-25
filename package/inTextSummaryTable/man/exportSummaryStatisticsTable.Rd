@@ -7,11 +7,11 @@
 exportSummaryStatisticsTable(data, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   colVar = NULL, labelVars = NULL, file = NULL, landscape = FALSE,
-  title = "Table: Descriptive statistics", subtitle = NULL)
+  title = "Table: Descriptive statistics")
 }
 \arguments{
 \item{data}{data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{getSummaryStatisticsTable}}}
+e.g. produced with the \code{\link{computeSummaryStatistics}}}
 
 \item{rowVar}{character vector with variable(s) of \code{data}
 used for grouping in rows.}
@@ -29,9 +29,6 @@ format}
 
 \item{title}{string with title for the table.
 Set to NULL if no title should be included.}
-
-\item{subtitle}{string with subtitle for the table,
-empty (NULL) by default.}
 }
 \description{
 Export a summary table in \code{docx} format.

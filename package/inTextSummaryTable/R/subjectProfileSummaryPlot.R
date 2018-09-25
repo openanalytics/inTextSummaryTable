@@ -1,6 +1,6 @@
 #' Plot subject summary profile
 #' @param data data.frame with summary statistics to represent in the plot,
-#' e.g. produced with the \code{\link{getSummaryStatisticsTable}}
+#' e.g. produced with the \code{\link{computeSummaryStatistics}}
 #' @param xVar string, variable of \code{data} with variable for the x-axis
 #' @param xLab string with label for the \code{xVar}
 #' @param meanVar string, variable of \code{data} with the mean variable

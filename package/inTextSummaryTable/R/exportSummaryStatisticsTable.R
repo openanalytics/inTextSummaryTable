@@ -12,8 +12,7 @@ exportSummaryStatisticsTable <- function(data,
 	colVar = NULL, 
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
-	title = "Table: Descriptive statistics",
-	subtitle = NULL){
+	title = "Table: Descriptive statistics"){
 
 	margin <- 1
 
@@ -28,7 +27,6 @@ exportSummaryStatisticsTable <- function(data,
 		convertSummaryStatisticsTableToFlextable(...,
 			landscape = landscape, margin = margin,
 			title = title,
-			subtitle = subtitle,
 			rowVar = rowVarLab
 		)	
 	}
@@ -136,8 +134,19 @@ formatSummaryStatisticsForExport <- function(data,
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
 	}
 	
-	# re-label columns
+	# label header for rows
 	colnames(dataLong)[match(rowVar, colnames(dataLong))] <- rowVarLab
+	
+	# extract header (in case multiple 'colVar' specified)
+	header <- strsplit(colnames(dataLong), split = "_")
+	nRowsHeader <- max(sapply(header, length))
+	headerDf <- as.data.frame(
+		do.call(cbind, 
+			lapply(header, function(x)	c(rep("", nRowsHeader - length(x)), x))
+		)
+	)
+	colnames(headerDf) <- colnames(dataLong)
+	attributes(dataLong)$header <- headerDf
 	
 	return(dataLong)
 	
@@ -148,8 +157,6 @@ formatSummaryStatisticsForExport <- function(data,
 #' as returned by \code{\link{formatSummaryStatisticsForExport}}
 #' @param title string with title for the table.
 #' Set to NULL if no title should be included.
-#' @param subtitle string with subtitle for the table,
-#' empty (NULL) by default.
 #' @inheritParams getDimPage
 #' @inheritParams formatSummaryStatisticsForExport
 #' @return \code{\link[flextable]{flextable}} object
@@ -157,21 +164,24 @@ formatSummaryStatisticsForExport <- function(data,
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
 #' @author Laure Cougnaud
-convertSummaryStatisticsTableToFlextable <- function(data, 
+convertSummaryStatisticsTableToFlextable <- function(
+	data, 
 	landscape = FALSE, margin = 1,
 	title = "Table: Descriptive statistics",
 	rowVar = NULL, 
-	subtitle = NULL,
 	fontname = "Times"
 	){
 	
 	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
-	colsData <- colnames(data)
-	names(colsData) <- paste0("col", seq_len(ncol(data)))
-	colnames(data) <- names(colsData)
+	colsDataFt <- colnames(data)
+	names(colsDataFt) <- paste0("col", seq_len(ncol(data)))
+	colnames(data) <- names(colsDataFt)
+	
+	headerDf <- attributes(data)$header	
+	if(!is.null(headerDf))	colnames(headerDf) <- names(colsDataFt)
 	
 	getNewCol <- function(initCol)
-		names(colsData)[match(initCol, colsData)]
+		names(colsDataFt)[match(initCol, colsDataFt)]
 	
 	ft <- flextable(data)
 	
@@ -180,22 +190,28 @@ convertSummaryStatisticsTableToFlextable <- function(data,
 	
 	# set correct alignments
 	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
-	colsAlignCenter <- setdiff(names(colsData), colsAlignLeft)
+	colsAlignCenter <- setdiff(names(colsDataFt), colsAlignLeft)
 	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
 	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
 	
-	# add title/subtitle
-	setHeader <- function(header){
-		headerList <- as.list(setNames(rep(header, length(colsData)), names(colsData)))
+	# add title and headers
+	setHeader <- function(ft, header){
+		headerList <- as.list(
+			if(is.matrix(header) | is.data.frame(header))	header	else
+			setNames(rep(header, length(colsDataFt)), names(colsDataFt))
+		)
 		ft <- do.call(add_header, c(list(x = ft, top = TRUE), headerList))
 		ft <- merge_h(x = ft, part = "header")
 		return(ft)
 	}
-	if(!is.null(subtitle))	ft <- setHeader(subtitle)
-	if(!is.null(title))	ft <- setHeader(header = title)
+	if(!is.null(headerDf) & nrow(headerDf) > 1)	ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
+	if(!is.null(title))	
+		for(titleI in title)
+			ft <- setHeader(ft, header = titleI)
 	
-	# set to correct headers
-	ft <- do.call(set_header_labels, c(list(x = ft), as.list(colsData)))
+	# set to correct headers	
+	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
+	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
 	
 	# set fontsize
 	ft <- fontsize(ft, size = 8, part = "all")
@@ -210,19 +226,19 @@ convertSummaryStatisticsTableToFlextable <- function(data,
 	
 	# adjust to fit in document:
 	widthPage <- getDimPage(type = "width", landscape = landscape, margin = margin)
-	varFixed <- getNewCol(setdiff(c("Statistic", "Total"), colnames(data)))
+	varFixed <- getNewCol(intersect(c("Statistic", "Total"), colsDataFt))
 	varFixedWidth <- 0.5
 	ft <- width(ft, j = varFixed, width = 0.5)
-	varsOther <- setdiff(names(colsData), varFixed)
+	varsOther <- setdiff(names(colsDataFt), varFixed)
 	varsOtherWidth <- (widthPage - length(varFixed) * varFixedWidth)/length(varsOther)
 	ft <- width(ft, j = varsOther, width = varsOtherWidth)
 	
 	# borders
 	ft <- border_remove(ft) %>%
 		hline_top(border = fp_border(), part = "body") %>% 
+		hline_bottom(border = fp_border(), part = "body") %>%
 		hline_top(border = fp_border(), part = "header") %>% 
-		hline(border = fp_border(), part = "header") %>%
-		hline_bottom(border = fp_border(), part = "body")
+		hline(border = fp_border(), part = "header") 
 	
 	return(ft)
 	

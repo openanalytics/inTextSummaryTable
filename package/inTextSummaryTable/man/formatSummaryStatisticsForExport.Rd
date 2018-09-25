@@ -10,7 +10,7 @@ formatSummaryStatisticsForExport(data, rowVar = NULL,
 }
 \arguments{
 \item{data}{data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{getSummaryStatisticsTable}}}
+e.g. produced with the \code{\link{computeSummaryStatistics}}}
 
 \item{rowVar}{character vector with variable(s) of \code{data}
 used for grouping in rows.}
