@@ -7,69 +7,36 @@
 #' @import officer
 #' @importFrom magrittr "%>%"
 #' @export
-exportSummaryStatisticsTable <- function(data, 
+exportSummaryStatisticsTable <- function(summaryTable, 
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	colVar = NULL, 
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
+	margin = 1, rowPadBase = 2,
 	title = "Table: Descriptive statistics"){
-
-	margin <- 1
 
 	## format table
 	summaryTableLong <- formatSummaryStatisticsForExport(
-		data = data,
+		summaryTable = summaryTable,
 		rowVar = rowVar, rowVarLab = rowVarLab,
 		colVar = colVar
 	)
-	
-	convertSummaryStatisticsTableToFlextableCustom <- function(...){
-		convertSummaryStatisticsTableToFlextable(...,
-			landscape = landscape, margin = margin,
-			title = title,
-			rowVar = rowVarLab
-		)	
-	}
-	
-	# create flextable only with header to extract dimensions header
-	summaryTableFt <- convertSummaryStatisticsTableToFlextableCustom(data = summaryTableLong)	
-	
-	##  split table between different sections
-	# Note: there is an automated implementation in the officer package
-	# to split table across pages
-	
-	# extract maximum width page and width of header and each row (in inches)
-#	heightPage <- getDimPage(type = "height", landscape = landscape, margin = margin)
-#	headerHeight <- sum(summaryTableFt$header$rowheights)
-#	bodyHeights <- summaryTableFt$body$rowheights
-	
-	# extract rows where the table should be split
-#	statsVar <- c("N", "Mean", "SD", "SE", "Median", "Min", "Max")
-#	idxEndSection <- which(summaryTableLong$Statistic == statsVar[length(statsVar)]) # cut by section
-#	bodyHeightsCumsum <- cumsum(bodyHeights)
-#	heightPageForTable <- heightPage - headerHeight
-#	breaks <- c(seq(from = 0, to = max(bodyHeightsCumsum), by = heightPageForTable), Inf)
-#	idxSectionByPage <- findInterval(bodyHeightsCumsum[idxEndSection], breaks)
-	
-#	# build the list of tables
-#	summaryTableFtList <- lapply(unique(idxSectionByPage), function(i){
-#		iRowStart <- ifelse(i == 1, 1, max(idxEndSection[which(idxSectionByPage == (i - 1))]) + 1)
-#		iRowEnd <-  max(idxEndSection[which(idxSectionByPage == i)])
-#		table <- summaryTableLong[seq.int(from = iRowStart, to = iRowEnd), ]
-#		convertSummaryStatisticsTableToFlextableCustom(data = table)
-#	})
 
+	# create flextable only with header to extract dimensions header
+	summaryTableFt <- convertSummaryStatisticsTableToFlextable(
+		summaryTable = summaryTableLong,
+		landscape = landscape, margin = margin, rowPadBase = rowPadBase,
+		title = title
+	)	
+	
 	# include the tables in a Word document
 	if(!is.null(file)){	
 		
 		doc <- read_docx()
 		if(landscape)	doc <- doc %>% body_end_section_landscape()
 		
-#		for(i in seq_along(summaryTableFtList)){
-			doc <- doc %>% body_add_flextable(value = summaryTableFt)
-#			if(i != length(summaryTableFtList))
-#				doc <- doc %>% body_add_break()
-#		}
+		doc <- doc %>% body_add_flextable(value = summaryTableFt)
+		
 		if(landscape){
 			doc <- doc %>%
 				# a paragraph needs to be included after the table otherwise the layout is not landscape
@@ -86,28 +53,34 @@ exportSummaryStatisticsTable <- function(data,
 
 #' Format summary statistics table for export
 #' @inheritParams subjectProfileSummaryPlot
-#' @param colVar string with variable of \code{data} used for grouping in column.
-#' @param rowVar character vector with variable(s) of \code{data}
+#' @param colVar string with variable of \code{summaryTable} used for grouping in column.
+#' @param rowVar character vector with variable(s) of \code{summaryTable}
 #' used for grouping in rows.
 #' @param rowVarLab label for each variable of \code{rowVar}.
 #' @inheritParams subjectProfileSummaryPlot
-#' @return data reformatted in long format
+#' @return summaryTable reformatted in long format, with extra attributes:
+#' \itemize{
+#' \item{'header': }{data.frame with header for each column}
+#' \item{'padParams': }{list of list of parameters to be passed to the 
+#' \code{\link[flextable]{padding}}} function
+#' }
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
 #' @importFrom reshape2 melt dcast
 #' @importFrom stats as.formula
-formatSummaryStatisticsForExport <- function(data,
+formatSummaryStatisticsForExport <- function(summaryTable,
 	rowVar = NULL, 
 	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVarInRow = rowVar,
 	colVar = NULL,
 	labelVars = NULL
 	){
 	
 	# add total in column header
-	dataWithTotal <- ddply(data, colVar, function(x){
-		idxTotal <- which(x[, rowVar] == "Total")
+	dataWithTotal <- ddply(summaryTable, colVar, function(x){
+		idxTotal <- which(rowSums(x[, rowVar, drop = FALSE] == "Total") == length(rowVar))
 		if(length(idxTotal) == 1){
-			x[, colVar[length(colVar)]] <- paste0(x[, colVar[length(colVar)]], " (N=",  x[idxTotal , "N"], ")")
+			x[, colVar[length(colVar)]] <- paste0(x[, colVar[length(colVar)]], "\n(N=",  x[idxTotal , "N"], ")")
 			x[-idxTotal, ]
 		}else x
 	})
@@ -134,8 +107,38 @@ formatSummaryStatisticsForExport <- function(data,
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
 	}
 	
+	# if more than one rowVar, convert them to different rows
+	dataLong$rowPadding <- rowPadding <- length(rowVar)-1
+	rowVarFinal <- rowVar[length(rowVar)]
+	rowVarToModify <- rowVar[-length(rowVar)]
+	if(length(rowVarToModify)){
+		for(var in rowVarToModify){
+			rowPadding <- rowPadding - 1
+			varX <- dataLong[, var]
+			# extract indices of new row
+			idxNewRow <- c(1, which(diff(as.numeric(factor(varX))) == 1) + 1)
+			# replicate row
+			dataLong <- dataLong[sort(c(idxNewRow, seq_len(nrow(dataLong)))), ]
+			# extract labels of variable in final row column
+			dataLong[idxNewRow, rowVarFinal] <- varX[idxNewRow]
+			# and set to rest to NA
+			dataLong[idxNewRow, colnames(dataLong) != rowVarFinal] <- NA
+			# save the padding for flextable
+			dataLong[idxNewRow, "rowPadding"] <- rowPadding
+			# remove the variable from the df
+			dataLong[, var] <- NULL 
+		}
+		rownames(dataLong) <- NULL
+		
+		# save indices of rows to set padding in flextable
+		padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
+			list(i = which(dataLong$rowPadding == pad), j = 1, part = "body", padding.left = pad)				
+		)
+		dataLong$rowPadding <- NULL
+	}else	padParams <- list()
+	
 	# label header for rows
-	colnames(dataLong)[match(rowVar, colnames(dataLong))] <- rowVarLab
+	colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <- paste(rowVarLab, collapse = "\n")
 	
 	# extract header (in case multiple 'colVar' specified)
 	header <- strsplit(colnames(dataLong), split = "_")
@@ -148,15 +151,28 @@ formatSummaryStatisticsForExport <- function(data,
 	colnames(headerDf) <- colnames(dataLong)
 	attributes(dataLong)$header <- headerDf
 	
+	# save padding of header
+	idxRowHeaderForPad <- which(headerDf[, headerRow] != "")[-1] # consider header for row column
+	padParams <- c(
+		padParams,
+		lapply(seq_along(idxRowHeaderForPad), function(i)
+			list(i = rev(idxRowHeaderForPad)[i], j = 1, part = "header", padding.left = i)
+		)
+	)
+	
+	attributes(dataLong)$padParams <- padParams
+	attributes(dataLong)$rowVar <- headerRow
+	
 	return(dataLong)
 	
 }
 
 #' Convert summary statistics table to flextable
-#' @param data summary statistics table in long format,
+#' @param summaryTable summary statistics table in long format,
 #' as returned by \code{\link{formatSummaryStatisticsForExport}}
 #' @param title string with title for the table.
 #' Set to NULL if no title should be included.
+#' @param rowPadBase base padding for row (number of spaces)
 #' @inheritParams getDimPage
 #' @inheritParams formatSummaryStatisticsForExport
 #' @return \code{\link[flextable]{flextable}} object
@@ -165,28 +181,54 @@ formatSummaryStatisticsForExport <- function(data,
 #' @importFrom stats setNames
 #' @author Laure Cougnaud
 convertSummaryStatisticsTableToFlextable <- function(
-	data, 
-	landscape = FALSE, margin = 1,
+	summaryTable, 
+	landscape = FALSE, 
+	margin = 1, rowPadBase = 2,
 	title = "Table: Descriptive statistics",
-	rowVar = NULL, 
 	fontname = "Times"
 	){
 	
 	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
-	colsDataFt <- colnames(data)
-	names(colsDataFt) <- paste0("col", seq_len(ncol(data)))
-	colnames(data) <- names(colsDataFt)
+	colsDataFt <- colnames(summaryTable)
+	names(colsDataFt) <- paste0("col", seq_len(ncol(summaryTable)))
+	colnames(summaryTable) <- names(colsDataFt)
 	
-	headerDf <- attributes(data)$header	
+	headerDf <- attributes(summaryTable)$header	
 	if(!is.null(headerDf))	colnames(headerDf) <- names(colsDataFt)
 	
 	getNewCol <- function(initCol)
 		names(colsDataFt)[match(initCol, colsDataFt)]
 	
-	ft <- flextable(data)
+	# base flextable
+	ft <- flextable(summaryTable)
 	
-	if(!is.null(rowVar))
-		ft <- merge_v(ft, j = getNewCol(rowVar)) # merge rows
+	## headers:
+	setHeader <- function(ft, header){
+		headerList <- as.list(
+				if(is.matrix(header) | is.data.frame(header))	header	else
+							setNames(rep(header, length(colsDataFt)), names(colsDataFt))
+		)
+		ft <- do.call(add_header, c(list(x = ft, top = TRUE), headerList))
+		ft <- merge_h(x = ft, part = "header")
+		return(ft)
+	}
+	if(!is.null(headerDf) & nrow(headerDf) > 1)	ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
+	
+	# set to correct headers	
+	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
+	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
+	
+	## padding
+	if(length(attributes(summaryTable)$padParams) > 0)
+		for(padParams in attributes(summaryTable)$padParams){
+			padPars <- grep("^padding", names(padParams), value = TRUE)
+			padParams[padPars] <- lapply(padPars, function(par) padParams[[par]] * rowPadBase)
+			ft <- do.call(padding, c(list(x = ft), padParams))
+		}
+	
+	# merge rows
+	rowVar <- attributes(summaryTable)$rowVar
+	ft <- merge_v(ft, j = getNewCol(rowVar)) 
 	
 	# set correct alignments
 	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
@@ -195,23 +237,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
 	
 	# add title and headers
-	setHeader <- function(ft, header){
-		headerList <- as.list(
-			if(is.matrix(header) | is.data.frame(header))	header	else
-			setNames(rep(header, length(colsDataFt)), names(colsDataFt))
-		)
-		ft <- do.call(add_header, c(list(x = ft, top = TRUE), headerList))
-		ft <- merge_h(x = ft, part = "header")
-		return(ft)
-	}
-	if(!is.null(headerDf) & nrow(headerDf) > 1)	ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
+
 	if(!is.null(title))	
 		for(titleI in title)
 			ft <- setHeader(ft, header = titleI)
-	
-	# set to correct headers	
-	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
-	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
 	
 	# set fontsize
 	ft <- fontsize(ft, size = 8, part = "all")

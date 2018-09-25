@@ -4,12 +4,12 @@
 \alias{convertSummaryStatisticsTableToFlextable}
 \title{Convert summary statistics table to flextable}
 \usage{
-convertSummaryStatisticsTableToFlextable(data, landscape = FALSE,
-  margin = 1, title = "Table: Descriptive statistics", rowVar = NULL,
-  fontname = "Times")
+convertSummaryStatisticsTableToFlextable(summaryTable, landscape = FALSE,
+  margin = 1, rowPadBase = 2,
+  title = "Table: Descriptive statistics", fontname = "Times")
 }
 \arguments{
-\item{data}{summary statistics table in long format,
+\item{summaryTable}{summary statistics table in long format,
 as returned by \code{\link{formatSummaryStatisticsForExport}}}
 
 \item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
@@ -17,11 +17,10 @@ format}
 
 \item{margin}{margin in the document in inches}
 
+\item{rowPadBase}{base padding for row (number of spaces)}
+
 \item{title}{string with title for the table.
 Set to NULL if no title should be included.}
-
-\item{rowVar}{character vector with variable(s) of \code{data}
-used for grouping in rows.}
 }
 \value{
 \code{\link[flextable]{flextable}} object

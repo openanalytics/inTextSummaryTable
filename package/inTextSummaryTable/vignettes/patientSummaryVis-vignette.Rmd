@@ -88,8 +88,9 @@ parameter (`ADPP` dataset).
 	summaryTable <- getSummaryStatisticsTable(
 		data = dataAll$ADPP,
 		rowVar = c("PARCAT1", "PARAM"),
-		colVar = "AVISIT",
-		labelVars = labelVars
+		colVar = c("TRTP", "AVISIT"),
+		labelVars = labelVars,
+		rowPadBase = 10
 	)
 
 	# create the plot
@@ -110,6 +111,20 @@ parameter (`ADPP` dataset).
 		file = "summaryStatisticsTable.docx"
 	)
 	ft
+
+```
+
+```{r}
+
+	summaryTable <- getSummaryStatisticsTable(
+		data = dataAll$ADLB,
+		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
+		colVar = "TRTP",
+		var = "ANRIND",
+		labelVars = labelVars,
+		rowPadBase = 10
+	)
+
 
 ```
 

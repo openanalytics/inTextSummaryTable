@@ -4,21 +4,22 @@
 \alias{exportSummaryStatisticsTable}
 \title{Export a summary table in \code{docx} format.}
 \usage{
-exportSummaryStatisticsTable(data, rowVar = NULL,
+exportSummaryStatisticsTable(summaryTable, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   colVar = NULL, labelVars = NULL, file = NULL, landscape = FALSE,
+  margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics")
 }
 \arguments{
-\item{data}{data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{computeSummaryStatistics}}}
+\item{summaryTable}{summary statistics table in long format,
+as returned by \code{\link{formatSummaryStatisticsForExport}}}
 
-\item{rowVar}{character vector with variable(s) of \code{data}
+\item{rowVar}{character vector with variable(s) of \code{summaryTable}
 used for grouping in rows.}
 
 \item{rowVarLab}{label for each variable of \code{rowVar}.}
 
-\item{colVar}{string with variable of \code{data} used for grouping in column.}
+\item{colVar}{string with variable of \code{summaryTable} used for grouping in column.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 
@@ -26,6 +27,10 @@ used for grouping in rows.}
 
 \item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
 format}
+
+\item{margin}{margin in the document in inches}
+
+\item{rowPadBase}{base padding for row (number of spaces)}
 
 \item{title}{string with title for the table.
 Set to NULL if no title should be included.}

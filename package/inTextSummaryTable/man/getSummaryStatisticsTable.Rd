@@ -7,22 +7,22 @@
 getSummaryStatisticsTable(data, var = "AVAL", rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   colVar = NULL, subjectVar = "USUBJID", labelVars = NULL,
-  landscape = FALSE, title = "Table: Descriptive statistics",
+  landscape = FALSE, margin = 1, rowPadBase = 2,
+  title = "Table: Descriptive statistics",
   file = "summaryStatisticsTable.docx")
 }
 \arguments{
-\item{data}{data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{computeSummaryStatistics}}}
+\item{data}{data.frame with data}
 
 \item{var}{string, variable of \code{data} with variable to use,
 'AVAL' by default}
 
-\item{rowVar}{character vector with variable(s) of \code{data}
+\item{rowVar}{character vector with variable(s) of \code{summaryTable}
 used for grouping in rows.}
 
 \item{rowVarLab}{label for each variable of \code{rowVar}.}
 
-\item{colVar}{string with variable of \code{data} used for grouping in column.}
+\item{colVar}{string with variable of \code{summaryTable} used for grouping in column.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
@@ -31,6 +31,10 @@ used for grouping in rows.}
 
 \item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
 format}
+
+\item{margin}{margin in the document in inches}
+
+\item{rowPadBase}{base padding for row (number of spaces)}
 
 \item{title}{string with title for the table.
 Set to NULL if no title should be included.}

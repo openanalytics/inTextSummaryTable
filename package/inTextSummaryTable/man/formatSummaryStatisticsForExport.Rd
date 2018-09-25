@@ -4,25 +4,27 @@
 \alias{formatSummaryStatisticsForExport}
 \title{Format summary statistics table for export}
 \usage{
-formatSummaryStatisticsForExport(data, rowVar = NULL,
+formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   colVar = NULL, labelVars = NULL)
 }
 \arguments{
-\item{data}{data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{computeSummaryStatistics}}}
-
-\item{rowVar}{character vector with variable(s) of \code{data}
+\item{rowVar}{character vector with variable(s) of \code{summaryTable}
 used for grouping in rows.}
 
 \item{rowVarLab}{label for each variable of \code{rowVar}.}
 
-\item{colVar}{string with variable of \code{data} used for grouping in column.}
+\item{colVar}{string with variable of \code{summaryTable} used for grouping in column.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 }
 \value{
-data reformatted in long format
+summaryTable reformatted in long format, with extra attributes:
+\itemize{
+\item{'header': }{data.frame with header for each column}
+\item{'padParams': }{list of list of parameters to be passed to the 
+\code{\link[flextable]{padding}}} function
+}
 }
 \description{
 Format summary statistics table for export
