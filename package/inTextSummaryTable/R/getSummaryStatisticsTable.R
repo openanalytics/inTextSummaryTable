@@ -4,11 +4,11 @@
 #' @param totalLabel string label for the column with the total,
 #' in case \code{totalInclude} is TRUE,
 #' 'total' by default.
-#' @param byWithin variable of \code{data} used 
-#' for grouping. If \code{totalInclude} is TRUE, the total will be 
-#' included across groups of this variable.
-#' @param byAcross character vector with variable(s) of \code{data} used 
-#' for grouping. No total is included for this column if \code{totalInclude} is TRUE. 
+#' @param rowVar variable(s) of \code{data} used for
+#' grouping in row.
+#' @param colVar variable(s) of \code{data} used 
+#' for grouping in column. The total 
+#' for each subgroup across \code{rowVar} is computed.
 #' @inheritParams getSummaryStatistics
 #' @inherit getSummaryStatistics return
 #' @author Laure Cougnaud
@@ -17,24 +17,23 @@
 #' @export
 getSummaryStatisticsTable <- function(data,  
 	var = "AVAL", 
-	byAcross = NULL,
-	byWithin = NULL,
+	colVar = NULL,
+	rowVar = NULL,
 	subjectVar = "USUBJID",
-	totalInclude = TRUE,
 	totalLabel = "Total"
 ){
 	
 	# get general statistics (by group if specified)
-	summaryTable <- ddply(data, c(byAcross, byWithin),function(x){
+	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
 		getSummaryStatistics(data = x, var = var)
 	})
 	
 	# get statistics for the entire dataset
-	if(totalInclude & !is.null(byWithin)){
-		summaryTableTotal <- ddply(data, byAcross, function(x)
+	if(!is.null(colVar)){
+		summaryTableTotal <- ddply(data, colVar, function(x)
 			getSummaryStatistics(data = x, var = var)
 		)
-		summaryTableTotal[, byWithin] <- totalLabel
+		summaryTableTotal[, rowVar] <- totalLabel
 		summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
 	}
 	

@@ -4,20 +4,20 @@
 \alias{formatSummaryStatisticsForExport}
 \title{Format summary statistics table for export}
 \usage{
-formatSummaryStatisticsForExport(data, byAcross = NULL,
-  byAcrossLab = getLabelVar(byAcross, labelVars = labelVars),
-  byWithin = NULL, labelVars = NULL)
+formatSummaryStatisticsForExport(data, rowVar = NULL,
+  rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+  colVar = NULL, labelVars = NULL)
 }
 \arguments{
 \item{data}{data.frame with summary statistics to represent in the plot,
 e.g. produced with the \code{\link{getSummaryStatisticsTable}}}
 
-\item{byAcross}{character vector with variable(s) of \code{data}
+\item{rowVar}{character vector with variable(s) of \code{data}
 used for grouping in rows.}
 
-\item{byAcrossLab}{label for each variable of \code{byAcross}.}
+\item{rowVarLab}{label for each variable of \code{rowVar}.}
 
-\item{byWithin}{string with variable of \code{data} used for grouping in column.}
+\item{colVar}{string with variable of \code{data} used for grouping in column.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 }

@@ -5,8 +5,8 @@
 \title{Convert summary statistics table to flextable}
 \usage{
 convertSummaryStatisticsTableToFlextable(data, landscape = FALSE,
-  margin = 1, title = "Table: Descriptive statistics",
-  byAcross = NULL, subtitle = NULL, fontname = "Times")
+  margin = 1, title = "Table: Descriptive statistics", rowVar = NULL,
+  subtitle = NULL, fontname = "Times")
 }
 \arguments{
 \item{data}{summary statistics table in long format,
@@ -20,7 +20,7 @@ format}
 \item{title}{string with title for the table.
 Set to NULL if no title should be included.}
 
-\item{byAcross}{character vector with variable(s) of \code{data}
+\item{rowVar}{character vector with variable(s) of \code{data}
 used for grouping in rows.}
 
 \item{subtitle}{string with subtitle for the table,

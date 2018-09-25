@@ -55,8 +55,18 @@ package is used.
 
 ```{r loadData}	
 	
-	data(ADaMDataPelican)
-	data(labelVarsADaMPelican)
+#	data(ADaMDataPelican)
+#	data(labelVarsADaMPelican)
+
+	# load data
+	library(glpgUtilityFct)
+	dataFiles <- list.files(
+		path = "data/Pelican/ADAM",
+		pattern = "*.sas7bdat",
+		full.names = TRUE
+	)
+	dataAll <- loadDataADaMSDTM(files = dataFiles)
+	labelVars <- attributes(dataAll)$labelVars
 
 ```
 
@@ -65,31 +75,41 @@ package is used.
 ```{r createMeanSEStats}
 
 	# create the summary table
+	# only CTrough in different visits
 	summaryTable <- getSummaryStatisticsTable(
-		data = ADaMDataPelican,
-		byAcross = c("PARAMCD", "AVISIT"),
-		byWithin = "TRTP"
+		data = dataAll$ADPP,
+		rowVar = "PARAMCD",
+		colVar = c("PARCAT1", "AVISIT")
 	)
 
 	# create the plot
-	gg <- subjectProfileSummaryPlot(
-		data = summaryTable,
-		xVar = "AVISIT",
-		colorVar = "TRTP",
-		labelVars = labelVarsADaMPelican,
-		facetVar = "PARAMCD"
-	)
+#	gg <- subjectProfileSummaryPlot(
+#		data = summaryTable,
+#		xVar = "AVISIT",
+#		colorVar = "TRTP",
+#		labelVars = labelVarsADaMPelican,
+#		facetVar = "PARAMCD"
+#	)
 	
 	# format and export the table in Word format
 	ft <- exportSummaryStatisticsTable(
 		data = summaryTable, 
-		byAcross = c("PARAMCD", "AVISIT"), byWithin = "TRTP",
-		labelVars = labelVarsADaMPelican,
+		rowVar = "PARAMCD",
+		colVar = c("PARCAT1", "AVISIT"),
+		labelVars = labelVars,
 		file = "summaryStatisticsTable.docx"
 	)
 	ft
 
 ```
+
+## 
+
+```{r}
+
+
+```
+
 
 # Appendix
 

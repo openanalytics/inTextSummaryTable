@@ -8,8 +8,8 @@
 #' @importFrom magrittr "%>%"
 #' @export
 exportSummaryStatisticsTable <- function(data, 
-	byAcross = NULL, byAcrossLab = getLabelVar(byAcross, labelVars = labelVars),
-	byWithin = NULL, 
+	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	colVar = NULL, 
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
 	title = "Table: Descriptive statistics",
@@ -20,8 +20,8 @@ exportSummaryStatisticsTable <- function(data,
 	## format table
 	summaryTableLong <- formatSummaryStatisticsForExport(
 		data = data,
-		byAcross = byAcross, byAcrossLab = byAcrossLab,
-		byWithin = byWithin
+		rowVar = rowVar, rowVarLab = rowVarLab,
+		colVar = colVar
 	)
 	
 	convertSummaryStatisticsTableToFlextableCustom <- function(...){
@@ -29,7 +29,7 @@ exportSummaryStatisticsTable <- function(data,
 			landscape = landscape, margin = margin,
 			title = title,
 			subtitle = subtitle,
-			byAcross = byAcrossLab
+			rowVar = rowVarLab
 		)	
 	}
 	
@@ -88,10 +88,10 @@ exportSummaryStatisticsTable <- function(data,
 
 #' Format summary statistics table for export
 #' @inheritParams subjectProfileSummaryPlot
-#' @param byWithin string with variable of \code{data} used for grouping in column.
-#' @param byAcross character vector with variable(s) of \code{data}
+#' @param colVar string with variable of \code{data} used for grouping in column.
+#' @param rowVar character vector with variable(s) of \code{data}
 #' used for grouping in rows.
-#' @param byAcrossLab label for each variable of \code{byAcross}.
+#' @param rowVarLab label for each variable of \code{rowVar}.
 #' @inheritParams subjectProfileSummaryPlot
 #' @return data reformatted in long format
 #' @author Laure Cougnaud
@@ -99,16 +99,25 @@ exportSummaryStatisticsTable <- function(data,
 #' @importFrom reshape2 melt dcast
 #' @importFrom stats as.formula
 formatSummaryStatisticsForExport <- function(data,
-	byAcross = NULL, 
-	byAcrossLab = getLabelVar(byAcross, labelVars = labelVars),
-	byWithin = NULL,
+	rowVar = NULL, 
+	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	colVar = NULL,
 	labelVars = NULL
 	){
 	
+	# add total in column header
+	dataWithTotal <- ddply(data, colVar, function(x){
+		idxTotal <- which(x[, rowVar] == "Total")
+		if(length(idxTotal) == 1){
+			x[, colVar[length(colVar)]] <- paste0(x[, colVar[length(colVar)]], " (N=",  x[idxTotal , "N"], ")")
+			x[-idxTotal, ]
+		}else x
+	})
+		
 	# convert from wide to long format
 	statsVar <- c("N", "Mean", "SD", "SE", "Median", "Min", "Max")
-	dataLong <- melt(data, 
-		id.vars = c(byAcross, byWithin),
+	dataLong <- melt(dataWithTotal, 
+		id.vars = c(rowVar, colVar),
 		measure.vars = statsVar,
 		value.name = "StatisticValue",
 		variable.name = "Statistic"
@@ -117,19 +126,18 @@ formatSummaryStatisticsForExport <- function(data,
 	# format statistic value
 	dataLong$StatisticValue <- formatC(dataLong$StatisticValue)
 	
-	# put elements in 'byWithin' in different columns (long -> wide format)
-	if(!is.null(byWithin)){
-		varsRows <- setdiff(colnames(dataLong), c("StatisticValue", byWithin))
+	# put elements in 'colVar' in different columns (long -> wide format)
+	if(!is.null(colVar)){
 		formulaWithin <- as.formula(paste(
-			paste(byAcross, collapse = " + "), 
+			paste(rowVar, collapse = " + "), 
 			"+ Statistic ~", 
-			paste(byWithin, collapse = " + ")
+			paste(colVar, collapse = " + ")
 		))
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
 	}
 	
 	# re-label columns
-	colnames(dataLong)[match(byAcross, colnames(dataLong))] <- byAcrossLab
+	colnames(dataLong)[match(rowVar, colnames(dataLong))] <- rowVarLab
 	
 	return(dataLong)
 	
@@ -152,7 +160,7 @@ formatSummaryStatisticsForExport <- function(data,
 convertSummaryStatisticsTableToFlextable <- function(data, 
 	landscape = FALSE, margin = 1,
 	title = "Table: Descriptive statistics",
-	byAcross = NULL, 
+	rowVar = NULL, 
 	subtitle = NULL,
 	fontname = "Times"
 	){
@@ -167,11 +175,11 @@ convertSummaryStatisticsTableToFlextable <- function(data,
 	
 	ft <- flextable(data)
 	
-	if(!is.null(byAcross))
-		ft <- merge_v(ft, j = getNewCol(byAcross)) # merge rows
+	if(!is.null(rowVar))
+		ft <- merge_v(ft, j = getNewCol(rowVar)) # merge rows
 	
 	# set correct alignments
-	colsAlignLeft <- getNewCol(c("Statistic", byAcross))
+	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
 	colsAlignCenter <- setdiff(names(colsData), colsAlignLeft)
 	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
 	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")

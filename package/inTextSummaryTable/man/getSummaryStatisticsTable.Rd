@@ -4,9 +4,8 @@
 \alias{getSummaryStatisticsTable}
 \title{Get summary statistics for a specific dataset and variables of interest}
 \usage{
-getSummaryStatisticsTable(data, var = "AVAL", byAcross = NULL,
-  byWithin = NULL, subjectVar = "USUBJID", totalInclude = TRUE,
-  totalLabel = "Total")
+getSummaryStatisticsTable(data, var = "AVAL", colVar = NULL,
+  rowVar = NULL, subjectVar = "USUBJID", totalLabel = "Total")
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -14,22 +13,22 @@ getSummaryStatisticsTable(data, var = "AVAL", byAcross = NULL,
 \item{var}{string, variable of \code{data} with variable to use,
 'AVAL' by default}
 
-\item{byAcross}{character vector with variable(s) of \code{data} used 
-for grouping. No total is included for this column if \code{totalInclude} is TRUE.}
+\item{colVar}{variable(s) of \code{data} used 
+for grouping in column. The total 
+for each subgroup across \code{rowVar} is computed.}
 
-\item{byWithin}{variable of \code{data} used 
-for grouping. If \code{totalInclude} is TRUE, the total will be 
-included across groups of this variable.}
+\item{rowVar}{variable(s) of \code{data} used for
+grouping in row.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
 
-\item{totalInclude}{logical, if TRUE (by default) and \code{by} is specified,
-include also the summary statistics for the entire dataset}
-
 \item{totalLabel}{string label for the column with the total,
 in case \code{totalInclude} is TRUE,
 'total' by default.}
+
+\item{totalInclude}{logical, if TRUE (by default) and \code{by} is specified,
+include also the summary statistics for the entire dataset}
 }
 \value{
 data.frame with summary statistics in columns:
