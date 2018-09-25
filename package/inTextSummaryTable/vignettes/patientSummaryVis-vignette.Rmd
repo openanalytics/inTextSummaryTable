@@ -116,8 +116,19 @@ parameter (`ADPP` dataset).
 
 ```{r}
 
+	dataLB <- subset(dataAll$ADLB, AN01FL == "Y")
+	
+	# ensure that order of elements is the one specified in the corresponding numeric variable
+	library(glpgUtilityFct)
+	dataLB <- convertVarToFactor(
+		data = dataLB, 
+		var = c("PARCAT1", "PARCAT2", "AVISIT", "TRTP", "ANRIND"), 
+		varNum = c("PARCAT1N", "PARCAT2N", "AVISITN", "TRTPN", "ANRINDN")
+	)
+	
+	# create summary table
 	summaryTable <- getSummaryStatisticsTable(
-		data = subset(dataAll$ADLB, PARAMCD == "ALB"),
+		data = dataLB,
 		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
 		rowVarInCol = "AVISIT",
 		colVar = "TRTP",
