@@ -8,8 +8,8 @@ getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
   labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarInCol = NULL, colVar = NULL, subjectVar = "USUBJID",
-  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
-  title = "Table: Descriptive statistics",
+  stats = NULL, labelVars = NULL, landscape = FALSE, margin = 1,
+  rowPadBase = 2, title = "Table: Descriptive statistics",
   file = "summaryStatisticsTable.docx")
 }
 \arguments{
@@ -27,6 +27,14 @@ used for grouping in rows.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
+
+\item{stats}{(optional) list of expression of summary statistics of interest.
+The following statistics are recognized, if: 
+\itemize{
+\item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
+'Min', 'Max', 'Perc'}
+\item{code{type} is a 'countTable':}{'N','Perc'}
+}}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 

@@ -11,6 +11,7 @@ getSummaryStatisticsTable <- function(
 	rowVarInCol = NULL,
 	colVar = NULL, 
 	subjectVar = "USUBJID",
+	stats = NULL,
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
 	title = "Table: Descriptive statistics",
@@ -21,7 +22,8 @@ getSummaryStatisticsTable <- function(
 		var = var, varIgnore = varIgnore,
 		colVar = colVar,
 		rowVar = rowVar,
-		subjectVar = subjectVar
+		subjectVar = subjectVar,
+		stats = stats
 	)
 	
 	# in case of a count table, 'var' is a column

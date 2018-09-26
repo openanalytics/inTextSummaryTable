@@ -6,7 +6,7 @@ Date: 2018-09-20
 Author: Laure Cougnaud
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
 Description: This package enables the creation of summary table to be included as in-text table in a Word document.
-Imports: glpgUtilityFct, dplyr, plyr, reshape2, ggplot2, flextable, officer, magrittr
+Imports: glpgUtilityFct (>= 0.0.2), dplyr, plyr, reshape2, ggplot2, flextable, officer, magrittr
 Suggests: knitr
 License: Software for Internal Use at Open Analytics NV
 RoxygenNote: 6.1.0

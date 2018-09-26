@@ -6,7 +6,8 @@
 \usage{
 computeSummaryStatistics(data, var = "AVAL", varIgnore = NULL,
   colVar = NULL, rowVar = NULL, subjectVar = "USUBJID",
-  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"))
+  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+  stats = NULL)
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -26,6 +27,14 @@ grouping in row in the final table.}
 
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default if \code{var} is numeric) or 'countTable'}
+
+\item{stats}{(optional) list of expression of summary statistics of interest.
+The following statistics are recognized, if: 
+\itemize{
+\item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
+'Min', 'Max', 'Perc'}
+\item{code{type} is a 'countTable':}{'N','Perc'}
+}}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',
@@ -51,6 +60,7 @@ either if \code{type} is:
 }
 }
 }
+The computed summary statistics are stored in the 'statsVar' attribute.
 }
 \description{
 Compute summary statistics for a specific dataset and variables of interest

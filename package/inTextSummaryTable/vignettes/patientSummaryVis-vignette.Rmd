@@ -78,19 +78,40 @@ grouping variable (`rowVar` and `colVar` for row/column variable(s)).
 By default, the summarized variable, specified via the
 `var` parameter is the `r labelVars["AVAL"]` (`AVAL` variable).
 
+## Summary statistics
+
 Please find an example of the summary statistics of the _Pharmacokinetics_
 parameter (`ADPP` dataset).
+By default, a set of summary statistical metrics are computed, see
+`? computeSummaryStatistics` for the list of metrics.
 
-```{r createMeanSEStats}
+```{r summaryTable-LB}
 
-	# create the summary table
-	# only CTrough in different visits
+	# extract all summary statistics
 	summaryTable <- getSummaryStatisticsTable(
 		data = dataAll$ADPP,
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
 		labelVars = labelVars,
 		rowPadBase = 10
+	)
+	
+```
+
+A custom format of summary statistics can be specified via the `stats`
+parameter.
+The summary table is restricted to the mean+-SE statistics.
+
+```{r summaryTable-LB-meanSE}
+	
+	# extract only Mean +- SE
+	summaryTable <- getSummaryStatisticsTable(
+		data = dataAll$ADPP,
+		rowVar = c("PARCAT1", "PARAM"),
+		colVar = c("TRTP", "AVISIT"),
+		labelVars = labelVars,
+		rowPadBase = 10,
+		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE))))
 	)
 
 	# create the plot
@@ -103,16 +124,31 @@ parameter (`ADPP` dataset).
 #	)
 	
 	# format and export the table in Word format
-	ft <- exportSummaryStatisticsTable(
-		data = summaryTable, 
-		rowVar = "PARAM",
-		colVar = c("PARCAT1", "AVISIT"),
-		labelVars = labelVars,
-		file = "summaryStatisticsTable.docx"
-	)
-	ft
+#	ft <- exportSummaryStatisticsTable(
+#		summaryTable = summaryTable, 
+#		rowVar = c("PARCAT1", "PARAM"),
+#		colVar = c("TRTP", "AVISIT"),
+#		labelVars = labelVars,
+#		file = "summaryStatisticsTable.docx"
+#	)
+#	ft
 
 ```
+
+## Count table
+
+If the specified variable of interest is `var` is not numeric (`character` or
+`factor`), a count table is produced.
+The number of patients presenting an abnormal laboratory measurement is
+reported in the table below.
+
+The laboratory parameters are grouped by category (`PARCAT1` and
+`PARCAT2` specified in `rowVar`).
+The counts are computed by visit, and treatment.
+
+Because the laboratory measurement reported as normal or empty ('') in the ADaM
+are not of interest, these classes are filtered via the `varIgnore` parameter.
+
 
 ```{r}
 
@@ -132,17 +168,13 @@ parameter (`ADPP` dataset).
 		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
 		rowVarInCol = "AVISIT",
 		colVar = "TRTP",
-		var = "ANRIND", varIgnore = c(""),
+		var = "ANRIND", varIgnore = c("", "N"),
 		labelVars = labelVars,
-		rowPadBase = 10
+		rowPadBase = 10,
+		title = "Treatment-emergent laboratory abnormalities",
+		stats = list(expression(paste0(N, " (", round(Perc*100), ")"))
+		)
 	)
-
-```
-
-## 
-
-```{r}
-
 
 ```
 

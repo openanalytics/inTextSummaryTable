@@ -4,6 +4,15 @@
 #' @param colVar variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
 #' for each subgroup across \code{rowVar} is computed.
+#' @param stats (optional) list of expression of summary statistics of interest.
+#' The following statistics are recognized, if: 
+#' \itemize{
+#' \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
+#' 'Min', 'Max', 'Perc'}
+#' \item{code{type} is a 'countTable':}{'N','Perc'}
+#' }
+#' If \code{stats} if of length 1, the name of the summary statistic is not included
+#' in the table.
 #' @inheritParams getSummaryStatistics
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter with statistics in columns,
@@ -28,6 +37,7 @@
 #' }
 #' }
 #' }
+#' The computed summary statistics are stored in the 'statsVar' attribute.
 #' @author Laure Cougnaud
 #' @importFrom dplyr n_distinct
 #' @importFrom plyr ddply rbind.fill
@@ -37,7 +47,8 @@ computeSummaryStatistics <- function(data,
 	colVar = NULL,
 	rowVar = NULL,
 	subjectVar = "USUBJID",
-	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable")
+	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+	stats = NULL
 ){
 	
 	# ignore certain elements
@@ -74,6 +85,26 @@ computeSummaryStatistics <- function(data,
 		})
 		
 	}
+	
+	# remove statistics from data
+	statsVar <- if(!is.null(stats)){
+		
+		# compute specified metrics
+		if(length(stats) > 1 & is.null(names(stats)))
+			stop("'statsFct' should be named.")
+		statsDf <- sapply(stats, function(expr)
+			eval(expr = expr, envir = summaryTable)
+		, simplify = FALSE)
+		if(is.null(names(statsDf)))	names(statsDf) <- "Statistic"
+		
+		# save in summaryTable
+		summaryTable <- cbind(summaryTable, statsDf)
+		
+		if(is.null(names(statsDf)))	"Statistic"	else	names(statsDf)
+
+	}else 	c("N", "Mean", "SD", "SE", "Median", "Min", "Max", "Perc")
+	
+	attributes(summaryTable)$statsVar <- statsVar
 	
 	class(summaryTable) <- c(type, class(summaryTable))
 	

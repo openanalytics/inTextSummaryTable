@@ -88,9 +88,11 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	})
 		
 	# convert from wide to long format
-#	statsVar <- c("N", "Mean", "SD", "SE", "Median", "Min", "Max")
+	statsVar <- if(is.null(attributes(summaryTable)$statsVar))
+		setdiff(colnames(dataWithTotal),  c(rowVar, colVar))	else	attributes(summaryTable)$statsVar
 	dataLong <- melt(dataWithTotal, 
 		id.vars = c(rowVar, colVar),
+		measure.vars = statsVar,
 		value.name = "StatisticValue",
 		variable.name = "Statistic"
 	)
@@ -102,7 +104,8 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	if(!is.null(colVar)){
 		formulaWithin <- as.formula(paste(
 			paste(rowVar, collapse = " + "), 
-			"+ Statistic ~", 
+			if(length(statsVar) > 1)	"+ Statistic",
+			"~", 
 			paste(colVar, collapse = " + ")
 		))
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
@@ -166,7 +169,7 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	padParams <- c(
 		padParams,
 		lapply(seq_along(idxRowHeaderForPad), function(i)
-			list(i = rev(idxRowHeaderForPad)[i], j = 1, part = "header", padding.left = i)
+			list(i = idxRowHeaderForPad[i], j = 1, part = "header", padding.left = i)
 		)
 	)
 	
@@ -207,7 +210,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	if(!is.null(headerDf))	colnames(headerDf) <- names(colsDataFt)
 	
 	getNewCol <- function(initCol)
-		names(colsDataFt)[match(initCol, colsDataFt)]
+		na.omit(names(colsDataFt)[match(initCol, colsDataFt)])
 	
 	# base flextable
 	ft <- flextable(summaryTable)
@@ -228,6 +231,13 @@ convertSummaryStatisticsTableToFlextable <- function(
 	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
 	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
 	
+	# set correct alignments
+	rowVar <- attributes(summaryTable)$rowVar
+	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
+	colsAlignCenter <- setdiff(names(colsDataFt), colsAlignLeft)
+	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
+	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
+	
 	## padding
 	if(length(attributes(summaryTable)$padParams) > 0)
 		for(padParams in attributes(summaryTable)$padParams){
@@ -237,14 +247,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 		}
 	
 	# merge rows
-	rowVar <- attributes(summaryTable)$rowVar
 	ft <- merge_v(ft, j = getNewCol(rowVar)) 
-	
-	# set correct alignments
-	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
-	colsAlignCenter <- setdiff(names(colsDataFt), colsAlignLeft)
-	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
-	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
 	
 	# add title and headers
 
