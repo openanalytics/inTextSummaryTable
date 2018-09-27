@@ -87,9 +87,19 @@ By default, a set of summary statistical metrics are computed, see
 
 ```{r summaryTable-LB}
 
+	dataPP <- dataAll$ADPP
+	
+	# ensure that order of elements is the one specified in the corresponding numeric variable
+	library(glpgUtilityFct)
+	dataPP <- convertVarToFactor(
+		data = dataPP, 
+		var = c("PARCAT1", "PARAM", "AVISIT", "TRTP"), 
+		varNum = c("PARCAT1N", "PARAMN", "AVISITN", "TRTPN")
+	)
+
 	# extract all summary statistics
 	summaryTable <- getSummaryStatisticsTable(
-		data = dataAll$ADPP,
+		data = dataPP,
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
 		labelVars = labelVars,
@@ -106,32 +116,14 @@ The summary table is restricted to the mean+-SE statistics.
 	
 	# extract only Mean +- SE
 	summaryTable <- getSummaryStatisticsTable(
-		data = dataAll$ADPP,
+		data = dataPP,
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
 		labelVars = labelVars,
 		rowPadBase = 10,
 		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE))))
 	)
-
-	# create the plot
-#	gg <- subjectProfileSummaryPlot(
-#		data = summaryTable,
-#		xVar = "AVISIT",
-#		colorVar = "TRTP",
-#		labelVars = labelVarsADaMPelican,
-#		facetVar = "PARAMCD"
-#	)
-	
-	# format and export the table in Word format
-#	ft <- exportSummaryStatisticsTable(
-#		summaryTable = summaryTable, 
-#		rowVar = c("PARCAT1", "PARAM"),
-#		colVar = c("TRTP", "AVISIT"),
-#		labelVars = labelVars,
-#		file = "summaryStatisticsTable.docx"
-#	)
-#	ft
+	summaryTable
 
 ```
 
@@ -178,6 +170,30 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 
 ```
 
+## Visualization
+
+```{r}
+
+	# create the plot
+#	gg <- subjectProfileSummaryPlot(
+#		data = summaryTable,
+#		xVar = "AVISIT",
+#		colorVar = "TRTP",
+#		labelVars = labelVarsADaMPelican,
+#		facetVar = "PARAMCD"
+#	)
+	
+	# format and export the table in Word format
+#	ft <- exportSummaryStatisticsTable(
+#		summaryTable = summaryTable, 
+#		rowVar = c("PARCAT1", "PARAM"),
+#		colVar = c("TRTP", "AVISIT"),
+#		labelVars = labelVars,
+#		file = "summaryStatisticsTable.docx"
+#	)
+#	ft
+
+```
 
 # Appendix
 

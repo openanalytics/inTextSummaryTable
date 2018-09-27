@@ -79,13 +79,21 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	){
 	
 	# add total in column header
+	colVarWithCount <- colVar[length(colVar)]
 	dataWithTotal <- ddply(summaryTable, colVar, function(x){
 		idxTotal <- which(rowSums(x[, rowVar, drop = FALSE] == "Total") == length(rowVar))
 		if(length(idxTotal) == 1){
-			x[, colVar[length(colVar)]] <- paste0(x[, colVar[length(colVar)]], "\n(N=",  x[idxTotal , "N"], ")")
+			x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "N"], ")")
 			x[-idxTotal, ]
 		}else x
 	})
+
+	# ensure that order of columns with Total is as specified in levels of the factor originally
+	if(is.factor(summaryTable[, colVarWithCount])){
+		colVarWithCountEl <- unique(dataWithTotal[, colVarWithCount])		
+		colVarWithCountElOrdered <- colVarWithCountEl[order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), levels(summaryTable[, colVarWithCount])))]		
+		dataWithTotal[, colVarWithCount] <- factor(dataWithTotal[, colVarWithCount], levels = colVarWithCountElOrdered)
+	}
 		
 	# convert from wide to long format
 	statsVar <- if(is.null(attributes(summaryTable)$statsVar))
@@ -111,27 +119,36 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
 	}
 	
+	# in case than rowVar are factor, can have issues to include additional rows (*invalid factor*), so convert them as character
+	rowVarFact <- names(which(sapply(dataLong[, rowVar], is.factor)))
+	if(length(rowVarFact) > 0)
+		dataLong[, rowVarFact] <- colwise(.fun = as.character)(dataLong[, rowVarFact])
+	
 	# if more than one rowVar, convert them to different rows
 	rowVarInRow <- setdiff(rowVar, rowVarInCol)
 	dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
 	rowVarFinal <- rowVarInRow[length(rowVarInRow)]
 	rowVarToModify <- rev(rowVarInRow[-length(rowVarInRow)])
 	if(length(rowVarToModify) > 0){
+		
 		for(var in rowVarToModify){
+			
 			rowPadding <- rowPadding - 1
 			varX <- dataLong[, var]
-			# extract indices of new row
-			idxNewRow <- c(1, which(diff(as.numeric(factor(varX))) == 1) + 1)
-			# replicate row
-			dataLong <- dataLong[sort(c(idxNewRow, seq_len(nrow(dataLong)))), ]
-			# extract labels of variable in final row column
-			dataLong[idxNewRow, rowVarFinal] <- varX[idxNewRow]
+			# add new rows
+			idxRowToRepl <- c(1, which(diff(as.numeric(factor(varX))) == 1) + 1) # indices of rows to replicates
+			dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
+			# fill columns
+			idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
+			# set var element in final row column
+			dataLong[idxNewRow, rowVarFinal] <- as.character(varX[idxNewRow]) # convert to character in case is a factor
 			# and set to rest to NA
 			dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
 			# save the padding for flextable
 			dataLong[idxNewRow, "rowPadding"] <- rowPadding
 			# remove the variable from the df
-			dataLong[, var] <- NULL 
+			dataLong[, var] <- NULL
+			
 		}
 		rownames(dataLong) <- NULL
 		

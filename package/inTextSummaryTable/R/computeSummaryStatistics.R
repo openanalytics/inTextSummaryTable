@@ -78,10 +78,17 @@ computeSummaryStatistics <- function(data,
 		summaryTableTotal[, rowVar] <- "Total"
 		summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
 		
+		# ensure that levels of factor are preserved
+		summaryTable[, rowVar] <- sapply(rowVar, function(var) 
+			if(is.factor(data[, var])){
+				factor(summaryTable[, var], levels = c(levels(data[, var]), "Total"))
+			}else summaryTable[, var]
+		, simplify = FALSE)
+		
 		# percentage of subjects
 		summaryTable <- ddply(summaryTable, colVar, function(x){
 			idxTotal <- which(rowSums(x[, rowVar] == "Total") == length(rowVar))
-			cbind(x, Perc = x$N/x[idxTotal, "N"])			
+			cbind(x, Perc = x$N/x[idxTotal, "N"]*100)			
 		})
 		
 	}
