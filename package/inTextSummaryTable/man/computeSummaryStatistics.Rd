@@ -13,7 +13,8 @@ computeSummaryStatistics(data, var = "AVAL", varIgnore = NULL,
 \item{data}{data.frame with data}
 
 \item{var}{string, variable of \code{data} with variable to compute statistics on,
-'AVAL' by default}
+'AVAL' by default.
+Set to NULL to get count table of all subjects or records.}
 
 \item{varIgnore}{vector with elements to ignore in the \code{var} variable}
 

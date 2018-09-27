@@ -148,7 +148,8 @@ computeSummaryStatistics <- function(data,
 #' Get summary statistics of interest
 #' @param data data.frame with data
 #' @param var string, variable of \code{data} with variable to compute statistics on,
-#' 'AVAL' by default
+#' 'AVAL' by default.
+#' Set to NULL to get count table of all subjects or records.
 #' @param subjectVar string, variable of \code{data} with subject ID,
 #' 'USUBJID' by default
 #' @param nType string with type of count, either: 

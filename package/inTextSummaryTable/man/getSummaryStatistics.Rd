@@ -12,7 +12,8 @@ getSummaryStatistics(data, var, subjectVar = "USUBJID",
 \item{data}{data.frame with data}
 
 \item{var}{string, variable of \code{data} with variable to compute statistics on,
-'AVAL' by default}
+'AVAL' by default.
+Set to NULL to get count table of all subjects or records.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
