@@ -189,7 +189,9 @@ getSummaryStatistics <- function(data, var,
 	nType <- match.arg(nType)
 	type <- match.arg(type, choices = c("summaryTable", "countTable"))
 	
-	val <- na.omit(data[, var])
+	data <- data[!is.na(data[, var]), ]
+	
+	val <- data[, var]
 	
 	getN <- switch(nType,
 		'subject' = function(x)	as.integer(n_distinct(x[, subjectVar])),
@@ -199,12 +201,12 @@ getSummaryStatistics <- function(data, var,
 	res <- switch(type,
 		'summaryTable' = data.frame(
 			N = getN(data),
-			Mean = mean(val),
+			Mean = ifelse(length(val) == 0, NA, mean(val)),
 			SD = sd(val),
 			SE = sd(val)/sqrt(length(val)),
 			Median = median(val),
-			Min = min(val),
-			Max = max(val)
+			Min = ifelse(length(val) == 0, NA, min(val)),
+			Max = ifelse(length(val) == 0, NA, max(val))
 		),
 		'countTable' = if(!is.null(var)){
 			ddply(data, var, function(x)
