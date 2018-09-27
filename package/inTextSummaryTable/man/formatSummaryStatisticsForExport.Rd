@@ -6,15 +6,22 @@
 \usage{
 formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowVarInCol = NULL, colVar = NULL, labelVars = NULL)
+  rowVarInSepCol = NULL, colVar = NULL, labelVars = NULL)
 }
 \arguments{
 \item{rowVar}{character vector with variable(s) of \code{summaryTable}
-used for grouping in rows.}
+used for the rows.
+If multiple variables are specified, the variables should be sorted in hierarchical order.
+The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
-\item{rowVarLab}{label for each variable of \code{rowVar}.}
+\item{rowVarLab}{label for each variable of \code{rowVar}}
 
-\item{colVar}{string with variable of \code{summaryTable} used for grouping in column.}
+\item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
+included in separated column in the table.}
+
+\item{colVar}{character vector with variable(s) of \code{summaryTable} used for the columns.
+If multiple variables are specified, the variables should be sorted in hierarchical order,
+and are included in multi-columns layout.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 }

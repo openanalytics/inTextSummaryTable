@@ -13,6 +13,9 @@
 #' }
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
 #' in the table.
+#' @param dataTotal data.frame used to extract the Total count, indicated
+#' in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
+#' It should contain the variables specified by \code{colVar}.
 #' @inheritParams getSummaryStatistics
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter with statistics in columns,
@@ -46,35 +49,54 @@ computeSummaryStatistics <- function(data,
 	var = "AVAL", varIgnore = NULL,
 	colVar = NULL,
 	rowVar = NULL,
-	subjectVar = "USUBJID",
 	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+	nType = "subject",
+	subjectVar = "USUBJID",	
+	dataTotal = NULL,
 	stats = NULL
 ){
+	
+	if(!is.null(dataTotal) && !all(colVar %in% colnames(dataTotal)))
+		stop("The variable(s) specified in 'colVar': ",
+			toString(paste0("'", colVar, "'")), 
+			" are not available in 'dataTotal'.")
 	
 	# ignore certain elements
 	if(!is.null(varIgnore))
 		data <- data[!data[, var] %in% varIgnore, ]
 	
+	getSummaryStatisticsCustom <- function(...)
+		getSummaryStatistics(..., subjectVar = subjectVar, nType = nType)
+	
 	# get general statistics (by group if specified)
 	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
-		getSummaryStatistics(data = x, var = var, type = type)
+		getSummaryStatisticsCustom(data = x, var = var, type = type)
 	})
 	
 	# get statistics for the entire dataset
 	if(!is.null(colVar)){
 		
-		# total per column variable
-		switch(type,
-			'summaryTable' = {
-				summaryTableTotal <- ddply(data, colVar, function(x)
-					getSummaryStatistics(data = x, var = var, type = type)
-				)
-			},
-			'countTable' = {
-				summaryTableTotal <- getSummaryStatistics(data = data, var = colVar, type = type)
-				rowVar <- c(rowVar, var)
-			}
-		)
+		if(!is.null(dataTotal)){
+			
+			summaryTableTotal <- getSummaryStatisticsCustom(data = dataTotal, var = colVar, type = "countTable")
+			rowVar <- c(rowVar, var)
+			
+		}else{
+		
+			# total per column variable
+			switch(type,
+				'summaryTable' = {
+					summaryTableTotal <- ddply(data, colVar, function(x)
+						getSummaryStatisticsCustom(data = x, var = var, type = type)
+					)
+				},
+				'countTable' = {
+					summaryTableTotal <- getSummaryStatisticsCustom(data = data, var = colVar, type = type)
+					rowVar <- c(rowVar, var)
+				}
+			)
+			
+		}
 		summaryTableTotal[, rowVar] <- "Total"
 		summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
 		
@@ -87,7 +109,7 @@ computeSummaryStatistics <- function(data,
 		
 		# percentage of subjects
 		summaryTable <- ddply(summaryTable, colVar, function(x){
-			idxTotal <- which(rowSums(x[, rowVar] == "Total") == length(rowVar))
+			idxTotal <- which(rowSums(x[, rowVar, drop = FALSE] == "Total") == length(rowVar))
 			cbind(x, Perc = x$N/x[idxTotal, "N"]*100)			
 		})
 		
@@ -125,6 +147,11 @@ computeSummaryStatistics <- function(data,
 #' 'AVAL' by default
 #' @param subjectVar string, variable of \code{data} with subject ID,
 #' 'USUBJID' by default
+#' @param nType string with type of count, either: 
+#' \itemize{
+#' \item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
+#' \item{'record' :}{count number of records}
+#' }
 #' @param type string with type of summary table: 'summaryTable' 
 #' (by default if \code{var} is numeric) or 'countTable'
 #' @return data.frame with summary statistics in columns,
@@ -152,16 +179,22 @@ computeSummaryStatistics <- function(data,
 #' @export
 getSummaryStatistics <- function(data, var,
 	subjectVar = "USUBJID",
-	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable")){
+	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+	nType = c("subject", "records")){
+
+	nType <- match.arg(nType)
+	type <- match.arg(type, choices = c("summaryTable", "countTable"))
 	
 	val <- data[, var]
 	
-	getNSubjects <- function(x)
-		as.integer(n_distinct(x[, subjectVar]))
+	getN <- switch(nType,
+		'subject' = function(x)	as.integer(n_distinct(x[, subjectVar])),
+		'record' = function(x) nrow(x)
+	)
 
 	res <- switch(type,
 		'summaryTable' = data.frame(
-			N = getNSubjects(data),
+			N = getN(data),
 			Mean = mean(val),
 			SD = sd(val),
 			SE = sd(val)/sqrt(length(val)),
@@ -171,9 +204,9 @@ getSummaryStatistics <- function(data, var,
 		),
 		'countTable' = if(!is.null(var)){
 			ddply(data, var, function(x)
-				data.frame(N = getNSubjects(x))
+				data.frame(N = getN(x))
 			)
-		}else	data.frame(N = getNSubjects(data))
+		}else	data.frame(N = getN(data))
 	)
 	
 	return(res)

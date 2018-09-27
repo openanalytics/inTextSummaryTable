@@ -9,7 +9,7 @@
 #' @export
 exportSummaryStatisticsTable <- function(summaryTable, 
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-	rowVarInCol = NULL,
+	rowVarInSepCol = NULL,
 	colVar = NULL, 
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
@@ -21,7 +21,7 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	summaryTableLong <- formatSummaryStatisticsForExport(
 		summaryTable = summaryTable,
 		rowVar = rowVar, rowVarLab = rowVarLab,
-		rowVarInCol = rowVarInCol,
+		rowVarInSepCol = rowVarInSepCol,
 		colVar = colVar
 	)
 
@@ -56,10 +56,16 @@ exportSummaryStatisticsTable <- function(summaryTable,
 
 #' Format summary statistics table for export
 #' @inheritParams subjectProfileSummaryPlot
-#' @param colVar string with variable of \code{summaryTable} used for grouping in column.
+#' @param colVar character vector with variable(s) of \code{summaryTable} used for the columns.
+#' If multiple variables are specified, the variables should be sorted in hierarchical order,
+#' and are included in multi-columns layout.
 #' @param rowVar character vector with variable(s) of \code{summaryTable}
-#' used for grouping in rows.
-#' @param rowVarLab label for each variable of \code{rowVar}.
+#' used for the rows.
+#' If multiple variables are specified, the variables should be sorted in hierarchical order.
+#' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
+#' @param rowVarLab label for each variable of \code{rowVar}
+#' @param rowVarInSepCol variable(s) of \code{rowVar} which should be 
+#' included in separated column in the table.
 #' @inheritParams subjectProfileSummaryPlot
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
@@ -74,11 +80,12 @@ exportSummaryStatisticsTable <- function(summaryTable,
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
 #' @importFrom reshape2 melt dcast
+#' @importFrom plyr colwise
 #' @importFrom stats as.formula
 formatSummaryStatisticsForExport <- function(summaryTable,
 	rowVar = NULL, 
 	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-	rowVarInCol = NULL,
+	rowVarInSepCol = NULL,
 	colVar = NULL,
 	labelVars = NULL
 	){
@@ -132,7 +139,7 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 		dataLong[, rowVarFact] <- colwise(.fun = as.character)(dataLong[, rowVarFact])
 	
 	# if more than one rowVar, convert them to different rows
-	rowVarInRow <- setdiff(rowVar, rowVarInCol)
+	rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
 	dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
 	rowVarFinal <- rowVarInRow[length(rowVarInRow)]
 	rowVarToModify <- rev(rowVarInRow[-length(rowVarInRow)])
@@ -177,7 +184,7 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	# label header for rows
 	colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
 		paste(rowVarLab[rowVarInRow], collapse = "_")
-	colnames(dataLong)[match(rowVarInCol, colnames(dataLong))] <- rowVarLab[rowVarInCol]
+	colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- rowVarLab[rowVarInSepCol]
 	
 	# extract header (in case multiple 'colVar' specified)
 	header <- strsplit(colnames(dataLong), split = "_")

@@ -7,10 +7,12 @@
 getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
   labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowVarInCol = NULL, colVar = NULL, subjectVar = "USUBJID",
-  stats = NULL, labelVars = NULL, landscape = FALSE, margin = 1,
-  rowPadBase = 2, title = "Table: Descriptive statistics",
-  footer = NULL, file = "summaryStatisticsTable.docx")
+  rowVarInSepCol = NULL, colVar = NULL, subjectVar = "USUBJID",
+  stats = NULL, dataTotal = NULL, nType = "subject",
+  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
+  title = "Table: Descriptive statistics", footer = NULL,
+  file = "summaryStatisticsTable.docx")
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -19,11 +21,18 @@ getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
 'AVAL' by default}
 
 \item{rowVar}{character vector with variable(s) of \code{summaryTable}
-used for grouping in rows.}
+used for the rows.
+If multiple variables are specified, the variables should be sorted in hierarchical order.
+The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
-\item{rowVarLab}{label for each variable of \code{rowVar}.}
+\item{rowVarLab}{label for each variable of \code{rowVar}}
 
-\item{colVar}{string with variable of \code{summaryTable} used for grouping in column.}
+\item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
+included in separated column in the table.}
+
+\item{colVar}{character vector with variable(s) of \code{summaryTable} used for the columns.
+If multiple variables are specified, the variables should be sorted in hierarchical order,
+and are included in multi-columns layout.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
@@ -37,6 +46,19 @@ The following statistics are recognized, if:
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.}
+
+\item{dataTotal}{data.frame used to extract the Total count, indicated
+in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
+It should contain the variables specified by \code{colVar}.}
+
+\item{nType}{string with type of count, either: 
+\itemize{
+\item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
+\item{'record' :}{count number of records}
+}}
+
+\item{type}{string with type of summary table: 'summaryTable' 
+(by default if \code{var} is numeric) or 'countTable'}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 

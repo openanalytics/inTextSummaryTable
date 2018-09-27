@@ -70,7 +70,7 @@ package is used.
 
 ```
 
-# Patient summarized profile
+# Summary table
 
 The main function is `getSummaryStatisticsTable`, which creates a in-text table
 of summary statistics for variable of interest and for specific
@@ -98,7 +98,7 @@ By default, a set of summary statistical metrics are computed, see
 	)
 
 	# extract all summary statistics
-	summaryTable <- getSummaryStatisticsTable(
+	summaryTablePP <- getSummaryStatisticsTable(
 		data = dataPP,
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
@@ -107,7 +107,7 @@ By default, a set of summary statistical metrics are computed, see
 		title = "Table: Descriptive statistics pharmacometrics",
 		file = "summaryStatisticsTable_PP_allStatistics.docx"
 	)
-	summaryTable
+	summaryTablePP
 	
 ```
 
@@ -117,8 +117,7 @@ The summary table is restricted to the mean+-SE statistics.
 
 ```{r summaryTable-PP-meanSE}
 	
-	# extract only Mean +- SE
-	summaryTable <- getSummaryStatisticsTable(
+	summaryTablePPMeanSE <- getSummaryStatisticsTable(
 		data = dataPP,
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
@@ -129,7 +128,7 @@ The summary table is restricted to the mean+-SE statistics.
 		footer = "Statistics: mean +- SE",
 		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE))))
 	)
-	summaryTable
+	summaryTablePPMeanSE
 
 ```
 
@@ -137,8 +136,7 @@ The same table is created with the median (minimum, maximum) variable.
 
 ```{r summaryTable-PP-medianMinMax}
 	
-	# extract only Mean +- SE
-	summaryTable <- getSummaryStatisticsTable(
+	summaryTablePPMedianMinMax <- getSummaryStatisticsTable(
 		data = dataPP,
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
@@ -147,9 +145,9 @@ The same table is created with the median (minimum, maximum) variable.
 		title = "Table: Descriptive statistics pharmacokinetics",
 		footer = "Statistics: median (min, max)",
 		file = "summaryStatisticsTable_PP_medianMinMax.docx",
-		stats = list(expression(paste0(formatC(Median), "\n(", formatC(Min), ", ", formatC(Min), ")")))
+		stats = list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")")))
 	)
-	summaryTable
+	summaryTablePPMedianMinMax
 
 ```
 
@@ -158,8 +156,11 @@ The same table is created with the median (minimum, maximum) variable.
 
 If the specified variable of interest is `var` is not numeric (`character` or
 `factor`), a count table is produced.
+
 The number of patients presenting an abnormal laboratory measurement is
 reported in the table below.
+
+## General
 
 The laboratory parameters are grouped by category (`PARCAT1` and
 `PARCAT2` specified in `rowVar`).
@@ -167,7 +168,6 @@ The counts are computed by visit, and treatment.
 
 Because the laboratory measurement reported as normal or empty ('') in the ADaM
 are not of interest, these classes are filtered via the `varIgnore` parameter.
-
 
 ```{r countTable-LB}
 
@@ -182,10 +182,10 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 	)
 	
 	# create summary table
-	summaryTable <- getSummaryStatisticsTable(
+	summaryTableLBNPerc <- getSummaryStatisticsTable(
 		data = dataLB,
 		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
-		rowVarInCol = "AVISIT",
+		rowVarInSepCol = "AVISIT",
 		colVar = "TRTP",
 		var = "ANRIND", varIgnore = c("", "N"),
 		labelVars = labelVars,
@@ -195,32 +195,72 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 		footer = "Statistics: N (%)",
 		file = "summaryStatisticsTable_LB_NWithPerc.docx",
 	)
-	summaryTable
+	summaryTableLBNPerc
 
 ```
 
-## Visualization
+## Total count
 
-```{r}
+By default, the total per column is extracted from the number of subjects
+available in the data used for the count table. If the total should be extracted
+from a different dataset, e.g. if only a subset of the patients are present 
+in the data, it should be specified via the `dataTotal` variable.
+
+If not all patients are present in the data in hand, the `dataTotal` parameter
+is used to specify a different dataset to extract the total count (used 
+for the computation of the percentage).
+
+```{r countTable-LB-customDenominator}
+
+	# dataset used to extract the 'Total'
+	dataTotal <- dataAll$ADSL
+	# should contain columns specified in 'colVar'
+	dataTotal$TRTP <- dataTotal$TRT01P 
+
+	# create summary table
+	summaryTableALT <- getSummaryStatisticsTable(
+		data = subset(dataLB, PARAMCD == "ALT"),
+		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
+		rowVarInSepCol = "AVISIT",
+		colVar = "TRTP",
+		var = "ANRIND", varIgnore = c("", "N"),
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Treatment-emergent ALT abnormalities",
+		stats = list(expression(paste0(N, " (", round(Perc), ")"))),
+		dataTotal = dataTotal,
+		footer = "Statistics: N (%)",
+		file = "summaryStatisticsTable_LB_NWithPerc_ALT_customTotal.docx",
+	)
+	summaryTableALT
+
+```
+
+# Visualization
+
+Summary statistics can be visualized via error bars by:
+
+* extracting the summary statistics table with the
+  `computeSummaryStatistics` function (used for `getSummaryStatistics` function)
+* visualizing the summary statistics via the `subjectProfileSummaryPlot`
+  function
+
+```{r visualization, out.width = "100%"}
+
+	summaryTableDf <- computeSummaryStatistics(
+		data = dataPP,
+		rowVar = "PARAM",
+		colVar = c("TRTP", "AVISIT")
+	)
 
 	# create the plot
-#	gg <- subjectProfileSummaryPlot(
-#		data = summaryTable,
-#		xVar = "AVISIT",
-#		colorVar = "TRTP",
-#		labelVars = labelVarsADaMPelican,
-#		facetVar = "PARAMCD"
-#	)
-	
-	# format and export the table in Word format
-#	ft <- exportSummaryStatisticsTable(
-#		summaryTable = summaryTable, 
-#		rowVar = c("PARCAT1", "PARAM"),
-#		colVar = c("TRTP", "AVISIT"),
-#		labelVars = labelVars,
-#		file = "summaryStatisticsTable.docx"
-#	)
-#	ft
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTableDf,
+		xVar = "AVISIT",
+		colorVar = "TRTP",
+		labelVars = labelVars,
+		facetVar = "PARAM"
+	)
 
 ```
 

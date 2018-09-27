@@ -5,9 +5,9 @@
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
 computeSummaryStatistics(data, var = "AVAL", varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, subjectVar = "USUBJID",
-  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
-  stats = NULL)
+  colVar = NULL, rowVar = NULL, type = ifelse(is.numeric(data[,
+  var]), "summaryTable", "countTable"), nType = "subject",
+  subjectVar = "USUBJID", dataTotal = NULL, stats = NULL)
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -22,11 +22,21 @@ for each subgroup across \code{rowVar} is computed.}
 \item{rowVar}{variable(s) of \code{data} used for
 grouping in row in the final table.}
 
+\item{type}{string with type of summary table: 'summaryTable' 
+(by default if \code{var} is numeric) or 'countTable'}
+
+\item{nType}{string with type of count, either: 
+\itemize{
+\item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
+\item{'record' :}{count number of records}
+}}
+
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
 
-\item{type}{string with type of summary table: 'summaryTable' 
-(by default if \code{var} is numeric) or 'countTable'}
+\item{dataTotal}{data.frame used to extract the Total count, indicated
+in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
+It should contain the variables specified by \code{colVar}.}
 
 \item{stats}{(optional) list of expression of summary statistics of interest.
 The following statistics are recognized, if: 

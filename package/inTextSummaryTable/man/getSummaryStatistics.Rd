@@ -5,7 +5,8 @@
 \title{Get summary statistics of interest}
 \usage{
 getSummaryStatistics(data, var, subjectVar = "USUBJID",
-  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"))
+  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+  nType = c("subject", "records"))
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -18,6 +19,12 @@ getSummaryStatistics(data, var, subjectVar = "USUBJID",
 
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default if \code{var} is numeric) or 'countTable'}
+
+\item{nType}{string with type of count, either: 
+\itemize{
+\item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
+\item{'record' :}{count number of records}
+}}
 }
 \value{
 data.frame with summary statistics in columns,
