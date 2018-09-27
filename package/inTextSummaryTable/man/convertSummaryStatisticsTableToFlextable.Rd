@@ -6,7 +6,8 @@
 \usage{
 convertSummaryStatisticsTableToFlextable(summaryTable, landscape = FALSE,
   margin = 1, rowPadBase = 2,
-  title = "Table: Descriptive statistics", fontname = "Times")
+  title = "Table: Descriptive statistics", footer = NULL,
+  fontname = "Times")
 }
 \arguments{
 \item{summaryTable}{summary statistics table in long format,
@@ -19,8 +20,11 @@ format}
 
 \item{rowPadBase}{base padding for row (number of spaces)}
 
-\item{title}{string with title for the table.
+\item{title}{character vector with title(s) for the table.
 Set to NULL if no title should be included.}
+
+\item{footer}{character vector with footer(s) for the table.
+Set to NULL (by default) of no footer should be included.}
 }
 \value{
 \code{\link[flextable]{flextable}} object

@@ -103,7 +103,9 @@ By default, a set of summary statistical metrics are computed, see
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
 		labelVars = labelVars,
-		rowPadBase = 10
+		rowPadBase = 10,
+		title = "Table: Descriptive statistics pharmacometrics",
+		file = "summaryStatisticsTable_PP_allStatistics.docx"
 	)
 	summaryTable
 	
@@ -113,7 +115,7 @@ A custom format of summary statistics can be specified via the `stats`
 parameter.
 The summary table is restricted to the mean+-SE statistics.
 
-```{r summaryTable-PP-custom}
+```{r summaryTable-PP-meanSE}
 	
 	# extract only Mean +- SE
 	summaryTable <- getSummaryStatisticsTable(
@@ -122,11 +124,35 @@ The summary table is restricted to the mean+-SE statistics.
 		colVar = c("TRTP", "AVISIT"),
 		labelVars = labelVars,
 		rowPadBase = 10,
+		title = "Table: Descriptive statistics pharmacokinetics",
+		file = "summaryStatisticsTable_PP_meanSE.docx",
+		footer = "Statistics: mean +- SE",
 		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE))))
 	)
 	summaryTable
 
 ```
+
+The same table is created with the median (minimum, maximum) variable.
+
+```{r summaryTable-PP-medianMinMax}
+	
+	# extract only Mean +- SE
+	summaryTable <- getSummaryStatisticsTable(
+		data = dataPP,
+		rowVar = c("PARCAT1", "PARAM"),
+		colVar = c("TRTP", "AVISIT"),
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Descriptive statistics pharmacokinetics",
+		footer = "Statistics: median (min, max)",
+		file = "summaryStatisticsTable_PP_medianMinMax.docx",
+		stats = list(expression(paste0(formatC(Median), "\n(", formatC(Min), ", ", formatC(Min), ")")))
+	)
+	summaryTable
+
+```
+
 
 ## Count table
 
@@ -164,9 +190,10 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 		var = "ANRIND", varIgnore = c("", "N"),
 		labelVars = labelVars,
 		rowPadBase = 10,
-		title = "Treatment-emergent laboratory abnormalities",
-		stats = list(expression(paste0(N, " (", round(Perc*100), ")"))
-		)
+		title = "Table: Treatment-emergent laboratory abnormalities",
+		stats = list(expression(paste0(N, " (", round(Perc), ")"))),
+		footer = "Statistics: N (%)",
+		file = "summaryStatisticsTable_LB_NWithPerc.docx",
 	)
 	summaryTable
 

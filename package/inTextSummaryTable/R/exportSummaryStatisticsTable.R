@@ -14,7 +14,8 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
 	margin = 1, rowPadBase = 2,
-	title = "Table: Descriptive statistics"){
+	title = "Table: Descriptive statistics",
+	footer = NULL){
 
 	## format table
 	summaryTableLong <- formatSummaryStatisticsForExport(
@@ -28,7 +29,7 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	summaryTableFt <- convertSummaryStatisticsTableToFlextable(
 		summaryTable = summaryTableLong,
 		landscape = landscape, margin = margin, rowPadBase = rowPadBase,
-		title = title
+		title = title, footer = footer
 	)	
 	
 	# include the tables in a Word document
@@ -219,8 +220,10 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 #' Convert summary statistics table to flextable
 #' @param summaryTable summary statistics table in long format,
 #' as returned by \code{\link{formatSummaryStatisticsForExport}}
-#' @param title string with title for the table.
+#' @param title character vector with title(s) for the table.
 #' Set to NULL if no title should be included.
+#' @param footer character vector with footer(s) for the table.
+#' Set to NULL (by default) of no footer should be included.
 #' @param rowPadBase base padding for row (number of spaces)
 #' @inheritParams getDimPage
 #' @inheritParams formatSummaryStatisticsForExport
@@ -234,6 +237,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	landscape = FALSE, 
 	margin = 1, rowPadBase = 2,
 	title = "Table: Descriptive statistics",
+	footer = NULL,
 	fontname = "Times"
 	){
 	
@@ -293,26 +297,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 		for(titleI in title)
 			ft <- setHeader(ft, header = titleI)
 	
-	# set fontsize
-	ft <- fontsize(ft, size = 8, part = "all")
-	
-	# set header in bold
-	ft <- bold(ft, part = "header")
-	
-	# set font
-	ft <- ft %>%
-		font(fontname = fontname, part = "body") %>%
-		font(fontname = fontname, part = "header")
-	
-	# adjust to fit in document:
-	widthPage <- getDimPage(type = "width", landscape = landscape, margin = margin)
-	varFixed <- getNewCol(intersect(c("Statistic", "Total"), colsDataFt))
-	varFixedWidth <- 0.5
-	ft <- width(ft, j = varFixed, width = 0.5)
-	varsOther <- setdiff(names(colsDataFt), varFixed)
-	varsOtherWidth <- (widthPage - length(varFixed) * varFixedWidth)/length(varsOther)
-	ft <- width(ft, j = varsOther, width = varsOtherWidth)
-	
 	# borders
 	ft <- border_remove(ft) %>%
 		border_outer(border = bd, part = "all") %>%
@@ -330,6 +314,33 @@ convertSummaryStatisticsTableToFlextable <- function(
 			vlineParams$i <- vlineParams$i + length(title)
 			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
 		}
+	
+	# add footer
+	if(!is.null(footer))	
+		for(footerI in footer){
+			paramsFooter <- setNames(list(footer), names(colsDataFt[1]))
+			ft <- do.call(add_footer, 
+				c(list(x = ft), paramsFooter)
+			) %>% merge_at(j = 1:ncol(summaryTable), part = "footer")
+		}
+	
+	# set fontsize
+	ft <- fontsize(ft, size = 8, part = "all")
+	
+	# set header in bold
+	ft <- bold(ft, part = "header")
+	
+	# set font
+	ft <- ft %>% font(fontname = fontname, part = "all")
+	
+	# adjust to fit in document:
+	widthPage <- getDimPage(type = "width", landscape = landscape, margin = margin)
+	varFixed <- getNewCol(intersect(c("Statistic", "Total"), colsDataFt))
+	varFixedWidth <- 0.5
+	ft <- width(ft, j = varFixed, width = 0.5)
+	varsOther <- setdiff(names(colsDataFt), varFixed)
+	varsOtherWidth <- (widthPage - length(varFixed) * varFixedWidth)/length(varsOther)
+	ft <- width(ft, j = varsOther, width = varsOtherWidth)
 			
 	return(ft)
 	

@@ -9,7 +9,7 @@
 #' \itemize{
 #' \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
 #' 'Min', 'Max', 'Perc'}
-#' \item{code{type} is a 'countTable':}{'N','Perc'}
+#' \item{\code{type} is a 'countTable':}{'N','Perc'}
 #' }
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
 #' in the table.

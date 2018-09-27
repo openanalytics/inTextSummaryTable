@@ -10,7 +10,7 @@ getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
   rowVarInCol = NULL, colVar = NULL, subjectVar = "USUBJID",
   stats = NULL, labelVars = NULL, landscape = FALSE, margin = 1,
   rowPadBase = 2, title = "Table: Descriptive statistics",
-  file = "summaryStatisticsTable.docx")
+  footer = NULL, file = "summaryStatisticsTable.docx")
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -33,7 +33,7 @@ The following statistics are recognized, if:
 \itemize{
 \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
 'Min', 'Max', 'Perc'}
-\item{code{type} is a 'countTable':}{'N','Perc'}
+\item{\code{type} is a 'countTable':}{'N','Perc'}
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.}
@@ -47,8 +47,11 @@ format}
 
 \item{rowPadBase}{base padding for row (number of spaces)}
 
-\item{title}{string with title for the table.
+\item{title}{character vector with title(s) for the table.
 Set to NULL if no title should be included.}
+
+\item{footer}{character vector with footer(s) for the table.
+Set to NULL (by default) of no footer should be included.}
 
 \item{file}{string with path of the file where the table should be exported}
 }
