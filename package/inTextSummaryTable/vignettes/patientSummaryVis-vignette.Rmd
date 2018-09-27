@@ -31,49 +31,44 @@ vignette: >
 	
 ```
 
-This package `patientProfilesVis` enables to create report containing subject
-profiles.
+The package `inTextSummaryTable` contains functionalities to create summary
+statistics table, format them as in-text table, and export to a`docx`
+document.
 
 ```{r loadPackages}
 
-	library(inTextSummaryTable)
 	library(pander)
+	library(inTextSummaryTable)
 
 ```
 
 ## Data format
 
-The input dataset for the workflow should be a data.frame, 
-usually loaded from a _SAS_ data file (`sas7bdat` format).
+The input data for the creation of summary table should be a data.frame,
+usually loaded a _SAS_ data file (`sas7bdat` format).
 The label of the variables stored in the `SAS` datasets is also used
 for title/captions. 
 
-The function `loadDataADaMSDTM` from the `patientProfilesVis` package can be
-used to load your custom `SAS` dataset(s) of interest.
-In this example, the example dataset stored in the `patientProfilesVis`
-package is used.
+Example datasets included in the `inTextSummaryTable` package are used in this
+vignette.
+Note that the `loadDataADaMSDTM` function of the `glpgUtilityFct` package can
+be used to load the custom your custom `SAS` dataset(s) of interest.
 
 ```{r loadData}	
 	
-#	data(ADaMDataPelican)
-#	data(labelVarsADaMPelican)
-
-	# load data
-	library(glpgUtilityFct)
-	dataFiles <- list.files(
-		path = "data/Pelican/ADAM",
-		pattern = "*.sas7bdat",
-		full.names = TRUE
-	)
-	dataAll <- loadDataADaMSDTM(files = dataFiles)
-	labelVars <- attributes(dataAll)$labelVars
+	# load example data
+	data(ADaMDataPelicanInText)
+	data(labelVarsADaMPelicanInText)
+	
+	dataAll <- ADaMDataPelicanInText
+	labelVars <- labelVarsADaMPelicanInText
 
 ```
 
 # Summary table
 
-The main function is `getSummaryStatisticsTable`, which creates a in-text table
-of summary statistics for variable of interest and for specific
+The main function is `getSummaryStatisticsTable`, creates a in-text table
+of summary statistics for a variable of interest and for specific
 grouping variable (`rowVar` and `colVar` for row/column variable(s)).
 By default, the summarized variable, specified via the
 `var` parameter is the `r labelVars["AVAL"]` (`AVAL` variable).
@@ -82,7 +77,7 @@ By default, the summarized variable, specified via the
 
 Please find an example of the summary statistics of the _Pharmacokinetics_
 parameter (`ADPP` dataset).
-By default, a set of summary statistical metrics are computed, see
+By default, an entire set of summary statistical metrics are computed, see
 `? computeSummaryStatistics` for the list of metrics.
 
 ```{r summaryTable-PP-general}

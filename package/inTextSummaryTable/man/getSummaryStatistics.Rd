@@ -11,7 +11,7 @@ getSummaryStatistics(data, var, subjectVar = "USUBJID",
 \arguments{
 \item{data}{data.frame with data}
 
-\item{var}{string, variable of \code{data} with variable to use,
+\item{var}{string, variable of \code{data} with variable to compute statistics on,
 'AVAL' by default}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,

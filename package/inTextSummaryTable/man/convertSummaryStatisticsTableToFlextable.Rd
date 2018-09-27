@@ -25,9 +25,11 @@ Set to NULL if no title should be included.}
 
 \item{footer}{character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
+
+\item{fontname}{string with font name, 'Times' by default}
 }
 \value{
-\code{\link[flextable]{flextable}} object
+\code{\link[flextable]{flextable}} object with summary table
 }
 \description{
 Convert summary statistics table to flextable

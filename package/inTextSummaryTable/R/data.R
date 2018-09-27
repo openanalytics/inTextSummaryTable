@@ -1,20 +1,18 @@
-
-#' Example ADaM data for subject profiles, currently 
+#' Example ADaM data for the 'inTextSummaryTable' package, currently 
 #' extracted from the \code{ADaM} datasets for the
 #' Pelican study ('study').
 #'
-#' This includes the sweat chloride ('ADRE') data.
 #' @format list with data.frame for each dataset
-#' @name ADaMDataPelican
+#' @name ADaMDataPelicanInText
 #' @docType data
 #' @author Laure Cougnaud
 #' @keywords data
 NULL
 
-#' Variable labels extracted from the \code{ADaM} datasets for the
-#' Pelican study, extracted from the \code{\link{ADaMDataPelican}} dataset.
+#'Variable labels extracted from the \code{ADaM} datasets for the
+#' Pelican study, extracted from the \code{\link{ADaMDataPelicanInText}} dataset.
 #' @format named vector with label for each variable (names)
-#' @name labelVarsADaMPelican
+#' @name labelVarsADaMPelicanInText
 #' @docType data
 #' @author Laure Cougnaud
 #' @keywords data

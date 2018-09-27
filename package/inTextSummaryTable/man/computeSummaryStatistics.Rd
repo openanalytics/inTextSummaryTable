@@ -12,8 +12,10 @@ computeSummaryStatistics(data, var = "AVAL", varIgnore = NULL,
 \arguments{
 \item{data}{data.frame with data}
 
-\item{var}{string, variable of \code{data} with variable to use,
+\item{var}{string, variable of \code{data} with variable to compute statistics on,
 'AVAL' by default}
+
+\item{varIgnore}{vector with elements to ignore in the \code{var} variable}
 
 \item{colVar}{variable(s) of \code{data} used 
 for grouping in column in the final table. The total 
@@ -38,7 +40,7 @@ grouping in row in the final table.}
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 It should contain the variables specified by \code{colVar}.}
 
-\item{stats}{(optional) list of expression of summary statistics of interest.
+\item{stats}{(optional) named list of expression of summary statistics of interest.
 The following statistics are recognized, if: 
 \itemize{
 \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
@@ -50,25 +52,25 @@ in the table.}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',
-depending on the 'type' parameter with statistics in columns,
+depending on the 'type' parameter; with statistics in columns,
 either if \code{type} is:
 \itemize{
 \item{'summaryTable': }{
 \itemize{
-\item{'N': }{number of subjects}
+\item{'N': }{number of subjects orrecords (depending on the \code{nType} parameter)}
 \item{'Mean': }{mean of \code{var}}
 \item{'SD': }{standard deviation of \code{var}}
 \item{'SE': }{standard error of \code{var}}
 \item{'Median': }{median of \code{var}}
 \item{'Min': }{minimum of \code{var}}
 \item{'Max': }{maximum of \code{var}}
-\item{'Perc': }{percentage of subjects}
+\item{'Perc': }{percentage of subjects or records (depending on the \code{nType} parameter)}
 }
 }
 \item{'countTable': }{
 \itemize{
-\item{'N': }{number of subjects}
-\item{'Perc': }{percentage of subjects}
+\item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
+\item{'Perc': }{percentage of subjects or records (depending on the \code{nType} parameter)}
 }
 }
 }

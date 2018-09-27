@@ -1,7 +1,9 @@
 #' Export a summary table in \code{docx} format.
-#' @param file string with path of the file where the table should be exported
+#' @param file string with path of the file where the table should be exported.
+#' If NULL, the summary table is not exported but only returned as output.
 #' @inheritParams formatSummaryStatisticsForExport
 #' @inheritParams convertSummaryStatisticsTableToFlextable
+#' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
 #' @import officer
@@ -55,17 +57,17 @@ exportSummaryStatisticsTable <- function(summaryTable,
 }
 
 #' Format summary statistics table for export
-#' @inheritParams subjectProfileSummaryPlot
-#' @param colVar character vector with variable(s) of \code{summaryTable} used for the columns.
+#' @param summaryTable summary table, created with the \code{\link{computeSummaryStatistics}} function.
+#' @param colVar character vector with variable(s) used for the columns.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order,
 #' and are included in multi-columns layout.
-#' @param rowVar character vector with variable(s) of \code{summaryTable}
-#' used for the rows.
+#' @param rowVar character vector with variable(s) used for the rows.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order.
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
-#' @param rowVarLab label for each variable of \code{rowVar}
+#' @param rowVarLab label for the \code{rowVar} variable(s)
 #' @param rowVarInSepCol variable(s) of \code{rowVar} which should be 
 #' included in separated column in the table.
+#' NULL by default. 
 #' @inheritParams subjectProfileSummaryPlot
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
@@ -82,7 +84,8 @@ exportSummaryStatisticsTable <- function(summaryTable,
 #' @importFrom reshape2 melt dcast
 #' @importFrom plyr colwise
 #' @importFrom stats as.formula
-formatSummaryStatisticsForExport <- function(summaryTable,
+formatSummaryStatisticsForExport <- function(
+	summaryTable,
 	rowVar = NULL, 
 	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarInSepCol = NULL,
@@ -92,22 +95,26 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 		
 	## format table
 	
-	# add total in column header
-	colVarWithCount <- colVar[length(colVar)]
-	dataWithTotal <- ddply(summaryTable, colVar, function(x){
-		idxTotal <- which(rowSums(x[, rowVar, drop = FALSE] == "Total") == length(rowVar))
-		if(length(idxTotal) == 1){
-			x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "N"], ")")
-			x[-idxTotal, ]
-		}else x
-	})
-
-	# ensure that order of columns with Total is as specified in levels of the factor originally
-	if(is.factor(summaryTable[, colVarWithCount])){
-		colVarWithCountEl <- unique(dataWithTotal[, colVarWithCount])		
-		colVarWithCountElOrdered <- colVarWithCountEl[order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), levels(summaryTable[, colVarWithCount])))]		
-		dataWithTotal[, colVarWithCount] <- factor(dataWithTotal[, colVarWithCount], levels = colVarWithCountElOrdered)
-	}
+	if(!is.null(colVar) & !is.null(rowVar)){
+		
+		# add total in column header
+		colVarWithCount <- colVar[length(colVar)]
+		dataWithTotal <- ddply(summaryTable, colVar, function(x){
+				idxTotal <- which(rowSums(x[, rowVar, drop = FALSE] == "Total") == length(rowVar))
+				if(length(idxTotal) == 1){
+					x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "N"], ")")
+					x[-idxTotal, ]
+				}else x
+			})
+	
+		# ensure that order of columns with Total is as specified in levels of the factor originally
+		if(is.factor(summaryTable[, colVarWithCount])){
+			colVarWithCountEl <- unique(dataWithTotal[, colVarWithCount])		
+			colVarWithCountElOrdered <- colVarWithCountEl[order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), levels(summaryTable[, colVarWithCount])))]		
+			dataWithTotal[, colVarWithCount] <- factor(dataWithTotal[, colVarWithCount], levels = colVarWithCountElOrdered)
+		}
+		
+	}else	dataWithTotal <- summaryTable
 		
 	# convert from wide to long format
 	statsVar <- if(is.null(attributes(summaryTable)$statsVar))
@@ -124,67 +131,76 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	
 	# put elements in 'colVar' in different columns (long -> wide format)
 	if(!is.null(colVar)){
+		rowVarForm <- c(
+			if(!is.null(rowVar)) paste(rowVar, collapse = " + "), 
+			if(length(statsVar) > 1)	"Statistic"
+		)
 		formulaWithin <- as.formula(paste(
-			paste(rowVar, collapse = " + "), 
-			if(length(statsVar) > 1)	"+ Statistic",
+			paste(rowVarForm, collapse = "+"),
 			"~", 
 			paste(colVar, collapse = " + ")
 		))
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
 	}
 	
-	# in case than rowVar are factor, can have issues to include additional rows (*invalid factor*), so convert them as character
-	rowVarFact <- names(which(sapply(dataLong[, rowVar], is.factor)))
-	if(length(rowVarFact) > 0)
-		dataLong[, rowVarFact] <- colwise(.fun = as.character)(dataLong[, rowVarFact])
-	
-	# if more than one rowVar, convert them to different rows
-	rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
-	dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
-	rowVarFinal <- rowVarInRow[length(rowVarInRow)]
-	rowVarToModify <- rev(rowVarInRow[-length(rowVarInRow)])
-	if(length(rowVarToModify) > 0){
+	if(!is.null(rowVar)){
 		
-		for(var in rowVarToModify){
+		# in case than rowVar are factor, can have issues to include additional rows (*invalid factor*), so convert them as character
+		rowVarFact <- names(which(sapply(dataLong[, rowVar], is.factor)))
+		if(length(rowVarFact) > 0)
+			dataLong[, rowVarFact] <- colwise(.fun = as.character)(dataLong[, rowVarFact])
+	
+		# if more than one rowVar, convert them to different rows
+		rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
+		rowVarFinal <- rowVarInRow[length(rowVarInRow)]
+		rowVarToModify <- rev(rowVarInRow[-length(rowVarInRow)])
+		if(length(rowVarToModify) > 0){
 			
-			rowPadding <- rowPadding - 1
-			varX <- dataLong[, var]
-			# add new rows
-			idxRowToRepl <- c(1, which(diff(as.numeric(factor(varX))) == 1) + 1) # indices of rows to replicates
-			dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
-			# fill columns
-			idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
-			# set var element in final row column
-			dataLong[idxNewRow, rowVarFinal] <- as.character(varX[idxNewRow]) # convert to character in case is a factor
-			# and set to rest to NA
-			dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
-			# save the padding for flextable
-			dataLong[idxNewRow, "rowPadding"] <- rowPadding
-			# remove the variable from the df
-			dataLong[, var] <- NULL
+			dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1			
+			for(var in rowVarToModify){
+				
+				rowPadding <- rowPadding - 1
+				varX <- dataLong[, var]
+				# add new rows
+				idxRowToRepl <- c(1, which(diff(as.numeric(factor(varX))) == 1) + 1) # indices of rows to replicates
+				dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
+				# fill columns
+				idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
+				# set var element in final row column
+				dataLong[idxNewRow, rowVarFinal] <- as.character(varX[idxNewRow]) # convert to character in case is a factor
+				# and set to rest to NA
+				dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
+				# save the padding for flextable
+				dataLong[idxNewRow, "rowPadding"] <- rowPadding
+				# remove the variable from the df
+				dataLong[, var] <- NULL
+				
+			}
+			rownames(dataLong) <- NULL
 			
-		}
-		rownames(dataLong) <- NULL
+			# save indices of rows to set padding in flextable
+			padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
+				list(i = which(dataLong$rowPadding == pad), j = 1, part = "body", padding.left = pad)				
+			)
+			dataLong$rowPadding <- NULL
+			
+		}else	padParams <- list()
+	
+		## extract extra parameters for flextable (including header)
 		
-		# save indices of rows to set padding in flextable
-		padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
-			list(i = which(dataLong$rowPadding == pad), j = 1, part = "body", padding.left = pad)				
-		)
-		dataLong$rowPadding <- NULL
-	}else	padParams <- list()
-	
-	## extract extra parameters for flextable (including header)
-	
-	# extract horizontal lines
-	idxHLine <- which(diff(as.numeric(as.factor(dataLong[, rowVarFinal]))) != 0)
-	attributes(dataLong)$hlineParams <- list(
-		list(i = idxHLine, part = "body", j = 1:ncol(dataLong))
-	)
-	
-	# label header for rows
-	colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
-		paste(rowVarLab[rowVarInRow], collapse = "_")
-	colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- rowVarLab[rowVarInSepCol]
+		# extract horizontal lines
+		idxHLine <- which(diff(as.numeric(as.factor(dataLong[, rowVarFinal]))) != 0)
+		if(length(idxHLine) > 0)
+			attributes(dataLong)$hlineParams <- list(
+				list(i = idxHLine, part = "body", j = 1:ncol(dataLong))
+			)
+			
+		# label header for rows
+		colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
+			paste(rowVarLab[rowVarInRow], collapse = "_")
+		colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- rowVarLab[rowVarInSepCol]
+		
+	}
 	
 	# extract header (in case multiple 'colVar' specified)
 	header <- strsplit(colnames(dataLong), split = "_")
@@ -208,17 +224,27 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 		})
 	)
 	
-	# save padding of header
-	idxRowHeaderForPad <- which(headerDf[, headerRow] != "")[-1] # consider header for row column
-	padParams <- c(
-		padParams,
-		lapply(seq_along(idxRowHeaderForPad), function(i)
-			list(i = idxRowHeaderForPad[i], j = 1, part = "header", padding.left = i)
-		)
-	)
-	attributes(dataLong)$padParams <- padParams
-	
-	attributes(dataLong)$rowVar <- headerRow
+	if(!is.null(rowVar)){
+		
+		if(length(headerRow) > 0 && headerRow != ""){
+		
+			# save padding of header
+			idxRowHeaderForPad <- which(headerDf[, headerRow] != "")[-1] # consider header for row column
+			padParams <- c(
+				padParams,
+				lapply(seq_along(idxRowHeaderForPad), function(i)
+					list(i = idxRowHeaderForPad[i], j = 1, part = "header", padding.left = i)
+				)
+			)
+			
+			attributes(dataLong)$rowVar <- headerRow
+			
+		}
+		
+		if(length(padParams) > 0)
+			attributes(dataLong)$padParams <- padParams
+
+	}
 	
 	return(dataLong)
 	
@@ -232,9 +258,10 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 #' @param footer character vector with footer(s) for the table.
 #' Set to NULL (by default) of no footer should be included.
 #' @param rowPadBase base padding for row (number of spaces)
+#' @param fontname string with font name, 'Times' by default
 #' @inheritParams getDimPage
 #' @inheritParams formatSummaryStatisticsForExport
-#' @return \code{\link[flextable]{flextable}} object
+#' @return \code{\link[flextable]{flextable}} object with summary table
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
@@ -268,8 +295,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	## headers:
 	setHeader <- function(ft, header){
 		headerList <- as.list(
-				if(is.matrix(header) | is.data.frame(header))	header	else
-							setNames(rep(header, length(colsDataFt)), names(colsDataFt))
+			if(is.matrix(header) | is.data.frame(header))	header	else
+				setNames(rep(header, length(colsDataFt)), names(colsDataFt))
 		)
 		ft <- do.call(add_header, c(list(x = ft, top = TRUE), headerList))
 		ft <- merge_h(x = ft, part = "header")
@@ -297,7 +324,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 		}
 	
 	# merge rows
-	ft <- merge_v(ft, j = getNewCol(rowVar)) 
+	if(!is.null(rowVar))	ft <- merge_v(ft, j = getNewCol(rowVar)) 
 	
 	# add title and headers
 	if(!is.null(title))	

@@ -14,23 +14,24 @@ exportSummaryStatisticsTable(summaryTable, rowVar = NULL,
 \item{summaryTable}{summary statistics table in long format,
 as returned by \code{\link{formatSummaryStatisticsForExport}}}
 
-\item{rowVar}{character vector with variable(s) of \code{summaryTable}
-used for the rows.
+\item{rowVar}{character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
-\item{rowVarLab}{label for each variable of \code{rowVar}}
+\item{rowVarLab}{label for the \code{rowVar} variable(s)}
 
 \item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
-included in separated column in the table.}
+included in separated column in the table.
+NULL by default.}
 
-\item{colVar}{character vector with variable(s) of \code{summaryTable} used for the columns.
+\item{colVar}{character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 
-\item{file}{string with path of the file where the table should be exported}
+\item{file}{string with path of the file where the table should be exported.
+If NULL, the summary table is not exported but only returned as output.}
 
 \item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
 format}
@@ -44,6 +45,9 @@ Set to NULL if no title should be included.}
 
 \item{footer}{character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
+}
+\value{
+\code{\link[flextable]{flextable}} object with summary table
 }
 \description{
 Export a summary table in \code{docx} format.

@@ -1,18 +1,20 @@
-# Project: GLPGPatientProfiles
+# Create example dataset for the 'inTextSummaryTable' R package
 # 
 # Author: Laure Cougnaud
 ###############################################################################
 
 library(glpgUtilityFct)
 
-dataFiles <- "../../../../../GLPGSAPCysticFibrosis/data/Pelican/ADAM/20180525 study/adre.sas7bdat"
+dataFiles <- list.files(
+	path = "data/Pelican/ADAM",
+	pattern = "*.sas7bdat",
+	full.names = TRUE
+)
 
 dataADaM <- loadDataADaMSDTM(files = dataFiles)
 
-#res <- getTimeVsReference(dataList)
+ADaMDataPelicanInText <- dataADaM
+save(ADaMDataPelicanInText, file = "../data/ADaMDataPelicanInText.RData")
 
-ADaMDataPelican <- dataADaM$ADRE
-save(ADaMDataPelican, file = "../data/ADaMDataPelican.RData")
-
-labelVarsADaMPelican <- attr(dataADaM, "labelVars")
-save(labelVarsADaMPelican, file = "../data/labelVarsADaMPelican.RData")
+labelVarsADaMPelicanInText <- attr(dataADaM, "labelVars")
+save(labelVarsADaMPelicanInText, file = "../data/labelVarsADaMPelicanInText.RData")

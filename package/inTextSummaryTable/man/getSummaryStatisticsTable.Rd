@@ -17,27 +17,31 @@ getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
 \arguments{
 \item{data}{data.frame with data}
 
-\item{var}{string, variable of \code{data} with variable to use,
+\item{var}{string, variable of \code{data} with variable to compute statistics on,
 'AVAL' by default}
 
-\item{rowVar}{character vector with variable(s) of \code{summaryTable}
-used for the rows.
+\item{varLab}{label for the \code{var} variable}
+
+\item{varIgnore}{vector with elements to ignore in the \code{var} variable}
+
+\item{rowVar}{character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
-\item{rowVarLab}{label for each variable of \code{rowVar}}
+\item{rowVarLab}{label for the \code{rowVar} variable(s)}
 
 \item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
-included in separated column in the table.}
+included in separated column in the table.
+NULL by default.}
 
-\item{colVar}{character vector with variable(s) of \code{summaryTable} used for the columns.
+\item{colVar}{character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
 
-\item{stats}{(optional) list of expression of summary statistics of interest.
+\item{stats}{(optional) named list of expression of summary statistics of interest.
 The following statistics are recognized, if: 
 \itemize{
 \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
@@ -75,7 +79,11 @@ Set to NULL if no title should be included.}
 \item{footer}{character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
 
-\item{file}{string with path of the file where the table should be exported}
+\item{file}{string with path of the file where the table should be exported.
+If NULL, the summary table is not exported but only returned as output.}
+}
+\value{
+\code{\link[flextable]{flextable}} object with summary table
 }
 \description{
 Get summary statistics table

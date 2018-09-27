@@ -9,17 +9,19 @@ formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
   rowVarInSepCol = NULL, colVar = NULL, labelVars = NULL)
 }
 \arguments{
-\item{rowVar}{character vector with variable(s) of \code{summaryTable}
-used for the rows.
+\item{summaryTable}{summary table, created with the \code{\link{computeSummaryStatistics}} function.}
+
+\item{rowVar}{character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
-\item{rowVarLab}{label for each variable of \code{rowVar}}
+\item{rowVarLab}{label for the \code{rowVar} variable(s)}
 
 \item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
-included in separated column in the table.}
+included in separated column in the table.
+NULL by default.}
 
-\item{colVar}{character vector with variable(s) of \code{summaryTable} used for the columns.
+\item{colVar}{character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 

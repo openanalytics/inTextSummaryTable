@@ -4,7 +4,7 @@
 #' @param colVar variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
 #' for each subgroup across \code{rowVar} is computed.
-#' @param stats (optional) list of expression of summary statistics of interest.
+#' @param stats (optional) named list of expression of summary statistics of interest.
 #' The following statistics are recognized, if: 
 #' \itemize{
 #' \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
@@ -13,30 +13,31 @@
 #' }
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
 #' in the table.
+#' @param varIgnore vector with elements to ignore in the \code{var} variable
 #' @param dataTotal data.frame used to extract the Total count, indicated
 #' in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 #' It should contain the variables specified by \code{colVar}.
 #' @inheritParams getSummaryStatistics
 #' @return data.frame of class 'countTable' or 'summaryTable',
-#' depending on the 'type' parameter with statistics in columns,
+#' depending on the 'type' parameter; with statistics in columns,
 #' either if \code{type} is:
 #' \itemize{
 #' \item{'summaryTable': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
+#' \item{'N': }{number of subjects orrecords (depending on the \code{nType} parameter)}
 #' \item{'Mean': }{mean of \code{var}}
 #' \item{'SD': }{standard deviation of \code{var}}
 #' \item{'SE': }{standard error of \code{var}}
 #' \item{'Median': }{median of \code{var}}
 #' \item{'Min': }{minimum of \code{var}}
 #' \item{'Max': }{maximum of \code{var}}
-#' \item{'Perc': }{percentage of subjects}
+#' \item{'Perc': }{percentage of subjects or records (depending on the \code{nType} parameter)}
 #' }
 #' }
 #' \item{'countTable': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'Perc': }{percentage of subjects}
+#' \item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
+#' \item{'Perc': }{percentage of subjects or records (depending on the \code{nType} parameter)}
 #' }
 #' }
 #' }
@@ -74,7 +75,7 @@ computeSummaryStatistics <- function(data,
 	})
 	
 	# get statistics for the entire dataset
-	if(!is.null(colVar)){
+	if(!is.null(colVar) & !is.null(rowVar)){
 		
 		if(!is.null(dataTotal)){
 			
@@ -131,7 +132,10 @@ computeSummaryStatistics <- function(data,
 		
 		if(is.null(names(statsDf)))	"Statistic"	else	names(statsDf)
 
-	}else 	c("N", "Mean", "SD", "SE", "Median", "Min", "Max", "Perc")
+	}else	c("N", 
+				if(type == "summaryTable") c("Mean", "SD", "SE", "Median", "Min", "Max"), 
+				if(!is.null(colVar) & !is.null(rowVar))	"Perc"
+			)
 	
 	attributes(summaryTable)$statsVar <- statsVar
 	
@@ -143,7 +147,7 @@ computeSummaryStatistics <- function(data,
 
 #' Get summary statistics of interest
 #' @param data data.frame with data
-#' @param var string, variable of \code{data} with variable to use,
+#' @param var string, variable of \code{data} with variable to compute statistics on,
 #' 'AVAL' by default
 #' @param subjectVar string, variable of \code{data} with subject ID,
 #' 'USUBJID' by default
@@ -185,7 +189,7 @@ getSummaryStatistics <- function(data, var,
 	nType <- match.arg(nType)
 	type <- match.arg(type, choices = c("summaryTable", "countTable"))
 	
-	val <- data[, var]
+	val <- na.omit(data[, var])
 	
 	getN <- switch(nType,
 		'subject' = function(x)	as.integer(n_distinct(x[, subjectVar])),
