@@ -63,7 +63,7 @@ computeSummaryStatistics <- function(data,
 			" are not available in 'dataTotal'.")
 	
 	# ignore certain elements
-	if(!is.null(varIgnore))
+	if(!is.null(var) && !is.null(varIgnore))
 		data <- data[!data[, var] %in% varIgnore, ]
 	
 	getSummaryStatisticsCustom <- function(...)
@@ -189,25 +189,27 @@ getSummaryStatistics <- function(data, var,
 	nType <- match.arg(nType)
 	type <- match.arg(type, choices = c("summaryTable", "countTable"))
 	
-	data <- data[!is.na(data[, var]), ]
-	
-	val <- data[, var]
-	
+	if(!is.null(var))
+		data <- data[!is.na(data[, var]), ]
+			
 	getN <- switch(nType,
 		'subject' = function(x)	as.integer(n_distinct(x[, subjectVar])),
 		'record' = function(x) nrow(x)
 	)
 
 	res <- switch(type,
-		'summaryTable' = data.frame(
-			N = getN(data),
-			Mean = ifelse(length(val) == 0, NA, mean(val)),
-			SD = sd(val),
-			SE = sd(val)/sqrt(length(val)),
-			Median = median(val),
-			Min = ifelse(length(val) == 0, NA, min(val)),
-			Max = ifelse(length(val) == 0, NA, max(val))
-		),
+		'summaryTable' = {
+			val <- data[, var]
+			data.frame(
+				N = getN(data),
+				Mean = ifelse(is.null(var) || length(val) == 0, NA, mean(val)),
+				SD = ifelse(is.null(var), NA, sd(val)),
+				SE = ifelse(is.null(var), NA, sd(val)/sqrt(length(val))),
+				Median = ifelse(is.null(var), NA, median(val)),
+				Min = ifelse(is.null(var) || length(val) == 0, NA, min(val)),
+				Max = ifelse(is.null(var) || length(val) == 0, NA, max(val))
+			)
+		},
 		'countTable' = if(!is.null(var)){
 			ddply(data, var, function(x)
 				data.frame(N = getN(x))

@@ -80,6 +80,8 @@ parameter (`ADPP` dataset).
 By default, an entire set of summary statistical metrics are computed, see
 `? computeSummaryStatistics` for the list of metrics.
 
+### Default statistics
+
 ```{r summaryTable-PP-general}
 
 	dataPP <- dataAll$ADPP
@@ -105,6 +107,8 @@ By default, an entire set of summary statistical metrics are computed, see
 	summaryTablePP
 	
 ```
+
+### Custom statistics
 
 A custom format of summary statistics can be specified via the `stats`
 parameter.
@@ -149,20 +153,23 @@ The same table is created with the median (minimum, maximum) variable.
 
 ## Count table
 
-If the specified variable of interest is `var` is not numeric (`character` or
+If the specified variable of interest (`var`) is not numeric (`character` or
 `factor`), a count table is produced.
 
 The number of patients presenting an abnormal laboratory measurement is
 reported in the table below.
 
-## General
+### General
 
-The laboratory parameters are grouped by category (`PARCAT1` and
-`PARCAT2` specified in `rowVar`).
-The counts are computed by visit, and treatment.
+The laboratory parameters are grouped by category, and the visit is indicated
+in the rows: `PARCAT1`, `PARCAT2` and `AVISIT` are specified in `rowVar`.
+The treatment is reported in the column: `TRTP` specified in `colVar`.
 
 Because the laboratory measurement reported as normal or empty ('') in the ADaM
 are not of interest, these classes are filtered via the `varIgnore` parameter.
+
+By default, the number ('N') and percentage ('Perc') are reported for each
+`rowVar`/`colVar`.
 
 ```{r countTable-LB}
 
@@ -176,6 +183,28 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 		varNum = c("PARCAT1N", "PARCAT2N", "AVISITN", "TRTPN", "ANRINDN")
 	)
 	
+	# create summary table
+	summaryTableLBCount <- getSummaryStatisticsTable(
+		data = dataLB,
+		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
+		rowVarInSepCol = "AVISIT",
+		colVar = "TRTP",
+		var = "ANRIND", varIgnore = c("", "N"),
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Treatment-emergent laboratory abnormalities",
+		file = "summaryStatisticsTable_LB_count.docx",
+	)
+	summaryTableLBCount
+
+```
+
+### Custom statistics
+
+The statistics are reformatted as 'N (%)' by using the `stats` parameter.
+
+```{r countTable-LB-custom}
+
 	# create summary table
 	summaryTableLBNPerc <- getSummaryStatisticsTable(
 		data = dataLB,
@@ -194,16 +223,13 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 
 ```
 
-## Total count
+### Total count
 
 By default, the total per column is extracted from the number of subjects
 available in the data used for the count table. If the total should be extracted
 from a different dataset, e.g. if only a subset of the patients are present 
-in the data, it should be specified via the `dataTotal` variable.
-
-If not all patients are present in the data in hand, the `dataTotal` parameter
-is used to specify a different dataset to extract the total count (used 
-for the computation of the percentage).
+in the data, it should be specified via the `dataTotal` variable (used also for
+the computation of the percentage).
 
 ```{r countTable-LB-customDenominator}
 
@@ -231,6 +257,30 @@ for the computation of the percentage).
 
 ```
 
+### Example adverse event
+
+```{r countTable-AE}
+
+	dataAE <- subset(dataAll$ADAE, FASFL == "Y")
+
+	# create summary table
+	summaryTableAE <- getSummaryStatisticsTable(
+		data = dataAE,
+		rowVar = c("AESOC", "AELLT"),
+		colVar = "TRTP",
+		var = NULL, #"AESEV", 
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Adverse events",
+		stats = list(expression(paste0(N, " (", round(Perc, 1), ")"))),
+		dataTotal = dataTotal,
+		footer = "Statistics: N (%)",
+		file = "summaryStatisticsTable_AE.docx",
+	)
+	summaryTableAE
+
+```
+
 # Visualization
 
 Summary statistics can be visualized via error bars by:
@@ -249,7 +299,7 @@ Summary statistics can be visualized via error bars by:
 	)
 
 	# create the plot
-	gg <- subjectProfileSummaryPlot(
+	subjectProfileSummaryPlot(
 		data = summaryTableDf,
 		xVar = "AVISIT",
 		colorVar = "TRTP",
