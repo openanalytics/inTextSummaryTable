@@ -85,7 +85,7 @@ parameter (`ADPP` dataset).
 By default, a set of summary statistical metrics are computed, see
 `? computeSummaryStatistics` for the list of metrics.
 
-```{r summaryTable-LB}
+```{r summaryTable-PP-general}
 
 	dataPP <- dataAll$ADPP
 	
@@ -105,6 +105,7 @@ By default, a set of summary statistical metrics are computed, see
 		labelVars = labelVars,
 		rowPadBase = 10
 	)
+	summaryTable
 	
 ```
 
@@ -112,7 +113,7 @@ A custom format of summary statistics can be specified via the `stats`
 parameter.
 The summary table is restricted to the mean+-SE statistics.
 
-```{r summaryTable-LB-meanSE}
+```{r summaryTable-PP-custom}
 	
 	# extract only Mean +- SE
 	summaryTable <- getSummaryStatisticsTable(
@@ -142,7 +143,7 @@ Because the laboratory measurement reported as normal or empty ('') in the ADaM
 are not of interest, these classes are filtered via the `varIgnore` parameter.
 
 
-```{r}
+```{r countTable-LB}
 
 	dataLB <- subset(dataAll$ADLB, AN01FL == "Y")
 	
@@ -167,6 +168,7 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 		stats = list(expression(paste0(N, " (", round(Perc*100), ")"))
 		)
 	)
+	summaryTable
 
 ```
 

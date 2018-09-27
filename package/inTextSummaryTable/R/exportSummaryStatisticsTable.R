@@ -64,7 +64,11 @@ exportSummaryStatisticsTable <- function(summaryTable,
 #' \itemize{
 #' \item{'header': }{data.frame with header for each column}
 #' \item{'padParams': }{list of list of parameters to be passed to the 
-#' \code{\link[flextable]{padding}}} function
+#' \code{\link[flextable]{padding}} function}
+#' \item{'rowVar': }{column of output with row variable}
+#' \item{'vlineParams' and 'hlineParams': }{
+#' list of list with correspondingly parameters for
+#' vertical and horizontal lines}
 #' }
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
@@ -77,6 +81,8 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	colVar = NULL,
 	labelVars = NULL
 	){
+		
+	## format table
 	
 	# add total in column header
 	colVarWithCount <- colVar[length(colVar)]
@@ -159,6 +165,8 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 		dataLong$rowPadding <- NULL
 	}else	padParams <- list()
 	
+	## extract extra parameters for flextable (including header)
+	
 	# extract horizontal lines
 	idxHLine <- which(diff(as.numeric(as.factor(dataLong[, rowVarFinal]))) != 0)
 	attributes(dataLong)$hlineParams <- list(
@@ -181,6 +189,17 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 	colnames(headerDf) <- colnames(dataLong)
 	attributes(dataLong)$header <- headerDf
 	
+	# extract vertical lines (specified by the right border)
+	attributes(dataLong)$vlineParams <- c(
+		list(
+			list(i = nRowsHeader, part = "header", j = 1:ncol(dataLong))
+		),
+		lapply(seq_len(nrow(headerDf)-1), function(i){
+			j <- which(diff(as.numeric(factor(unlist(headerDf[i, ])))) == 1)
+			list(i = i, part = "header", j = j)
+		})
+	)
+	
 	# save padding of header
 	idxRowHeaderForPad <- which(headerDf[, headerRow] != "")[-1] # consider header for row column
 	padParams <- c(
@@ -189,8 +208,8 @@ formatSummaryStatisticsForExport <- function(summaryTable,
 			list(i = idxRowHeaderForPad[i], j = 1, part = "header", padding.left = i)
 		)
 	)
-	
 	attributes(dataLong)$padParams <- padParams
+	
 	attributes(dataLong)$rowVar <- headerRow
 	
 	return(dataLong)
@@ -217,6 +236,9 @@ convertSummaryStatisticsTableToFlextable <- function(
 	title = "Table: Descriptive statistics",
 	fontname = "Times"
 	){
+	
+	# column border
+	bd <- fp_border()
 	
 	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
 	colsDataFt <- colnames(summaryTable)
@@ -267,7 +289,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ft <- merge_v(ft, j = getNewCol(rowVar)) 
 	
 	# add title and headers
-
 	if(!is.null(title))	
 		for(titleI in title)
 			ft <- setHeader(ft, header = titleI)
@@ -293,16 +314,22 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ft <- width(ft, j = varsOther, width = varsOtherWidth)
 	
 	# borders
-	bd <- fp_border()
 	ft <- border_remove(ft) %>%
-		hline_top(border = bd, part = "body") %>% 
-		hline_bottom(border = bd, part = "body") %>%
-		hline_top(border = bd, part = "header") %>% 
-		hline(border = bd, part = "header") 
+		border_outer(border = bd, part = "all") %>%
+		hline(border = bd, part = "header") %>%
+		vline(border = bd, part = "body")
 
+	# horizontal lines
 	if(!is.null(attributes(summaryTable)$hlineParams))
 		for(hlineParams in attributes(summaryTable)$hlineParams)
 			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
+	
+	# vertical lines
+	if(!is.null(attributes(summaryTable)$vlineParams))
+		for(vlineParams in attributes(summaryTable)$vlineParams){
+			vlineParams$i <- vlineParams$i + length(title)
+			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
+		}
 			
 	return(ft)
 	

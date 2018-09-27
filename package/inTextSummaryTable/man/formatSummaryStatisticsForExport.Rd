@@ -23,7 +23,11 @@ summaryTable reformatted in long format, with extra attributes:
 \itemize{
 \item{'header': }{data.frame with header for each column}
 \item{'padParams': }{list of list of parameters to be passed to the 
-\code{\link[flextable]{padding}}} function
+\code{\link[flextable]{padding}} function}
+\item{'rowVar': }{column of output with row variable}
+\item{'vlineParams' and 'hlineParams': }{
+list of list with correspondingly parameters for
+vertical and horizontal lines}
 }
 }
 \description{
