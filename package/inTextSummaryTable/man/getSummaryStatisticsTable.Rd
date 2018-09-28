@@ -4,13 +4,13 @@
 \alias{getSummaryStatisticsTable}
 \title{Get summary statistics table}
 \usage{
-getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
+getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarInSepCol = NULL, colVar = NULL, subjectVar = "USUBJID",
   stats = NULL, dataTotal = NULL, nType = "subject",
-  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
-  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
+  type = "summaryTable", labelVars = NULL, landscape = FALSE,
+  margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx")
 }
@@ -18,8 +18,8 @@ getSummaryStatisticsTable(data, var = "AVAL", varLab = getLabelVar(var,
 \item{data}{data.frame with data}
 
 \item{var}{string, variable of \code{data} with variable to compute statistics on,
-'AVAL' by default.
-Set to NULL to get count table of all subjects or records.}
+only used (and required) if \code{type} is 'summaryTable'.
+Missing values, if present, are filtered.}
 
 \item{varLab}{label for the \code{var} variable}
 
@@ -63,7 +63,7 @@ It should contain the variables specified by \code{colVar}.}
 }}
 
 \item{type}{string with type of summary table: 'summaryTable' 
-(by default if \code{var} is numeric) or 'countTable'}
+(by default) or 'countTable'}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 

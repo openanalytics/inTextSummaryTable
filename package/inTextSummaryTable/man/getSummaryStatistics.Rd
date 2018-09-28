@@ -4,28 +4,31 @@
 \alias{getSummaryStatistics}
 \title{Get summary statistics of interest}
 \usage{
-getSummaryStatistics(data, var, subjectVar = "USUBJID",
-  type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
-  nType = c("subject", "records"))
+getSummaryStatistics(data, var = NULL, subjectVar = "USUBJID",
+  type = "summaryTable", nType = c("subject", "record"),
+  filterEmptyVar = TRUE)
 }
 \arguments{
 \item{data}{data.frame with data}
 
 \item{var}{string, variable of \code{data} with variable to compute statistics on,
-'AVAL' by default.
-Set to NULL to get count table of all subjects or records.}
+only used (and required) if \code{type} is 'summaryTable'.
+Missing values, if present, are filtered.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
 
 \item{type}{string with type of summary table: 'summaryTable' 
-(by default if \code{var} is numeric) or 'countTable'}
+(by default) or 'countTable'}
 
 \item{nType}{string with type of count, either: 
 \itemize{
 \item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
 \item{'record' :}{count number of records}
 }}
+
+\item{filterEmptyVar}{logical (TRUE by default), should the summary statistics be filtered
+in case \code{var} is empty.}
 }
 \value{
 data.frame with summary statistics in columns,
@@ -33,7 +36,7 @@ depending if \code{type} is:
 \itemize{
 \item{'summary': }{
 \itemize{
-\item{'N': }{number of subjects}
+\item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
 \item{'Mean': }{mean of \code{var}}
 \item{'SD': }{standard deviation of \code{var}}
 \item{'SE': }{standard error of \code{var}}
@@ -44,7 +47,7 @@ depending if \code{type} is:
 }
 \item{'count': }{
 \itemize{
-\item{'N': }{number of subjects}
+\item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
 }
 }
 }
