@@ -4,17 +4,17 @@
 \alias{computeSummaryStatistics}
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
-computeSummaryStatistics(data, var = "AVAL", varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, type = ifelse(is.numeric(data[,
-  var]), "summaryTable", "countTable"), nType = "subject",
-  subjectVar = "USUBJID", dataTotal = NULL, stats = NULL)
+computeSummaryStatistics(data, var = NULL, varIgnore = NULL,
+  colVar = NULL, rowVar = NULL, type = "summaryTable",
+  nType = "subject", subjectVar = "USUBJID", dataTotal = NULL,
+  stats = NULL)
 }
 \arguments{
 \item{data}{data.frame with data}
 
 \item{var}{string, variable of \code{data} with variable to compute statistics on,
-'AVAL' by default.
-Set to NULL to get count table of all subjects or records.}
+only used (and required) if \code{type} is 'summaryTable'.
+Missing values, if present, are filtered.}
 
 \item{varIgnore}{vector with elements to ignore in the \code{var} variable}
 
@@ -26,7 +26,7 @@ for each subgroup across \code{rowVar} is computed.}
 grouping in row in the final table.}
 
 \item{type}{string with type of summary table: 'summaryTable' 
-(by default if \code{var} is numeric) or 'countTable'}
+(by default) or 'countTable'}
 
 \item{nType}{string with type of count, either: 
 \itemize{

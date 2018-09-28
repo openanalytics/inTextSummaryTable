@@ -2,7 +2,7 @@ Package: inTextSummaryTable
 Type: Package
 Title: Creation of in-text summary table
 Version: 0.0.1
-Date: 2018-09-20
+Date: 2018-09-28
 Author: Laure Cougnaud
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
 Description: This package enables the creation of summary table to be included as in-text table in a Word document.

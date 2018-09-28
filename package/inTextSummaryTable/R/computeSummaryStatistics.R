@@ -47,10 +47,10 @@
 #' @importFrom plyr ddply rbind.fill
 #' @export
 computeSummaryStatistics <- function(data,  
-	var = "AVAL", varIgnore = NULL,
+	var = NULL, varIgnore = NULL,
 	colVar = NULL,
 	rowVar = NULL,
-	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+	type = "summaryTable",
 	nType = "subject",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL,
@@ -71,55 +71,33 @@ computeSummaryStatistics <- function(data,
 	
 	# get general statistics (by group if specified)
 	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
-		getSummaryStatisticsCustom(data = x, var = var, type = type)
+		getSummaryStatisticsCustom(data = x, var = var, type = type,
+			filterEmptyVar = (type == "summaryTable")
+		)
 	})
 	
-	# get statistics for the entire dataset
-	if(!is.null(colVar) & !is.null(rowVar)){
-		
-		if(!is.null(dataTotal)){
-			
-			summaryTableTotal <- getSummaryStatisticsCustom(data = dataTotal, var = colVar, type = "countTable")
-			rowVar <- c(rowVar, var)
-			
-		}else{
-		
-			# total per column variable
-			switch(type,
-				'summaryTable' = {
-					summaryTableTotal <- ddply(data, colVar, function(x)
-						getSummaryStatisticsCustom(data = x, var = var, type = type)
-					)
-				},
-				'countTable' = {
-					summaryTableTotal <- getSummaryStatisticsCustom(data = data, var = colVar, type = type)
-					rowVar <- c(rowVar, var)
-				}
+	# get counts for the entire dataset
+	summaryTableTotal <- ddply(
+		.data = if(!is.null(dataTotal))	dataTotal	else	data, 
+		.variables = colVar, 
+		.fun = function(x)
+			getSummaryStatisticsCustom(
+				data = x, type = "countTable", filterEmptyVar = FALSE
 			)
-			
-		}
-		summaryTableTotal[, rowVar] <- "Total"
-		summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
-		
-		# ensure that levels of factor are preserved
-		summaryTable[, rowVar] <- sapply(rowVar, function(var) 
-			if(is.factor(data[, var])){
-				factor(summaryTable[, var], levels = c(levels(data[, var]), "Total"))
-			}else summaryTable[, var]
-		, simplify = FALSE)
-		
-		# percentage of subjects
-		summaryTable <- ddply(summaryTable, colVar, function(x){
-			idxTotal <- which(rowSums(x[, rowVar, drop = FALSE] == "Total") == length(rowVar))
-			cbind(x, Perc = x$N/x[idxTotal, "N"]*100)			
-		})
-		
-	}
+	)
+	summaryTableTotal$isTotal <- TRUE
+	summaryTable$isTotal <- FALSE
+	summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
 	
-	# remove statistics from data
+	# compute percentages
+	summaryTable <- ddply(summaryTable, colVar, function(x){
+		idxTotal <- which(x$isTotal)
+		cbind(x, Perc = x$N/x[idxTotal, "N"]*100)			
+	})
+	
+	# compute specified metrics and extract statistic names
 	statsVar <- if(!is.null(stats)){
 		
-		# compute specified metrics
 		if(length(stats) > 1 & is.null(names(stats)))
 			stop("'statsFct' should be named.")
 		statsDf <- sapply(stats, function(expr)
@@ -134,8 +112,11 @@ computeSummaryStatistics <- function(data,
 
 	}else	c("N", 
 				if(type == "summaryTable") c("Mean", "SD", "SE", "Median", "Min", "Max"), 
-				if(!is.null(colVar) & !is.null(rowVar))	"Perc"
+				"Perc"
 			)
+
+	if(".id" %in% colnames(summaryTable))
+		summaryTable <- summaryTable[, -which(colnames(summaryTable) == ".id")]
 	
 	attributes(summaryTable)$statsVar <- statsVar
 	
@@ -148,23 +129,25 @@ computeSummaryStatistics <- function(data,
 #' Get summary statistics of interest
 #' @param data data.frame with data
 #' @param var string, variable of \code{data} with variable to compute statistics on,
-#' 'AVAL' by default.
-#' Set to NULL to get count table of all subjects or records.
+#' only used (and required) if \code{type} is 'summaryTable'.
+#' Missing values, if present, are filtered.
 #' @param subjectVar string, variable of \code{data} with subject ID,
 #' 'USUBJID' by default
+#' @param filterEmptyVar logical (TRUE by default), should the summary statistics be filtered
+#' in case \code{var} is empty.
 #' @param nType string with type of count, either: 
 #' \itemize{
 #' \item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
 #' \item{'record' :}{count number of records}
 #' }
 #' @param type string with type of summary table: 'summaryTable' 
-#' (by default if \code{var} is numeric) or 'countTable'
+#' (by default) or 'countTable'
 #' @return data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{
 #' \item{'summary': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
+#' \item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
 #' \item{'Mean': }{mean of \code{var}}
 #' \item{'SD': }{standard deviation of \code{var}}
 #' \item{'SE': }{standard error of \code{var}}
@@ -175,20 +158,32 @@ computeSummaryStatistics <- function(data,
 #' }
 #' \item{'count': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
+#' \item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
 #' }
 #' }
 #' }
 #' @author Laure Cougnaud
 #' @importFrom stats na.omit median sd
 #' @export
-getSummaryStatistics <- function(data, var,
+getSummaryStatistics <- function(data, 
+	var = NULL,
 	subjectVar = "USUBJID",
-	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
-	nType = c("subject", "records")){
+	type = "summaryTable",
+	nType = c("subject", "record"),
+	filterEmptyVar = TRUE){
+
+	## checks parameters
 
 	nType <- match.arg(nType)
 	type <- match.arg(type, choices = c("summaryTable", "countTable"))
+	
+	switch(type,
+		'summaryTable' = if(is.null(var))
+			stop("Variable of interest should be specified via the 'var' parameter for a summary table."),
+		'countTable' = if(!is.null(var))
+			warning("'var' is not used for count table. ",
+				"You might want to specify this variable via the 'rowVar'/'rowVarInSepCol' parameters.")
+	)
 	
 	if(!is.null(var))
 		data <- data[!is.na(data[, var]), ]
@@ -201,21 +196,19 @@ getSummaryStatistics <- function(data, var,
 	res <- switch(type,
 		'summaryTable' = {
 			val <- data[, var]
-			data.frame(
-				N = getN(data),
-				Mean = ifelse(is.null(var) || length(val) == 0, NA, mean(val)),
-				SD = ifelse(is.null(var), NA, sd(val)),
-				SE = ifelse(is.null(var), NA, sd(val)/sqrt(length(val))),
-				Median = ifelse(is.null(var), NA, median(val)),
-				Min = ifelse(is.null(var) || length(val) == 0, NA, min(val)),
-				Max = ifelse(is.null(var) || length(val) == 0, NA, max(val))
-			)
+			if(!(filterEmptyVar & length(val) == 0)){
+				data.frame(
+					N = getN(data),
+					Mean = ifelse(is.null(var), NA, mean(val)),
+					SD = ifelse(is.null(var), NA, sd(val)),
+					SE = ifelse(is.null(var), NA, sd(val)/sqrt(length(val))),
+					Median = ifelse(is.null(var), NA, median(val)),
+					Min = ifelse(is.null(var), NA, min(val)),
+					Max = ifelse(is.null(var), NA, max(val))
+				)
+			}
 		},
-		'countTable' = if(!is.null(var)){
-			ddply(data, var, function(x)
-				data.frame(N = getN(x))
-			)
-		}else	data.frame(N = getN(data))
+		'countTable' = data.frame(N = getN(data))
 	)
 	
 	return(res)

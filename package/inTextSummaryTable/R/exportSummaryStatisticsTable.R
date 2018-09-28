@@ -95,12 +95,12 @@ formatSummaryStatisticsForExport <- function(
 		
 	## format table
 	
-	if(!is.null(colVar) & !is.null(rowVar)){
+	if(!is.null(colVar)){
 		
 		# add total in column header
 		colVarWithCount <- colVar[length(colVar)]
 		dataWithTotal <- ddply(summaryTable, colVar, function(x){
-				idxTotal <- which(rowSums(x[, rowVar, drop = FALSE] == "Total") == length(rowVar))
+				idxTotal <- which(x$isTotal)
 				if(length(idxTotal) == 1){
 					x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "N"], ")")
 					x[-idxTotal, ]
@@ -114,7 +114,11 @@ formatSummaryStatisticsForExport <- function(
 			dataWithTotal[, colVarWithCount] <- factor(dataWithTotal[, colVarWithCount], levels = colVarWithCountElOrdered)
 		}
 		
-	}else	dataWithTotal <- summaryTable
+	}else{
+		idxTotal <- which(summaryTable$isTotal)
+		nTotal <- summaryTable[idxTotal, "N"]
+		dataWithTotal <- summaryTable[-idxTotal, ]
+	}
 		
 	# convert from wide to long format
 	statsVar <- if(is.null(attributes(summaryTable)$statsVar))
@@ -141,55 +145,65 @@ formatSummaryStatisticsForExport <- function(
 			paste(colVar, collapse = " + ")
 		))
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
+	}else{
+		colnames(dataLong)[match("StatisticValue", colnames(dataLong))] <- 
+			paste0("StatisticValue\n(N=",  nTotal, ")")
 	}
 	
 	if(!is.null(rowVar)){
 		
+		# sort data.frame with specified row variables
+		dataLong <- ddply(dataLong, rowVar)
+		
 		# in case than rowVar are factor, can have issues to include additional rows (*invalid factor*), so convert them as character
 		rowVarFact <- names(which(sapply(dataLong[, rowVar], is.factor)))
 		if(length(rowVarFact) > 0)
-			dataLong[, rowVarFact] <- colwise(.fun = as.character)(dataLong[, rowVarFact])
+			dataLong[, rowVarFact] <- colwise(.fun = as.character)(dataLong[, rowVarFact, drop = FALSE])
 	
 		# if more than one rowVar, convert them to different rows
 		rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
 		rowVarFinal <- rowVarInRow[length(rowVarInRow)]
-		rowVarToModify <- rev(rowVarInRow[-length(rowVarInRow)])
+		rowVarToModify <- rowVarInRow[-length(rowVarInRow)]
 		if(length(rowVarToModify) > 0){
 			
-			dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1			
-			for(var in rowVarToModify){
+			dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
+			for(i in rev(seq_along(rowVarToModify))){
 				
-				rowPadding <- rowPadding - 1
+				var <- rowVarToModify[i]
 				varX <- dataLong[, var]
 				# add new rows
-				idxRowToRepl <- c(1, which(diff(as.numeric(factor(varX))) == 1) + 1) # indices of rows to replicates
+				idxRowToRepl <- which(!duplicated(interaction(dataLong[, rowVarToModify[seq_len(i)]]))) # indices of rows to replicates
 				dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
 				# fill columns
 				idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
 				# set var element in final row column
-				dataLong[idxNewRow, rowVarFinal] <- as.character(varX[idxNewRow]) # convert to character in case is a factor
+				# convert to character in case is a factor
+				val <- as.character(varX[idxRowToRepl])
+				dataLong[idxNewRow, rowVarFinal] <- ifelse(is.na(val) | val == "", "Non specified", val)
 				# and set to rest to NA
 				dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
 				# save the padding for flextable
-				dataLong[idxNewRow, "rowPadding"] <- rowPadding
-				# remove the variable from the df
-				dataLong[, var] <- NULL
+				dataLong[idxNewRow, "rowPadding"] <- rowPadding <- rowPadding - 1
 				
 			}
-			rownames(dataLong) <- NULL
+			dataLong[, rowVarToModify] <- rownames(dataLong) <- NULL
 			
 			# save indices of rows to set padding in flextable
 			padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
 				list(i = which(dataLong$rowPadding == pad), j = 1, part = "body", padding.left = pad)				
 			)
-			dataLong$rowPadding <- NULL
 			
 		}else	padParams <- list()
 	
 		## extract extra parameters for flextable (including header)
 		
 		# extract horizontal lines
-		idxHLine <- which(diff(as.numeric(as.factor(dataLong[, rowVarFinal]))) != 0)
+		idxHLine <- if(length(statsVar) > 1){
+			which(!duplicated(dataLong[, rowVarFinal]))[-1]-1
+		}else	if(length(rowVarToModify) > 0){
+				which(diff(dataLong$rowPadding) != 0)
+		}
+		dataLong$rowPadding <- NULL
 		if(length(idxHLine) > 0)
 			attributes(dataLong)$hlineParams <- list(
 				list(i = idxHLine, part = "body", j = 1:ncol(dataLong))

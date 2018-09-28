@@ -7,13 +7,13 @@
 #' @export
 getSummaryStatisticsTable <- function(
 	data, 
-	var = "AVAL", varLab = getLabelVar(var, labelVars = labelVars), varIgnore = NULL,
+	var = NULL, varLab = getLabelVar(var, labelVars = labelVars), varIgnore = NULL,
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarInSepCol = NULL,
 	colVar = NULL, 
 	subjectVar = "USUBJID",
 	stats = NULL, dataTotal = NULL, nType = "subject",
-	type = ifelse(is.numeric(data[, var]), "summaryTable", "countTable"),
+	type = "summaryTable",
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
 	title = "Table: Descriptive statistics", footer = NULL,
@@ -29,13 +29,7 @@ getSummaryStatisticsTable <- function(
 		stats = stats, 
 		dataTotal = dataTotal
 	)
-	
-	# in case of a count table, 'var' is a column
-	if(inherits(summaryTable, "countTable")){
-		rowVarInSepCol <- c(rowVarInSepCol, var)
-		rowVar <- c(rowVar, var)
-		rowVarLab <- c(rowVarLab, varLab)
-	}
+
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
 		rowVar = rowVar, rowVarLab = rowVarLab,
