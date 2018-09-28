@@ -5,9 +5,9 @@
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
 computeSummaryStatistics(data, var = NULL, varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, type = "summaryTable",
-  nType = "subject", subjectVar = "USUBJID", dataTotal = NULL,
-  stats = NULL)
+  colVar = NULL, rowVar = NULL, rowTotalInclude = FALSE,
+  type = "summaryTable", nType = "subject", subjectVar = "USUBJID",
+  dataTotal = NULL, stats = NULL)
 }
 \arguments{
 \item{data}{data.frame with data}

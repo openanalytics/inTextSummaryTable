@@ -7,10 +7,10 @@
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowVarInSepCol = NULL, colVar = NULL, subjectVar = "USUBJID",
-  stats = NULL, dataTotal = NULL, nType = "subject",
-  type = "summaryTable", labelVars = NULL, landscape = FALSE,
-  margin = 1, rowPadBase = 2,
+  rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
+  colVar = NULL, subjectVar = "USUBJID", stats = NULL,
+  dataTotal = NULL, nType = "subject", type = "summaryTable",
+  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx")
 }
@@ -34,6 +34,12 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 \item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
 included in separated column in the table.
 NULL by default.}
+
+\item{rowTotalInclude}{logical, if TRUE (FALSE by default) include the total
+across rows in a separated row.
+This is only available if \code{rowVar} if not NULL.}
+
+\item{rowTotalLab}{label for the row with total}
 
 \item{colVar}{character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,

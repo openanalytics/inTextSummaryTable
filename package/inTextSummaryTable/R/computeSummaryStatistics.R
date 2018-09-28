@@ -50,6 +50,7 @@ computeSummaryStatistics <- function(data,
 	var = NULL, varIgnore = NULL,
 	colVar = NULL,
 	rowVar = NULL,
+	rowTotalInclude = FALSE,
 	type = "summaryTable",
 	nType = "subject",
 	subjectVar = "USUBJID",	
@@ -75,6 +76,26 @@ computeSummaryStatistics <- function(data,
 			filterEmptyVar = (type == "summaryTable")
 		)
 	})
+
+	if(rowTotalInclude){
+		if(!is.null(rowVar)){
+			summaryTableTotalData <- ddply(
+				.data = data, 
+				.variables = colVar, 
+				.fun = function(x)
+					getSummaryStatisticsCustom(
+						data = x, type = type, 
+						filterEmptyVar = (type == "summaryTable"),
+						var = var
+					)
+			)
+			summaryTableTotalData[, rowVar] <- "Total"
+			summaryTable <- rbind.fill(summaryTable, summaryTableTotalData)
+			summaryTable[, rowVar] <- colwise(function(x)	
+					factor(x, levels = unique(c("Total", if(is.factor(x))	levels(x)	else	sort(unique(x)))))
+			)(summaryTable[, rowVar, drop = FALSE])
+		}else warning("The row 'total' is not included because no 'rowVar' is specified.")
+	}
 	
 	# get counts for the entire dataset
 	summaryTableTotal <- ddply(
