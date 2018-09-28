@@ -5,8 +5,7 @@
 \title{Get summary statistics of interest}
 \usage{
 getSummaryStatistics(data, var = NULL, subjectVar = "USUBJID",
-  type = "summaryTable", nType = c("subject", "record"),
-  filterEmptyVar = TRUE)
+  type = "summaryTable", filterEmptyVar = TRUE)
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -21,12 +20,6 @@ Missing values, if present, are filtered.}
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default) or 'countTable'}
 
-\item{nType}{string with type of count, either: 
-\itemize{
-\item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
-\item{'record' :}{count number of records}
-}}
-
 \item{filterEmptyVar}{logical (TRUE by default), should the summary statistics be filtered
 in case \code{var} is empty.}
 }
@@ -36,7 +29,8 @@ depending if \code{type} is:
 \itemize{
 \item{'summary': }{
 \itemize{
-\item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
+\item{'N': }{number of subjects }
+\item{'m': }{number of records}
 \item{'Mean': }{mean of \code{var}}
 \item{'SD': }{standard deviation of \code{var}}
 \item{'SE': }{standard error of \code{var}}
@@ -47,7 +41,8 @@ depending if \code{type} is:
 }
 \item{'count': }{
 \itemize{
-\item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
+\item{'N': }{number of subjects}
+\item{'m': }{number of records}
 }
 }
 }

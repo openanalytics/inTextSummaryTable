@@ -13,7 +13,7 @@ getSummaryStatisticsTable <- function(
 	rowTotalInclude = FALSE, rowTotalLab = NULL,
 	colVar = NULL, 
 	subjectVar = "USUBJID",
-	stats = NULL, dataTotal = NULL, nType = "subject",
+	stats = NULL, dataTotal = NULL, 
 	type = "summaryTable",
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
@@ -27,7 +27,7 @@ getSummaryStatisticsTable <- function(
 		rowVar = rowVar, 
 		rowTotalInclude = rowTotalInclude,
 		type = type,
-		nType = nType, subjectVar = subjectVar,
+		subjectVar = subjectVar,
 		stats = stats, 
 		dataTotal = dataTotal
 	)

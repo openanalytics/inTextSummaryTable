@@ -157,9 +157,14 @@ formatSummaryStatisticsForExport <- function(
 		
 		# extract horizontal lines
 		idxHLine <- if(length(statsVar) > 1){
-			which(!duplicated(dataLong[, rowVarFinal]))[-1]-1
-		}else	if(length(rowVarToModify) > 0){
+			which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
+		}else{
+			if(length(rowVarToModify) > 0){
 				which(diff(dataLong$rowPadding) != 0)
+			}else if(length(rowVarInSepCol) > 0){
+				which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
+			}
+				
 		}
 		
 		if(rowTotalInclude){

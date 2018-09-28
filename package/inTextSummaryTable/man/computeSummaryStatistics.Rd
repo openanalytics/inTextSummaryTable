@@ -6,8 +6,8 @@
 \usage{
 computeSummaryStatistics(data, var = NULL, varIgnore = NULL,
   colVar = NULL, rowVar = NULL, rowTotalInclude = FALSE,
-  type = "summaryTable", nType = "subject", subjectVar = "USUBJID",
-  dataTotal = NULL, stats = NULL)
+  type = "summaryTable", subjectVar = "USUBJID", dataTotal = NULL,
+  stats = NULL)
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -27,12 +27,6 @@ grouping in row in the final table.}
 
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default) or 'countTable'}
-
-\item{nType}{string with type of count, either: 
-\itemize{
-\item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
-\item{'record' :}{count number of records}
-}}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
@@ -58,20 +52,24 @@ either if \code{type} is:
 \itemize{
 \item{'summaryTable': }{
 \itemize{
-\item{'N': }{number of subjects orrecords (depending on the \code{nType} parameter)}
+\item{'N': }{number of subjects}
 \item{'Mean': }{mean of \code{var}}
 \item{'SD': }{standard deviation of \code{var}}
 \item{'SE': }{standard error of \code{var}}
 \item{'Median': }{median of \code{var}}
 \item{'Min': }{minimum of \code{var}}
 \item{'Max': }{maximum of \code{var}}
-\item{'Perc': }{percentage of subjects or records (depending on the \code{nType} parameter)}
+\item{'Perc': }{percentage of subjects}
+\item{'m': }{number of records}
+\item{'Percm': }{percentage of records}
 }
 }
 \item{'countTable': }{
 \itemize{
-\item{'N': }{number of subjects or records (depending on the \code{nType} parameter)}
-\item{'Perc': }{percentage of subjects or records (depending on the \code{nType} parameter)}
+\item{'N': }{number of subjects}
+\item{'PercN': }{percentage of subjects}
+\item{'m': }{number of records}
+\item{'Percm': }{percentage of records}
 }
 }
 }

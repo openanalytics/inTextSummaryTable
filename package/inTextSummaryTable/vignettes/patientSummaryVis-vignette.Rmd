@@ -68,21 +68,14 @@ be used to load the custom your custom `SAS` dataset(s) of interest.
 # Summary table
 
 The main function is `getSummaryStatisticsTable`, creates a in-text table
-of summary statistics for a variable of interest and for specific
-grouping variable (`rowVar` and `colVar` for row/column variable(s)).
-By default, the summarized variable, specified via the
-`var` parameter is the `r labelVars["AVAL"]` (`AVAL` variable).
+of summary statistics for a variable of interest.
 
 ## Summary statistics
 
-Please find an example of the summary statistics of the _Pharmacokinetics_
-parameter (`ADPP` dataset).
-By default, an entire set of summary statistical metrics are computed, see
-`? computeSummaryStatistics` for the list of metrics.
+The _Pharmacokinetics_ data (`ADPP` dataset) is used as example for the summary
+statistics table.
 
-### Default statistics
-
-```{r summaryTable-PP-general}
+```{r summaryTable-PP-data}
 
 	dataPP <- dataAll$ADPP
 	
@@ -94,76 +87,315 @@ By default, an entire set of summary statistical metrics are computed, see
 		varNum = c("PARCAT1N", "PARAMN", "AVISITN", "TRTPN")
 	)
 
-	# extract all summary statistics
-	summaryTablePP <- getSummaryStatisticsTable(
+```
+
+### General
+
+The variable (should be **numeric**) to summarize is specified via the `var`
+parameter.
+By default, an
+entire set of summary statistical metrics are computed, see
+`? computeSummaryStatistics` for the list of metrics.
+
+```{r summaryTable-PP-simple}
+
+	getSummaryStatisticsTable(
 		data = dataPP,
-		rowVar = c("PARCAT1", "PARAM"),
-		colVar = c("TRTP", "AVISIT"),
-		labelVars = labelVars,
-		rowPadBase = 10,
-		title = "Table: Descriptive statistics pharmacometrics",
-		file = "summaryStatisticsTable_PP_allStatistics.docx"
+		var = "AVAL"
 	)
-	summaryTablePP
+
+```
+
+### Row variable(s)
+
+Specific grouping variable(s) for the rows can be specified via the
+`rowVar` parameter.
+
+For example, the summary statistics are computed for each `r labelVars["PARAM"]`
+(`PARAM` parameter).
+
+```{r summaryTable-PP-rowVar}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		rowVar = "PARAM"
+	)
+	
+```
+
+Grouping for the rows can be specified via multiple `rowVar`, which should be
+sorted in hierarchical order.
+
+The `rowPadBase` parameter can be used to change the padding between each row
+level.
+
+```{r summaryTable-PP-rowVarMultiple}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		rowVar = c("PARCAT1", "PARAM"),
+		rowPadBase = 10
+	)
+	
+```
+
+## Column variable(s)
+
+Similarly, column(s) of interest are specified via the `colVar` parameter.
+The total is included for each column.
+
+```{r summaryTable-PP-colVar}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = "TRTP"
+	)
+	
+```
+
+```{r summaryTable-PP-colVarMultiple}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT")
+	)
+	
+```
+
+## Row and column combinations
+
+```{r summaryTable-PP-rowColVar}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM")
+	)
+	
+```
+
+## Variable labels
+
+The label used for the `rowVar` parameter can be automatically extracted by the
+labels contained in the _SAS_ dataset, by specifying the `labelVars` parameter.
+
+```{r summaryTable-PP-rowVarWithLabel-labelVars}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		labelVars = labelVars
+	)
+	
+```
+
+The label can also be specified directly via the `rowVarLab` parameter.
+
+```{r summaryTable-PP-rowVarWithLabel-rowVarLab}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		rowVarLab = c('PARAM' = "Pharmacokinetics parameter", 'PARCAT1' = "Compound")
+	)
 	
 ```
 
 ### Custom statistics
 
-A custom format of summary statistics can be specified via the `stats`
-parameter.
-The summary table is restricted to the mean+-SE statistics.
+The `stats` parameter is used to specify a custom format for the statistics.
+In the case that a unique statistic is specified, the 'Statistic' column
+doesn't appear in the table.
+
+For example, the summary table is restricted to the mean+-SE statistics.
 
 ```{r summaryTable-PP-meanSE}
-	
-	summaryTablePPMeanSE <- getSummaryStatisticsTable(
+
+	getSummaryStatisticsTable(
 		data = dataPP,
-		rowVar = c("PARCAT1", "PARAM"),
+		var = "AVAL",
 		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
-		rowPadBase = 10,
-		title = "Table: Descriptive statistics pharmacokinetics",
-		file = "summaryStatisticsTable_PP_meanSE.docx",
+		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE)))),
 		footer = "Statistics: mean +- SE",
-		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE))))
+		rowPadBase = 10
 	)
-	summaryTablePPMeanSE
 
 ```
-
 The same table is created with the median (minimum, maximum) variable.
 
 ```{r summaryTable-PP-medianMinMax}
 	
-	summaryTablePPMedianMinMax <- getSummaryStatisticsTable(
+	getSummaryStatisticsTable(
 		data = dataPP,
-		rowVar = c("PARCAT1", "PARAM"),
+		var = "AVAL",
 		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
-		rowPadBase = 10,
-		title = "Table: Descriptive statistics pharmacokinetics",
-		footer = "Statistics: median (min, max)",
-		file = "summaryStatisticsTable_PP_medianMinMax.docx",
-		stats = list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")")))
+		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")"))),
+		footer = "Statistics: median (min, max)"
 	)
-	summaryTablePPMedianMinMax
 
 ```
 
+#### Row as separated columns
+
+Row variables that shouldn't be included as grouping for the rows, but as
+separated column are via the `rowVarInSepCol` parameter.
+
+```{r summaryTable-PP-rowVarInSepCol}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		rowVarInSepCol = "PARAM",
+		labelVars = labelVars,
+		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")"))),
+		footer = "Statistics: median (min, max)"
+	)
+	
+```
 
 ## Count table
 
-If the specified variable of interest (`var`) is not numeric (`character` or
-`factor`), a count table is produced.
+Count table are obtained by specifying the `type` parameter to 'countTable'.
+In this case, no `var` variable are requested.
 
-The number of patients presenting an abnormal laboratory measurement is
-reported in the table below.
+The adverse event dataset is used as an example.
+
+```{r countTable-AE-data}
+
+	dataAE <-  subset(dataAll$ADAE, FASFL == "Y")
+	
+	# ensure that order of elements is the one specified in the corresponding numeric variable
+	library(glpgUtilityFct)
+	dataAE <- convertVarToFactor(
+		data = dataAE, 
+		var = "TRTP", 
+		varNum = "TRTPN"
+	)
+
+```
 
 ### General
 
-The laboratory parameters are grouped by category, and the visit is indicated
-in the rows: `PARCAT1`, `PARCAT2` and `AVISIT` are specified in `rowVar`.
-The treatment is reported in the column: `TRTP` specified in `colVar`.
+```{r countTable-AE-simple}
+
+	getSummaryStatisticsTable(
+		data = dataAE,
+		type = "count"
+	)
+
+```	
+
+### Extra functionalities
+
+All functionalities provided for the summary statistics table are also available
+for the count table.
+For example, the counts of subjects and records for adverse events are
+reformatted as: 'N/m (%)' with the `stats` parameter, and the adverse event term
+are grouped according to the `r labelVars["AEHLGT"]` ('AEHLGT) and
+`r labelVars["AEHLT"]` ('AEHLT') variable.
+
+```{r countTable-AE-extra}
+
+	getSummaryStatisticsTable(
+		data = dataAE,
+		type = "count",
+		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
+		colVar = "TRTP",
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Adverse Events",
+		stats = list(
+			'N (%)' = expression(paste0(N, " (", round(PercN, 1), ")")),
+			'm (%)' = expression(paste0(m, " (", round(Percm, 1), ")"))
+		),
+		footer = "Statistics: number and percentage of subjects: N (%) and records: m (%)"
+	)
+
+```	
+
+### Denominator dataset for total count per column
+
+By default, the total per column is extracted from the number of subjects
+available in the data used for the count table. If the total should be extracted
+from a different dataset, e.g. if only a subset of the patients are present 
+in the data, it should be specified via the `dataTotal` variable (used also for
+the computation of the percentage).
+
+For example, the total number of patients per treatment is extracted from the 
+subject-level (`ADSL`) dataset. 
+
+```{r countTable-LB-customDenominator}
+
+	# dataset used to extract the 'Total'
+	dataTotal <- dataAll$ADSL
+	# should contain columns specified in 'colVar'
+	dataTotal$TRTP <- dataTotal$TRT01P 
+	
+	getSummaryStatisticsTable(
+		data = dataAE,
+		type = "count",
+		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
+		colVar = "TRTP",
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Adverse Events",
+		dataTotal = dataTotal,
+		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		footer = "Statistics: N (%)"
+	)
+
+```
+
+### Total count of events across rows
+
+The `rowTotalInclude` is set to TRUE to obtain the total number of events
+across the entire table per column.
+
+```{r countTable-LB-rowTotalInclude}
+
+	# dataset used to extract the 'Total'
+	dataTotal <- dataAll$ADSL
+	# should contain columns specified in 'colVar'
+	dataTotal$TRTP <- dataTotal$TRT01P 
+	
+	getSummaryStatisticsTable(
+		data = dataAE,
+		type = "count",
+		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
+		colVar = "TRTP",
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Adverse Events",
+		dataTotal = dataTotal,
+		rowTotalInclude = TRUE,
+		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		footer = "Statistics: N (%)"
+	)
+
+```
+
+# Examples
+
+## Laboratory abnormalities
+
+The laboratory parameters are grouped by category, and the visit is indicated in
+the rows: `PARCAT1`, `PARCAT2` and `AVISIT` are specified in `rowVar`. The
+treatment is reported in the column: `TRTP` specified in `colVar`.
 
 Because the laboratory measurement reported as normal or empty ('') in the ADaM
 are not of interest, these classes are filtered via the `varIgnore` parameter.
@@ -183,101 +415,23 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		varNum = c("PARCAT1N", "PARCAT2N", "AVISITN", "TRTPN", "ANRINDN")
 	)
 	
+	# only consider abnormalities
+	dataLB <- subset(dataLB, !ANRIND %in% c("", "L"))
+	
 	# create summary table
 	summaryTableLBCount <- getSummaryStatisticsTable(
 		data = dataLB,
-		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
-		rowVarInSepCol = "AVISIT",
-		colVar = "TRTP",
-		var = "ANRIND", varIgnore = c("", "N"),
+		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "ANRIND"),
+		rowVarInSepCol = "ANRIND",
+		colVar = c("TRTP", "AVISIT"),  
+		type = "count",
 		labelVars = labelVars,
 		rowPadBase = 10,
+		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
 		title = "Table: Treatment-emergent laboratory abnormalities",
 		file = "summaryStatisticsTable_LB_count.docx",
 	)
 	summaryTableLBCount
-
-```
-
-### Custom statistics
-
-The statistics are reformatted as 'N (%)' by using the `stats` parameter.
-
-```{r countTable-LB-custom}
-
-	# create summary table
-	summaryTableLBNPerc <- getSummaryStatisticsTable(
-		data = dataLB,
-		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
-		rowVarInSepCol = "AVISIT",
-		colVar = "TRTP",
-		var = "ANRIND", varIgnore = c("", "N"),
-		labelVars = labelVars,
-		rowPadBase = 10,
-		title = "Table: Treatment-emergent laboratory abnormalities",
-		stats = list(expression(paste0(N, " (", round(Perc), ")"))),
-		footer = "Statistics: N (%)",
-		file = "summaryStatisticsTable_LB_NWithPerc.docx",
-	)
-	summaryTableLBNPerc
-
-```
-
-### Total count
-
-By default, the total per column is extracted from the number of subjects
-available in the data used for the count table. If the total should be extracted
-from a different dataset, e.g. if only a subset of the patients are present 
-in the data, it should be specified via the `dataTotal` variable (used also for
-the computation of the percentage).
-
-```{r countTable-LB-customDenominator}
-
-	# dataset used to extract the 'Total'
-	dataTotal <- dataAll$ADSL
-	# should contain columns specified in 'colVar'
-	dataTotal$TRTP <- dataTotal$TRT01P 
-
-	# create summary table
-	summaryTableALT <- getSummaryStatisticsTable(
-		data = subset(dataLB, PARAMCD == "ALT"),
-		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "AVISIT"),
-		rowVarInSepCol = "AVISIT",
-		colVar = "TRTP",
-		var = "ANRIND", varIgnore = c("", "N"),
-		labelVars = labelVars,
-		rowPadBase = 10,
-		title = "Table: Treatment-emergent ALT abnormalities",
-		stats = list(expression(paste0(N, " (", round(Perc), ")"))),
-		dataTotal = dataTotal,
-		footer = "Statistics: N (%)",
-		file = "summaryStatisticsTable_LB_NWithPerc_ALT_customTotal.docx",
-	)
-	summaryTableALT
-
-```
-
-### Example adverse event
-
-```{r countTable-AE}
-
-	dataAE <- subset(dataAll$ADAE, FASFL == "Y")
-
-	# create summary table
-	summaryTableAE <- getSummaryStatisticsTable(
-		data = dataAE,
-		rowVar = c("AESOC", "AELLT"),
-		colVar = "TRTP",
-		var = NULL, #"AESEV", 
-		labelVars = labelVars,
-		rowPadBase = 10,
-		title = "Table: Adverse events",
-		stats = list(expression(paste0(N, " (", round(Perc, 1), ")"))),
-		dataTotal = dataTotal,
-		footer = "Statistics: N (%)",
-		file = "summaryStatisticsTable_AE.docx",
-	)
-	summaryTableAE
 
 ```
 
@@ -294,13 +448,14 @@ Summary statistics can be visualized via error bars by:
 
 	summaryTableDf <- computeSummaryStatistics(
 		data = dataPP,
+		var = "AVAL",
 		rowVar = "PARAM",
 		colVar = c("TRTP", "AVISIT")
 	)
 
 	# create the plot
 	subjectProfileSummaryPlot(
-		data = summaryTableDf,
+		data = subset(summaryTableDf, !isTotal),
 		xVar = "AVISIT",
 		colorVar = "TRTP",
 		labelVars = labelVars,

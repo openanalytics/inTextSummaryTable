@@ -9,8 +9,8 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
   colVar = NULL, subjectVar = "USUBJID", stats = NULL,
-  dataTotal = NULL, nType = "subject", type = "summaryTable",
-  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
+  dataTotal = NULL, type = "summaryTable", labelVars = NULL,
+  landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx")
 }
@@ -61,12 +61,6 @@ in the table.}
 \item{dataTotal}{data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 It should contain the variables specified by \code{colVar}.}
-
-\item{nType}{string with type of count, either: 
-\itemize{
-\item{'subject' :}{count number of subjects in the \code{subjectVar} dataset}
-\item{'record' :}{count number of records}
-}}
 
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default) or 'countTable'}
