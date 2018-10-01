@@ -10,11 +10,10 @@
 #' @param rowVarInSepCol variable(s) of \code{rowVar} which should be 
 #' included in separated column in the table.
 #' NULL by default. 
-#' @param rowTotalInclude logical, if TRUE (FALSE by default) include the total
-#' across rows in a separated row.
 #' This is only available if \code{rowVar} if not NULL.
 #' @param rowTotalLab label for the row with total
 #' @inheritParams subjectProfileSummaryPlot
+#' @inheritParams computeSummaryStatistics
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
 #' \item{'header': }{data.frame with header for each column}

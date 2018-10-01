@@ -25,6 +25,9 @@ for each subgroup across \code{rowVar} is computed.}
 \item{rowVar}{variable(s) of \code{data} used for
 grouping in row in the final table.}
 
+\item{rowTotalInclude}{logical, if TRUE (FALSE by default) include the total
+across rows in a separated row.}
+
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default) or 'countTable'}
 

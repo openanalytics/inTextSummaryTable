@@ -403,7 +403,7 @@ are not of interest, these classes are filtered via the `varIgnore` parameter.
 By default, the number ('N') and percentage ('Perc') are reported for each
 `rowVar`/`colVar`.
 
-```{r countTable-LB}
+```{r example-countTable-LB}
 
 	dataLB <- subset(dataAll$ADLB, AN01FL == "Y")
 	
@@ -418,10 +418,13 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 	# only consider abnormalities
 	dataLB <- subset(dataLB, !ANRIND %in% c("", "L"))
 	
+	# specific analysis visits
+	dataLB <- subset(dataLB, AVISIT %in% c("Baseline", "Day 14", "Day 28", "Follow-up"))
+	
 	# create summary table
 	summaryTableLBCount <- getSummaryStatisticsTable(
 		data = dataLB,
-		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "ANRIND"),
+		rowVar = c("PARCAT1", "PARCAT2", "PARAMCD", "ANRIND"),
 		rowVarInSepCol = "ANRIND",
 		colVar = c("TRTP", "AVISIT"),  
 		type = "count",
@@ -434,6 +437,71 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 	summaryTableLBCount
 
 ```
+
+### Adverse events
+
+```{r example-countTable-AE}
+
+	dataAE <-  subset(dataAll$ADAE, FASFL == "Y")
+	
+	# ensure that order of elements is the one specified in the corresponding numeric variable
+	library(glpgUtilityFct)
+	dataAE <- convertVarToFactor(
+		data = dataAE, 
+		var = "TRTP", 
+		varNum = "TRTPN"
+	)
+
+	# dataset used to extract the 'Total'
+	dataTotal <- dataAll$ADSL
+	# should contain columns specified in 'colVar'
+	dataTotal$TRTP <- dataTotal$TRT01P 
+	
+	getSummaryStatisticsTable(
+		data = dataAE,
+		type = "count",
+		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
+		colVar = "TRTP",
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Adverse Events",
+		dataTotal = dataTotal,
+		rowTotalInclude = TRUE,
+		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		footer = "Statistics: N (%)",
+		file = "summaryStatisticsTable_AE_count.docx",
+	)
+
+```
+
+## Pharmacokinetic parameters
+
+
+```{r example-PP}
+	
+	dataPP <- dataAll$ADPP
+	
+	# ensure that order of elements is the one specified in the corresponding numeric variable
+	library(glpgUtilityFct)
+	dataPP <- convertVarToFactor(
+		data = dataPP, 
+		var = c("PARCAT1", "PARAM", "AVISIT", "TRTP"), 
+		varNum = c("PARCAT1N", "PARAMN", "AVISITN", "TRTPN")
+	)
+	
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		labelVars = labelVars,
+		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")"))),
+		footer = "Statistics: median (min, max)",
+		file = "summaryStatisticsTable_PP_summaryStatistics.docx"
+	)
+
+```
+
 
 # Visualization
 

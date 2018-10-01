@@ -17,6 +17,8 @@
 #' @param dataTotal data.frame used to extract the Total count, indicated
 #' in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 #' It should contain the variables specified by \code{colVar}.
+#' @param rowTotalInclude logical, if TRUE (FALSE by default) include the total
+#' across rows in a separated row.
 #' @inheritParams getSummaryStatistics
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,

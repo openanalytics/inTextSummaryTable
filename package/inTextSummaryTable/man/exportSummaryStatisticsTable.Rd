@@ -23,11 +23,11 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 
 \item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
 included in separated column in the table.
-NULL by default.}
+NULL by default. 
+This is only available if \code{rowVar} if not NULL.}
 
 \item{rowTotalInclude}{logical, if TRUE (FALSE by default) include the total
-across rows in a separated row.
-This is only available if \code{rowVar} if not NULL.}
+across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
