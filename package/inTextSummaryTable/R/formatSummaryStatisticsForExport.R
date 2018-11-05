@@ -1,13 +1,13 @@
 #' Format summary statistics table for export
-#' @param summaryTable summary table, created with the \code{\link{computeSummaryStatistics}} function.
-#' @param colVar character vector with variable(s) used for the columns.
+#' @param summaryTable Summary table, created with the \code{\link{computeSummaryStatistics}} function.
+#' @param colVar Character vector with variable(s) used for the columns.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order,
 #' and are included in multi-columns layout.
-#' @param rowVar character vector with variable(s) used for the rows.
+#' @param rowVar Character vector with variable(s) used for the rows.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order.
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
-#' @param rowVarLab label for the \code{rowVar} variable(s)
-#' @param rowVarInSepCol variable(s) of \code{rowVar} which should be 
+#' @param rowVarLab Label for the \code{rowVar} variable(s).
+#' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
 #' included in separated column in the table.
 #' NULL by default. 
 #' This is only available if \code{rowVar} if not NULL.

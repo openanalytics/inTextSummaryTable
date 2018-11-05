@@ -10,29 +10,29 @@ formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
   colVar = NULL, labelVars = NULL)
 }
 \arguments{
-\item{summaryTable}{summary table, created with the \code{\link{computeSummaryStatistics}} function.}
+\item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatistics}} function.}
 
-\item{rowVar}{character vector with variable(s) used for the rows.
+\item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
-\item{rowVarLab}{label for the \code{rowVar} variable(s)}
+\item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
-\item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
+\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table.
 NULL by default. 
 This is only available if \code{rowVar} if not NULL.}
 
-\item{rowTotalInclude}{logical, if TRUE (FALSE by default) include the total
+\item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
-\item{colVar}{character vector with variable(s) used for the columns.
+\item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named string with variable labels (names are the variable code).}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:

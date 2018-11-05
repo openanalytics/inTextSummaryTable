@@ -7,12 +7,12 @@
 getDimPage(type = c("width", "height"), landscape = TRUE, margin = 1)
 }
 \arguments{
-\item{type}{string dimension of interest, 'width' or 'height'}
+\item{type}{String dimension of interest, 'width' or 'height'.}
 
-\item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
-format}
+\item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
+format.}
 
-\item{margin}{margin in the document in inches}
+\item{margin}{Margin in the document in inches.}
 }
 \value{
 integer with dimension of interest

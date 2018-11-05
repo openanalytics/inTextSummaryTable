@@ -10,23 +10,23 @@ convertSummaryStatisticsTableToFlextable(summaryTable, landscape = FALSE,
   fontname = "Times")
 }
 \arguments{
-\item{summaryTable}{summary statistics table in long format,
-as returned by \code{\link{formatSummaryStatisticsForExport}}}
+\item{summaryTable}{Dummary statistics table in long format,
+as returned by \code{\link{formatSummaryStatisticsForExport}}.}
 
-\item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
-format}
+\item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
+format.}
 
-\item{margin}{margin in the document in inches}
+\item{margin}{Margin in the document in inches.}
 
-\item{rowPadBase}{base padding for row (number of spaces)}
+\item{rowPadBase}{Base padding for row (number of spaces)}
 
-\item{title}{character vector with title(s) for the table.
+\item{title}{Character vector with title(s) for the table.
 Set to NULL if no title should be included.}
 
-\item{footer}{character vector with footer(s) for the table.
+\item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
 
-\item{fontname}{string with font name, 'Times' by default}
+\item{fontname}{String with font name, 'Times' by default}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table

@@ -13,40 +13,40 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   linetypePalette = NULL, jitter = NULL, title = NULL)
 }
 \arguments{
-\item{data}{data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{computeSummaryStatistics}}}
+\item{data}{Data.frame with summary statistics to represent in the plot,
+e.g. produced with the \code{\link{computeSummaryStatistics}}.}
 
-\item{xVar}{string, variable of \code{data} with variable for the x-axis}
+\item{xVar}{String, variable of \code{data} with variable for the x-axis.}
 
-\item{xLab}{string with label for the \code{xVar}}
+\item{xLab}{String with label for the \code{xVar}.}
 
-\item{meanVar}{string, variable of \code{data} with the mean variable}
+\item{meanVar}{String, variable of \code{data} with the mean variable.}
 
-\item{seVar}{string, variable of \code{data} with the standard error}
+\item{seVar}{String, variable of \code{data} with the standard error.}
 
-\item{yLab}{string with label for the y-axis}
+\item{yLab}{String with label for the y-axis.}
 
-\item{facetVar}{string, variable of \code{data} for facetting}
+\item{facetVar}{String, variable of \code{data} for facetting.}
 
-\item{facetScale}{string with type of scale used for facetting, 'free_y' by default
-(fixed scale in the x-axis and free in the y-axis)}
+\item{facetScale}{String with type of scale used for facetting, 'free_y' by default
+(fixed scale in the x-axis and free in the y-axis).}
 
-\item{colorVar}{string, variable of \code{data} for coloring}
+\item{colorVar}{String, variable of \code{data} for coloring.}
 
-\item{colorLab}{string, label for \code{colorVar}, used in the legend}
+\item{colorLab}{String, label for \code{colorVar}, used in the legend.}
 
-\item{colorPalette}{(named) vector with color palette}
+\item{colorPalette}{(named) Vector with color palette.}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named string with variable labels (names are the variable code).}
 
-\item{useLinetype}{logical, if TRUE (FALSE by default) use also linetype
-to differenciate the variable specified via \code{colorVar} in the mean line}
+\item{useLinetype}{Logical, if TRUE (FALSE by default) use also linetype
+to differenciate the variable specified via \code{colorVar} in the mean line.}
 
-\item{linetypePalette}{vector with linetype(s), in case \code{useLinetype} is TRUE}
+\item{linetypePalette}{Vector with linetype(s), in case \code{useLinetype} is TRUE.}
 
-\item{jitter}{numeric with jitter for the x-axis, only used if \code{colorVar} specified}
+\item{jitter}{Numeric with jitter for the x-axis, only used if \code{colorVar} specified.}
 
-\item{title}{string with title for the plot}
+\item{title}{String with title for the plot.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object

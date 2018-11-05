@@ -1,12 +1,12 @@
 #' Convert summary statistics table to flextable
-#' @param summaryTable summary statistics table in long format,
-#' as returned by \code{\link{formatSummaryStatisticsForExport}}
-#' @param title character vector with title(s) for the table.
+#' @param summaryTable Dummary statistics table in long format,
+#' as returned by \code{\link{formatSummaryStatisticsForExport}}.
+#' @param title Character vector with title(s) for the table.
 #' Set to NULL if no title should be included.
-#' @param footer character vector with footer(s) for the table.
+#' @param footer Character vector with footer(s) for the table.
 #' Set to NULL (by default) of no footer should be included.
-#' @param rowPadBase base padding for row (number of spaces)
-#' @param fontname string with font name, 'Times' by default
+#' @param rowPadBase Base padding for row (number of spaces)
+#' @param fontname String with font name, 'Times' by default
 #' @inheritParams getDimPage
 #' @inheritParams formatSummaryStatisticsForExport
 #' @return \code{\link[flextable]{flextable}} object with summary table
@@ -129,10 +129,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 }
 
 #' Return page dimension of interest
-#' @param type string dimension of interest, 'width' or 'height'
-#' @param landscape logical, if TRUE (by defaut) the table is presented in landscape
-#' format
-#' @param margin margin in the document in inches
+#' @param type String dimension of interest, 'width' or 'height'.
+#' @param landscape Logical, if TRUE (by defaut) the table is presented in landscape
+#' format.
+#' @param margin Margin in the document in inches.
 #' @return integer with dimension of interest
 #' @author Laure Cougnaud
 getDimPage <- function(type = c("width", "height"), landscape = TRUE, margin = 1){

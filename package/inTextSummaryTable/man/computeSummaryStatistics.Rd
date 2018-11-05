@@ -16,16 +16,16 @@ computeSummaryStatistics(data, var = NULL, varIgnore = NULL,
 only used (and required) if \code{type} is 'summaryTable'.
 Missing values, if present, are filtered.}
 
-\item{varIgnore}{vector with elements to ignore in the \code{var} variable}
+\item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 
-\item{colVar}{variable(s) of \code{data} used 
+\item{colVar}{Variable(s) of \code{data} used 
 for grouping in column in the final table. The total 
 for each subgroup across \code{rowVar} is computed.}
 
-\item{rowVar}{variable(s) of \code{data} used for
+\item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
-\item{rowTotalInclude}{logical, if TRUE (FALSE by default) include the total
+\item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 across rows in a separated row.}
 
 \item{type}{string with type of summary table: 'summaryTable' 
@@ -34,11 +34,11 @@ across rows in a separated row.}
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
 
-\item{dataTotal}{data.frame used to extract the Total count, indicated
+\item{dataTotal}{Data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 It should contain the variables specified by \code{colVar}.}
 
-\item{stats}{(optional) named list of expression of summary statistics of interest.
+\item{stats}{(optional) Named list of expression of summary statistics of interest.
 The following statistics are recognized, if: 
 \itemize{
 \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',

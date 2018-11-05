@@ -21,34 +21,34 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
 only used (and required) if \code{type} is 'summaryTable'.
 Missing values, if present, are filtered.}
 
-\item{varLab}{label for the \code{var} variable}
+\item{varLab}{Label for the \code{var} variable.}
 
-\item{varIgnore}{vector with elements to ignore in the \code{var} variable}
+\item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 
-\item{rowVar}{character vector with variable(s) used for the rows.
+\item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
-\item{rowVarLab}{label for the \code{rowVar} variable(s)}
+\item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
-\item{rowVarInSepCol}{variable(s) of \code{rowVar} which should be 
+\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table.
 NULL by default. 
 This is only available if \code{rowVar} if not NULL.}
 
-\item{rowTotalInclude}{logical, if TRUE (FALSE by default) include the total
+\item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
-\item{colVar}{character vector with variable(s) used for the columns.
+\item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
 \item{subjectVar}{string, variable of \code{data} with subject ID,
 'USUBJID' by default}
 
-\item{stats}{(optional) named list of expression of summary statistics of interest.
+\item{stats}{(optional) Named list of expression of summary statistics of interest.
 The following statistics are recognized, if: 
 \itemize{
 \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
@@ -58,29 +58,29 @@ The following statistics are recognized, if:
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.}
 
-\item{dataTotal}{data.frame used to extract the Total count, indicated
+\item{dataTotal}{Data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 It should contain the variables specified by \code{colVar}.}
 
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default) or 'countTable'}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named string with variable labels (names are the variable code).}
 
-\item{landscape}{logical, if TRUE (by defaut) the table is presented in landscape
-format}
+\item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
+format.}
 
-\item{margin}{margin in the document in inches}
+\item{margin}{Margin in the document in inches.}
 
-\item{rowPadBase}{base padding for row (number of spaces)}
+\item{rowPadBase}{Base padding for row (number of spaces)}
 
-\item{title}{character vector with title(s) for the table.
+\item{title}{Character vector with title(s) for the table.
 Set to NULL if no title should be included.}
 
-\item{footer}{character vector with footer(s) for the table.
+\item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
 
-\item{file}{string with path of the file where the table should be exported.
+\item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
 }
 \value{

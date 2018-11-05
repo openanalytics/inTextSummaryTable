@@ -1,10 +1,10 @@
 #' Compute summary statistics for a specific dataset and variables of interest
-#' @param rowVar variable(s) of \code{data} used for
+#' @param rowVar Variable(s) of \code{data} used for
 #' grouping in row in the final table.
-#' @param colVar variable(s) of \code{data} used 
+#' @param colVar Variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
 #' for each subgroup across \code{rowVar} is computed.
-#' @param stats (optional) named list of expression of summary statistics of interest.
+#' @param stats (optional) Named list of expression of summary statistics of interest.
 #' The following statistics are recognized, if: 
 #' \itemize{
 #' \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
@@ -13,11 +13,11 @@
 #' }
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
 #' in the table.
-#' @param varIgnore vector with elements to ignore in the \code{var} variable
-#' @param dataTotal data.frame used to extract the Total count, indicated
+#' @param varIgnore Vector with elements to ignore in the \code{var} variable
+#' @param dataTotal Data.frame used to extract the Total count, indicated
 #' in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 #' It should contain the variables specified by \code{colVar}.
-#' @param rowTotalInclude logical, if TRUE (FALSE by default) include the total
+#' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' across rows in a separated row.
 #' @inheritParams getSummaryStatistics
 #' @return data.frame of class 'countTable' or 'summaryTable',

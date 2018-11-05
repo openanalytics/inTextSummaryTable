@@ -1,14 +1,15 @@
 Package: inTextSummaryTable
 Type: Package
-Title: Creation of in-text summary table
-Version: 0.0.1
-Date: 2018-10-01
+Title: Creation Of In-Text Summary Table
+Version: 0.0.2
+Date: 2018-11-05
 Author: Laure Cougnaud
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
-Description: This package enables the creation of summary table to be included as in-text table in a Word document.
+Description: Functions to create table of summary statistics or count tables are created
+  to be included as in-text table in a Word document.
 Imports: glpgUtilityFct (>= 0.0.2), dplyr, plyr, reshape2, ggplot2, flextable, officer, magrittr
 Suggests: knitr, testthat, pander
-License: Software for Internal Use at Open Analytics NV
+License: Software for Internal Use at Galapagos and Open Analytics.
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr
 LazyData: true

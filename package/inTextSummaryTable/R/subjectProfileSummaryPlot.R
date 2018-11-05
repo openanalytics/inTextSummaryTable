@@ -1,23 +1,23 @@
 #' Plot subject summary profile
-#' @param data data.frame with summary statistics to represent in the plot,
-#' e.g. produced with the \code{\link{computeSummaryStatistics}}
-#' @param xVar string, variable of \code{data} with variable for the x-axis
-#' @param xLab string with label for the \code{xVar}
-#' @param meanVar string, variable of \code{data} with the mean variable
-#' @param seVar string, variable of \code{data} with the standard error
-#' @param yLab string with label for the y-axis
-#' @param facetVar string, variable of \code{data} for facetting
-#' @param facetScale string with type of scale used for facetting, 'free_y' by default
-#' (fixed scale in the x-axis and free in the y-axis)
-#' @param colorVar string, variable of \code{data} for coloring
-#' @param colorLab string, label for \code{colorVar}, used in the legend
-#' @param colorPalette (named) vector with color palette
-#' @param useLinetype logical, if TRUE (FALSE by default) use also linetype
-#' to differenciate the variable specified via \code{colorVar} in the mean line
-#' @param linetypePalette vector with linetype(s), in case \code{useLinetype} is TRUE
-#' @param title string with title for the plot
-#' @param labelVars named string with variable labels (names are the variable code)
-#' @param jitter numeric with jitter for the x-axis, only used if \code{colorVar} specified
+#' @param data Data.frame with summary statistics to represent in the plot,
+#' e.g. produced with the \code{\link{computeSummaryStatistics}}.
+#' @param xVar String, variable of \code{data} with variable for the x-axis.
+#' @param xLab String with label for the \code{xVar}.
+#' @param meanVar String, variable of \code{data} with the mean variable.
+#' @param seVar String, variable of \code{data} with the standard error.
+#' @param yLab String with label for the y-axis.
+#' @param facetVar String, variable of \code{data} for facetting.
+#' @param facetScale String with type of scale used for facetting, 'free_y' by default
+#' (fixed scale in the x-axis and free in the y-axis).
+#' @param colorVar String, variable of \code{data} for coloring.
+#' @param colorLab String, label for \code{colorVar}, used in the legend.
+#' @param colorPalette (named) Vector with color palette.
+#' @param useLinetype Logical, if TRUE (FALSE by default) use also linetype
+#' to differenciate the variable specified via \code{colorVar} in the mean line.
+#' @param linetypePalette Vector with linetype(s), in case \code{useLinetype} is TRUE.
+#' @param title String with title for the plot.
+#' @param labelVars Named string with variable labels (names are the variable code).
+#' @param jitter Numeric with jitter for the x-axis, only used if \code{colorVar} specified.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getPatientColorPalette getLabelVar

@@ -1,5 +1,5 @@
 #' Get summary statistics table
-#' @param varLab label for the \code{var} variable 
+#' @param varLab Label for the \code{var} variable.
 #' @inheritParams computeSummaryStatistics
 #' @inheritParams exportSummaryStatisticsTable
 #' @inherit exportSummaryStatisticsTable return

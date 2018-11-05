@@ -1,5 +1,5 @@
 #' Export a summary table in \code{docx} format.
-#' @param file string with path of the file where the table should be exported.
+#' @param file String with path of the file where the table should be exported.
 #' If NULL, the summary table is not exported but only returned as output.
 #' @inheritParams formatSummaryStatisticsForExport
 #' @inheritParams convertSummaryStatisticsTableToFlextable
