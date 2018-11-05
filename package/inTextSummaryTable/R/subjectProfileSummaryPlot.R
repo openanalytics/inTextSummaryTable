@@ -1,6 +1,6 @@
 #' Plot subject summary profile
 #' @param data Data.frame with summary statistics to represent in the plot,
-#' e.g. produced with the \code{\link{computeSummaryStatistics}}.
+#' e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.
 #' @param xVar String, variable of \code{data} with variable for the x-axis.
 #' @param xLab String with label for the \code{xVar}.
 #' @param meanVar String, variable of \code{data} with the mean variable.
@@ -51,7 +51,8 @@ subjectProfileSummaryPlot <- function(data,
 	)
 	aesLine <- c(
 		list(y = meanVar),
-		list(group = ifelse(!is.null(colorVar), colorVar, 1))
+		list(group = ifelse(!is.null(colorVar), colorVar, 1)),
+		if(!is.null(colorVar) & useLinetype)	list(linetype = colorVar)
 	)
 	gg <- ggplot(data = data, mapping = do.call(aes_string, aesBase)) +
 		geom_line(do.call(aes_string, aesLine), position = pd) +

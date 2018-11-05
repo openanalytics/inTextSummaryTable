@@ -2,12 +2,10 @@
 % Please edit documentation in R/computeSummaryStatistics.R
 \name{computeSummaryStatistics}
 \alias{computeSummaryStatistics}
-\title{Compute summary statistics for a specific dataset and variables of interest}
+\title{Get summary statistics of interest of an unique variable of interest.}
 \usage{
-computeSummaryStatistics(data, var = NULL, varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, rowTotalInclude = FALSE,
-  type = "summaryTable", subjectVar = "USUBJID", dataTotal = NULL,
-  stats = NULL)
+computeSummaryStatistics(data, var = NULL, subjectVar = "USUBJID",
+  type = "summaryTable", filterEmptyVar = TRUE)
 }
 \arguments{
 \item{data}{data.frame with data}
@@ -16,70 +14,41 @@ computeSummaryStatistics(data, var = NULL, varIgnore = NULL,
 only used (and required) if \code{type} is 'summaryTable'.
 Missing values, if present, are filtered.}
 
-\item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
-
-\item{colVar}{Variable(s) of \code{data} used 
-for grouping in column in the final table. The total 
-for each subgroup across \code{rowVar} is computed.}
-
-\item{rowVar}{Variable(s) of \code{data} used for
-grouping in row in the final table.}
-
-\item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
-across rows in a separated row.}
+\item{subjectVar}{string, variable of \code{data} with subject ID,
+'USUBJID' by default}
 
 \item{type}{string with type of summary table: 'summaryTable' 
 (by default) or 'countTable'}
 
-\item{subjectVar}{string, variable of \code{data} with subject ID,
-'USUBJID' by default}
-
-\item{dataTotal}{Data.frame used to extract the Total count, indicated
-in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
-It should contain the variables specified by \code{colVar}.}
-
-\item{stats}{(optional) Named list of expression of summary statistics of interest.
-The following statistics are recognized, if: 
-\itemize{
-\item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
-'Min', 'Max', 'Perc'}
-\item{\code{type} is a 'countTable':}{'N','Perc'}
-}
-If \code{stats} if of length 1, the name of the summary statistic is not included
-in the table.}
+\item{filterEmptyVar}{logical (TRUE by default), should the summary statistics be filtered
+in case \code{var} is empty.}
 }
 \value{
-data.frame of class 'countTable' or 'summaryTable',
-depending on the 'type' parameter; with statistics in columns,
-either if \code{type} is:
+data.frame with summary statistics in columns,
+depending if \code{type} is:
 \itemize{
-\item{'summaryTable': }{
+\item{'summary': }{
 \itemize{
-\item{'N': }{number of subjects}
+\item{'N': }{number of subjects }
+\item{'m': }{number of records}
 \item{'Mean': }{mean of \code{var}}
 \item{'SD': }{standard deviation of \code{var}}
 \item{'SE': }{standard error of \code{var}}
 \item{'Median': }{median of \code{var}}
 \item{'Min': }{minimum of \code{var}}
 \item{'Max': }{maximum of \code{var}}
-\item{'Perc': }{percentage of subjects}
-\item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
-\item{'countTable': }{
+\item{'count': }{
 \itemize{
 \item{'N': }{number of subjects}
-\item{'PercN': }{percentage of subjects}
 \item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
 }
-The computed summary statistics are stored in the 'statsVar' attribute.
 }
 \description{
-Compute summary statistics for a specific dataset and variables of interest
+Get summary statistics of interest of an unique variable of interest.
 }
 \author{
 Laure Cougnaud

@@ -1,6 +1,6 @@
 #' Get summary statistics table
 #' @param varLab Label for the \code{var} variable.
-#' @inheritParams computeSummaryStatistics
+#' @inheritParams computeSummaryStatisticsTable
 #' @inheritParams exportSummaryStatisticsTable
 #' @inherit exportSummaryStatisticsTable return
 #' @author Laure Cougnaud
@@ -20,7 +20,7 @@ getSummaryStatisticsTable <- function(
 	title = "Table: Descriptive statistics", footer = NULL,
 	file = "summaryStatisticsTable.docx"){
 
-	summaryTable <- computeSummaryStatistics(
+	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
 		var = var, varIgnore = varIgnore,
 		colVar = colVar,

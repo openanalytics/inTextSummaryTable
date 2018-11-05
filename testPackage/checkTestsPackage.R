@@ -13,7 +13,7 @@ library(vdiffr)
 # at the creation of the reference figures with 'manage_cases'
 # this affect the order of the elements with 'reorder'
 # if different, the order of the parameters in the y-axis of the plot might differ
-Sys.setlocale(category = "LC_COLLATE", locale = "C")
+tmp <- Sys.setlocale(category = "LC_COLLATE", locale = "C")
 
 # create reference figures in 'tests/fig' package
 validate_cases(collect_cases(package = packagePath))
@@ -29,12 +29,11 @@ check_built(path = pkgTarballPath)
 
 library(covr)
 
-# test coverage all 'subjectProfile'*'Plot' functions
+# test coverage all functions
 pc <- package_coverage(
 	path = packagePath, 
 	type = c("tests", "vignettes"), # tests + vignettes
-	function_exclusions = "^(?!subjectProfile.*Plot)", # only subject profile plot function
-	combine_types = TRUE # report coverage for each type
+	combine_types = TRUE # report coverage for each type ?
 )
-report(x = pc, file = "testCoverage-patientProfilesVis.html")
+report(x = pc, file = "testCoverage-inTextSummaryTable.html")
 

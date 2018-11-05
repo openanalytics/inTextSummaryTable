@@ -10,7 +10,7 @@ formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
   colVar = NULL, labelVars = NULL)
 }
 \arguments{
-\item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatistics}} function.}
+\item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.

@@ -19,7 +19,7 @@
 #' It should contain the variables specified by \code{colVar}.
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' across rows in a separated row.
-#' @inheritParams computeSummaryStatisticsOneVar
+#' @inheritParams computeSummaryStatistics
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
 #' either if \code{type} is:
@@ -52,7 +52,7 @@
 #' @importFrom dplyr n_distinct
 #' @importFrom plyr ddply rbind.fill
 #' @export
-computeSummaryStatistics <- function(data,  
+computeSummaryStatisticsTable <- function(data,  
 	var = NULL, varIgnore = NULL,
 	colVar = NULL,
 	rowVar = NULL,
@@ -72,12 +72,12 @@ computeSummaryStatistics <- function(data,
 	if(!is.null(var) && !is.null(varIgnore))
 		data <- data[!data[, var] %in% varIgnore, ]
 	
-	computeSummaryStatisticsOneVarCustom <- function(...)
-		computeSummaryStatisticsOneVar(..., subjectVar = subjectVar)
+	computeSummaryStatisticsCustom <- function(...)
+		computeSummaryStatistics(..., subjectVar = subjectVar)
 	
 	# get general statistics (by group if specified)
 	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
-		computeSummaryStatisticsOneVarCustom(data = x, var = var, type = type,
+		computeSummaryStatisticsCustom(data = x, var = var, type = type,
 			filterEmptyVar = (type == "summaryTable")
 		)
 	})
@@ -88,7 +88,7 @@ computeSummaryStatistics <- function(data,
 				.data = data, 
 				.variables = colVar, 
 				.fun = function(x)
-					computeSummaryStatisticsOneVarCustom(
+					computeSummaryStatisticsCustom(
 						data = x, type = type, 
 						filterEmptyVar = (type == "summaryTable"),
 						var = var
@@ -117,7 +117,7 @@ computeSummaryStatistics <- function(data,
 		.data = if(!is.null(dataTotal))	dataTotal	else	data, 
 		.variables = colVar, 
 		.fun = function(x)
-			computeSummaryStatisticsOneVarCustom(
+			computeSummaryStatisticsCustom(
 				data = x, type = "countTable", filterEmptyVar = FALSE
 			)
 	)
@@ -201,7 +201,7 @@ computeSummaryStatistics <- function(data,
 #' @author Laure Cougnaud
 #' @importFrom stats na.omit median sd
 #' @export
-computeSummaryStatisticsOneVar <- function(data, 
+computeSummaryStatistics <- function(data, 
 	var = NULL,
 	subjectVar = "USUBJID",
 	type = "summaryTable",
@@ -219,7 +219,8 @@ computeSummaryStatisticsOneVar <- function(data,
 		},
 		'countTable' = if(!is.null(var))
 			warning("'var' is not used for count table. ",
-				"You might want to specify this variable via the 'rowVar'/'rowVarInSepCol' parameters.")
+				"You might want to specify this variable via the",
+				"'rowVar'/'rowVarInSepCol' parameters of the 'computeSummaryStatisticsTable' function.")
 	)
 	
 	if(!is.null(var))

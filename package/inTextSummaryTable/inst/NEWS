@@ -1,2 +1,6 @@
+0.0.2
+    o add tests
+    o consistent functions naming: computeSummaryStatistics -> computeSummaryStatisticsTable, getSummaryStatistics -> computeSummaryStatistics
+    o subjectProfileSummaryPlot: fix for 'useLinetype'
 0.0.1
     o initial commit

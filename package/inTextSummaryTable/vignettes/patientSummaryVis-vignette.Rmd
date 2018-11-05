@@ -95,7 +95,7 @@ The variable (should be **numeric**) to summarize is specified via the `var`
 parameter.
 By default, an
 entire set of summary statistical metrics are computed, see
-`? computeSummaryStatistics` for the list of metrics.
+`? computeSummaryStatisticsTable` for the list of metrics.
 
 ```{r summaryTable-PP-simple}
 
@@ -497,6 +497,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		labelVars = labelVars,
 		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")"))),
 		footer = "Statistics: median (min, max)",
+		landscape = TRUE,
 		file = "summaryStatisticsTable_PP_summaryStatistics.docx"
 	)
 
@@ -508,13 +509,13 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 Summary statistics can be visualized via error bars by:
 
 * extracting the summary statistics table with the
-  `computeSummaryStatistics` function (used for `getSummaryStatistics` function)
+  `computeSummaryStatisticsTable` function (used for `getSummaryStatistics` function)
 * visualizing the summary statistics via the `subjectProfileSummaryPlot`
   function
 
 ```{r visualization, out.width = "100%"}
 
-	summaryTableDf <- computeSummaryStatistics(
+	summaryTableDf <- computeSummaryStatisticsTable(
 		data = dataPP,
 		var = "AVAL",
 		rowVar = "PARAM",

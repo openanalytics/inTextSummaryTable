@@ -14,7 +14,7 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{computeSummaryStatistics}}.}
+e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.}
 
 \item{xVar}{String, variable of \code{data} with variable for the x-axis.}
 

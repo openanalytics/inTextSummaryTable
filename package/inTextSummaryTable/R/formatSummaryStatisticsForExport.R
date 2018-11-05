@@ -1,5 +1,5 @@
 #' Format summary statistics table for export
-#' @param summaryTable Summary table, created with the \code{\link{computeSummaryStatistics}} function.
+#' @param summaryTable Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.
 #' @param colVar Character vector with variable(s) used for the columns.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order,
 #' and are included in multi-columns layout.
@@ -13,7 +13,7 @@
 #' This is only available if \code{rowVar} if not NULL.
 #' @param rowTotalLab label for the row with total
 #' @inheritParams subjectProfileSummaryPlot
-#' @inheritParams computeSummaryStatistics
+#' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
 #' \item{'header': }{data.frame with header for each column}
