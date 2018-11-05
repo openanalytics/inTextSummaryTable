@@ -31,9 +31,9 @@ vignette: >
 	
 ```
 
-The package `inTextSummaryTable` contains functionalities to create summary
-statistics table, format them as in-text table, and export to a`docx`
-document.
+The package `inTextSummaryTable` contains functionalities to table of
+summary statistics or count table or metrics of interest, to format them as
+in-text table, and to export them to a`docx` document.
 
 ```{r loadPackages}
 
@@ -45,14 +45,15 @@ document.
 ## Data format
 
 The input data for the creation of summary table should be a data.frame,
-usually loaded a _SAS_ data file (`sas7bdat` format).
+usually loaded from _SAS_ data file (`sas7bdat` format).
 The label of the variables stored in the `SAS` datasets is also used
-for title/captions. 
+for the title/captions. 
 
-Example datasets included in the `inTextSummaryTable` package are used in this
-vignette.
+Example datasets from the _Pelican_ study included in the
+`inTextSummaryTable` package itself are used in this vignette.  
+
 Note that the `loadDataADaMSDTM` function of the `glpgUtilityFct` package can
-be used to load the custom your custom `SAS` dataset(s) of interest.
+be used to your custom `SAS` dataset(s) of interest.
 
 ```{r loadData}	
 	
@@ -67,10 +68,12 @@ be used to load the custom your custom `SAS` dataset(s) of interest.
 
 # Summary table
 
-The main function is `getSummaryStatisticsTable`, creates a in-text table
-of summary statistics for a variable of interest.
+The main function is `getSummaryStatisticsTable` which creates a in-text table
+of summary statistics for variable(s) of interest.
 
 ## Summary statistics
+
+### General
 
 The _Pharmacokinetics_ data (`ADPP` dataset) is used as example for the summary
 statistics table.
@@ -89,10 +92,8 @@ statistics table.
 
 ```
 
-### General
-
-The variable (should be **numeric**) to summarize is specified via the `var`
-parameter.
+The variable to summarize is specified via the `var`
+parameter. For the summary statistics table, this variable should be numeric.
 By default, an
 entire set of summary statistical metrics are computed, see
 `? computeSummaryStatisticsTable` for the list of metrics.
@@ -124,8 +125,8 @@ For example, the summary statistics are computed for each `r labelVars["PARAM"]`
 	
 ```
 
-Grouping for the rows can be specified via multiple `rowVar`, which should be
-sorted in hierarchical order.
+Grouping for the rows can be specified via multiple variables to the `rowVar`
+parameter, which should be sorted in hierarchical order.
 
 The `rowPadBase` parameter can be used to change the padding between each row
 level.
@@ -141,7 +142,7 @@ level.
 	
 ```
 
-## Column variable(s)
+### Column variable(s)
 
 Similarly, column(s) of interest are specified via the `colVar` parameter.
 The total is included for each column.
@@ -166,7 +167,7 @@ The total is included for each column.
 	
 ```
 
-## Row and column combinations
+### Row and column combinations
 
 ```{r summaryTable-PP-rowColVar}
 
@@ -179,10 +180,11 @@ The total is included for each column.
 	
 ```
 
-## Variable labels
+### Variable labels
 
-The label used for the `rowVar` parameter can be automatically extracted by the
-labels contained in the _SAS_ dataset, by specifying the `labelVars` parameter.
+The labels used for the variable specified via the `rowVar` parameter are
+automatically extracted from the labels contained in the _SAS_ dataset, by
+specifying the `labelVars` parameter.
 
 ```{r summaryTable-PP-rowVarWithLabel-labelVars}
 
@@ -248,7 +250,7 @@ The same table is created with the median (minimum, maximum) variable.
 
 ```
 
-#### Row as separated columns
+### Row as separated columns
 
 Row variables that shouldn't be included as grouping for the rows, but as
 separated column are via the `rowVarInSepCol` parameter.
@@ -271,7 +273,7 @@ separated column are via the `rowVarInSepCol` parameter.
 ## Count table
 
 Count table are obtained by specifying the `type` parameter to 'countTable'.
-In this case, no `var` variable are requested.
+In this case, no `var` variable should be specified.
 
 The adverse event dataset is used as an example.
 
@@ -291,6 +293,9 @@ The adverse event dataset is used as an example.
 
 ### General
 
+By default, a set of custom statistics are computed, see the
+`? computeSummaryStatisticsTable` for further details.
+
 ```{r countTable-AE-simple}
 
 	getSummaryStatisticsTable(
@@ -303,10 +308,11 @@ The adverse event dataset is used as an example.
 ### Extra functionalities
 
 All functionalities provided for the summary statistics table are also available
-for the count table.
-For example, the counts of subjects and records for adverse events are
-reformatted as: 'N/m (%)' with the `stats` parameter, and the adverse event term
-are grouped according to the `r labelVars["AEHLGT"]` ('AEHLGT) and
+for the count table.  
+
+In the following example: the counts of subjects and records for the adverse
+events are reformatted as: 'N/m (%)' with the `stats` parameter, and the adverse
+event term are grouped according to the `r labelVars["AEHLGT"]` ('AEHLGT) and
 `r labelVars["AEHLT"]` ('AEHLT') variable.
 
 ```{r countTable-AE-extra}
@@ -433,6 +439,8 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
 		title = "Table: Treatment-emergent laboratory abnormalities",
 		file = "summaryStatisticsTable_LB_count.docx",
+		footer = "Statistics: N (%)",
+		landscape = TRUE
 	)
 	summaryTableLBCount
 
@@ -476,7 +484,6 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 
 ## Pharmacokinetic parameters
 
-
 ```{r example-PP}
 	
 	dataPP <- dataAll$ADPP
@@ -497,7 +504,6 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		labelVars = labelVars,
 		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")"))),
 		footer = "Statistics: median (min, max)",
-		landscape = TRUE,
 		file = "summaryStatisticsTable_PP_summaryStatistics.docx"
 	)
 
@@ -513,7 +519,7 @@ Summary statistics can be visualized via error bars by:
 * visualizing the summary statistics via the `subjectProfileSummaryPlot`
   function
 
-```{r visualization, out.width = "100%"}
+```{r visualization, out.width = "100%", fig.height = 6, fig.width = 9}
 
 	summaryTableDf <- computeSummaryStatisticsTable(
 		data = dataPP,
@@ -528,15 +534,26 @@ Summary statistics can be visualized via error bars by:
 		xVar = "AVISIT",
 		colorVar = "TRTP",
 		labelVars = labelVars,
-		facetVar = "PARAM"
+		facetVar = "PARAM",
+		useLinetype = TRUE
 	)
 
 ```
 
+# Format details
+
+The `getSummaryStatisticsTable` function returns a `flextable` object
+(`? flextable`).
+
+When printed into the R console, this object is displayed in the browser.
+This object can be inserted within a rmarkdown document by printing in the
+specified document chunk.
+
+This can also be exported to a _docx_ format.
+
 # Appendix
 
 ## Session information
-
 
 ```{r includeSessionInfo, echo = FALSE}
 

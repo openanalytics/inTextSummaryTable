@@ -166,17 +166,17 @@ computeSummaryStatisticsTable <- function(data,
 }
 
 #' Get summary statistics of interest of an unique variable of interest.
-#' @param data data.frame with data
-#' @param var string, variable of \code{data} with variable to compute statistics on,
+#' @param data Data.frame with data.
+#' @param var String, variable of \code{data} with variable to compute statistics on,
 #' only used (and required) if \code{type} is 'summaryTable'.
 #' Missing values, if present, are filtered.
-#' @param subjectVar string, variable of \code{data} with subject ID,
-#' 'USUBJID' by default
-#' @param filterEmptyVar logical (TRUE by default), should the summary statistics be filtered
+#' @param subjectVar String, variable of \code{data} with subject ID,
+#' 'USUBJID' by default.
+#' @param filterEmptyVar Logical (TRUE by default), should the summary statistics be filtered
 #' in case \code{var} is empty.
-#' @param type string with type of summary table: 'summaryTable' 
-#' (by default) or 'countTable'
-#' @return data.frame with summary statistics in columns,
+#' @param type String with type of summary table: 'summaryTable' 
+#' (by default) or 'countTable'.
+#' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{
 #' \item{'summary': }{
