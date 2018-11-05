@@ -8,23 +8,23 @@ computeSummaryStatistics(data, var = NULL, subjectVar = "USUBJID",
   type = "summaryTable", filterEmptyVar = TRUE)
 }
 \arguments{
-\item{data}{data.frame with data}
+\item{data}{Data.frame with data.}
 
-\item{var}{string, variable of \code{data} with variable to compute statistics on,
+\item{var}{String, variable of \code{data} with variable to compute statistics on,
 only used (and required) if \code{type} is 'summaryTable'.
 Missing values, if present, are filtered.}
 
-\item{subjectVar}{string, variable of \code{data} with subject ID,
-'USUBJID' by default}
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
 
-\item{type}{string with type of summary table: 'summaryTable' 
-(by default) or 'countTable'}
+\item{type}{String with type of summary table: 'summaryTable' 
+(by default) or 'countTable'.}
 
-\item{filterEmptyVar}{logical (TRUE by default), should the summary statistics be filtered
+\item{filterEmptyVar}{Logical (TRUE by default), should the summary statistics be filtered
 in case \code{var} is empty.}
 }
 \value{
-data.frame with summary statistics in columns,
+Data.frame with summary statistics in columns,
 depending if \code{type} is:
 \itemize{
 \item{'summary': }{

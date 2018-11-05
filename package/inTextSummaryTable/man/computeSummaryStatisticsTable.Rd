@@ -10,9 +10,9 @@ computeSummaryStatisticsTable(data, var = NULL, varIgnore = NULL,
   stats = NULL)
 }
 \arguments{
-\item{data}{data.frame with data}
+\item{data}{Data.frame with data.}
 
-\item{var}{string, variable of \code{data} with variable to compute statistics on,
+\item{var}{String, variable of \code{data} with variable to compute statistics on,
 only used (and required) if \code{type} is 'summaryTable'.
 Missing values, if present, are filtered.}
 
@@ -28,11 +28,11 @@ grouping in row in the final table.}
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 across rows in a separated row.}
 
-\item{type}{string with type of summary table: 'summaryTable' 
-(by default) or 'countTable'}
+\item{type}{String with type of summary table: 'summaryTable' 
+(by default) or 'countTable'.}
 
-\item{subjectVar}{string, variable of \code{data} with subject ID,
-'USUBJID' by default}
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.

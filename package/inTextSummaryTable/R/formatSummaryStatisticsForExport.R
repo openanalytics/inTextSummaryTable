@@ -77,7 +77,8 @@ formatSummaryStatisticsForExport <- function(
 	)
 	
 	# format statistic value
-	dataLong$StatisticValue <- formatC(dataLong$StatisticValue)
+	if(is.numeric(dataLong$StatisticValue))
+		dataLong$StatisticValue <- formatC(dataLong$StatisticValue)
 	
 	# put elements in 'colVar' in different columns (long -> wide format)
 	if(!is.null(colVar)){

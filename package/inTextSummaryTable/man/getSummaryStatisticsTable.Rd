@@ -15,9 +15,9 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   file = "summaryStatisticsTable.docx")
 }
 \arguments{
-\item{data}{data.frame with data}
+\item{data}{Data.frame with data.}
 
-\item{var}{string, variable of \code{data} with variable to compute statistics on,
+\item{var}{String, variable of \code{data} with variable to compute statistics on,
 only used (and required) if \code{type} is 'summaryTable'.
 Missing values, if present, are filtered.}
 
@@ -45,8 +45,8 @@ across rows in a separated row.}
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
-\item{subjectVar}{string, variable of \code{data} with subject ID,
-'USUBJID' by default}
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
 
 \item{stats}{(optional) Named list of expression of summary statistics of interest.
 The following statistics are recognized, if: 
@@ -62,8 +62,8 @@ in the table.}
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 It should contain the variables specified by \code{colVar}.}
 
-\item{type}{string with type of summary table: 'summaryTable' 
-(by default) or 'countTable'}
+\item{type}{String with type of summary table: 'summaryTable' 
+(by default) or 'countTable'.}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 

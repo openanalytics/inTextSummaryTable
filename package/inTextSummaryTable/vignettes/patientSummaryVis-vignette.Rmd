@@ -502,7 +502,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		colVar = c("TRTP", "AVISIT"),
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
-		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")"))),
+		stats =  list(expression(paste0(formatC(Median), "\n(", formatC(Min), ", ", formatC(Min), ")"))),
 		footer = "Statistics: median (min, max)",
 		file = "summaryStatisticsTable_PP_summaryStatistics.docx"
 	)
