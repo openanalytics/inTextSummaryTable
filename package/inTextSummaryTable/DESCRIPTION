@@ -8,8 +8,8 @@ Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
 Description: Functions to create table of summary statistics or count tables are created
   to be included as in-text table in a Word document.
 Imports: glpgUtilityFct (>= 0.0.2), dplyr, plyr, reshape2, ggplot2, flextable, officer, magrittr
-Suggests: knitr, testthat, pander
-License: Software for Internal Use at Galapagos and Open Analytics.
+Suggests: knitr, testthat, pander, vdiffr
+License: file LICENSE
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr
 LazyData: true

@@ -19,7 +19,7 @@
 #' It should contain the variables specified by \code{colVar}.
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' across rows in a separated row.
-#' @inheritParams getSummaryStatistics
+#' @inheritParams computeSummaryStatisticsOneVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
 #' either if \code{type} is:
@@ -72,12 +72,12 @@ computeSummaryStatistics <- function(data,
 	if(!is.null(var) && !is.null(varIgnore))
 		data <- data[!data[, var] %in% varIgnore, ]
 	
-	getSummaryStatisticsCustom <- function(...)
-		getSummaryStatistics(..., subjectVar = subjectVar)
+	computeSummaryStatisticsOneVarCustom <- function(...)
+		computeSummaryStatisticsOneVar(..., subjectVar = subjectVar)
 	
 	# get general statistics (by group if specified)
 	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
-		getSummaryStatisticsCustom(data = x, var = var, type = type,
+		computeSummaryStatisticsOneVarCustom(data = x, var = var, type = type,
 			filterEmptyVar = (type == "summaryTable")
 		)
 	})
@@ -88,7 +88,7 @@ computeSummaryStatistics <- function(data,
 				.data = data, 
 				.variables = colVar, 
 				.fun = function(x)
-					getSummaryStatisticsCustom(
+					computeSummaryStatisticsOneVarCustom(
 						data = x, type = type, 
 						filterEmptyVar = (type == "summaryTable"),
 						var = var
@@ -117,7 +117,7 @@ computeSummaryStatistics <- function(data,
 		.data = if(!is.null(dataTotal))	dataTotal	else	data, 
 		.variables = colVar, 
 		.fun = function(x)
-			getSummaryStatisticsCustom(
+			computeSummaryStatisticsOneVarCustom(
 				data = x, type = "countTable", filterEmptyVar = FALSE
 			)
 	)
@@ -165,7 +165,7 @@ computeSummaryStatistics <- function(data,
 	
 }
 
-#' Get summary statistics of interest
+#' Get summary statistics of interest of an unique variable of interest.
 #' @param data data.frame with data
 #' @param var string, variable of \code{data} with variable to compute statistics on,
 #' only used (and required) if \code{type} is 'summaryTable'.
@@ -201,7 +201,7 @@ computeSummaryStatistics <- function(data,
 #' @author Laure Cougnaud
 #' @importFrom stats na.omit median sd
 #' @export
-getSummaryStatistics <- function(data, 
+computeSummaryStatisticsOneVar <- function(data, 
 	var = NULL,
 	subjectVar = "USUBJID",
 	type = "summaryTable",
