@@ -1,10 +1,10 @@
 #' Compute summary statistics for a specific dataset and variables of interest
 #' @param rowVar Variable(s) of \code{data} used for
 #' grouping in row in the final table.
-#' @param rowOrder String of named character vector with method used to order the rows,
+#' @param rowOrder String or function of named list with method used to order the rows,
 #' see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
 #' If a string, the same method is used for all \code{rowVar},
-#' otherwise should be named with the \code{rowVar} variable, to
+#' otherwise the list is named with the \code{rowVar} variable, to
 #' specify a different ordering method for each variable.
 #' @param colVar Variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
@@ -193,9 +193,10 @@ computeSummaryStatisticsTable <- function(data,
 	
 	if(!is.null(rowOrder)){
 		summaryTable[, rowVar] <- lapply(rowVar, function(var){
+			methodVar <- if(var %in% names(rowOrder))	rowOrder[[var]]	else rowOrder
 			convertVarToFactorWithOrder(
 				data = summaryTable, var = var, 
-				method = if(var %in% names(rowOrder))	rowOrder[var]	else rowOrder, 
+				method = methodVar, 
 				otherVars = setdiff(rowVar, var)
 			)
 		})
@@ -328,14 +329,18 @@ computeSummaryStatistics <- function(data,
 #' @param var String with variable of \code{data} to sort.
 #' @param otherVars Character vector with other variable(s) of \code{data}
 #' considered in the specific dimension.
-#' @param type String with ordering method to use, either:
+#' @param method Ordering method to use, either:
+#' \itemize{
+#' \item{String among:}{
 #' \itemize{
 #' \item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
 #' \item{'alphabetical': }{\code{var} is order in alphabetical order}
 #' \item{'total': }{\code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
 #' The total count is extracted from the rows with all \code{otherVars} equal to 'Total'.
-#' If none, consider all rows.
+#' If none, consider all rows.}
 #' }
+#' }
+#' \item{Function to be applied on each subset to get the order elements of the variable}
 #' }
 #' @param totalVar String with variable of \code{data} considered in case \code{type} is 'total'.
 #' @return Factor \code{var} variable of \code{data} with specified order.
@@ -346,43 +351,55 @@ convertVarToFactorWithOrder <- function(
 	method = c("auto", "alphabetical", "total"),
 	totalVar = "N"){
 
-	method <- match.arg(method)
-	switch(method,
-		'auto' = if(is.factor(data[, var]))
-			data[, var]	else	sortVar(data = data, var = var, method = "alphabetical"),
-		'alphabetical' = {
-			varLevels <- c(
-				if("Total" %in% data[, var])	"Total", 
-				sort(setdiff(unique(data[, var]), "Total"), decreasing = TRUE)
-			)
-			factor(data[, var])
-		},
-		'total' = {
-			if(is.null(otherVars)){
-				warning("The variable: ", var, "cannot be sorted based on total count ",
-						"because no total count is available. You might want to set: ",
-						"'rowSubtotalInclude' to TRUE."
-				)
-				sortVar(data = data, var = var, method = "auto")
-			}else{
-				# remove total for this variable
-				dataForTotal <- data[which(data[, var] != "Total"), ]
-				if(!is.null(otherVars)){
-					# consider rows with subtotal for this variable (if any)
-					idxRowTotal <- which(rowSums(dataForTotal[, otherVars, drop = FALSE] == "Total") == length(otherVars))
-					if(length(idxRowTotal) > 0)
-						dataForTotal <- dataForTotal[idxRowTotal, ]
-					totalPerVar <- daply(dataForTotal, var, function(x) sum(x[, totalVar], na.rm = TRUE))
-				}
+	if(!is.function(method)){
+		
+		method <- match.arg(method)
+	
+		res <- switch(method,
+			'auto' = if(is.factor(data[, var]))
+				data[, var]	else	sortVar(data = data, var = var, method = "alphabetical"),
+			'alphabetical' = {
 				varLevels <- c(
 					if("Total" %in% data[, var])	"Total", 
-					setdiff(names(sort(totalPerVar, decreasing = TRUE)), "Total")
+					sort(setdiff(unique(data[, var]), "Total"), decreasing = TRUE)
 				)
-				varLevels <- c(varLevels, setdiff(as.character(unique(data[, var])), varLevels))
-				factor(data[, var], levels = varLevels)
+				factor(data[, var])
+			},
+			'total' = {
+				if(is.null(otherVars)){
+					warning("The variable: ", var, "cannot be sorted based on total count ",
+							"because no total count is available. You might want to set: ",
+							"'rowSubtotalInclude' to TRUE."
+					)
+					sortVar(data = data, var = var, method = "auto")
+				}else{
+					# remove total for this variable
+					dataForTotal <- data[which(data[, var] != "Total"), ]
+					if(!is.null(otherVars)){
+						# consider rows with subtotal for this variable (if any)
+						idxRowTotal <- which(rowSums(dataForTotal[, otherVars, drop = FALSE] == "Total") == length(otherVars))
+						if(length(idxRowTotal) > 0)
+							dataForTotal <- dataForTotal[idxRowTotal, ]
+						totalPerVar <- daply(dataForTotal, var, function(x) sum(x[, totalVar], na.rm = TRUE))
+					}
+					varLevels <- c(
+						if("Total" %in% data[, var])	"Total", 
+						setdiff(names(sort(totalPerVar, decreasing = TRUE)), "Total")
+					)
+					varLevels <- c(varLevels, setdiff(as.character(unique(data[, var])), varLevels))
+					factor(data[, var], levels = varLevels)
+				}
 			}
-		}
-	)
+		)
+		
+	}else{
+		
+		varLevels <- method(data)
+		res <- factor(data[, var], levels = varLevels)
+		
+	}
 	
+	return(res)
+		
 }
 
