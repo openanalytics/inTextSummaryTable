@@ -15,17 +15,21 @@ convertVarToFactorWithOrder(data, var, otherVars = NULL,
 \item{otherVars}{Character vector with other variable(s) of \code{data}
 considered in the specific dimension.}
 
-\item{totalVar}{String with variable of \code{data} considered in case \code{type} is 'total'.}
-
-\item{type}{String with ordering method to use, either:
+\item{method}{Ordering method to use, either:
+\itemize{
+\item{String among:}{
 \itemize{
 \item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
 \item{'alphabetical': }{\code{var} is order in alphabetical order}
 \item{'total': }{\code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
 The total count is extracted from the rows with all \code{otherVars} equal to 'Total'.
-If none, consider all rows.
+If none, consider all rows.}
 }
+}
+\item{Function to be applied on each subset to get the order elements of the variable}
 }}
+
+\item{totalVar}{String with variable of \code{data} considered in case \code{type} is 'total'.}
 }
 \value{
 Factor \code{var} variable of \code{data} with specified order.
