@@ -13,7 +13,7 @@ combineVariables(data, paramsList, newVar, labelVars = NULL,
 \item{paramsList}{nested list of parameters.
 There are two ways to select a subset of interest:
 \itemize{
-\item{by specifying one unique variable of interest: }{
+\item{by specifying one unique variable of interest with: }{
 \itemize{
 \item{
 \item{'var': }{string with column of \code{data} of interest}
@@ -22,7 +22,7 @@ There are two ways to select a subset of interest:
 If not specified, the records with \code{var} equal to \code{value} are retained (\code{fctTest} set to '==')} 
 \item{'labelExtra': }{string with extra label concatenate with \code{var} label extracted from \code{labelVars}}
 }}}
-\item{by specifying a combination of variable of interest: }{
+\item{by specifying a combination of variable of interest with: }{
 \itemize{
 \item{'exprs': }{string with expression of columns of \code{data} to select subset of interest}
 \item{'label': }{string with label for this group}

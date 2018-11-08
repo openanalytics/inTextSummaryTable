@@ -7,11 +7,11 @@
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
-  rowSubtotalInclude = FALSE, colVar = NULL, subjectVar = "USUBJID",
-  stats = NULL, filterFct = NULL, dataTotal = NULL,
-  type = "summaryTable", labelVars = NULL, landscape = FALSE,
-  margin = 1, rowPadBase = 2,
+  rowOrder = "auto", rowVarInSepCol = NULL, rowTotalInclude = FALSE,
+  rowTotalLab = NULL, rowSubtotalInclude = FALSE, colVar = NULL,
+  subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
+  dataTotal = NULL, type = "summaryTable", labelVars = NULL,
+  landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx")
 }
@@ -31,6 +31,12 @@ If multiple variables are specified, the variables should be sorted in hierarchi
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
+
+\item{rowOrder}{String of named character vector with method used to order the rows,
+see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
+If a string, the same method is used for all \code{rowVar},
+otherwise should be named with the \code{rowVar} variable, to
+specify a different ordering method for each variable.}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table.

@@ -45,22 +45,25 @@ formatSummaryStatisticsForExport <- function(
 	if(!is.null(colVar)){
 		
 		# add total in column header
-		colVarWithCount <- colVar[length(colVar)]
+		colVarWithCount <- colVar[length(colVar)] 
+		
 		dataWithTotal <- ddply(summaryTable, colVar, function(x){
-				idxTotal <- which(x$isTotal)
-				if(length(idxTotal) == 1){
-					x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "N"], ")")
-					x[-idxTotal, ]
-				}else x
-			})
+			idxTotal <- which(x$isTotal)
+			if(length(idxTotal) == 1){
+				x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "N"], ")")
+				x[-idxTotal, ]
+			}else x
+		})
 	
 		# ensure that order of columns with Total is as specified in levels of the factor originally
-		if(is.factor(summaryTable[, colVarWithCount])){
-			colVarWithCountEl <- unique(dataWithTotal[, colVarWithCount])		
-			colVarWithCountElOrdered <- colVarWithCountEl[order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), levels(summaryTable[, colVarWithCount])))]		
-			dataWithTotal[, colVarWithCount] <- factor(dataWithTotal[, colVarWithCount], levels = colVarWithCountElOrdered)
-		}
-		
+		colVarWithCountEl <- unique(dataWithTotal[, colVarWithCount])	
+		colVarInit <-  summaryTable[, colVarWithCount]
+		colVarEl <- if(is.factor(colVarInit))	levels(colVarInit)	else	unique(colVarInit)	
+		colVarWithCountElOrdered <- colVarWithCountEl[
+			order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), colVarEl))
+		]
+		dataWithTotal[, colVarWithCount] <- factor(dataWithTotal[, colVarWithCount], levels = colVarWithCountElOrdered)
+
 	}else{
 		idxTotal <- which(summaryTable$isTotal)
 		nTotal <- summaryTable[idxTotal, "N"]
@@ -166,10 +169,10 @@ formatSummaryStatisticsForExport <- function(
 		
 		# extract horizontal lines
 		idxHLine <- if(length(statsVar) > 1){
-			which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0) -1
+			which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
 		}else{
 			if(length(rowVarToModify) > 0){
-				rowsDiffPad <- which(diff(dataLong$rowPadding) != 0) - 1
+				rowsDiffPad <- which(diff(dataLong$rowPadding) != 0)
 				if(!rowSubtotalInclude){
 					rowsDiffPad
 				}else{
@@ -179,7 +182,7 @@ formatSummaryStatisticsForExport <- function(
 					)
 				}
 			}else if(length(rowVarInSepCol) > 0){
-				which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0) -1
+				which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
 			}
 		}
 		idxHLine <- unique(idxHLine[idxHLine > 0])

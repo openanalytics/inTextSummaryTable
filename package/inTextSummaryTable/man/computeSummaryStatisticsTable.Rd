@@ -5,10 +5,10 @@
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
 computeSummaryStatisticsTable(data, var = NULL, varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, rowTotalInclude = FALSE,
-  rowSubtotalInclude = FALSE, type = "summaryTable",
-  subjectVar = "USUBJID", dataTotal = NULL, stats = NULL,
-  filterFct = NULL)
+  colVar = NULL, rowVar = NULL, rowOrder = "auto",
+  rowTotalInclude = FALSE, rowSubtotalInclude = FALSE,
+  type = "summaryTable", subjectVar = "USUBJID", dataTotal = NULL,
+  stats = NULL, filterFct = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -25,6 +25,12 @@ for each subgroup across \code{rowVar} is computed.}
 
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
+
+\item{rowOrder}{String of named character vector with method used to order the rows,
+see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
+If a string, the same method is used for all \code{rowVar},
+otherwise should be named with the \code{rowVar} variable, to
+specify a different ordering method for each variable.}
 
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 across rows in a separated row.}
