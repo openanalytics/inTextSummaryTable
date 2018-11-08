@@ -10,3 +10,4 @@ tests/
 *.docx
 examples/
 testPackage/lib
+data/

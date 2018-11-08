@@ -7,8 +7,8 @@
 exportSummaryStatisticsTable(summaryTable, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
-  colVar = NULL, labelVars = NULL, file = NULL, landscape = FALSE,
-  margin = 1, rowPadBase = 2,
+  rowSubtotalInclude = FALSE, colVar = NULL, labelVars = NULL,
+  file = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL)
 }
 \arguments{

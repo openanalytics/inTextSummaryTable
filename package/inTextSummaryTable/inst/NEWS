@@ -3,5 +3,7 @@
     o consistent functions naming: computeSummaryStatistics -> computeSummaryStatisticsTable, getSummaryStatistics -> computeSummaryStatistics
     o subjectProfileSummaryPlot: fix for 'useLinetype'
     o formatSummaryStatisticsForExport: fix issue padding in case statistic is a character
+    o computeSummaryStatisticsTable: fix in case rowVar is a factor and rowTotalInclude
+    O new parameter: rowSubtotalInclude
 0.0.1
     o initial commit

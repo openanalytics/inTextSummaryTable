@@ -7,7 +7,7 @@
 formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
-  colVar = NULL, labelVars = NULL)
+  rowSubtotalInclude = FALSE, colVar = NULL, labelVars = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}

@@ -446,7 +446,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 
 ```
 
-### Adverse events
+## Adverse events
 
 ```{r example-countTable-AE}
 

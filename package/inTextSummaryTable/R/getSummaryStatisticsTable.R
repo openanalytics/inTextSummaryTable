@@ -11,9 +11,11 @@ getSummaryStatisticsTable <- function(
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL,
+	rowSubtotalInclude = FALSE,
 	colVar = NULL, 
 	subjectVar = "USUBJID",
-	stats = NULL, dataTotal = NULL, 
+	stats = NULL, filterFct = NULL,
+	dataTotal = NULL, 
 	type = "summaryTable",
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
@@ -26,9 +28,11 @@ getSummaryStatisticsTable <- function(
 		colVar = colVar,
 		rowVar = rowVar, 
 		rowTotalInclude = rowTotalInclude,
+		rowSubtotalInclude = rowSubtotalInclude,
 		type = type,
 		subjectVar = subjectVar,
 		stats = stats, 
+		filterFct = filterFct,
 		dataTotal = dataTotal
 	)
 
@@ -37,6 +41,7 @@ getSummaryStatisticsTable <- function(
 		rowVar = rowVar, rowVarLab = rowVarLab,
 		rowVarInSepCol = rowVarInSepCol,
 		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
+		rowSubtotalInclude = rowSubtotalInclude,
 		colVar = colVar,
 		title = title, footer = footer,
 		labelVars = labelVars,

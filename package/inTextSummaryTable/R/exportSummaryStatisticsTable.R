@@ -13,6 +13,7 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL,
+	rowSubtotalInclude = FALSE,
 	colVar = NULL, 
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
@@ -26,6 +27,7 @@ exportSummaryStatisticsTable <- function(summaryTable,
 		rowVar = rowVar, rowVarLab = rowVarLab,
 		rowVarInSepCol = rowVarInSepCol,
 		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
+		rowSubtotalInclude = rowSubtotalInclude,
 		colVar = colVar
 	)
 	

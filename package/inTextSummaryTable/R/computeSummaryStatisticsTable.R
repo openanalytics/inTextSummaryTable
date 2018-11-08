@@ -19,6 +19,8 @@
 #' It should contain the variables specified by \code{colVar}.
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' across rows in a separated row.
+#' @param filterFct (optional) Function based on computed statistics of
+#' \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
 #' @inheritParams computeSummaryStatistics
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
@@ -57,10 +59,11 @@ computeSummaryStatisticsTable <- function(data,
 	colVar = NULL,
 	rowVar = NULL,
 	rowTotalInclude = FALSE,
+	rowSubtotalInclude = FALSE,
 	type = "summaryTable",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL,
-	stats = NULL
+	stats = NULL, filterFct = NULL
 ){
 	
 	if(!is.null(dataTotal) && !all(colVar %in% colnames(dataTotal)))
@@ -77,7 +80,8 @@ computeSummaryStatisticsTable <- function(data,
 	
 	# get general statistics (by group if specified)
 	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
-		computeSummaryStatisticsCustom(data = x, var = var, type = type,
+		computeSummaryStatisticsCustom(
+			data = x, var = var, type = type,
 			filterEmptyVar = (type == "summaryTable")
 		)
 	})
@@ -95,11 +99,52 @@ computeSummaryStatisticsTable <- function(data,
 					)
 			)
 			summaryTableTotalData[, rowVar] <- "Total"
-			summaryTable <- rbind.fill(summaryTable, summaryTableTotalData)
-			summaryTable[, rowVar] <- colwise(function(x)	
-					factor(x, levels = unique(c("Total", if(is.factor(x))	levels(x)	else	sort(unique(x)))))
-			)(summaryTable[, rowVar, drop = FALSE])
 		}else warning("The row 'total' is not included because no 'rowVar' is specified.")
+	}
+	
+	if(rowSubtotalInclude){
+		
+		if(length(rowVar) <= 1){
+			warning("The row 'sub-total' is not included because only",
+				"one or no variable is specified in 'rowVar'."
+			)
+			rowSubtotalInclude <- FALSE
+		}else{
+			
+			rowVarSubTotal <- rowVar[-length(rowVar)]
+			summaryTableSubtotalData <- ddply(
+				.data = data, 
+				.variables = c(colVar, rowVarSubTotal),
+				.fun = function(x)
+					computeSummaryStatisticsCustom(
+						data = x, type = type, 
+						filterEmptyVar = (type == "summaryTable"),
+						var = var
+				)
+			)
+			summaryTableSubtotalData[, rowVar[length(rowVar)]] <- "Total"
+		}
+		
+	}
+	
+	if(rowTotalInclude | rowSubtotalInclude){
+		
+		rowVarLevels <- sapply(
+			summaryTable[, rowVar, drop = FALSE], function(x)
+				if(is.factor(x))	levels(x)	else	sort(unique(x)),
+			simplify = FALSE
+		)
+		
+		if(rowTotalInclude)
+			summaryTable <- rbind.fill(summaryTable, summaryTableTotalData)
+		
+		if(rowSubtotalInclude)
+			summaryTable <- rbind.fill(summaryTable, summaryTableSubtotalData)
+		
+		summaryTable[, rowVar] <- lapply(rowVar, function(x)
+			factor(summaryTable[, x], levels = unique(c("Total", rowVarLevels[[x]])))
+		)
+		
 	}
 	
 	# get counts for the entire dataset
@@ -133,6 +178,9 @@ computeSummaryStatisticsTable <- function(data,
 			Percm = x$m/x[idxTotal, "m"]*100
 		)			
 	})
+
+	if(!is.null(filterFct))
+		summaryTable <- filterFct(summaryTable)
 	
 	# compute specified metrics and extract statistic names
 	statsVar <- if(!is.null(stats)){

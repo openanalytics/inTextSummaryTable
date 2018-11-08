@@ -8,9 +8,10 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
-  colVar = NULL, subjectVar = "USUBJID", stats = NULL,
-  dataTotal = NULL, type = "summaryTable", labelVars = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 2,
+  rowSubtotalInclude = FALSE, colVar = NULL, subjectVar = "USUBJID",
+  stats = NULL, filterFct = NULL, dataTotal = NULL,
+  type = "summaryTable", labelVars = NULL, landscape = FALSE,
+  margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx")
 }
@@ -57,6 +58,9 @@ The following statistics are recognized, if:
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.}
+
+\item{filterFct}{(optional) Function based on computed statistics of
+\code{rowVar}/code{colVar} which returns a subset of the summary table of interest.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.

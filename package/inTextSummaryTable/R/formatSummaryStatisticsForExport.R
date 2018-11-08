@@ -35,6 +35,7 @@ formatSummaryStatisticsForExport <- function(
 	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarInSepCol = NULL,
 	rowTotalInclude = FALSE, rowTotalLab = NULL,
+	rowSubtotalInclude = FALSE, 
 	colVar = NULL,
 	labelVars = NULL
 	){
@@ -117,12 +118,11 @@ formatSummaryStatisticsForExport <- function(
 		if(length(rowVarToModify) > 0){
 			
 			dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
-			if(rowTotalInclude){
+			if(rowTotalInclude)
 				dataLong[getTotalRow(data = dataLong), "rowPadding"] <- 0
-			}
-			
-			for(i in rev(seq_along(rowVarToModify))){
 				
+			for(i in rev(seq_along(rowVarToModify))){
+					
 				var <- rowVarToModify[i]
 				varX <- dataLong[, var]
 				
@@ -130,21 +130,30 @@ formatSummaryStatisticsForExport <- function(
 				idxRowToRepl <- which(!duplicated(interaction(dataLong[, rowVarToModify[seq_len(i)]]))) # indices of rows to replicates
 				if(rowTotalInclude)
 					idxRowToRepl <- setdiff(idxRowToRepl, getTotalRow(data = dataLong))
+				
+				if(!rowSubtotalInclude){
 					
-				dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
-				# fill columns
-				idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
-				# set var element in final row column
-				# convert to character in case is a factor
-				val <- as.character(varX[idxRowToRepl])
-				dataLong[idxNewRow, rowVarFinal] <- ifelse(is.na(val) | val == "", "Non specified", val)
-				# and set to rest to NA
-				dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
-				# save the padding for flextable
-				dataLong[idxNewRow, "rowPadding"] <- rowPadding <- rowPadding - 1
+					dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
+					# fill columns
+					idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
+					# set var element in final row column
+					# convert to character in case is a factor
+					val <- as.character(varX[idxRowToRepl])
+					dataLong[idxNewRow, rowVarFinal] <- ifelse(is.na(val) | val == "", "Non specified", val)
+					# and set to rest to NA
+					dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
+					# save the padding for flextable
+					dataLong[idxNewRow, "rowPadding"] <- rowPadding <- rowPadding - 1
+				
+				}else{
+					# include the variable in the final column
+					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
+					dataLong[idxRowToRepl, rowVarFinal] <- dataLong[idxRowToRepl, var]					
+				}
+					
+				dataLong[, rowVarToModify] <- rownames(dataLong) <- NULL
 				
 			}
-			dataLong[, rowVarToModify] <- rownames(dataLong) <- NULL
 			
 			# save indices of rows to set padding in flextable
 			padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
@@ -157,15 +166,23 @@ formatSummaryStatisticsForExport <- function(
 		
 		# extract horizontal lines
 		idxHLine <- if(length(statsVar) > 1){
-			which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
+			which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0) -1
 		}else{
 			if(length(rowVarToModify) > 0){
-				which(diff(dataLong$rowPadding) != 0)
+				rowsDiffPad <- which(diff(dataLong$rowPadding) != 0) - 1
+				if(!rowSubtotalInclude){
+					rowsDiffPad
+				}else{
+					c(
+						rowsDiffPad,
+						which(dataLong$rowPadding == 0) - 1 # all rows with sub-total
+					)
+				}
 			}else if(length(rowVarInSepCol) > 0){
-				which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
+				which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0) -1
 			}
-				
 		}
+		idxHLine <- unique(idxHLine[idxHLine > 0])
 		
 		if(rowTotalInclude){
 			idxRowTotal <- which(dataLong[, rowVarFinal] == "Total")
