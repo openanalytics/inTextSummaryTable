@@ -150,10 +150,10 @@ formatSummaryStatisticsForExport <- function(
 					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
 					dataLong[idxRowToRepl, rowVarFinal] <- dataLong[idxRowToRepl, var]					
 				}
-					
-				dataLong[, rowVarToModify] <- rownames(dataLong) <- NULL
-				
+									
 			}
+			
+			dataLong[, rowVarToModify] <- rownames(dataLong) <- NULL
 			
 			# save indices of rows to set padding in flextable
 			padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
