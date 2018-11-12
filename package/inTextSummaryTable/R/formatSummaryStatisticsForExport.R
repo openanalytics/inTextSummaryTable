@@ -86,12 +86,14 @@ formatSummaryStatisticsForExport <- function(
 			if(!is.null(rowVar)) paste(rowVar, collapse = " + "), 
 			if(length(statsVar) > 1)	"Statistic"
 		)
+		if(is.null(rowVarForm))	rowVarForm <- "."
 		formulaWithin <- as.formula(paste(
 			paste(rowVarForm, collapse = "+"),
 			"~", 
 			paste(colVar, collapse = " + ")
 		))
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
+		if(all(rowVarForm == "."))	dataLong["."] <- NULL
 	}else{
 		colnames(dataLong)[match("StatisticValue", colnames(dataLong))] <- 
 			paste0("StatisticValue\n(N=",  nTotal, ")")
