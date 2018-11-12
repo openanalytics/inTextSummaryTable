@@ -162,14 +162,14 @@ computeSummaryStatisticsTable <- function(data,
 		if(!is.null(colVar)){
 			dataTotal[, colVar] <- lapply(colVar, function(var)
 				if(is.factor(summaryTable[, var])){
-					factor(dataTotal[, colVar], levels = levels(summaryTable[, var]))
-				}else dataTotal[, colVar]
+					factor(dataTotal[, var], levels = levels(summaryTable[, var]))
+				}else dataTotal[, var]
 			)
 		}
 	}else dataTotal <- data
 	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
 		data = dataTotal, 
-		var = var, type = "countTable", filterEmptyVar = FALSE,
+		type = "countTable", filterEmptyVar = FALSE,
 		colVar = colVar, colVarInclude0 = colVarInclude0,
 		subjectVar = subjectVar
 	)
@@ -180,11 +180,12 @@ computeSummaryStatisticsTable <- function(data,
 	# compute percentages
 	summaryTable <- ddply(summaryTable, colVar, function(x){
 		idxTotal <- which(x$isTotal)
-		cbind(x, 
-			PercN = x$N/x[idxTotal, "N"]*100,
-			Percm = x$m/x[idxTotal, "m"]*100
-		)			
-	}, .drop = FALSE)
+		if(length(idxTotal) > 0){
+			PercN <- x$N/x[idxTotal, "N"]*100
+			Percm <- x$m/x[idxTotal, "m"]*100
+		}else PercN <- Percm <- NA
+		cbind(x, PercN = PercN, Percm = Percm)
+	})
 
 	# filter records if any 'filterFct' is specified
 	if(!is.null(filterFct))
@@ -449,7 +450,8 @@ convertVarToFactorWithOrder <- function(
 	
 		res <- switch(method,
 			'auto' = if(is.factor(data[, var]))
-				data[, var]	else	sortVar(data = data, var = var, method = "alphabetical"),
+				data[, var]	else	
+				convertVarToFactorWithOrder(data = data, var = var, method = "alphabetical"),
 			'alphabetical' = {
 				varLevels <- c(
 					if("Total" %in% data[, var])	"Total", 
@@ -460,10 +462,10 @@ convertVarToFactorWithOrder <- function(
 			'total' = {
 				if(is.null(otherVars)){
 					warning("The variable: ", var, "cannot be sorted based on total count ",
-							"because no total count is available. You might want to set: ",
-							"'rowSubtotalInclude' to TRUE."
+						"because no total count is available. You might want to set: ",
+						"'rowSubtotalInclude' to TRUE."
 					)
-					sortVar(data = data, var = var, method = "auto")
+					convertVarToFactorWithOrder(data = data, var = var, method = "auto")
 				}else{
 					# remove total for this variable
 					dataForTotal <- data[which(data[, var] != "Total"), ]
