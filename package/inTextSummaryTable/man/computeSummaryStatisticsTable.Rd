@@ -5,10 +5,11 @@
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
 computeSummaryStatisticsTable(data, var = NULL, varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, rowOrder = "auto",
-  rowTotalInclude = FALSE, rowSubtotalInclude = FALSE,
-  type = "summaryTable", subjectVar = "USUBJID", dataTotal = NULL,
-  stats = NULL, filterFct = NULL)
+  colVar = NULL, rowVar = NULL, rowVarInSepCol = NULL,
+  rowOrder = "auto", rowTotalInclude = FALSE,
+  rowSubtotalInclude = FALSE, type = "summaryTable",
+  subjectVar = "USUBJID", dataTotal = NULL, stats = NULL,
+  filterFct = NULL, rowVarInclude0 = FALSE, colVarInclude0 = TRUE)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -19,12 +20,10 @@ Missing values, if present, are filtered.}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 
-\item{colVar}{Variable(s) of \code{data} used 
-for grouping in column in the final table. The total 
-for each subgroup across \code{rowVar} is computed.}
-
-\item{rowVar}{Variable(s) of \code{data} used for
-grouping in row in the final table.}
+\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
+included in separated column in the table.
+NULL by default. 
+This is only available if \code{rowVar} if not NULL.}
 
 \item{rowOrder}{String or function of named list with method used to order the rows,
 see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
