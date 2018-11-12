@@ -85,12 +85,12 @@ computeSummaryStatisticsTable <- function(data,
 		computeSummaryStatistics(..., subjectVar = subjectVar)
 	
 	# get general statistics (by group if specified)
-	summaryTable <- ddply(data, c(rowVar, colVar),function(x){
+	summaryTable <- ddply(data, c(rowVar, colVar), function(x){
 		computeSummaryStatisticsCustom(
 			data = x, var = var, type = type,
 			filterEmptyVar = (type == "summaryTable")
 		)
-	})
+	}, .drop = FALSE)
 
 	if(rowTotalInclude){
 		if(!is.null(rowVar)){
@@ -103,7 +103,7 @@ computeSummaryStatisticsTable <- function(data,
 						filterEmptyVar = (type == "summaryTable"),
 						var = var
 					)
-			)
+			, .drop = FALSE)
 			summaryTableTotalData[, rowVar] <- "Total"
 		}else{
 			warning("The row 'total' is not included because no 'rowVar' is specified.")
@@ -129,8 +129,8 @@ computeSummaryStatisticsTable <- function(data,
 						data = x, type = type, 
 						filterEmptyVar = (type == "summaryTable"),
 						var = var
-				)
-			)
+				),
+			.drop = FALSE)
 			summaryTableSubtotalData[, rowVar[length(rowVar)]] <- "Total"
 		}
 		
@@ -174,7 +174,7 @@ computeSummaryStatisticsTable <- function(data,
 			computeSummaryStatisticsCustom(
 				data = x, type = "countTable", filterEmptyVar = FALSE
 			)
-	)
+	, .drop = FALSE)
 	summaryTableTotal$isTotal <- TRUE
 	summaryTable$isTotal <- FALSE
 	summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
@@ -186,7 +186,7 @@ computeSummaryStatisticsTable <- function(data,
 			PercN = x$N/x[idxTotal, "N"]*100,
 			Percm = x$m/x[idxTotal, "m"]*100
 		)			
-	})
+	}, .drop = FALSE)
 
 	if(!is.null(filterFct))
 		summaryTable <- filterFct(summaryTable)
