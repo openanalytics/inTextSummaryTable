@@ -7,10 +7,6 @@
 #' If multiple variables are specified, the variables should be sorted in hierarchical order.
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
-#' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
-#' included in separated column in the table.
-#' NULL by default. 
-#' This is only available if \code{rowVar} if not NULL.
 #' @param rowTotalLab label for the row with total
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
