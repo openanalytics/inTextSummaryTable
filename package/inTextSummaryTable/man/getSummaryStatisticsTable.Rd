@@ -7,12 +7,12 @@
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowOrder = "auto", rowVarInSepCol = NULL, rowTotalInclude = FALSE,
-  rowTotalLab = NULL, rowSubtotalInclude = FALSE,
-  rowVarInclude0 = FALSE, colVar = NULL, colVarInclude0 = TRUE,
-  subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
-  dataTotal = NULL, type = "summaryTable", labelVars = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 2,
+  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
+  rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
+  rowSubtotalInclude = FALSE, rowVarInclude0 = FALSE, colVar = NULL,
+  colVarInclude0 = TRUE, subjectVar = "USUBJID", stats = NULL,
+  filterFct = NULL, dataTotal = NULL, type = "summaryTable",
+  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx")
 }
@@ -38,6 +38,9 @@ see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
 If a string, the same method is used for all \code{rowVar},
 otherwise the list is named with the \code{rowVar} variable, to
 specify a different ordering method for each variable.}
+
+\item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
+based on total counts (in case \code{rowOrder} is 'Total').}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table.

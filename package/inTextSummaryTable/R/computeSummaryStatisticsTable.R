@@ -8,6 +8,8 @@
 #' If a string, the same method is used for all \code{rowVar},
 #' otherwise the list is named with the \code{rowVar} variable, to
 #' specify a different ordering method for each variable.
+#' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
+#' based on total counts (in case \code{rowOrder} is 'Total').
 #' @param stats (optional) Named list of expression of summary statistics of interest.
 #' The following statistics are recognized, if: 
 #' \itemize{
@@ -62,7 +64,7 @@ computeSummaryStatisticsTable <- function(data,
 	var = NULL, varIgnore = NULL,
 	colVar = NULL,
 	rowVar = NULL, rowVarInSepCol = NULL,
-	rowOrder = "auto",
+	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowTotalInclude = FALSE,
 	rowSubtotalInclude = FALSE,
 	type = "summaryTable",
@@ -126,14 +128,24 @@ computeSummaryStatisticsTable <- function(data,
 			
 		}else{
 		
-			summaryTableRowSubtotal <- computeSummaryStatisticsByRowColVar(
-				data = data, 
-				var = var, type = type,
-				rowVar = rowVarSubTotal, rowVarInclude0 = rowVarInclude0,
-				colVar = colVar, colVarInclude0 = colVarInclude0,
-				subjectVar = subjectVar
-			)
-			summaryTableRowSubtotal[, rowVarForSubTotal[length(rowVarForSubTotal)]] <- "Total"
+			# compute sub-total for each specified rowVar (excepted the last one)
+			summaryTableRowSubtotal <- data.frame()
+			while(length(rowVarSubTotal) > 0){
+				# compute statistics
+				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
+					data = data, 
+					var = var, type = type,
+					rowVar = rowVarSubTotal, rowVarInclude0 = rowVarInclude0,
+					colVar = colVar, colVarInclude0 = colVarInclude0,
+					subjectVar = subjectVar
+				)
+				# set other row variables to 'Total'
+				summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rowVarSubTotal)] <- "Total"
+				# save results
+				summaryTableRowSubtotal <- rbind.fill(summaryTableRowSubtotal, summaryTableRowSubtotalVar)
+				# consider the next variable
+				rowVarSubTotal <- rowVarSubTotal[-length(rowVarSubTotal)]
+			}
 			
 		}
 		
@@ -200,7 +212,8 @@ computeSummaryStatisticsTable <- function(data,
 			methodVar <- if(var %in% names(rowOrder))	rowOrder[[var]]	else rowOrder
 			convertVarToFactorWithOrder(
 				data = summaryTable, var = var, 
-				method = methodVar, 
+				method = methodVar,
+				totalFilterFct = rowOrderTotalFilterFct,
 				otherVars = setdiff(rowVar, var)
 			)
 		})
@@ -439,12 +452,15 @@ computeSummaryStatistics <- function(data,
 #' \item{Function to be applied on each subset to get the order elements of the variable}
 #' }
 #' @param totalVar String with variable of \code{data} considered in case \code{type} is 'total'.
+#' @param totalFilterFct (optional) Function which returns a subset of the data of interest,
+#' to filter the total data considered for the ordering.
 #' @return Factor \code{var} variable of \code{data} with specified order.
 #' @importFrom plyr daply
 #' @author Laure Cougnaud
 convertVarToFactorWithOrder <- function(
 	data, var, otherVars = NULL, 
 	method = c("auto", "alphabetical", "total"),
+	totalFilterFct = NULL,
 	totalVar = "N"){
 
 	if(!is.function(method)){
@@ -470,8 +486,14 @@ convertVarToFactorWithOrder <- function(
 					)
 					convertVarToFactorWithOrder(data = data, var = var, method = "auto")
 				}else{
+					
 					# remove total for this variable
 					dataForTotal <- data[which(data[, var] != "Total"), ]
+					
+					# filter records if any 'filterFct' is specified
+					if(!is.null(totalFilterFct))
+						dataForTotal <- totalFilterFct(dataForTotal)
+					
 					if(!is.null(otherVars)){
 						# consider rows with subtotal for this variable (if any)
 						idxRowTotal <- which(rowSums(dataForTotal[, otherVars, drop = FALSE] == "Total") == length(otherVars))

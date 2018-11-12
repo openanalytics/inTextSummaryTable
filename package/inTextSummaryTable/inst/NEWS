@@ -5,7 +5,8 @@
     o formatSummaryStatisticsForExport: fix issue padding in case statistic is a character
     o computeSummaryStatisticsTable: fix in case rowVar is a factor and rowTotalInclude
     O new parameter: rowSubtotalInclude
-    o new function: combineVariables, convertVarToFactorWithOrder
+    o new function: combineVariables
+    o functionalities to order rows with convertVarToFactorWithOrder
     o computeSummaryStatisticsTable and new computeSummaryStatisticsByRowColVar: include 0 counts
 0.0.1
     o initial commit
