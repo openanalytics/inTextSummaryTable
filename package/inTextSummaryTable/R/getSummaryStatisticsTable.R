@@ -30,6 +30,7 @@ getSummaryStatisticsTable <- function(
 		colVar = colVar, colVarInclude0 = colVarInclude0,
 		rowVar = rowVar, rowVarInclude0 = rowVarInclude0,
 		rowVarInSepCol = rowVarInSepCol,
+		rowVarLab = rowVarLab,
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
 		rowTotalInclude = rowTotalInclude,
 		rowSubtotalInclude = rowSubtotalInclude,
@@ -37,12 +38,14 @@ getSummaryStatisticsTable <- function(
 		subjectVar = subjectVar,
 		stats = stats, 
 		filterFct = filterFct,
-		dataTotal = dataTotal
+		dataTotal = dataTotal,
+		labelVars = labelVars
 	)
 
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
-		rowVar = rowVar, rowVarLab = rowVarLab,
+		rowVar = attributes(summaryTable)$rowVar, 
+		rowVarLab = attributes(summaryTable)$rowVarLab,
 		rowVarInSepCol = rowVarInSepCol,
 		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
 		rowSubtotalInclude = rowSubtotalInclude,

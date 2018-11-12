@@ -7,13 +7,12 @@
 computeSummaryStatisticsByRowColVar(data, var = NULL,
   type = "summaryTable", rowVar = NULL, rowVarInclude0 = FALSE,
   colVar = NULL, colVarInclude0 = TRUE, subjectVar = "USUBJID",
-  filterEmptyVar = (type == "summaryTable"))
+  filterEmptyVar = (type == "summaryTable"), labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{String, variable of \code{data} with variable to compute statistics on,
-only used (and required) if \code{type} is 'summaryTable'.
+\item{var}{String, variable of \code{data} with variable to compute statistics on.
 Missing values, if present, are filtered.}
 
 \item{type}{String with type of summary table: 'summaryTable' 
@@ -39,6 +38,8 @@ include columns with \code{colVar} elements not available in the data
 
 \item{filterEmptyVar}{Logical (TRUE by default), should the summary statistics be filtered
 in case \code{var} is empty.}
+
+\item{labelVars}{named string with variable labels (names are the variable code)}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',
