@@ -72,6 +72,9 @@ computeSummaryStatisticsTable <- function(data,
 	rowVarInclude0 = FALSE, colVarInclude0 = TRUE
 ){
 	
+	if(nrow(data) == 0)
+		stop("The specified dataset is empty.")
+	
 	if(!is.null(dataTotal) && !all(colVar %in% colnames(dataTotal)))
 		stop("The variable(s) specified in 'colVar': ",
 			toString(paste0("'", colVar, "'")), 
