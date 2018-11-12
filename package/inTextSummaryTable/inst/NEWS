@@ -6,5 +6,6 @@
     o computeSummaryStatisticsTable: fix in case rowVar is a factor and rowTotalInclude
     O new parameter: rowSubtotalInclude
     o new function: combineVariables, convertVarToFactorWithOrder
+    o computeSummaryStatisticsTable: include 0 counts
 0.0.1
     o initial commit
