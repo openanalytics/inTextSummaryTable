@@ -5,21 +5,23 @@
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
 computeSummaryStatisticsTable(data, var = NULL, varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, rowVarInSepCol = NULL,
-  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
-  rowTotalInclude = FALSE, rowSubtotalInclude = FALSE,
-  type = "summaryTable", subjectVar = "USUBJID", dataTotal = NULL,
-  stats = NULL, filterFct = NULL, rowVarInclude0 = FALSE,
-  colVarInclude0 = TRUE)
+  colVar = NULL, rowVar = NULL, rowVarLab = getLabelVar(rowVar,
+  labelVars = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
+  rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
+  rowSubtotalInclude = FALSE, type = "summaryTable",
+  subjectVar = "USUBJID", dataTotal = NULL, stats = NULL,
+  filterFct = NULL, rowVarInclude0 = FALSE, colVarInclude0 = TRUE,
+  labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{String, variable of \code{data} with variable to compute statistics on,
-only used (and required) if \code{type} is 'summaryTable'.
+\item{var}{String, variable of \code{data} with variable to compute statistics on.
 Missing values, if present, are filtered.}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
+
+\item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table.

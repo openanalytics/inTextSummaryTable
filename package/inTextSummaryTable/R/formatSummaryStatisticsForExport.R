@@ -27,7 +27,7 @@
 #' @importFrom stats as.formula
 formatSummaryStatisticsForExport <- function(
 	summaryTable,
-	rowVar = NULL, 
+	rowVar = attributes(summaryTable)$rowVar, 
 	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarInSepCol = NULL,
 	rowTotalInclude = FALSE, rowTotalLab = NULL,

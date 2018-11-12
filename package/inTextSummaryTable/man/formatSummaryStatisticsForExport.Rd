@@ -4,7 +4,8 @@
 \alias{formatSummaryStatisticsForExport}
 \title{Format summary statistics table for export}
 \usage{
-formatSummaryStatisticsForExport(summaryTable, rowVar = NULL,
+formatSummaryStatisticsForExport(summaryTable,
+  rowVar = attributes(summaryTable)$rowVar,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, colVar = NULL, labelVars = NULL)

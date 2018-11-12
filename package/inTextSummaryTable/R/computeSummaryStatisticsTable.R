@@ -8,6 +8,7 @@
 #' If a string, the same method is used for all \code{rowVar},
 #' otherwise the list is named with the \code{rowVar} variable, to
 #' specify a different ordering method for each variable.
+#' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
 #' based on total counts (in case \code{rowOrder} is 'Total').
 #' @param stats (optional) Named list of expression of summary statistics of interest.
@@ -63,7 +64,9 @@
 computeSummaryStatisticsTable <- function(data,  
 	var = NULL, varIgnore = NULL,
 	colVar = NULL,
-	rowVar = NULL, rowVarInSepCol = NULL,
+	rowVar = NULL, 
+	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVarInSepCol = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowTotalInclude = FALSE,
 	rowSubtotalInclude = FALSE,
@@ -71,7 +74,8 @@ computeSummaryStatisticsTable <- function(data,
 	subjectVar = "USUBJID",	
 	dataTotal = NULL,
 	stats = NULL, filterFct = NULL,
-	rowVarInclude0 = FALSE, colVarInclude0 = TRUE
+	rowVarInclude0 = FALSE, colVarInclude0 = TRUE,
+	labelVars = NULL
 ){
 	
 	if(nrow(data) == 0)
@@ -92,7 +96,7 @@ computeSummaryStatisticsTable <- function(data,
 		var = var, type = type,
 		rowVar = rowVar, rowVarInclude0 = rowVarInclude0,
 		colVar = colVar, colVarInclude0 = colVarInclude0,
-		subjectVar = subjectVar
+		subjectVar = subjectVar, labelVars = labelVars
 	)
 	
 	# get total by row (if specified)
@@ -103,7 +107,7 @@ computeSummaryStatisticsTable <- function(data,
 				data = data, 
 				var = var, type = type,
 				colVar = colVar, colVarInclude0 = colVarInclude0,
-				subjectVar = subjectVar
+				subjectVar = subjectVar, labelVars = labelVars
 			)
 			summaryTableRowTotal[, rowVar] <- "Total"
 			
@@ -137,7 +141,7 @@ computeSummaryStatisticsTable <- function(data,
 					var = var, type = type,
 					rowVar = rowVarSubTotal, rowVarInclude0 = rowVarInclude0,
 					colVar = colVar, colVarInclude0 = colVarInclude0,
-					subjectVar = subjectVar
+					subjectVar = subjectVar, labelVars = labelVars
 				)
 				# set other row variables to 'Total'
 				summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rowVarSubTotal)] <- "Total"
@@ -186,7 +190,7 @@ computeSummaryStatisticsTable <- function(data,
 		data = dataTotal, 
 		type = "countTable", filterEmptyVar = FALSE,
 		colVar = colVar, colVarInclude0 = colVarInclude0,
-		subjectVar = subjectVar
+		subjectVar = subjectVar, labelVars = labelVars
 	)
 	summaryTableTotal$isTotal <- TRUE
 	summaryTable$isTotal <- FALSE
@@ -244,6 +248,13 @@ computeSummaryStatisticsTable <- function(data,
 	
 	attributes(summaryTable)$statsVar <- statsVar
 	
+	attributes(summaryTable)$rowVar <- c(rowVar, 
+		if(length(var) > 1)	c("variable", if(type == "countTable")	"variableGroup")
+	)
+	attributes(summaryTable)$rowVarLab <- c(rowVarLab, 
+		if(length(var) > 1)	c("variable" = "variable", if(type == "countTable")	c('variableGroup' = "subgroup"))
+	)
+	
 	class(summaryTable) <- c(type, class(summaryTable))
 	
 	return(summaryTable)
@@ -263,6 +274,7 @@ computeSummaryStatisticsTable <- function(data,
 #' include columns with \code{colVar} elements not available in the data
 #' (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).
 #' @inheritParams computeSummaryStatistics
+#' @inheritParams glpgUtilityFct::getLabelVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
 #' either if \code{type} is:
@@ -287,13 +299,15 @@ computeSummaryStatisticsTable <- function(data,
 #' }
 #' }
 #' @author Laure Cougnaud
+#' @importFrom glpgUtilityFct getLabelVar
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
 	var = NULL, type = "summaryTable",
 	rowVar = NULL, rowVarInclude0 = FALSE,
 	colVar = NULL, colVarInclude0 = TRUE,
 	subjectVar = "USUBJID",
-	filterEmptyVar = (type == "summaryTable")){
+	filterEmptyVar = (type == "summaryTable"),
+	labelVars = NULL){
 	
 	computeSummaryStatisticsCustom <- function(...)
 		computeSummaryStatistics(..., subjectVar = subjectVar)
@@ -322,10 +336,31 @@ computeSummaryStatisticsByRowColVar <- function(
 	
 	# get general statistics (by group if specified)
 	summaryTable <- ddply(data, groupVar, function(x){
-		computeSummaryStatisticsCustom(
-			data = x, var = var, type = type,
-			filterEmptyVar = filterEmptyVar
-		)
+		# compute statistics for each specified variable
+		# (loop in case multiple are specified)
+		if(is.null(var)){
+			sumTable <- computeSummaryStatisticsCustom(
+				data = x, 
+				var = var, 
+				type = type,
+				filterEmptyVar = filterEmptyVar
+			)
+		}else{
+			summaryTableVarList <- lapply(var, function(varI){
+				sumTable <- computeSummaryStatisticsCustom(
+					data = x, 
+					var = varI, 
+					type = type,
+					filterEmptyVar = filterEmptyVar
+				)
+				# only store the variable if more than one specified variable
+				if(!is.null(sumTable) && length(var) > 1){
+					variableLabel <- unname(getLabelVar(var = varI, data = data, labelVars = labelVars))
+					cbind(variable = variableLabel, sumTable)
+				}else sumTable
+			})
+			do.call(rbind, summaryTableVarList)
+		}
 	}, .drop = FALSE)
 
 	# include original rowVar/colVar
@@ -344,8 +379,7 @@ computeSummaryStatisticsByRowColVar <- function(
 
 #' Get summary statistics of interest of an unique variable of interest.
 #' @param data Data.frame with data.
-#' @param var String, variable of \code{data} with variable to compute statistics on,
-#' only used (and required) if \code{type} is 'summaryTable'.
+#' @param var String, variable of \code{data} with variable to compute statistics on.
 #' Missing values, if present, are filtered.
 #' @param subjectVar String, variable of \code{data} with subject ID,
 #' 'USUBJID' by default.
@@ -388,29 +422,24 @@ computeSummaryStatistics <- function(data,
 
 	type <- match.arg(type, choices = c("summaryTable", "countTable"))
 	
-	switch(type,
-		'summaryTable' = if(is.null(var)){
+	if(type == "summaryTable"){
+		if(is.null(var)){
 			stop("Variable of interest should be specified via the 'var' parameter for a summary table.")
 		}else if(!is.numeric(data[, var])){
 			stop("Variable of interest: 'var' should be numeric in case type is set to 'summaryTable'.")
-		},
-		'countTable' = if(!is.null(var))
-			warning("'var' is not used for count table. ",
-				"You might want to specify this variable via the",
-				"'rowVar'/'rowVarInSepCol' parameters of the 'computeSummaryStatisticsTable' function.")
-	)
+		}
+	}
 	
 	if(!is.null(var))
 		data <- data[!is.na(data[, var]), ]
-			
 	
 	getNSubjects <- function(x)	as.integer(n_distinct(x[, subjectVar]))
 	getNRecords <- function(x) nrow(x)
 
-	res <- switch(type,
+	switch(type,
 		'summaryTable' = {
 			val <- data[, var]
-			if(!(filterEmptyVar & length(val) == 0)){
+			res <- if(!(filterEmptyVar & length(val) == 0)){
 				data.frame(
 					N = getNSubjects(data),
 					m = getNRecords(data),
@@ -423,10 +452,19 @@ computeSummaryStatistics <- function(data,
 				)
 			}
 		},
-		'countTable' = data.frame(
-			N = getNSubjects(data),
-			m = getNRecords(data)
-		)
+		'countTable' = {
+			res <- ddply(data, var, function(x)
+				data.frame(
+					N = getNSubjects(x),
+					m = getNRecords(x)
+				)
+			)
+			if(is.null(var)){
+				res[, ".id"] <- NULL
+			}else{
+				colnames(res)[match(var, colnames(res))] <- "variableGroup"
+			}
+		}
 	)
 	
 	return(res)

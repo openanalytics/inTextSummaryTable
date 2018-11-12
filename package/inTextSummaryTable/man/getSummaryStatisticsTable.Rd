@@ -19,8 +19,7 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{String, variable of \code{data} with variable to compute statistics on,
-only used (and required) if \code{type} is 'summaryTable'.
+\item{var}{String, variable of \code{data} with variable to compute statistics on.
 Missing values, if present, are filtered.}
 
 \item{varLab}{Label for the \code{var} variable.}
