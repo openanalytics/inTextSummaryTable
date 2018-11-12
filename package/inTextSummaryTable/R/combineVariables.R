@@ -37,7 +37,7 @@ combineVariables <- function(data, paramsList, newVar,
 	paramsLabel <- sapply(seq_along(paramsList), function(i){
 		x <- paramsList[[i]]
 		label <- if(!is.null(x$var)){
-			getLabelVar(x$var, data, labelVars)
+			if(!is.null(x$label))	x$label	else	getLabelVar(x$var, data, labelVars)
 		}else{
 			if(!is.null(x$label))	x$label	else
 				stop("Label should be specified for parameter: '", i, "'.")
