@@ -5,7 +5,8 @@
 \title{Convert a variable to a factor with levels in specified order.}
 \usage{
 convertVarToFactorWithOrder(data, var, otherVars = NULL,
-  method = c("auto", "alphabetical", "total"), totalVar = "N")
+  method = c("auto", "alphabetical", "total"), totalFilterFct = NULL,
+  totalVar = "N")
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -28,6 +29,9 @@ If none, consider all rows.}
 }
 \item{Function to be applied on each subset to get the order elements of the variable}
 }}
+
+\item{totalFilterFct}{(optional) Function which returns a subset of the data of interest,
+to filter the total data considered for the ordering.}
 
 \item{totalVar}{String with variable of \code{data} considered in case \code{type} is 'total'.}
 }

@@ -6,10 +6,11 @@
 \usage{
 computeSummaryStatisticsTable(data, var = NULL, varIgnore = NULL,
   colVar = NULL, rowVar = NULL, rowVarInSepCol = NULL,
-  rowOrder = "auto", rowTotalInclude = FALSE,
-  rowSubtotalInclude = FALSE, type = "summaryTable",
-  subjectVar = "USUBJID", dataTotal = NULL, stats = NULL,
-  filterFct = NULL, rowVarInclude0 = FALSE, colVarInclude0 = TRUE)
+  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
+  rowTotalInclude = FALSE, rowSubtotalInclude = FALSE,
+  type = "summaryTable", subjectVar = "USUBJID", dataTotal = NULL,
+  stats = NULL, filterFct = NULL, rowVarInclude0 = FALSE,
+  colVarInclude0 = TRUE)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -30,6 +31,9 @@ see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
 If a string, the same method is used for all \code{rowVar},
 otherwise the list is named with the \code{rowVar} variable, to
 specify a different ordering method for each variable.}
+
+\item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
+based on total counts (in case \code{rowOrder} is 'Total').}
 
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 across rows in a separated row.}
