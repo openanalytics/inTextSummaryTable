@@ -4,14 +4,16 @@
 \alias{computeSummaryStatisticsTable}
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
-computeSummaryStatisticsTable(data, var = NULL, varIgnore = NULL,
-  colVar = NULL, rowVar = NULL, rowVarLab = getLabelVar(rowVar,
-  labelVars = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
+computeSummaryStatisticsTable(data, var = NULL,
+  varLab = getLabelVar(var, data = data, labelVars = labelVars),
+  varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
+  varIgnore = NULL, colVar = NULL, rowVar = NULL,
+  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
+  rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
-  rowSubtotalInclude = FALSE, type = "summaryTable",
-  subjectVar = "USUBJID", dataTotal = NULL, stats = NULL,
-  filterFct = NULL, rowVarInclude0 = FALSE, colVarInclude0 = TRUE,
-  labelVars = NULL)
+  rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
+  dataTotal = NULL, stats = NULL, filterFct = NULL,
+  rowVarInclude0 = FALSE, colVarInclude0 = TRUE, labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -19,7 +21,26 @@ computeSummaryStatisticsTable(data, var = NULL, varIgnore = NULL,
 \item{var}{String, variable of \code{data} with variable to compute statistics on.
 Missing values, if present, are filtered.}
 
+\item{varLab}{Named character vector with label for each variable 
+specified in \code{var}.
+By default, extracted from the \code{labelVars}.}
+
+\item{varLabGeneral}{String with general label for variable specified in \code{var}.
+In case of multiple variable in \code{var}, this will be included in the table header
+(see 'rowVarLab' attribute of the output).}
+
+\item{varLabSubgroup}{String with general label for sub-group, in case
+\code{var} is specified for a count table.
+This will be included in the table header (see 'rowVarLab' attribute of the output).}
+
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
+
+\item{colVar}{Variable(s) of \code{data} used 
+for grouping in column in the final table. The total 
+for each subgroup across \code{rowVar} is computed.}
+
+\item{rowVar}{Variable(s) of \code{data} used for
+grouping in row in the final table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
@@ -40,8 +61,14 @@ based on total counts (in case \code{rowOrder} is 'Total').}
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 across rows in a separated row.}
 
-\item{type}{String with type of summary table: 'summaryTable' 
-(by default) or 'countTable'.}
+\item{type}{String with type of table: 
+\itemize{
+\item{'summaryTable': }{summary table with custom statistics}
+\item{'countTable': }{count table}
+\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+'countTable' otherwise
+}
+}}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
@@ -50,8 +77,8 @@ across rows in a separated row.}
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 It should contain the variables specified by \code{colVar}.}
 
-\item{stats}{(optional) Named list of expression of summary statistics of interest.
-The following statistics are recognized, if: 
+\item{stats}{(optional) Named list of expression or call object of summary statistics of interest.
+The following variables are recognized, if: 
 \itemize{
 \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
 'Min', 'Max', 'Perc'}
@@ -62,6 +89,16 @@ in the table.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.}
+
+\item{rowVarInclude0}{Logical, if TRUE (FALSE) by default,
+include rows with \code{rowVar} elements not available in the data
+(e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
+
+\item{colVarInclude0}{Logical, if TRUE (FALSE) by default,
+include columns with \code{colVar} elements not available in the data
+(e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
+
+\item{labelVars}{named string with variable labels (names are the variable code)}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',
@@ -89,6 +126,16 @@ either if \code{type} is:
 \item{'m': }{number of records}
 \item{'Percm': }{percentage of records}
 }
+}
+}
+The output contains additional the following attributes:
+\itemize{
+\item{'statsVar': }{column name(s) of summary table with statistics
+included in the final table}
+\item{'rowVar': column name(s) of summary table with row variable
+included in the final table
+}
+\item{'rowVarLab': labels corresponding to the 'rowVar' attribute
 }
 }
 The computed summary statistics are stored in the 'statsVar' attribute.

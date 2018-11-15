@@ -5,13 +5,14 @@
 \title{Get summary statistics table}
 \usage{
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
-  labelVars = labelVars), varIgnore = NULL, rowVar = NULL,
-  rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
+  data = data, labelVars = labelVars), varIgnore = NULL,
+  varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
+  rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars =
+  labelVars), rowOrder = "auto", rowOrderTotalFilterFct = NULL,
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowVarInclude0 = FALSE, colVar = NULL,
   colVarInclude0 = TRUE, subjectVar = "USUBJID", stats = NULL,
-  filterFct = NULL, dataTotal = NULL, type = "summaryTable",
+  filterFct = NULL, dataTotal = NULL, type = "auto",
   labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx")
@@ -25,6 +26,14 @@ Missing values, if present, are filtered.}
 \item{varLab}{Label for the \code{var} variable.}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
+
+\item{varLabGeneral}{String with general label for variable specified in \code{var}.
+In case of multiple variable in \code{var}, this will be included in the table header
+(see 'rowVarLab' attribute of the output).}
+
+\item{varLabSubgroup}{String with general label for sub-group, in case
+\code{var} is specified for a count table.
+This will be included in the table header (see 'rowVarLab' attribute of the output).}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
@@ -51,15 +60,23 @@ across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
+\item{rowVarInclude0}{Logical, if TRUE (FALSE) by default,
+include rows with \code{rowVar} elements not available in the data
+(e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
+
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
+\item{colVarInclude0}{Logical, if TRUE (FALSE) by default,
+include columns with \code{colVar} elements not available in the data
+(e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
+
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{stats}{(optional) Named list of expression of summary statistics of interest.
-The following statistics are recognized, if: 
+\item{stats}{(optional) Named list of expression or call object of summary statistics of interest.
+The following variables are recognized, if: 
 \itemize{
 \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
 'Min', 'Max', 'Perc'}
@@ -75,8 +92,14 @@ in the table.}
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 It should contain the variables specified by \code{colVar}.}
 
-\item{type}{String with type of summary table: 'summaryTable' 
-(by default) or 'countTable'.}
+\item{type}{String with type of table: 
+\itemize{
+\item{'summaryTable': }{summary table with custom statistics}
+\item{'countTable': }{count table}
+\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+'countTable' otherwise
+}
+}}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 

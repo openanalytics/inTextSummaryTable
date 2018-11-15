@@ -5,7 +5,8 @@
 \title{Get summary statistics of interest of an unique variable of interest.}
 \usage{
 computeSummaryStatistics(data, var = NULL, subjectVar = "USUBJID",
-  type = "summaryTable", filterEmptyVar = TRUE)
+  filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type ==
+  "summaryTable"), type = "auto")
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -16,11 +17,18 @@ Missing values, if present, are filtered.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{type}{String with type of summary table: 'summaryTable' 
-(by default) or 'countTable'.}
+\item{filterEmptyVar}{Logical, if TRUE doesn't return any results
+if the variable is empty, otherwise return 0 for the counts and NA for summary 
+statistics (by default, only TRUE if the final table is 'summaryTable')}
 
-\item{filterEmptyVar}{Logical (TRUE by default), should the summary statistics be filtered
-in case \code{var} is empty.}
+\item{type}{String with type of table: 
+\itemize{
+\item{'summaryTable': }{summary table with custom statistics}
+\item{'countTable': }{count table}
+\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+'countTable' otherwise
+}
+}}
 }
 \value{
 Data.frame with summary statistics in columns,

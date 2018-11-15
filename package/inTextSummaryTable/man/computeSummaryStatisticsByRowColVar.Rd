@@ -5,9 +5,10 @@
 \title{Compute summary statistics by specified \code{rowVar} and \code{colVar}}
 \usage{
 computeSummaryStatisticsByRowColVar(data, var = NULL,
-  type = "summaryTable", rowVar = NULL, rowVarInclude0 = FALSE,
+  varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
+  type = "auto", rowVar = NULL, rowVarInclude0 = FALSE,
   colVar = NULL, colVarInclude0 = TRUE, subjectVar = "USUBJID",
-  filterEmptyVar = (type == "summaryTable"), labelVars = NULL)
+  labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -15,8 +16,18 @@ computeSummaryStatisticsByRowColVar(data, var = NULL,
 \item{var}{String, variable of \code{data} with variable to compute statistics on.
 Missing values, if present, are filtered.}
 
-\item{type}{String with type of summary table: 'summaryTable' 
-(by default) or 'countTable'.}
+\item{varLab}{Named character vector with label for each variable 
+specified in \code{var}.
+By default, extracted from the \code{labelVars}.}
+
+\item{type}{String with type of table: 
+\itemize{
+\item{'summaryTable': }{summary table with custom statistics}
+\item{'countTable': }{count table}
+\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+'countTable' otherwise
+}
+}}
 
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
@@ -35,9 +46,6 @@ include columns with \code{colVar} elements not available in the data
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
-
-\item{filterEmptyVar}{Logical (TRUE by default), should the summary statistics be filtered
-in case \code{var} is empty.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 }

@@ -68,13 +68,18 @@ formatSummaryStatisticsForExport <- function(
 		
 	# convert from wide to long format
 	statsVar <- if(is.null(attributes(summaryTable)$statsVar))
-		setdiff(colnames(dataWithTotal),  c(rowVar, colVar))	else	attributes(summaryTable)$statsVar
+		setdiff(colnames(dataWithTotal),  c(rowVar, colVar, "variable", "variableGroup", "isTotal"))	else	
+		attributes(summaryTable)$statsVar
 	dataLong <- melt(dataWithTotal, 
 		id.vars = c(rowVar, colVar),
 		measure.vars = statsVar,
 		value.name = "StatisticValue",
 		variable.name = "Statistic"
 	)
+	
+	emptyStats <- which(is.na(dataLong$StatisticValue))
+	if(length(emptyStats) > 0)
+		dataLong <- dataLong[-emptyStats, ]
 	
 	# format statistic value
 	if(is.numeric(dataLong$StatisticValue))
@@ -167,7 +172,7 @@ formatSummaryStatisticsForExport <- function(
 		
 		# extract horizontal lines
 		idxHLine <- if(length(statsVar) > 1){
-			which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
+			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
 		}else{
 			if(length(rowVarToModify) > 0){
 				rowsDiffPad <- which(diff(dataLong$rowPadding) != 0)
@@ -180,7 +185,7 @@ formatSummaryStatisticsForExport <- function(
 					)
 				}
 			}else if(length(rowVarInSepCol) > 0){
-				which(diff(as.numeric(factor(dataLong[, rowVarFinal]))) != 0)
+				which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
 			}
 		}
 		idxHLine <- unique(idxHLine[idxHLine > 0])
