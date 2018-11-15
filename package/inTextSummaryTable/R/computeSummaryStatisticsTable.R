@@ -11,8 +11,8 @@
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
 #' based on total counts (in case \code{rowOrder} is 'Total').
-#' @param stats (optional) Named list of expression of summary statistics of interest.
-#' The following statistics are recognized, if: 
+#' @param stats (optional) Named list of expression or call object of summary statistics of interest.
+#' The following variables are recognized, if: 
 #' \itemize{
 #' \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
 #' 'Min', 'Max', 'Perc'}
@@ -20,6 +20,12 @@
 #' }
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
 #' in the table.
+#' @param varLabGeneral String with general label for variable specified in \code{var}.
+#' In case of multiple variable in \code{var}, this will be included in the table header
+#' (see 'rowVarLab' attribute of the output).
+#' @param varLabSubgroup String with general label for sub-group, in case
+#' \code{var} is specified for a count table.
+#' This will be included in the table header (see 'rowVarLab' attribute of the output).
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable
 #' @param dataTotal Data.frame used to extract the Total count, indicated
 #' in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
@@ -28,7 +34,7 @@
 #' across rows in a separated row.
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
-#' @inheritParams computeSummaryStatistics
+#' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
 #' either if \code{type} is:
@@ -56,21 +62,34 @@
 #' }
 #' }
 #' }
+#' The output contains additional the following attributes:
+#' \itemize{
+#' \item{'statsVar': }{column name(s) of summary table with statistics
+#' included in the final table}
+#' \item{'rowVar': column name(s) of summary table with row variable
+#' included in the final table
+#' }
+#' \item{'rowVarLab': labels corresponding to the 'rowVar' attribute
+#' }
+#' }
 #' The computed summary statistics are stored in the 'statsVar' attribute.
 #' @author Laure Cougnaud
 #' @importFrom dplyr n_distinct
 #' @importFrom plyr ddply rbind.fill
 #' @export
 computeSummaryStatisticsTable <- function(data,  
-	var = NULL, varIgnore = NULL,
+	var = NULL, 
+	varLab = getLabelVar(var, data = data, labelVars = labelVars),
+	varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
+	varIgnore = NULL,
 	colVar = NULL,
 	rowVar = NULL, 
-	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
 	rowVarInSepCol = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowTotalInclude = FALSE,
 	rowSubtotalInclude = FALSE,
-	type = "summaryTable",
+	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL,
 	stats = NULL, filterFct = NULL,
@@ -93,7 +112,7 @@ computeSummaryStatisticsTable <- function(data,
 	# get general statistics (by group if specified)
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
-		var = var, type = type,
+		var = var, varLab = varLab, type = type,
 		rowVar = rowVar, rowVarInclude0 = rowVarInclude0,
 		colVar = colVar, colVarInclude0 = colVarInclude0,
 		subjectVar = subjectVar, labelVars = labelVars
@@ -107,7 +126,7 @@ computeSummaryStatisticsTable <- function(data,
 				data = data, 
 				var = var, type = type,
 				colVar = colVar, colVarInclude0 = colVarInclude0,
-				subjectVar = subjectVar, labelVars = labelVars
+				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 			)
 			summaryTableRowTotal[, rowVar] <- "Total"
 			
@@ -141,7 +160,7 @@ computeSummaryStatisticsTable <- function(data,
 					var = var, type = type,
 					rowVar = rowVarSubTotal, rowVarInclude0 = rowVarInclude0,
 					colVar = colVar, colVarInclude0 = colVarInclude0,
-					subjectVar = subjectVar, labelVars = labelVars
+					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 				)
 				# set other row variables to 'Total'
 				summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rowVarSubTotal)] <- "Total"
@@ -188,9 +207,9 @@ computeSummaryStatisticsTable <- function(data,
 	}else dataTotal <- data
 	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
 		data = dataTotal, 
-		type = "countTable", filterEmptyVar = FALSE,
+		type = "countTable", 
 		colVar = colVar, colVarInclude0 = colVarInclude0,
-		subjectVar = subjectVar, labelVars = labelVars
+		subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 	)
 	summaryTableTotal$isTotal <- TRUE
 	summaryTable$isTotal <- FALSE
@@ -224,35 +243,64 @@ computeSummaryStatisticsTable <- function(data,
 	}
 	
 	# compute specified metrics and extract statistic names
-	statsVar <- if(!is.null(stats)){
+	if(!is.null(stats)){
 		
 		if(length(stats) > 1 & is.null(names(stats)))
 			stop("'statsFct' should be named.")
-		statsDf <- sapply(stats, function(expr)
-			eval(expr = expr, envir = summaryTable)
-		, simplify = FALSE)
-		if(is.null(names(statsDf)))	names(statsDf) <- "Statistic"
 		
-		# save in summaryTable
-		summaryTable <- cbind(summaryTable, statsDf, stringsAsFactors = FALSE)
+		# add specified custom statistics in summaryTable
+		addStats <- function(sumTable, stats){
+			
+			statsDf <- sapply(stats, function(expr)
+				eval(expr = expr, envir = sumTable)
+			, simplify = FALSE)
+			if(is.null(names(statsDf)))	names(statsDf) <- "Statistic"
+			
+			# save in summaryTable
+			sumTable <- cbind(sumTable, statsDf, stringsAsFactors = FALSE)
+			
+			return(sumTable)
+			
+		}
 		
-		if(is.null(names(statsDf)))	"Statistic"	else	names(statsDf)
+		getStatColName <- function(stats)
+			if(is.null(names(stats)))	"Statistic"	else	names(stats)
+		
+		# if statistics specified for each variable:
+		if(length(var) > 1 & any(names(stats) %in% var)){
+	
+			summaryTable <- ddply(summaryTable, "variable", function(x){
+				varI <- unique(x$variableInit)
+				if(varI %in% names(stats)){
+					addStats(sumTable = x, stats = stats[[varI]])
+				}else x
+			})
+			statsVar <- unname(unique(unlist(lapply(stats, getStatColName))))
+			
+		}else{
+			
+			summaryTable <- addStats(sumTable = summaryTable, stats = stats)
+			statsVar <- getStatColName(stats)
+		
+		}
 
-	}else	c("N", "m", 
-				if(type == "summaryTable") c("Mean", "SD", "SE", "Median", "Min", "Max"), 
-				"PercN", "Percm"
-			)
+	}else	statsVar <- setdiff(colnames(summaryTable), c(rowVar, colVar, ".id", "variable", "variableGroup", "isTotal"))
 
-	if(".id" %in% colnames(summaryTable))
-		summaryTable <- summaryTable[, -which(colnames(summaryTable) == ".id")]
+	colsToRemove <- which(colnames(summaryTable) %in% c(".id", "variableInit"))
+	if(length(colsToRemove) > 0)
+		summaryTable <- summaryTable[, -colsToRemove]
 	
 	attributes(summaryTable)$statsVar <- statsVar
 	
 	attributes(summaryTable)$rowVar <- c(rowVar, 
-		if(length(var) > 1)	c("variable", if(type == "countTable")	"variableGroup")
+		if(length(var) > 1)	c("variable", 
+			if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
+		)
 	)
 	attributes(summaryTable)$rowVarLab <- c(rowVarLab, 
-		if(length(var) > 1)	c("variable" = "variable", if(type == "countTable")	c('variableGroup' = "subgroup"))
+		if(length(var) > 1)	c("variable" = varLabGeneral, 
+			if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varLabSubgroup)
+		)
 	)
 	
 	class(summaryTable) <- c(type, class(summaryTable))
@@ -273,6 +321,9 @@ computeSummaryStatisticsTable <- function(data,
 #' @param colVarInclude0 Logical, if TRUE (FALSE) by default,
 #' include columns with \code{colVar} elements not available in the data
 #' (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).
+#' @param varLab Named character vector with label for each variable 
+#' specified in \code{var}.
+#' By default, extracted from the \code{labelVars}.
 #' @inheritParams computeSummaryStatistics
 #' @inheritParams glpgUtilityFct::getLabelVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
@@ -302,11 +353,11 @@ computeSummaryStatisticsTable <- function(data,
 #' @importFrom glpgUtilityFct getLabelVar
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
-	var = NULL, type = "summaryTable",
+	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
+	type = "auto",
 	rowVar = NULL, rowVarInclude0 = FALSE,
 	colVar = NULL, colVarInclude0 = TRUE,
 	subjectVar = "USUBJID",
-	filterEmptyVar = (type == "summaryTable"),
 	labelVars = NULL){
 	
 	computeSummaryStatisticsCustom <- function(...)
@@ -342,24 +393,29 @@ computeSummaryStatisticsByRowColVar <- function(
 			sumTable <- computeSummaryStatisticsCustom(
 				data = x, 
 				var = var, 
-				type = type,
-				filterEmptyVar = filterEmptyVar
+				type = type
 			)
 		}else{
 			summaryTableVarList <- lapply(var, function(varI){
 				sumTable <- computeSummaryStatisticsCustom(
 					data = x, 
 					var = varI, 
-					type = type,
-					filterEmptyVar = filterEmptyVar
+					type = type
 				)
 				# only store the variable if more than one specified variable
 				if(!is.null(sumTable) && length(var) > 1){
-					variableLabel <- unname(getLabelVar(var = varI, data = data, labelVars = labelVars))
-					cbind(variable = variableLabel, sumTable)
+					cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
 				}else sumTable
 			})
-			do.call(rbind, summaryTableVarList)
+			summaryTable <- do.call(rbind.fill, summaryTableVarList)
+			# if multiple variable(s), sort 'variable' in order specified in input
+			if(length(var) > 1){
+				summaryTable$variable <- factor(
+					varLab[summaryTable$variableInit],
+					levels = varLab[var]
+				)
+			}
+			summaryTable
 		}
 	}, .drop = FALSE)
 
@@ -383,10 +439,17 @@ computeSummaryStatisticsByRowColVar <- function(
 #' Missing values, if present, are filtered.
 #' @param subjectVar String, variable of \code{data} with subject ID,
 #' 'USUBJID' by default.
-#' @param filterEmptyVar Logical (TRUE by default), should the summary statistics be filtered
-#' in case \code{var} is empty.
-#' @param type String with type of summary table: 'summaryTable' 
-#' (by default) or 'countTable'.
+#' @param type String with type of table: 
+#' \itemize{
+#' \item{'summaryTable': }{summary table with custom statistics}
+#' \item{'countTable': }{count table}
+#' \item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+#' 'countTable' otherwise
+#' }
+#' }
+#' @param filterEmptyVar Logical, if TRUE doesn't return any results
+#' if the variable is empty, otherwise return 0 for the counts and NA for summary 
+#' statistics (by default, only TRUE if the final table is 'summaryTable')
 #' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{
@@ -415,12 +478,15 @@ computeSummaryStatisticsByRowColVar <- function(
 computeSummaryStatistics <- function(data, 
 	var = NULL,
 	subjectVar = "USUBJID",
-	type = "summaryTable",
-	filterEmptyVar = TRUE){
+	filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
+	type = "auto"){
 
 	## checks parameters
 
-	type <- match.arg(type, choices = c("summaryTable", "countTable"))
+	type <- match.arg(type, choices = c("auto", "summaryTable", "countTable"))
+	
+	if(type == "auto")
+		type <- ifelse(is.numeric(data[, var]), "summaryTable", "countTable")
 	
 	if(type == "summaryTable"){
 		if(is.null(var)){
@@ -439,26 +505,29 @@ computeSummaryStatistics <- function(data,
 	switch(type,
 		'summaryTable' = {
 			val <- data[, var]
-			res <- if(!(filterEmptyVar & length(val) == 0)){
+			emptyVar <- is.null(val) || length(val) == 0
+			res <- if(!(filterEmptyVar & emptyVar)){
 				data.frame(
 					N = getNSubjects(data),
 					m = getNRecords(data),
-					Mean = ifelse(is.null(var), NA, mean(val)),
-					SD = ifelse(is.null(var), NA, sd(val)),
-					SE = ifelse(is.null(var), NA, sd(val)/sqrt(length(val))),
-					Median = ifelse(is.null(var), NA, median(val)),
-					Min = ifelse(is.null(var), NA, min(val)),
-					Max = ifelse(is.null(var), NA, max(val))
+					Mean = ifelse(emptyVar, NA, mean(val)),
+					SD = ifelse(emptyVar, NA, sd(val)),
+					SE = ifelse(emptyVar, NA, sd(val)/sqrt(length(val))),
+					Median = ifelse(emptyVar, NA, median(val)),
+					Min = ifelse(emptyVar, NA, min(val)),
+					Max = ifelse(emptyVar, NA, max(val))
 				)
 			}
 		},
 		'countTable' = {
-			res <- ddply(data, var, function(x)
-				data.frame(
-					N = getNSubjects(x),
-					m = getNRecords(x)
-				)
-			)
+			res <- ddply(data, var, function(x){
+				if(!(filterEmptyVar & nrow(x) == 0)){
+					data.frame(
+						N = getNSubjects(x),
+						m = getNRecords(x)
+					)
+				}
+			})
 			if(is.null(var)){
 				res[, ".id"] <- NULL
 			}else{

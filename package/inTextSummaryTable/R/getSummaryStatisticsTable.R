@@ -7,18 +7,23 @@
 #' @export
 getSummaryStatisticsTable <- function(
 	data, 
-	var = NULL, varLab = getLabelVar(var, labelVars = labelVars), varIgnore = NULL,
+	# parameters for summary statistics
+	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
+	varIgnore = NULL,
+	varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
+	# row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL, 
 	rowSubtotalInclude = FALSE,
 	rowVarInclude0 = FALSE, 
+	# column variable
 	colVar = NULL, colVarInclude0 = TRUE,
 	subjectVar = "USUBJID",
 	stats = NULL, filterFct = NULL,
 	dataTotal = NULL, 
-	type = "summaryTable",
+	type = "auto",
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
 	title = "Table: Descriptive statistics", footer = NULL,
@@ -26,7 +31,9 @@ getSummaryStatisticsTable <- function(
 
 	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
-		var = var, varIgnore = varIgnore,
+		var = var, varLab = varLab,
+		varIgnore = varIgnore,
+		varLabGeneral = varLabGeneral, varLabSubgroup = varLabSubgroup, 
 		colVar = colVar, colVarInclude0 = colVarInclude0,
 		rowVar = rowVar, rowVarInclude0 = rowVarInclude0,
 		rowVarInSepCol = rowVarInSepCol,

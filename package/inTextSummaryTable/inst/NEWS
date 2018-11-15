@@ -8,5 +8,6 @@
     o new function: combineVariables
     o functionalities to order rows with convertVarToFactorWithOrder
     o computeSummaryStatisticsTable and new computeSummaryStatisticsByRowColVar: include 0 counts
+    o include mixed table, multiple variables
 0.0.1
     o initial commit
