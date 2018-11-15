@@ -10,12 +10,13 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars =
   labelVars), rowOrder = "auto", rowOrderTotalFilterFct = NULL,
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
-  rowSubtotalInclude = FALSE, rowVarInclude0 = FALSE, colVar = NULL,
-  colVarInclude0 = TRUE, subjectVar = "USUBJID", stats = NULL,
+  rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
+  colInclude0 = TRUE, subjectVar = "USUBJID", stats = NULL,
   filterFct = NULL, dataTotal = NULL, type = "auto",
   labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
-  file = "summaryStatisticsTable.docx")
+  file = "summaryStatisticsTable.docx", outputType = c("flextable",
+  "data.frame"))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -60,7 +61,7 @@ across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
-\item{rowVarInclude0}{Logical, if TRUE (FALSE) by default,
+\item{rowInclude0}{Logical, if TRUE (FALSE) by default,
 include rows with \code{rowVar} elements not available in the data
 (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
 
@@ -68,7 +69,7 @@ include rows with \code{rowVar} elements not available in the data
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
-\item{colVarInclude0}{Logical, if TRUE (FALSE) by default,
+\item{colInclude0}{Logical, if TRUE (FALSE) by default,
 include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
 
@@ -118,9 +119,15 @@ Set to NULL (by default) of no footer should be included.}
 
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
+
+\item{outputType}{String with output type, 'data.frame' or 'flextable'.}
 }
 \value{
-\code{\link[flextable]{flextable}} object with summary table
+Depending on the \code{outputType}:
+\itemize{
+\item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
+\item{'data.frame': }{data.frame with summary table}
+}
 }
 \description{
 Get summary statistics table

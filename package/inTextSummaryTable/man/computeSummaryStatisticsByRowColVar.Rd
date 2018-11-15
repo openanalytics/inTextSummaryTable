@@ -6,9 +6,8 @@
 \usage{
 computeSummaryStatisticsByRowColVar(data, var = NULL,
   varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
-  type = "auto", rowVar = NULL, rowVarInclude0 = FALSE,
-  colVar = NULL, colVarInclude0 = TRUE, subjectVar = "USUBJID",
-  labelVars = NULL)
+  type = "auto", rowVar = NULL, rowInclude0 = FALSE, colVar = NULL,
+  colInclude0 = TRUE, subjectVar = "USUBJID", labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -32,7 +31,7 @@ By default, extracted from the \code{labelVars}.}
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
-\item{rowVarInclude0}{Logical, if TRUE (FALSE) by default,
+\item{rowInclude0}{Logical, if TRUE (FALSE) by default,
 include rows with \code{rowVar} elements not available in the data
 (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
 
@@ -40,7 +39,7 @@ include rows with \code{rowVar} elements not available in the data
 for grouping in column in the final table. The total 
 for each subgroup across \code{rowVar} is computed.}
 
-\item{colVarInclude0}{Logical, if TRUE (FALSE) by default,
+\item{colInclude0}{Logical, if TRUE (FALSE) by default,
 include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
 

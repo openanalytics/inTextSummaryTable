@@ -11,7 +11,7 @@ convertSummaryStatisticsTableToFlextable(summaryTable, landscape = FALSE,
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
-as returned by \code{\link{formatSummaryStatisticsForExport}}.}
+as returned by \code{\link{formatSummaryStatisticsTable}}.}
 
 \item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
 format.}

@@ -13,7 +13,7 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, stats = NULL, filterFct = NULL,
-  rowVarInclude0 = FALSE, colVarInclude0 = TRUE, labelVars = NULL)
+  rowInclude0 = FALSE, colInclude0 = TRUE, labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -90,11 +90,11 @@ in the table.}
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.}
 
-\item{rowVarInclude0}{Logical, if TRUE (FALSE) by default,
+\item{rowInclude0}{Logical, if TRUE (FALSE) by default,
 include rows with \code{rowVar} elements not available in the data
 (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
 
-\item{colVarInclude0}{Logical, if TRUE (FALSE) by default,
+\item{colInclude0}{Logical, if TRUE (FALSE) by default,
 include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
 

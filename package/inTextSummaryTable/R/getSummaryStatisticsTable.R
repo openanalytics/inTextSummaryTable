@@ -17,9 +17,9 @@ getSummaryStatisticsTable <- function(
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL, 
 	rowSubtotalInclude = FALSE,
-	rowVarInclude0 = FALSE, 
+	rowInclude0 = FALSE, 
 	# column variable
-	colVar = NULL, colVarInclude0 = TRUE,
+	colVar = NULL, colInclude0 = TRUE,
 	subjectVar = "USUBJID",
 	stats = NULL, filterFct = NULL,
 	dataTotal = NULL, 
@@ -27,15 +27,18 @@ getSummaryStatisticsTable <- function(
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
 	title = "Table: Descriptive statistics", footer = NULL,
-	file = "summaryStatisticsTable.docx"){
+	file = "summaryStatisticsTable.docx",
+	outputType = c("flextable", "data.frame")){
+
+	outputType <- match.arg(outputType)
 
 	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
 		var = var, varLab = varLab,
 		varIgnore = varIgnore,
 		varLabGeneral = varLabGeneral, varLabSubgroup = varLabSubgroup, 
-		colVar = colVar, colVarInclude0 = colVarInclude0,
-		rowVar = rowVar, rowVarInclude0 = rowVarInclude0,
+		colVar = colVar, colInclude0 = colInclude0,
+		rowVar = rowVar, rowInclude0 = rowInclude0,
 		rowVarInSepCol = rowVarInSepCol,
 		rowVarLab = rowVarLab,
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
@@ -60,7 +63,8 @@ getSummaryStatisticsTable <- function(
 		title = title, footer = footer,
 		labelVars = labelVars,
 		file = file, landscape = landscape,
-		margin = margin, rowPadBase = rowPadBase
+		margin = margin, rowPadBase = rowPadBase,
+		outputType = outputType
 	)
 	
 	return(ft)

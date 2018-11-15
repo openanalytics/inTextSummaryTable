@@ -9,11 +9,12 @@ exportSummaryStatisticsTable(summaryTable, rowVar = NULL,
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, colVar = NULL, labelVars = NULL,
   file = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
-  title = "Table: Descriptive statistics", footer = NULL)
+  title = "Table: Descriptive statistics", footer = NULL,
+  outputType = c("flextable", "data.frame"))
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
-as returned by \code{\link{formatSummaryStatisticsForExport}}.}
+as returned by \code{\link{formatSummaryStatisticsTable}}.}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
@@ -52,9 +53,15 @@ Set to NULL if no title should be included.}
 
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
+
+\item{outputType}{String with output type, 'data.frame' or 'flextable'.}
 }
 \value{
-\code{\link[flextable]{flextable}} object with summary table
+Depending on the \code{outputType}:
+\itemize{
+\item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
+\item{'data.frame': }{data.frame with summary table}
+}
 }
 \description{
 Export a summary table in \code{docx} format.
