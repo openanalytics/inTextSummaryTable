@@ -25,7 +25,7 @@
 #' @importFrom reshape2 melt dcast
 #' @importFrom plyr colwise
 #' @importFrom stats as.formula
-formatSummaryStatisticsForExport <- function(
+formatSummaryStatisticsTable <- function(
 	summaryTable,
 	rowVar = attributes(summaryTable)$rowVar, 
 	rowVarLab = getLabelVar(rowVar, labelVars = labelVars),

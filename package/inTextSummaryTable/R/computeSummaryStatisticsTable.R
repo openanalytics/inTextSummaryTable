@@ -93,7 +93,7 @@ computeSummaryStatisticsTable <- function(data,
 	subjectVar = "USUBJID",	
 	dataTotal = NULL,
 	stats = NULL, filterFct = NULL,
-	rowVarInclude0 = FALSE, colVarInclude0 = TRUE,
+	rowInclude0 = FALSE, colInclude0 = TRUE,
 	labelVars = NULL
 ){
 	
@@ -113,8 +113,8 @@ computeSummaryStatisticsTable <- function(data,
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
 		var = var, varLab = varLab, type = type,
-		rowVar = rowVar, rowVarInclude0 = rowVarInclude0,
-		colVar = colVar, colVarInclude0 = colVarInclude0,
+		rowVar = rowVar, rowInclude0 = rowInclude0,
+		colVar = colVar, colInclude0 = colInclude0,
 		subjectVar = subjectVar, labelVars = labelVars
 	)
 	
@@ -125,7 +125,7 @@ computeSummaryStatisticsTable <- function(data,
 			summaryTableRowTotal <- computeSummaryStatisticsByRowColVar(
 				data = data, 
 				var = var, type = type,
-				colVar = colVar, colVarInclude0 = colVarInclude0,
+				colVar = colVar, colInclude0 = colInclude0,
 				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 			)
 			summaryTableRowTotal[, rowVar] <- "Total"
@@ -158,8 +158,8 @@ computeSummaryStatisticsTable <- function(data,
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 					data = data, 
 					var = var, type = type,
-					rowVar = rowVarSubTotal, rowVarInclude0 = rowVarInclude0,
-					colVar = colVar, colVarInclude0 = colVarInclude0,
+					rowVar = rowVarSubTotal, rowInclude0 = rowInclude0,
+					colVar = colVar, colInclude0 = colInclude0,
 					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 				)
 				# set other row variables to 'Total'
@@ -208,7 +208,7 @@ computeSummaryStatisticsTable <- function(data,
 	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
 		data = dataTotal, 
 		type = "countTable", 
-		colVar = colVar, colVarInclude0 = colVarInclude0,
+		colVar = colVar, colInclude0 = colInclude0,
 		subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 	)
 	summaryTableTotal$isTotal <- TRUE
@@ -303,7 +303,7 @@ computeSummaryStatisticsTable <- function(data,
 		)
 	)
 	
-	class(summaryTable) <- c(type, class(summaryTable))
+#	class(summaryTable) <- c(type, class(summaryTable))
 	
 	return(summaryTable)
 	
@@ -312,13 +312,13 @@ computeSummaryStatisticsTable <- function(data,
 #' Compute summary statistics by specified \code{rowVar} and \code{colVar}
 #' @param rowVar Variable(s) of \code{data} used for
 #' grouping in row in the final table.
-#' @param rowVarInclude0 Logical, if TRUE (FALSE) by default,
+#' @param rowInclude0 Logical, if TRUE (FALSE) by default,
 #' include rows with \code{rowVar} elements not available in the data
 #' (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).
 #' @param colVar Variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
 #' for each subgroup across \code{rowVar} is computed.
-#' @param colVarInclude0 Logical, if TRUE (FALSE) by default,
+#' @param colInclude0 Logical, if TRUE (FALSE) by default,
 #' include columns with \code{colVar} elements not available in the data
 #' (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).
 #' @param varLab Named character vector with label for each variable 
@@ -355,8 +355,8 @@ computeSummaryStatisticsByRowColVar <- function(
 	data, 
 	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
 	type = "auto",
-	rowVar = NULL, rowVarInclude0 = FALSE,
-	colVar = NULL, colVarInclude0 = TRUE,
+	rowVar = NULL, rowInclude0 = FALSE,
+	colVar = NULL, colInclude0 = TRUE,
 	subjectVar = "USUBJID",
 	labelVars = NULL){
 	
@@ -372,13 +372,13 @@ computeSummaryStatisticsByRowColVar <- function(
 	# (variables considered independently)
 	groupVar <- c(
 		if(!is.null(rowVar)){
-			if(!rowVarInclude0){
+			if(!rowInclude0){
 				data$rowVariables <- interaction(data[, rowVar], drop = TRUE)
 				"rowVariables"
 			}else	rowVar
 		},
 		if(!is.null(colVar)){
-			if(!colVarInclude0){
+			if(!colInclude0){
 				data$colVariables <- interaction(data[, colVar], drop = TRUE)
 				"colVariables"
 			}else colVar	
@@ -420,11 +420,11 @@ computeSummaryStatisticsByRowColVar <- function(
 	}, .drop = FALSE)
 
 	# include original rowVar/colVar
-	if(!is.null(rowVar) & !rowVarInclude0){
+	if(!is.null(rowVar) & !rowInclude0){
 		summaryTable[, rowVar] <- data[match(summaryTable$rowVariables, data$rowVariables), rowVar]
 		summaryTable$rowVariables <- NULL
 	}
-	if(!is.null(colVar) & !colVarInclude0){
+	if(!is.null(colVar) & !colInclude0){
 		summaryTable[, colVar] <- data[match(summaryTable$colVariables, data$colVariables), colVar]
 		summaryTable$colVariables <- NULL
 	}
