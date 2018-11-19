@@ -3,7 +3,7 @@
     o consistent functions naming: computeSummaryStatistics -> computeSummaryStatisticsTable, getSummaryStatistics -> computeSummaryStatistics
     o subjectProfileSummaryPlot: fix for 'useLinetype'
     o formatSummaryStatisticsTable: fix issue padding in case statistic is a character
-    o computeSummaryStatisticsTable: fix in case rowVar is a factor and rowTotalInclude
+    o computeSummaryStatisticsTable: fix in case rowVar is a factor and rowTotalInclude, new parameter: colTotalInclude
     O new parameter: rowSubtotalInclude
     o new function: combineVariables
     o functionalities to order rows with convertVarToFactorWithOrder

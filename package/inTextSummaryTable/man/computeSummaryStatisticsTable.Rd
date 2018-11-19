@@ -7,9 +7,9 @@
 computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
-  varIgnore = NULL, colVar = NULL, rowVar = NULL,
-  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
-  rowVarInSepCol = NULL, rowOrder = "auto",
+  varIgnore = NULL, colVar = NULL, colTotalInclude = FALSE,
+  rowVar = NULL, rowVarLab = getLabelVar(rowVar, data = data, labelVars
+  = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, stats = NULL, filterFct = NULL,
@@ -39,6 +39,9 @@ This will be included in the table header (see 'rowVarLab' attribute of the outp
 for grouping in column in the final table. The total 
 for each subgroup across \code{rowVar} is computed.}
 
+\item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
+statistics across columns in a separated column.}
+
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
@@ -59,7 +62,7 @@ specify a different ordering method for each variable.}
 based on total counts (in case \code{rowOrder} is 'Total').}
 
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
-across rows in a separated row.}
+counts across rows in a separated row.}
 
 \item{type}{String with type of table: 
 \itemize{

@@ -11,9 +11,10 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   labelVars), rowOrder = "auto", rowOrderTotalFilterFct = NULL,
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
-  colInclude0 = TRUE, subjectVar = "USUBJID", stats = NULL,
-  filterFct = NULL, dataTotal = NULL, type = "auto",
-  labelVars = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
+  colInclude0 = TRUE, colTotalInclude = FALSE,
+  subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
+  dataTotal = NULL, type = "auto", labelVars = NULL,
+  landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx", outputType = c("flextable",
   "data.frame"))
@@ -57,7 +58,7 @@ NULL by default.
 This is only available if \code{rowVar} if not NULL.}
 
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
-across rows in a separated row.}
+counts across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
@@ -72,6 +73,9 @@ and are included in multi-columns layout.}
 \item{colInclude0}{Logical, if TRUE (FALSE) by default,
 include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
+
+\item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
+statistics across columns in a separated column.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
