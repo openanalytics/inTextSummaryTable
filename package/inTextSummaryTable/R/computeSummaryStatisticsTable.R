@@ -283,7 +283,7 @@ computeSummaryStatisticsTable <- function(data,
 		summaryTable <- filterFct(summaryTable)
 	
 	# order the row variables as specified
-	if(!is.null(rowOrder)){
+	if(!is.null(rowVar) && !is.null(rowOrder)){
 		summaryTable[, rowVar] <- lapply(rowVar, function(var){
 			methodVar <- if(var %in% names(rowOrder))	rowOrder[[var]]	else rowOrder
 			convertVarToFactorWithOrder(
@@ -337,7 +337,9 @@ computeSummaryStatisticsTable <- function(data,
 		
 		}
 
-	}else	statsVar <- setdiff(colnames(summaryTable), c(rowVar, colVar, ".id", "variable", "variableGroup", "isTotal"))
+	}else	statsVar <- setdiff(colnames(summaryTable), 
+				c(rowVar, colVar, ".id", "variable", "variableGroup", "isTotal", "variableInit")
+			)
 
 	colsToRemove <- which(colnames(summaryTable) %in% c(".id", "variableInit"))
 	if(length(colsToRemove) > 0)
