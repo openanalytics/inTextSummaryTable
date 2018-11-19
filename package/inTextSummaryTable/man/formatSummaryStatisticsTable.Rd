@@ -25,7 +25,7 @@ NULL by default.
 This is only available if \code{rowVar} if not NULL.}
 
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
-across rows in a separated row.}
+counts across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 

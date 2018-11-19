@@ -31,9 +31,11 @@
 #' in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
 #' It should contain the variables specified by \code{colVar}.
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
-#' across rows in a separated row.
+#' counts across rows in a separated row.
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
+#' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
+#' statistics across columns in a separated column.
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
@@ -83,6 +85,7 @@ computeSummaryStatisticsTable <- function(data,
 	varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
 	varIgnore = NULL,
 	colVar = NULL,
+	colTotalInclude = FALSE,
 	rowVar = NULL, 
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
 	rowVarInSepCol = NULL,
@@ -104,6 +107,11 @@ computeSummaryStatisticsTable <- function(data,
 		stop("The variable(s) specified in 'colVar': ",
 			toString(paste0("'", colVar, "'")), 
 			" are not available in 'dataTotal'.")
+
+	if(colTotalInclude & is.null(colVar)){
+		warning("Column 'total' is not included because no column variable is specified.")
+		colTotalInclude <- FALSE
+	}
 	
 	# ignore certain elements
 	if(!is.null(var) && !is.null(varIgnore))
@@ -117,6 +125,18 @@ computeSummaryStatisticsTable <- function(data,
 		colVar = colVar, colInclude0 = colInclude0,
 		subjectVar = subjectVar, labelVars = labelVars
 	)
+	
+	if(colTotalInclude){
+		
+		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
+			data = data, 
+			var = var, varLab = varLab, type = type,
+			rowVar = rowVar, rowInclude0 = rowInclude0,	
+			subjectVar = subjectVar, labelVars = labelVars
+		)
+		summaryTableColTotal[, colVar] <- "Total"
+		
+	}
 	
 	# get total by row (if specified)
 	if(rowTotalInclude){
@@ -174,6 +194,8 @@ computeSummaryStatisticsTable <- function(data,
 		
 	}
 	
+	# bind the df with row total and subtotal to the summary table
+	# ensure that the order of the levels of the variable are retained
 	if(rowTotalInclude | rowSubtotalInclude){
 		
 		rowVarLevels <- sapply(
@@ -194,7 +216,9 @@ computeSummaryStatisticsTable <- function(data,
 		
 	}
 	
-	# get counts for the entire dataset
+	## get counts for the entire dataset
+	
+	# data considered to compute the total
 	if(!is.null(dataTotal)){
 		# to have specified order for colVar in case different order 'dataTotal'
 		if(!is.null(colVar)){
@@ -205,14 +229,43 @@ computeSummaryStatisticsTable <- function(data,
 			)
 		}
 	}else dataTotal <- data
+	
+	# get counts
 	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
 		data = dataTotal, 
 		type = "countTable", 
 		colVar = colVar, colInclude0 = colInclude0,
 		subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 	)
+	
+	## column total
+	if(colTotalInclude){
+		
+		colVarLevels <- sapply(
+			summaryTable[, colVar, drop = FALSE], function(x)
+				if(is.factor(x))	levels(x)	else	sort(unique(x)),
+			simplify = FALSE
+		)
+		summaryTable <- rbind.fill(summaryTable, summaryTableColTotal)
+		summaryTable[, colVar] <- lapply(colVar, function(x)
+			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], "Total")))
+		)
+		
+		# compute also the total count acros columns
+		summaryTableTotalAllCols <- computeSummaryStatisticsByRowColVar(
+			data = dataTotal, 
+			type = "countTable", 
+			colInclude0 = colInclude0,
+			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+		)
+		summaryTableTotalAllCols[, colVar] <- "Total"
+		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalAllCols)
+		
+	}
+	# save total or not in the 'isTotal' column
 	summaryTableTotal$isTotal <- TRUE
 	summaryTable$isTotal <- FALSE
+	# bind to the summary table
 	summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
 	
 	# compute percentages
@@ -420,6 +473,9 @@ computeSummaryStatisticsByRowColVar <- function(
 				summaryTable
 			}
 		}, .drop = FALSE)
+
+		if(is.null(groupVar))
+			summaryTable[, ".id"] <- NULL
 	
 		# include original rowVar/colVar
 		if(!is.null(rowVar) & !rowInclude0){

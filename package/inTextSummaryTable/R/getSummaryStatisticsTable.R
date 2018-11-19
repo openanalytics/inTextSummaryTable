@@ -20,6 +20,7 @@ getSummaryStatisticsTable <- function(
 	rowInclude0 = FALSE, 
 	# column variable
 	colVar = NULL, colInclude0 = TRUE,
+	colTotalInclude = FALSE,
 	subjectVar = "USUBJID",
 	stats = NULL, filterFct = NULL,
 	dataTotal = NULL, 
@@ -38,6 +39,7 @@ getSummaryStatisticsTable <- function(
 		varIgnore = varIgnore,
 		varLabGeneral = varLabGeneral, varLabSubgroup = varLabSubgroup, 
 		colVar = colVar, colInclude0 = colInclude0,
+		colTotalInclude = colTotalInclude, 
 		rowVar = rowVar, rowInclude0 = rowInclude0,
 		rowVarInSepCol = rowVarInSepCol,
 		rowVarLab = rowVarLab,
