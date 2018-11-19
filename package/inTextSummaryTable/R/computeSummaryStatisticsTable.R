@@ -360,75 +360,79 @@ computeSummaryStatisticsByRowColVar <- function(
 	subjectVar = "USUBJID",
 	labelVars = NULL){
 	
-	computeSummaryStatisticsCustom <- function(...)
-		computeSummaryStatistics(..., subjectVar = subjectVar)
+	if(nrow(data) > 0){
+
+		computeSummaryStatisticsCustom <- function(...)
+			computeSummaryStatistics(..., subjectVar = subjectVar)
+			
+		# build variables used for grouping:
+		# 1) consider 'ddply(, .drop = FALSE)' to also include zeros
+		# 2) build interaction of row variable(s), column variable(s) to only consider 
+		# available combinations of row/column variables (if multiple variables in each direction)
+		# otherwise ddply(, .drop = FALSE) with also include combinations of elements non present 
+		# e.g. AE term in an AE group not present
+		# (variables considered independently)
+		groupVar <- c(
+			if(!is.null(rowVar)){
+				if(!rowInclude0){
+					data$rowVariables <- interaction(data[, rowVar], drop = TRUE)
+					"rowVariables"
+				}else	rowVar
+			},
+			if(!is.null(colVar)){
+				if(!colInclude0){
+					data$colVariables <- interaction(data[, colVar], drop = TRUE)
+					"colVariables"
+				}else colVar	
+			}
+		)
 		
-	# build variables used for grouping:
-	# 1) consider 'ddply(, .drop = FALSE)' to also include zeros
-	# 2) build interaction of row variable(s), column variable(s) to only consider 
-	# available combinations of row/column variables (if multiple variables in each direction)
-	# otherwise ddply(, .drop = FALSE) with also include combinations of elements non present 
-	# e.g. AE term in an AE group not present
-	# (variables considered independently)
-	groupVar <- c(
-		if(!is.null(rowVar)){
-			if(!rowInclude0){
-				data$rowVariables <- interaction(data[, rowVar], drop = TRUE)
-				"rowVariables"
-			}else	rowVar
-		},
-		if(!is.null(colVar)){
-			if(!colInclude0){
-				data$colVariables <- interaction(data[, colVar], drop = TRUE)
-				"colVariables"
-			}else colVar	
-		}
-	)
-	
-	# get general statistics (by group if specified)
-	summaryTable <- ddply(data, groupVar, function(x){
-		# compute statistics for each specified variable
-		# (loop in case multiple are specified)
-		if(is.null(var)){
-			sumTable <- computeSummaryStatisticsCustom(
-				data = x, 
-				var = var, 
-				type = type
-			)
-		}else{
-			summaryTableVarList <- lapply(var, function(varI){
+		# get general statistics (by group if specified)
+		summaryTable <- ddply(data, groupVar, function(x){
+			# compute statistics for each specified variable
+			# (loop in case multiple are specified)
+			if(is.null(var)){
 				sumTable <- computeSummaryStatisticsCustom(
 					data = x, 
-					var = varI, 
+					var = var, 
 					type = type
 				)
-				# only store the variable if more than one specified variable
-				if(!is.null(sumTable) && length(var) > 1){
-					cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
-				}else sumTable
-			})
-			summaryTable <- do.call(rbind.fill, summaryTableVarList)
-			# if multiple variable(s), sort 'variable' in order specified in input
-			if(length(var) > 1){
-				summaryTable$variable <- factor(
-					varLab[summaryTable$variableInit],
-					levels = varLab[var]
-				)
+			}else{
+				summaryTableVarList <- lapply(var, function(varI){
+					sumTable <- computeSummaryStatisticsCustom(
+						data = x, 
+						var = varI, 
+						type = type
+					)
+					# only store the variable if more than one specified variable
+					if(!is.null(sumTable) && length(var) > 1){
+						cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
+					}else sumTable
+				})
+				summaryTable <- do.call(rbind.fill, summaryTableVarList)
+				# if multiple variable(s), sort 'variable' in order specified in input
+				if(length(var) > 1){
+					summaryTable$variable <- factor(
+						varLab[summaryTable$variableInit],
+						levels = varLab[var]
+					)
+				}
+				summaryTable
 			}
-			summaryTable
-		}
-	}, .drop = FALSE)
-
-	# include original rowVar/colVar
-	if(!is.null(rowVar) & !rowInclude0){
-		summaryTable[, rowVar] <- data[match(summaryTable$rowVariables, data$rowVariables), rowVar]
-		summaryTable$rowVariables <- NULL
-	}
-	if(!is.null(colVar) & !colInclude0){
-		summaryTable[, colVar] <- data[match(summaryTable$colVariables, data$colVariables), colVar]
-		summaryTable$colVariables <- NULL
-	}
+		}, .drop = FALSE)
 	
+		# include original rowVar/colVar
+		if(!is.null(rowVar) & !rowInclude0){
+			summaryTable[, rowVar] <- data[match(summaryTable$rowVariables, data$rowVariables), rowVar]
+			summaryTable$rowVariables <- NULL
+		}
+		if(!is.null(colVar) & !colInclude0){
+			summaryTable[, colVar] <- data[match(summaryTable$colVariables, data$colVariables), colVar]
+			summaryTable$colVariables <- NULL
+		}
+		
+	}else summaryTable <- NULL
+		
 	return(summaryTable)
 	
 }
@@ -520,18 +524,23 @@ computeSummaryStatistics <- function(data,
 			}
 		},
 		'countTable' = {
-			res <- ddply(data, var, function(x){
-				if(!(filterEmptyVar & nrow(x) == 0)){
-					data.frame(
-						N = getNSubjects(x),
-						m = getNRecords(x)
-					)
-				}
-			})
-			if(is.null(var)){
-				res[, ".id"] <- NULL
+			# to avoid that ddply with empty data returns entire data.frame
+			if(nrow(data) == 0){
+				res <- data.frame(N = 0, m = 0)
 			}else{
-				colnames(res)[match(var, colnames(res))] <- "variableGroup"
+				res <- ddply(data, var, function(x){
+					if(!(filterEmptyVar & nrow(x) == 0)){
+						data.frame(
+							N = getNSubjects(x),
+							m = getNRecords(x)
+						)
+					}
+				})
+				if(is.null(var)){
+					res[, ".id"] <- NULL
+				}else{
+					colnames(res)[match(var, colnames(res))] <- "variableGroup"
+				}
 			}
 		}
 	)

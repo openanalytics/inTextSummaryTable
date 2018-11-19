@@ -28,7 +28,7 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	footer = NULL,
 	outputType = c("flextable", "data.frame")){
 
-	outputType  <- outputType(outputType)
+	outputType  <- match.arg(outputType)
 	
 	## format table
 	summaryTableLong <- formatSummaryStatisticsTable(
