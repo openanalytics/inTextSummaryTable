@@ -32,6 +32,9 @@ counts across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
+\item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
+group of the nested variable specified in \code{rowVar}}
+
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
