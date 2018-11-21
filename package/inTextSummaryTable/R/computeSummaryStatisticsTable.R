@@ -5,18 +5,40 @@
 #' This is only available if \code{rowVar} if not NULL.
 #' @param rowOrder String or function of named list with method used to order the rows,
 #' see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
+#' 'total' is only available if the total is available for each \code{rowVar} (\code{rowSubtotalInclude} set to TRUE)
 #' If a string, the same method is used for all \code{rowVar},
 #' otherwise the list is named with the \code{rowVar} variable, to
 #' specify a different ordering method for each variable.
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
-#' based on total counts (in case \code{rowOrder} is 'Total').
+#' based on total counts (in case \code{rowOrder} is 'total').
+#' @param rowSubtotalInclude Logical, if TRUE (FALSE by default) include also the total for each
+#' group of the nested variable specified in \code{rowVar}
 #' @param stats (optional) Named list of expression or call object of summary statistics of interest.
-#' The following variables are recognized, if: 
+#' The following variables are recognized, if the table is a: 
 #' \itemize{
-#' \item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
-#' 'Min', 'Max', 'Perc'}
-#' \item{\code{type} is a 'countTable':}{'N','Perc'}
+#' \item{'summaryTable': }{
+#' \itemize{
+#' \item{'N': }{number of subjects}
+#' \item{'Mean': }{mean of \code{var}}
+#' \item{'SD': }{standard deviation of \code{var}}
+#' \item{'SE': }{standard error of \code{var}}
+#' \item{'Median': }{median of \code{var}}
+#' \item{'Min': }{minimum of \code{var}}
+#' \item{'Max': }{maximum of \code{var}}
+#' \item{'Perc': }{percentage of subjects}
+#' \item{'m': }{number of records}
+#' \item{'Percm': }{percentage of records}
+#' }
+#' }
+#' \item{'countTable': }{
+#' \itemize{
+#' \item{'N': }{number of subjects}
+#' \item{'PercN': }{percentage of subjects}
+#' \item{'m': }{number of records}
+#' \item{'Percm': }{percentage of records}
+#' }
+#' }
 #' }
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
 #' in the table.
@@ -34,6 +56,8 @@
 #' counts across rows in a separated row.
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
+#' Note: the total count per category of the row variables is included
+#' in a row with this variable set to 'Total'.
 #' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
 #' statistics across columns in a separated column.
 #' @inheritParams computeSummaryStatisticsByRowColVar
@@ -68,11 +92,10 @@
 #' \itemize{
 #' \item{'statsVar': }{column name(s) of summary table with statistics
 #' included in the final table}
-#' \item{'rowVar': column name(s) of summary table with row variable
-#' included in the final table
-#' }
-#' \item{'rowVarLab': labels corresponding to the 'rowVar' attribute
-#' }
+#' \item{'rowVar': }{column name(s) of summary table with row variable
+#' included in the final table}
+#' \item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
+#' \item{'rowSubtotalInclude': }{\code{rowSubtotalInclude} checked}
 #' }
 #' The computed summary statistics are stored in the 'statsVar' attribute.
 #' @author Laure Cougnaud
@@ -96,7 +119,7 @@ computeSummaryStatisticsTable <- function(data,
 	subjectVar = "USUBJID",	
 	dataTotal = NULL,
 	stats = NULL, filterFct = NULL,
-	rowInclude0 = FALSE, colInclude0 = TRUE,
+	rowInclude0 = FALSE, colInclude0 = FALSE,
 	labelVars = NULL
 ){
 	
@@ -164,7 +187,7 @@ computeSummaryStatisticsTable <- function(data,
 		
 		if(length(rowVarSubTotal) < 1){
 			
-			warning("The row 'sub-total' is not included because only",
+			warning("The row 'sub-total' is not included because only ",
 				"one or no variable is specified in 'rowVar' (without row variable in separated column)."
 			)
 			rowSubtotalInclude <- FALSE
@@ -347,6 +370,8 @@ computeSummaryStatisticsTable <- function(data,
 	
 	attributes(summaryTable)$statsVar <- statsVar
 	
+	attributes(summaryTable)$rowSubtotalInclude <- rowSubtotalInclude
+	
 	attributes(summaryTable)$rowVar <- c(rowVar, 
 		if(length(var) > 1)	c("variable", 
 			if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
@@ -367,13 +392,13 @@ computeSummaryStatisticsTable <- function(data,
 #' Compute summary statistics by specified \code{rowVar} and \code{colVar}
 #' @param rowVar Variable(s) of \code{data} used for
 #' grouping in row in the final table.
-#' @param rowInclude0 Logical, if TRUE (FALSE) by default,
+#' @param rowInclude0 Logical, if TRUE (FALSE by default),
 #' include rows with \code{rowVar} elements not available in the data
 #' (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).
 #' @param colVar Variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
 #' for each subgroup across \code{rowVar} is computed.
-#' @param colInclude0 Logical, if TRUE (FALSE) by default,
+#' @param colInclude0 Logical, if TRUE (FALSE by default),
 #' include columns with \code{colVar} elements not available in the data
 #' (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).
 #' @param varLab Named character vector with label for each variable 
@@ -411,7 +436,7 @@ computeSummaryStatisticsByRowColVar <- function(
 	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
 	type = "auto",
 	rowVar = NULL, rowInclude0 = FALSE,
-	colVar = NULL, colInclude0 = TRUE,
+	colVar = NULL, colInclude0 = FALSE,
 	subjectVar = "USUBJID",
 	labelVars = NULL){
 	
@@ -466,7 +491,7 @@ computeSummaryStatisticsByRowColVar <- function(
 				})
 				summaryTable <- do.call(rbind.fill, summaryTableVarList)
 				# if multiple variable(s), sort 'variable' in order specified in input
-				if(length(var) > 1){
+				if(!is.null(summaryTable) && length(var) > 1){
 					summaryTable$variable <- factor(
 						varLab[summaryTable$variableInit],
 						levels = varLab[var]

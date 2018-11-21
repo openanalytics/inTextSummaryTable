@@ -19,7 +19,7 @@ getSummaryStatisticsTable <- function(
 	rowSubtotalInclude = FALSE,
 	rowInclude0 = FALSE, 
 	# column variable
-	colVar = NULL, colInclude0 = TRUE,
+	colVar = NULL, colInclude0 = FALSE,
 	colTotalInclude = FALSE,
 	subjectVar = "USUBJID",
 	stats = NULL, filterFct = NULL,
@@ -60,7 +60,7 @@ getSummaryStatisticsTable <- function(
 		rowVarLab = attributes(summaryTable)$rowVarLab,
 		rowVarInSepCol = rowVarInSepCol,
 		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
-		rowSubtotalInclude = rowSubtotalInclude,
+		rowSubtotalInclude = attributes(summaryTable)$rowSubtotalInclude,
 		colVar = colVar,
 		title = title, footer = footer,
 		labelVars = labelVars,

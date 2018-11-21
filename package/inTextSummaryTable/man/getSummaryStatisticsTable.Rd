@@ -11,7 +11,7 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   labelVars), rowOrder = "auto", rowOrderTotalFilterFct = NULL,
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
-  colInclude0 = TRUE, colTotalInclude = FALSE,
+  colInclude0 = FALSE, colTotalInclude = FALSE,
   subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
   dataTotal = NULL, type = "auto", labelVars = NULL,
   landscape = FALSE, margin = 1, rowPadBase = 2,
@@ -45,12 +45,13 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 
 \item{rowOrder}{String or function of named list with method used to order the rows,
 see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
+'total' is only available if the total is available for each \code{rowVar} (\code{rowSubtotalInclude} set to TRUE)
 If a string, the same method is used for all \code{rowVar},
 otherwise the list is named with the \code{rowVar} variable, to
 specify a different ordering method for each variable.}
 
 \item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
-based on total counts (in case \code{rowOrder} is 'Total').}
+based on total counts (in case \code{rowOrder} is 'total').}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table.
@@ -62,7 +63,10 @@ counts across rows in a separated row.}
 
 \item{rowTotalLab}{label for the row with total}
 
-\item{rowInclude0}{Logical, if TRUE (FALSE) by default,
+\item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
+group of the nested variable specified in \code{rowVar}}
+
+\item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with \code{rowVar} elements not available in the data
 (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
 
@@ -70,7 +74,7 @@ include rows with \code{rowVar} elements not available in the data
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
-\item{colInclude0}{Logical, if TRUE (FALSE) by default,
+\item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
 
@@ -81,17 +85,38 @@ statistics across columns in a separated column.}
 'USUBJID' by default.}
 
 \item{stats}{(optional) Named list of expression or call object of summary statistics of interest.
-The following variables are recognized, if: 
+The following variables are recognized, if the table is a: 
 \itemize{
-\item{\code{type} is a 'summaryTable':}{'N', 'Mean', 'SD', 'SE', 'Median',
-'Min', 'Max', 'Perc'}
-\item{\code{type} is a 'countTable':}{'N','Perc'}
+\item{'summaryTable': }{
+\itemize{
+\item{'N': }{number of subjects}
+\item{'Mean': }{mean of \code{var}}
+\item{'SD': }{standard deviation of \code{var}}
+\item{'SE': }{standard error of \code{var}}
+\item{'Median': }{median of \code{var}}
+\item{'Min': }{minimum of \code{var}}
+\item{'Max': }{maximum of \code{var}}
+\item{'Perc': }{percentage of subjects}
+\item{'m': }{number of records}
+\item{'Percm': }{percentage of records}
+}
+}
+\item{'countTable': }{
+\itemize{
+\item{'N': }{number of subjects}
+\item{'PercN': }{percentage of subjects}
+\item{'m': }{number of records}
+\item{'Percm': }{percentage of records}
+}
+}
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
-\code{rowVar}/code{colVar} which returns a subset of the summary table of interest.}
+\code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
+Note: the total count per category of the row variables is included
+in a row with this variable set to 'Total'.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
