@@ -11,3 +11,4 @@ tests/
 examples/
 testPackage/lib
 data/
+test.Rmd
