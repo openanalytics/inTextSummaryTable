@@ -35,5 +35,8 @@ pc <- package_coverage(
 	type = c("tests", "vignettes"), # tests + vignettes
 	combine_types = TRUE # report coverage for each type ?
 )
-report(x = pc, file = "testCoverage-inTextSummaryTable.html")
+report(
+	x = pc, 
+	file = paste0("testCoverage-inTextSummaryTable", packageVersion("inTextSummaryTable"), ".html")
+)
 
