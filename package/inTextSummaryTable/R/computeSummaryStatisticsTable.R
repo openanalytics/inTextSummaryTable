@@ -50,7 +50,8 @@
 #' This will be included in the table header (see 'rowVarLab' attribute of the output).
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable
 #' @param dataTotal Data.frame used to extract the Total count, indicated
-#' in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
+#' in 'N' in column header and used for the computation of the percentage:
+#' 'PercN' and 'Percm' parameters.
 #' It should contain the variables specified by \code{colVar}.
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' counts across rows in a separated row.
@@ -274,7 +275,7 @@ computeSummaryStatisticsTable <- function(data,
 			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], "Total")))
 		)
 		
-		# compute also the total count acros columns
+		# compute also the total count across columns
 		summaryTableTotalAllCols <- computeSummaryStatisticsByRowColVar(
 			data = dataTotal, 
 			type = "countTable", 
@@ -645,7 +646,7 @@ computeSummaryStatistics <- function(data,
 #' \item{'alphabetical': }{\code{var} is order in alphabetical order}
 #' \item{'total': }{\code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
 #' The total count is extracted from the rows with all \code{otherVars} equal to 'Total'.
-#' If none, consider all rows.}
+#' If no \code{otherVars} is specified, consider all rows.}
 #' }
 #' }
 #' \item{Function to be applied on each subset to get the order elements of the variable}
@@ -678,13 +679,6 @@ convertVarToFactorWithOrder <- function(
 				factor(data[, var])
 			},
 			'total' = {
-				if(is.null(otherVars)){
-					warning("The variable: ", var, "cannot be sorted based on total count ",
-						"because no total count is available. You might want to set: ",
-						"'rowSubtotalInclude' to TRUE."
-					)
-					convertVarToFactorWithOrder(data = data, var = var, method = "auto")
-				}else{
 					
 					# remove total for this variable
 					dataForTotal <- data[which(data[, var] != "Total"), ]
@@ -693,20 +687,21 @@ convertVarToFactorWithOrder <- function(
 					if(!is.null(totalFilterFct))
 						dataForTotal <- totalFilterFct(dataForTotal)
 					
-					if(!is.null(otherVars)){
+					if(!is.null(otherVars) && length(otherVars) > 0){
 						# consider rows with subtotal for this variable (if any)
 						idxRowTotal <- which(rowSums(dataForTotal[, otherVars, drop = FALSE] == "Total") == length(otherVars))
 						if(length(idxRowTotal) > 0)
 							dataForTotal <- dataForTotal[idxRowTotal, ]
-						totalPerVar <- daply(dataForTotal, var, function(x) sum(x[, totalVar], na.rm = TRUE))
 					}
+					
+					totalPerVar <- daply(dataForTotal, var, function(x) sum(x[, totalVar], na.rm = TRUE))
 					varLevels <- c(
 						if("Total" %in% data[, var])	"Total", 
 						setdiff(names(sort(totalPerVar, decreasing = TRUE)), "Total")
 					)
 					varLevels <- c(varLevels, setdiff(as.character(unique(data[, var])), varLevels))
 					factor(data[, var], levels = varLevels)
-				}
+					
 			}
 		)
 		

@@ -119,7 +119,8 @@ Note: the total count per category of the row variables is included
 in a row with this variable set to 'Total'.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
-in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
+in 'N' in column header and used for the computation of the percentage:
+'PercN' and 'Percm' parameters.
 It should contain the variables specified by \code{colVar}.}
 
 \item{type}{String with type of table: 

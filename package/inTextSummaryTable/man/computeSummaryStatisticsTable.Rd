@@ -81,7 +81,8 @@ group of the nested variable specified in \code{rowVar}}
 'USUBJID' by default.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
-in 'N' in column header and used for the computation of the percentage ('Perc') parameter.
+in 'N' in column header and used for the computation of the percentage:
+'PercN' and 'Percm' parameters.
 It should contain the variables specified by \code{colVar}.}
 
 \item{stats}{(optional) Named list of expression or call object of summary statistics of interest.

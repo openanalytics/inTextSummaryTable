@@ -2,7 +2,7 @@
 % Please edit documentation in R/combineVariables.R
 \name{combineVariables}
 \alias{combineVariables}
-\title{Create a data.frame combining records from multiple variable.}
+\title{Create a data.frame combining set of records from same or multiple variables.}
 \usage{
 combineVariables(data, paramsList, newVar, labelVars = NULL,
   fctTest = "==", includeAll = FALSE, labelAll = "Any")
@@ -15,26 +15,33 @@ There are two ways to select a subset of interest:
 \itemize{
 \item{by specifying one unique variable of interest with: }{
 \itemize{
-\item{
 \item{'var': }{string with column of \code{data} of interest}
 \item{'value': }{value of \code{var} of interest (only used if \code{var} is specified)}
-\item{'fctTest': }{string with function to apply on \code{var} to select subset of interest versus 'value'
-If not specified, the records with \code{var} equal to \code{value} are retained (\code{fctTest} set to '==')} 
-\item{'labelExtra': }{string with extra label concatenate with \code{var} label extracted from \code{labelVars}}
-}}}
+\item{'fctTest': }{string with function to apply on \code{var} to select subset of interest 
+versus 'value'.
+If not specified, the records with \code{var} equal to \code{value} are retained (\code{fctTest} set to '==')
+} 
+\item{label specification: }{
+\itemize{
+\item{'label': }{string with complete label for the group}
+\item{'labelExtra': }{string with extra label, will be concatenated with 
+the label of \code{var} extracted from \code{labelVars}}
+}
+}
+}}
 \item{by specifying a combination of variable of interest with: }{
 \itemize{
 \item{'exprs': }{string with expression of columns of \code{data} to select subset of interest}
-\item{'label': }{string with label for this group}
-}}
-}}
+\item{'label': }{string with complete label for the group}
+}}}}
 
 \item{newVar}{String with name of new variable to construct.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 
-\item{fctTest}{String with default function to use to compare \code{var} and \code{value} specified
-in each sublist of \code{paramsList}.}
+\item{fctTest}{String with global default function to use to compare \code{var} and \code{value} specified
+in each sublist of \code{paramsList}.
+This is only used if \code{fctTest} is not specified in each sublist.}
 
 \item{includeAll}{Logical, if TRUE (FALSE by default) include also the entire data as an additional subgroup.}
 
