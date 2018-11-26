@@ -24,7 +24,7 @@ considered in the specific dimension.}
 \item{'alphabetical': }{\code{var} is order in alphabetical order}
 \item{'total': }{\code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
 The total count is extracted from the rows with all \code{otherVars} equal to 'Total'.
-If none, consider all rows.}
+If no \code{otherVars} is specified, consider all rows.}
 }
 }
 \item{Function to be applied on each subset to get the order elements of the variable}

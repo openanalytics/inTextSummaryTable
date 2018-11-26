@@ -1,3 +1,6 @@
+0.0.3
+    o convertVarToFactorWithOrder: remove warning in case only one row variable is specified and add check if otherVars is of length 1
+    o additional example vignette: combineVars, function for rowOrder
 0.0.2
     o add tests
     o consistent functions naming: computeSummaryStatistics -> computeSummaryStatisticsTable, getSummaryStatistics -> computeSummaryStatistics

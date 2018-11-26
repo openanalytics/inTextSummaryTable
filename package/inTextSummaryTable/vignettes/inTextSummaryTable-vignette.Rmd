@@ -7,6 +7,7 @@ output:
     toc: true
     toc_float:
       collapsed: true
+    toc_depth: 4
     number_sections: true
 vignette: >
   %\VignetteIndexEntry{inTextSummaryTable package}
@@ -68,21 +69,21 @@ be used to your custom `SAS` dataset(s) of interest.
 
 # Summary table
 
-The main workhorse function is **`getSummaryStatisticsTable`** which creates a
+The main workhorse function is: **`getSummaryStatisticsTable`** which creates an
 in-text table of summary statistics for variable(s) of interest.
 
 Two types of table can be created: a **count table for discrete variable**
 (integer, factor, character) to indicate the counts of the number of subjects or
-records per category of interest or **a summary statistics table to indicate
-standard distribution statistics (mean, median, minimum, maximum, standard
+records per category of interest or **a summary statistics table** to indicate
+**standard distribution statistics (mean, median, minimum, maximum, standard
 error, standard deviation, and count statistics) for a numeric variable**.
 
 By default, the type of the table is **automatically detected** based on the
 variable type. This can also be specified via the `type` parameter set to:
 `summaryTable`, `countTable` or `auto` (by default).
 
-Note: all functionalities described for the summary statistics table are also
-available for the count table (and vice versa).
+Note: all functionalities described below for the summary statistics table are
+also available for the count table (and vice versa).
 
 ## Summary statistics
 
@@ -112,7 +113,7 @@ The variable to summarize is specified via the `var`
 parameter. For the summary statistics table, this variable should be numeric.
 **By default, an
 entire set of summary statistical metrics are computed**, see
-`? computeSummaryStatisticsTable` for the list of metrics.
+`?computeSummaryStatisticsTable` for the list of metrics.
 
 ```{r summaryTable-PP-simple}
 
@@ -237,9 +238,10 @@ computed, see documentation of the `stats` parameter for the
 **These statistics can be combined and the format can be customized via the
 `stats` parameter** (`expression` or `call` object). 
 
-In the case
-that an unique statistic is specified, the 'Statistic' column doesn't appear in
-the table.
+If an unique statistic expression is specified, the 'Statistic' column doesn't
+appear in the table. In case multiple statistics are specified, these are
+included
+as multiple rows for each row group specified in `rowVar`.
 
 For example, the summary table is restricted to the mean+-SE statistics.
 
@@ -268,7 +270,9 @@ of .
 		colVar = c("TRTP", "AVISIT"),
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
-		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Max), ")"))),
+		stats =  list(expression(paste0(formatC(Median), 
+			" (", formatC(Min), ", ", formatC(Max), ")"))
+		),
 		footer = "Statistics: median (min, max)"
 	)
 
@@ -276,8 +280,9 @@ of .
 
 ### Row as separated columns
 
-**Row variables** that shouldn't be included as grouping for the rows, but as
-**separated column** are via the `rowVarInSepCol` parameter.
+**Row variables** that shouldn't be included in the unique column with the row
+variables, but as **separated column** are additionally specified via the
+`rowVarInSepCol` parameter.
 
 ```{r summaryTable-PP-rowVarInSepCol}
 
@@ -288,7 +293,9 @@ of .
 		rowVar = c("PARCAT1", "PARAM"),
 		rowVarInSepCol = "PARAM",
 		labelVars = labelVars,
-		stats =  list(expression(paste0(formatC(Median), " (", formatC(Min), ", ", formatC(Min), ")"))),
+		stats =  list(expression(paste0(formatC(Median), 
+			" (", formatC(Min), ", ", formatC(Min), ")"))
+		),
 		footer = "Statistics: median (min, max)"
 	)
 	
@@ -403,11 +410,14 @@ event term are grouped according to the `r labelVars["AEHLGT"]` ('AEHLGT) and
 
 ### External dataset for total counts
 
-By default, the **total per column is extracted from the number of subjects
-available in the data used for the count table**. If the total should be
-extracted from a **different dataset**, e.g. if only a subset of the patients
-are present in the data, it should be specified via the **`dataTotal`** variable
-(used also for the computation of the percentage).
+By default, the **total per column is extracted from
+the number of subjects available in the data used for the table**. If the total
+should be extracted from a **different dataset**, e.g. if only a subset of the
+patients are present in the data, it should be specified via the **`dataTotal`**
+variable (used also for the computation of the percentage).
+
+Note: the percentage of subjects and records is also computed based on this
+`dataTotal` dataset.
 
 For example, the total number of patients per treatment is extracted from the 
 subject-level (`ADSL`) dataset. 
@@ -594,14 +604,19 @@ of the low-level AR category are retained.
 ### Row ordering
 
 The **categories in the row variables can be ordered** based on the
-**`rowOrder`** variable:
+**`rowOrder`** variable. 
 
-* `alphabetical`: categories are ordered **alphabetically**
-* `auto`: order of the categories in the **input variable** (factor levels) 
-are retained (ordered alphabetically if not specifed)
-* `total`: categories are ordered based on the **total of
+This variable is either:
+
+* a string with the name of an implemented method to order the rows, among:
+     + `alphabetical`: categories are ordered **alphabetically**
+     + `auto`: order of the categories in the **input variable** (factor levels) 
+are retained (ordered alphabetically if not specified), e.g. to use a fixed
+       ordering
+     + `total`: categories are ordered based on the **total of
   the sub-category**
-  
+* a custom ordering function to apply in the data to order the rows
+
 #### Common order for all row variables
 
 ```{r countTable-LB-rowOrder-common}
@@ -623,7 +638,7 @@ are retained (ordered alphabetically if not specifed)
 
 ```
 
-#### Different order for each row variables
+#### Different orders for each row variable
 
 In case the order should be different for each row variable, a named list is
 provided for the `rowVar` parameter.
@@ -655,15 +670,14 @@ provided for the `rowVar` parameter.
 
 ```
 
-### Row order based on the total of a column category
+#### Row order based on the total of a column category
 
 If the row categories should be **ordered by total counts for a specific
 category of the column variable(s)**, a function **`rowOrderTotalFilterFct`** is
 specified.
 
-The categories of the adverse events of upper respiratory tract infections  of
-are sorted based on their occurrence on only the treated
-patients.
+The categories of the adverse events of upper respiratory tract infections are
+sorted based on their occurrence on only the treated patients.
 
 ```{r countTable-LB-rowOrder-filterFct}
 
@@ -676,7 +690,42 @@ patients.
 		colVar = "TRTP",
 		labelVars = labelVars,
 		rowPadBase = 10,
+		# consider only the counts of the treated patients to order the rows
 		rowOrderTotalFilterFct = function(x) subset(x, TRTP == "treatmentX"),
+		title = "Table: Adverse Events ordered based on total counts",
+		dataTotal = dataTotal,
+		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		footer = "Statistics: N (%)"
+	)
+
+```
+
+#### Row order based on a custom specified function
+
+If the method to order the rows is more complex, a function can be
+specified for the`rowOrder` parameter.
+
+For example, the adverse event table is sorted based on the counts of patient
+presenting this event across all treatment classes, and in case of ties based on 
+the counts of treated-patients presenting this event.
+
+```{r countTable-LB-rowOrder-customFunction}
+
+	getSummaryStatisticsTable(
+		data = dataAE,
+		type = "count",
+		rowVar = "AEHLT",
+		rowOrder = function(x){
+			totalPerCat <- daply(x, "AEHLT", function(y) sum(y$N))# count across treatments
+			totalForTreatOnly <- daply(x, "AEHLT", function(y)
+				subset(y, TRTP == "treatmentX")$N
+			) # counts across treated patients
+			# sort first based on overall count, then counts of treated patients
+			names(totalPerCat)[order(totalPerCat, totalForTreatOnly, decreasing = TRUE)]
+		},
+		colVar = "TRTP", colTotalInclude = TRUE,
+		labelVars = labelVars,
+		rowPadBase = 10,
 		title = "Table: Adverse Events ordered based on total counts",
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
@@ -710,6 +759,69 @@ The variable type is automatically detected by the function.
 		labelVars = labelVars,
 		rowPadBase = 5,
 		title = "Demographic table",
+	)
+
+```
+
+## Data pre-processing
+
+The variables used for the row and columns of the summary statistics tables
+should be present in a long format in the input data for
+the `getSummaryStatisticsTable` function.
+
+In case the grouping of the rows/columns is more complex and no
+grouping variable is yet available in the data,
+the function `combineVariables` offers simpler functionalities to
+create the input data.
+
+The label for the grouping is extract from the SAS dataset labels if `labelVars`
+is specified, or can be customized (`label` parameter).
+
+For example, the adverse events are counted for different population set:
+screened population, completer population, only events with high severity,
+or related to the treatment and with high severity.
+
+```{r combineVariables}
+
+	# prepare the data: create grouping of interest
+	dataAEGroup <- combineVariables(
+		data = dataAE,
+		newVar = "AEGRP",
+		paramsList = list(
+			# for all screened patients
+			list(var = "SCRNFL", value = "Y"),
+			# only for completers patients
+			list(var = "COMPLFL", value = "Y"),
+			# for high severity
+			list(var = "AESEV", value = 2, fctTest = ">=", labelExtra = "higher than 2"),
+			# treatment-emergent and with higher severity
+			list(
+				exprs = 'AREL == "Related" & AESEVN >= 2',
+				label = paste(
+					labelVars["AREL"], 
+					"with", labelVars["AESEV"], "higher than 2"
+				)
+			),
+			list(var = "AENDY", label = paste("With adverse events ending date"))
+		),
+		# include also counts for all records
+		includeAll = TRUE, labelAll = "All Adverse events", 
+		labelVars = labelVars
+	)
+	labelVars["AEGRP"] <- "Patient groups of interest"
+	
+	# create the table
+	getSummaryStatisticsTable(
+		data = dataAEGroup,
+		colVar = "TRTP", 
+		rowVar = "AEGRP", 
+		varLabGeneral = "Characteristic", varLabSubgroup = "Class",
+		labelVars = labelVars,
+		rowPadBase = 5,
+		dataTotal = dataTotal,
+		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		title = "Table: Adverse events: counts for groups of interest",
+		footer = "Statistics: N (%)"
 	)
 
 ```
@@ -862,10 +974,10 @@ Summary statistics can be visualized via **error bars** by:
 # Format details
 
 The `getSummaryStatisticsTable` function **returns a `flextable` object
-(`? flextable`)**.
+(see `?flextable`)**.
 
 When printed into the R console, this object is displayed in the browser.
-This object can be inserted within a rmarkdown document by printing in the
+This object can be inserted within a rmarkdown document by printing it in the
 specified document chunk.
 
 This can also be exported to a _docx_ file, in case the `file` parameter is

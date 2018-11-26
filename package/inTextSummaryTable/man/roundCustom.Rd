@@ -5,12 +5,12 @@
 \title{Custom round function, rounding to the closest digits
 (instead of rounding to the even number in case of 0.5)}
 \usage{
-roundCustom(x, digits)
+roundCustom(x, digits = 0)
 }
 \arguments{
 \item{x}{numeric vector to round}
 
-\item{digits}{number of digits to consider}
+\item{digits}{number of digits to consider, 0 by default}
 }
 \value{
 rounded vector
@@ -18,6 +18,15 @@ rounded vector
 \description{
 Custom round function, rounding to the closest digits
 (instead of rounding to the even number in case of 0.5)
+}
+\examples{
+# numbers are rounded to the closest even number in case of .5 
+# with the round 'base' function
+round(0.45, 1)
+# 'roundCustom' round to the closest number
+roundCustom(0.45, 1)
+# rounding is the same for uneven number:
+round(0.55, 1) == roundCustom(0.55, 1)
 }
 \author{
 stackoverflow question 6461209
