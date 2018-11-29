@@ -5,11 +5,13 @@
 \title{Format summary statistics table for export}
 \usage{
 formatSummaryStatisticsTable(summaryTable,
-  rowVar = attributes(summaryTable)$rowVar,
-  rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
-  rowSubtotalInclude = FALSE, colVar = NULL, labelVars = NULL,
-  statsLayout = c("row", "col", "rowInSepCol"))
+  rowVar = getAttribute(summaryTable, "rowVar"),
+  rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
+  getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
+  rowTotalInclude = FALSE, rowTotalLab = NULL,
+  rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
+  FALSE), colVar = NULL, labelVars = NULL, statsLayout = c("row",
+  "col", "rowInSepCol"))
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}

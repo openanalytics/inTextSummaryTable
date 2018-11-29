@@ -58,16 +58,17 @@ getSummaryStatisticsTable <- function(
 		labelVars = labelVars,
 		byVar = byVar
 	)
-
+	
+	rowVar <- getAttribute(summaryTable, "rowVar")
+	rowVarLab <- getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars))
+	rowSubtotalInclude <- getAttribute(summaryTable, "rowSubtotalInclude", FALSE)
+	
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
 		rowVar = rowVar,
 		rowVarLab = rowVarLab,
-#		rowVar = attributes(summaryTable)$rowVar, 
-#		rowVarLab = attributes(summaryTable)$rowVarLab,
 		rowVarInSepCol = rowVarInSepCol,
 		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
-#		rowSubtotalInclude = attributes(summaryTable)$rowSubtotalInclude,
 		rowSubtotalInclude = rowSubtotalInclude,
 		colVar = colVar,
 		title = title, footer = footer,

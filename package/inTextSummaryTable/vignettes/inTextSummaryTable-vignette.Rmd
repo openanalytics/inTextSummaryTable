@@ -848,7 +848,7 @@ The variable type is automatically detected by the function.
 ```{r mixedTable-SL}
 
 	customStatsCat <- expression(paste0(N, " (", round(PercN, 1), ")"))
-	customStatsNum <- expression(formatC(Mean), "+-", formatC(SE))
+	customStatsNum <- expression(paste0(formatC(Mean), "+-", formatC(SE)))
 	
 	getSummaryStatisticsTable(
 		data = dataAll$ADSL,
@@ -1057,7 +1057,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		type = "count",
 		labelVars = labelVars,
 		rowPadBase = 10,
-		stats = list(expression(paste0("[X]"))),
+		stats = list(expression(paste0("[X.XX]"))),
 		title = "Table: Treatment-emergent laboratory abnormalities (mock-up)",
 		file = "summaryStatisticsTable_LB_mockUp_count.docx",
 		footer = "Statistics: N (%)",

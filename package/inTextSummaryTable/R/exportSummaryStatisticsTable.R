@@ -19,10 +19,11 @@
 #' @export
 exportSummaryStatisticsTable <- function(
 	summaryTable, 
-	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVar = getAttribute(summaryTable, "rowVar"), 
+	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL,
-	rowSubtotalInclude = FALSE,
+	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE),
 	colVar = NULL, 
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 

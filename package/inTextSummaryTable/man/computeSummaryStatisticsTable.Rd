@@ -133,8 +133,12 @@ should be created.}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',
-depending on the 'type' parameter; with statistics in columns,
-either if \code{type} is:
+depending on the 'type' parameter; or list of such data.frame if
+\code{byVar} is specified.
+The data.frame contains the :
+\itemize{
+\item{row and column variables}
+\item{computed statistics: }{if \code{type} is:
 \itemize{
 \item{'summaryTable': }{
 \itemize{
@@ -154,8 +158,18 @@ either if \code{type} is:
 \item{'N': }{number of subjects}
 \item{'PercN': }{percentage of subjects}
 \item{'m': }{number of records}
+}}}
+}
+\item{statistics specified by \code{statsVar}.
+(if not named and of length 1 in a column 'Statistic')}
+\item{variables: }{
+\itemize{
+\item{'variable': }{variable name in case \code{var} is of length > 1}
+\item{'variableGroup': }{in case \code{var} is of length > 1 and for variable(s) used for count:
+elements of the variable}
 }
 }
+\item{'isTotal': }{variable with logical flag, TRUE if the record contain the total by column}
 }
 The output contains additional the following attributes:
 \itemize{
