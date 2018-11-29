@@ -229,11 +229,13 @@ The label can also be specified directly via the `rowVarLab` parameter.
 	
 ```
 
-### Custom statistics
+### Statistics
 
 For each element of the row and column variables, a set of summary statistics is
 computed, see documentation of the `stats` parameter for the
 `getSummaryStatisticsTable` function for more details.
+
+#### Custom statistics
 
 **These statistics can be combined and the format can be customized via the
 `stats` parameter** (`expression` or `call` object). 
@@ -259,21 +261,92 @@ For example, the summary table is restricted to the mean+-SE statistics.
 	)
 
 ```
-The same table is created with the median (minimum, maximum) of the actual value
-of .
+
+Multiple statistics can be specified.
 
 ```{r summaryTable-PP-medianMinMax}
-	
+
 	getSummaryStatisticsTable(
 		data = dataPP,
 		var = "AVAL",
 		colVar = c("TRTP", "AVISIT"),
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
-		stats =  list(expression(paste0(formatC(Median), 
-			" (", formatC(Min), ", ", formatC(Max), ")"))
+		stats =  list(
+			Mean = expression(formatC(Mean)),
+			Median = expression(formatC(Median))
 		),
-		footer = "Statistics: median (min, max)"
+		footer = "Statistics: median (min, max)",
+		statsLayout = "col",
+		rowPadBase = 10
+	)
+
+```
+
+#### Statistics layout
+
+The layout of the statistics is specified via the `statsLayout` parameter.
+By default, the statistics are included in rows, after each element of the row
+variable(s).
+
+```{r summaryTable-PP-medianMinMax-statsLayoutRowl}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		labelVars = labelVars,
+		stats =  list(
+			Mean = expression(formatC(Mean)),
+			Median = expression(formatC(Median))
+		),
+		footer = "Statistics: median (min, max)",
+		statsLayout = "row",
+		rowPadBase = 10
+	)
+
+```
+
+The statistics can also be included in columns.
+
+```{r summaryTable-PP-medianMinMax-statsLayoutCol}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		labelVars = labelVars,
+		stats =  list(
+			Mean = expression(formatC(Mean)),
+			Median = expression(formatC(Median))
+		),
+		footer = "Statistics: median (min, max)",
+		statsLayout = "col",
+		rowPadBase = 10
+	)
+
+```
+
+The statistics can also be specified in rows, but in a column separated from
+the row variables.
+
+```{r summaryTable-PP-medianMinMax-statsLayoutRowVarInSepCol}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		labelVars = labelVars,
+		stats =  list(
+			Mean = expression(formatC(Mean)),
+			Median = expression(formatC(Median))
+		),
+		footer = "Statistics: median (min, max)",
+		statsLayout = "rowInSepCol",
+		rowPadBase = 10
 	)
 
 ```

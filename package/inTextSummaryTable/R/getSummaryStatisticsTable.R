@@ -29,7 +29,10 @@ getSummaryStatisticsTable <- function(
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
 	title = "Table: Descriptive statistics", footer = NULL,
 	file = "summaryStatisticsTable.docx",
-	outputType = c("flextable", "data.frame")){
+	outputType = c("flextable", "data.frame"),
+	statsLayout = c("row", "col", "rowInSepCol")){
+
+	statsLayout <- match.arg(statsLayout)
 
 	outputType <- match.arg(outputType)
 
@@ -66,7 +69,8 @@ getSummaryStatisticsTable <- function(
 		labelVars = labelVars,
 		file = file, landscape = landscape,
 		margin = margin, rowPadBase = rowPadBase,
-		outputType = outputType
+		outputType = outputType,
+		statsLayout = statsLayout
 	)
 	
 	return(ft)

@@ -26,9 +26,12 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	margin = 1, rowPadBase = 2,
 	title = "Table: Descriptive statistics",
 	footer = NULL,
-	outputType = c("flextable", "data.frame")){
+	outputType = c("flextable", "data.frame"),
+	statsLayout = c("row", "col", "rowInSepCol")){
 
 	outputType  <- match.arg(outputType)
+	
+	statsLayout <- match.arg(statsLayout)
 	
 	## format table
 	summaryTableLong <- formatSummaryStatisticsTable(
@@ -37,7 +40,8 @@ exportSummaryStatisticsTable <- function(summaryTable,
 		rowVarInSepCol = rowVarInSepCol,
 		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
 		rowSubtotalInclude = rowSubtotalInclude,
-		colVar = colVar
+		colVar = colVar,
+		statsLayout = statsLayout
 	)
 	
 	if(outputType == "flextable" | !is.null(file)){
