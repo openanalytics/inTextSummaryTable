@@ -4,11 +4,14 @@
 \alias{exportSummaryStatisticsTable}
 \title{Export a summary table in \code{docx} format.}
 \usage{
-exportSummaryStatisticsTable(summaryTable, rowVar = NULL,
-  rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
-  rowSubtotalInclude = FALSE, colVar = NULL, labelVars = NULL,
-  file = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
+exportSummaryStatisticsTable(summaryTable,
+  rowVar = getAttribute(summaryTable, "rowVar"),
+  rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
+  getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
+  rowTotalInclude = FALSE, rowTotalLab = NULL,
+  rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
+  FALSE), colVar = NULL, labelVars = NULL, file = NULL,
+  landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   outputType = c("flextable", "data.frame"), statsLayout = c("row",
   "col", "rowInSepCol"), byVar = NULL)

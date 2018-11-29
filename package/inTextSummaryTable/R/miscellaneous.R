@@ -22,3 +22,30 @@ roundCustom <- function(x, digits = 0) {
 	z*posneg
 }
 
+#' Get specific attribute from a summaryTable or a list of summaryTables
+#' @param summaryTable Data.frame with summaryTable or list of such data.frames.
+#' @param name String with attribute name.
+#' @param default Object with default value for attribute, 
+#' NULL by default.
+#' @return Object with attribute, or \code{default} is doesn't
+#' exists in \code{summaryTable}
+#' @author Laure Cougnaud
+getAttribute <- function(summaryTable, name, default = NULL){
+	
+	attribute <- if(is.data.frame(summaryTable)){
+		attributes(summaryTable)[[name]]
+	}else{
+		attributeList <- lapply(summaryTable, function(x) attributes(x)[[name]])
+		# only keep names within the list ('use.names' in unlist concatenate with higher-level element)
+		res <- unlist(attributeList)
+		names(res) <- unlist(lapply(attributeList, names))
+		# use 'duplicated' because unique lose names
+		res[!duplicated(res)]
+	}
+	
+	if(is.null(attribute))
+		attribute <- default
+
+	return(attribute)
+	
+}

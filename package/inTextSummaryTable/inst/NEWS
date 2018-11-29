@@ -1,7 +1,8 @@
 0.0.4
     o statsLayout parameter
     o remove Percm (percentage of records based on dataTotal)
-    o byVar
+    o byVar and getAttribute function
+    o example mock-up table in vignette
 0.0.3
     o convertVarToFactorWithOrder: remove warning in case only one row variable is specified and add check if otherVars is of length 1
     o additional example vignette: combineVars, function for rowOrder
