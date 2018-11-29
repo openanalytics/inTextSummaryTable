@@ -820,7 +820,7 @@ at once with the `byVar` variable.
 		"Infections - pathogen unspecified",
 		"Respiratory disorders NEC"
 	))
-	getSummaryStatisticsTable(
+	summaryTables <- getSummaryStatisticsTable(
 		data = dataAEByVar,
 		type = "count",
 		rowVar = c("AEHLT", "AELLT"),
@@ -833,6 +833,8 @@ at once with the `byVar` variable.
 		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
+	summaryTables[[1]]
+	summaryTables[[2]]
 
 ```
 
@@ -1038,6 +1040,28 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		stats =  list(expression(paste0(formatC(Median), "\n(", formatC(Min), ", ", formatC(Min), ")"))),
 		footer = "Statistics: median (min, max)",
 		file = "summaryStatisticsTable_PP_summaryStatistics.docx"
+	)
+
+```
+
+## Mock-up tables
+
+```{r mockUpTables}
+
+	# create summary table
+	getSummaryStatisticsTable(
+		data = dataLB,
+		rowVar = c("PARCAT1", "PARCAT2", "PARAMCD", "ANRIND"),
+		rowVarInSepCol = "ANRIND",
+		colVar = c("TRTP", "AVISIT"),  
+		type = "count",
+		labelVars = labelVars,
+		rowPadBase = 10,
+		stats = list(expression(paste0("[X]"))),
+		title = "Table: Treatment-emergent laboratory abnormalities (mock-up)",
+		file = "summaryStatisticsTable_LB_mockUp_count.docx",
+		footer = "Statistics: N (%)",
+		landscape = TRUE
 	)
 
 ```
