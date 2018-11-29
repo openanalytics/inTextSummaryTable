@@ -13,7 +13,8 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, stats = NULL, filterFct = NULL,
-  rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL)
+  rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
+  byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -126,6 +127,9 @@ include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
+
+\item{byVar}{Variable(s) of \code{data} for which separated table(s)
+should be created.}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',

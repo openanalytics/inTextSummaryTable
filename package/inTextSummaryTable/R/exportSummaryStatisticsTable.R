@@ -9,13 +9,16 @@
 #' \item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
 #' \item{'data.frame': }{data.frame with summary table}
 #' }
+#' If \code{summaryTable} is a list of summary tables,
+#' returns a list of corresponding summary tables in long format.
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
 #' @import officer
 #' @importFrom magrittr "%>%"
 #' @export
-exportSummaryStatisticsTable <- function(summaryTable, 
+exportSummaryStatisticsTable <- function(
+	summaryTable, 
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL,
@@ -27,11 +30,14 @@ exportSummaryStatisticsTable <- function(summaryTable,
 	title = "Table: Descriptive statistics",
 	footer = NULL,
 	outputType = c("flextable", "data.frame"),
-	statsLayout = c("row", "col", "rowInSepCol")){
+	statsLayout = c("row", "col", "rowInSepCol"),
+	byVar = NULL){
 
 	outputType  <- match.arg(outputType)
 	
 	statsLayout <- match.arg(statsLayout)
+	
+	isListTables <- !is.data.frame(summaryTable)
 	
 	## format table
 	summaryTableLong <- formatSummaryStatisticsTable(
@@ -53,13 +59,17 @@ exportSummaryStatisticsTable <- function(summaryTable,
 			title = title, footer = footer
 		)
 		
-		# include the tables in a Word document
+		# include the table(s) in a Word document
 		if(!is.null(file)){	
 			
 			doc <- read_docx()
 			if(landscape)	doc <- doc %>% body_end_section_landscape()
 			
-			doc <- doc %>% body_add_flextable(value = summaryTableFt)
+			if(isListTables){
+				for(summaryTableFtI in summaryTableFt){
+					doc <- doc %>% body_add_flextable(value = summaryTableFtI) %>% body_add_break()
+				}
+			}else	doc <- doc %>% body_add_flextable(value = summaryTableFt)
 			
 			if(landscape){
 				doc <- doc %>%

@@ -59,6 +59,8 @@ summaryTable reformatted in long format, with extra attributes:
 list of list with correspondingly parameters for
 vertical and horizontal lines}
 }
+If \code{summaryTable} is a list of summary tables,
+returns a list of corresponding summary tables in long format.
 }
 \description{
 Format summary statistics table for export

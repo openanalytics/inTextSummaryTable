@@ -483,6 +483,8 @@ adverse event term are grouped according to the `r labelVars["AEHLGT"]`
 
 ### External dataset for total counts
 
+#### Based on subject ID only
+
 By default, the **total per column is extracted from
 the number of subjects available in the data used for the table**. If the total
 should be extracted from a **different dataset**, e.g. if only a subset of the
@@ -800,6 +802,33 @@ the counts of treated-patients presenting this event.
 		labelVars = labelVars,
 		rowPadBase = 10,
 		title = "Table: Adverse Events ordered based on total counts",
+		dataTotal = dataTotal,
+		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		footer = "Statistics: N (%)"
+	)
+
+```
+
+### Multiple summary tables
+
+Multiple summary table for different elements of a specific variable are created
+at once with the `byVar` variable.
+
+```{r countTable-AE-byVar}
+		
+	dataAEByVar <- subset(dataAE, AEHLGT %in% c(
+		"Infections - pathogen unspecified",
+		"Respiratory disorders NEC"
+	))
+	getSummaryStatisticsTable(
+		data = dataAEByVar,
+		type = "count",
+		rowVar = c("AEHLT", "AELLT"),
+		byVar = "AEHLGT", 
+		colVar = "TRTP", colTotalInclude = TRUE,
+		labelVars = labelVars,
+		rowPadBase = 10,
+		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
 		footer = "Statistics: N (%)"

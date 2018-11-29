@@ -30,6 +30,8 @@ Set to NULL (by default) of no footer should be included.}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table
+If \code{summaryTable} is a list of summary tables,
+returns a list of \code{\link[flextable]{flextable}}.
 }
 \description{
 Convert summary statistics table to flextable

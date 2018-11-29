@@ -11,7 +11,7 @@ exportSummaryStatisticsTable(summaryTable, rowVar = NULL,
   file = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"))
+  "col", "rowInSepCol"), byVar = NULL)
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
@@ -75,6 +75,8 @@ Depending on the \code{outputType}:
 \item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
 \item{'data.frame': }{data.frame with summary table}
 }
+If \code{summaryTable} is a list of summary tables,
+returns a list of corresponding summary tables in long format.
 }
 \description{
 Export a summary table in \code{docx} format.
