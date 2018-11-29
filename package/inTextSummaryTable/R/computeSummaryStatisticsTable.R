@@ -59,6 +59,8 @@
 #' in a row with this variable set to 'Total'.
 #' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
 #' statistics across columns in a separated column.
+#' @param byVar Variable(s) of \code{data} for which separated table(s)
+#' should be created.
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
@@ -117,8 +119,11 @@ computeSummaryStatisticsTable <- function(data,
 	dataTotal = NULL,
 	stats = NULL, filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
-	labelVars = NULL
+	labelVars = NULL,
+	byVar = NULL
 ){
+	
+	inputParams <- as.list(environment())
 	
 	if(nrow(data) == 0)
 		stop("The specified dataset is empty.")
@@ -127,6 +132,21 @@ computeSummaryStatisticsTable <- function(data,
 		stop("The variable(s) specified in 'colVar': ",
 			toString(paste0("'", colVar, "'")), 
 			" are not available in 'dataTotal'.")
+
+	if(!is.null(byVar)){
+		if(!byVar %in% colnames(data)){
+			warning("'byVar' is not available in the 'data' so is not used.")
+			byVar <- FALSE
+		}else{
+			res <- dlply(data, byVar, function(dataBy){
+				inputParamsBy <- inputParams
+				inputParamsBy$data <- dataBy
+				inputParamsBy$byVar <- NULL
+				do.call(computeSummaryStatisticsTable, inputParamsBy)		
+			})	
+			return(res)
+		}
+	}
 
 	if(colTotalInclude & is.null(colVar)){
 		warning("Column 'total' is not included because no column variable is specified.")

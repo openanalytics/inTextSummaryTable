@@ -10,6 +10,8 @@
 #' @inheritParams getDimPage
 #' @inheritParams formatSummaryStatisticsTable
 #' @return \code{\link[flextable]{flextable}} object with summary table
+#' If \code{summaryTable} is a list of summary tables,
+#' returns a list of \code{\link[flextable]{flextable}}.
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
@@ -22,6 +24,18 @@ convertSummaryStatisticsTableToFlextable <- function(
 	footer = NULL,
 	fontname = "Times"
 ){
+	
+	if(!is.data.frame(summaryTable)){
+		
+		inputParams <- as.list(environment())
+		res <- sapply(summaryTable, function(summaryTableI){
+			inputParamsBy <- inputParams
+			inputParamsBy$summaryTable <- summaryTableI
+			do.call(convertSummaryStatisticsTableToFlextable, inputParamsBy)		
+		}, simplify = FALSE)	
+		return(res)
+		
+	}
 	
 	# column border
 	bd <- fp_border()

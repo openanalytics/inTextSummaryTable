@@ -30,7 +30,8 @@ getSummaryStatisticsTable <- function(
 	title = "Table: Descriptive statistics", footer = NULL,
 	file = "summaryStatisticsTable.docx",
 	outputType = c("flextable", "data.frame"),
-	statsLayout = c("row", "col", "rowInSepCol")){
+	statsLayout = c("row", "col", "rowInSepCol"),
+	byVar = NULL){
 
 	statsLayout <- match.arg(statsLayout)
 
@@ -54,16 +55,20 @@ getSummaryStatisticsTable <- function(
 		stats = stats, 
 		filterFct = filterFct,
 		dataTotal = dataTotal,
-		labelVars = labelVars
+		labelVars = labelVars,
+		byVar = byVar
 	)
 
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
-		rowVar = attributes(summaryTable)$rowVar, 
-		rowVarLab = attributes(summaryTable)$rowVarLab,
+		rowVar = rowVar,
+		rowVarLab = rowVarLab,
+#		rowVar = attributes(summaryTable)$rowVar, 
+#		rowVarLab = attributes(summaryTable)$rowVarLab,
 		rowVarInSepCol = rowVarInSepCol,
 		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
-		rowSubtotalInclude = attributes(summaryTable)$rowSubtotalInclude,
+#		rowSubtotalInclude = attributes(summaryTable)$rowSubtotalInclude,
+		rowSubtotalInclude = rowSubtotalInclude,
 		colVar = colVar,
 		title = title, footer = footer,
 		labelVars = labelVars,

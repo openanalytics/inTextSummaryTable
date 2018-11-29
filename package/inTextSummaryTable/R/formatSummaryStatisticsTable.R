@@ -28,6 +28,8 @@
 #' list of list with correspondingly parameters for
 #' vertical and horizontal lines}
 #' }
+#' If \code{summaryTable} is a list of summary tables,
+#' returns a list of corresponding summary tables in long format.
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
 #' @importFrom reshape2 melt dcast
@@ -44,6 +46,18 @@ formatSummaryStatisticsTable <- function(
 	labelVars = NULL,
 	statsLayout = c("row", "col", "rowInSepCol")
 	){
+		
+	if(!is.data.frame(summaryTable)){
+		
+		inputParams <- as.list(environment())
+		res <- sapply(summaryTable, function(summaryTableI){
+			inputParamsBy <- inputParams
+			inputParamsBy$summaryTable <- summaryTableI
+			do.call(formatSummaryStatisticsTable, inputParamsBy)		
+		}, simplify = FALSE)	
+		return(res)
+		
+	}
 		
 	statsLayout <- match.arg(statsLayout)	
 		

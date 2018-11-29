@@ -17,7 +17,8 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx", outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"))
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
+  byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -158,6 +159,9 @@ If NULL, the summary table is not exported but only returned as output.}
 \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
 the \code{rowVar} variable(s)}
 }}
+
+\item{byVar}{Variable(s) of \code{data} for which separated table(s)
+should be created.}
 }
 \value{
 Depending on the \code{outputType}:
@@ -165,6 +169,8 @@ Depending on the \code{outputType}:
 \item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
 \item{'data.frame': }{data.frame with summary table}
 }
+If \code{summaryTable} is a list of summary tables,
+returns a list of corresponding summary tables in long format.
 }
 \description{
 Get summary statistics table
