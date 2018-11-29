@@ -45,7 +45,7 @@ and are included in multi-columns layout.}
 \item{row: }{Statistics are included in rows in the first column of the table}
 \item{'col': }{Statistics are included in columns (last row of the header)}
 \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the variable of \code{rowVar}}
+the \code{rowVar} variable(s)}
 }}
 }
 \value{
