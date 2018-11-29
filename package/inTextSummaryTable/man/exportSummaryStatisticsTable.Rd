@@ -10,7 +10,8 @@ exportSummaryStatisticsTable(summaryTable, rowVar = NULL,
   rowSubtotalInclude = FALSE, colVar = NULL, labelVars = NULL,
   file = NULL, landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
-  outputType = c("flextable", "data.frame"))
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"))
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
@@ -58,6 +59,15 @@ Set to NULL if no title should be included.}
 Set to NULL (by default) of no footer should be included.}
 
 \item{outputType}{String with output type, 'data.frame' or 'flextable'.}
+
+\item{statsLayout}{String with layout for the statistics names 
+(in case more than one statistic is included), among:
+\itemize{
+\item{row: }{Statistics are included in rows in the first column of the table}
+\item{'col': }{Statistics are included in columns (last row of the header)}
+\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
+the variable of \code{rowVar}}
+}}
 }
 \value{
 Depending on the \code{outputType}:

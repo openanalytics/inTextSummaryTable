@@ -8,6 +8,14 @@
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowTotalLab label for the row with total
+#' @param statsLayout String with layout for the statistics names 
+#' (in case more than one statistic is included), among:
+#' \itemize{
+#' \item{row: }{Statistics are included in rows in the first column of the table}
+#' \item{'col': }{Statistics are included in columns (last row of the header)}
+#' \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
+#' the \code{rowVar} variable(s)}
+#' }
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -33,8 +41,11 @@ formatSummaryStatisticsTable <- function(
 	rowTotalInclude = FALSE, rowTotalLab = NULL,
 	rowSubtotalInclude = FALSE, 
 	colVar = NULL,
-	labelVars = NULL
+	labelVars = NULL,
+	statsLayout = c("row", "col", "rowInSepCol")
 	){
+		
+	statsLayout <- match.arg(statsLayout)	
 		
 	## format table
 	
@@ -68,7 +79,9 @@ formatSummaryStatisticsTable <- function(
 		
 	# convert from wide to long format
 	statsVar <- if(is.null(attributes(summaryTable)$statsVar))
-		setdiff(colnames(dataWithTotal),  c(rowVar, colVar, "variable", "variableGroup", "isTotal"))	else	
+		setdiff(colnames(dataWithTotal),  
+			c(rowVar, colVar, "variable", "variableGroup", "isTotal")
+		)	else	
 		attributes(summaryTable)$statsVar
 	dataLong <- melt(dataWithTotal, 
 		id.vars = c(rowVar, colVar),
@@ -86,16 +99,18 @@ formatSummaryStatisticsTable <- function(
 		dataLong$StatisticValue <- formatC(dataLong$StatisticValue)
 	
 	# put elements in 'colVar' in different columns (long -> wide format)
-	if(!is.null(colVar)){
+
+	if(!is.null(colVar) | statsLayout == "col"){
 		rowVarForm <- c(
 			if(!is.null(rowVar)) paste(rowVar, collapse = " + "), 
-			if(length(statsVar) > 1)	"Statistic"
+			if(length(statsVar) > 1 & statsLayout != "col")	"Statistic"
 		)
 		if(is.null(rowVarForm))	rowVarForm <- "."
+		colVarUsed <- c(colVar, if(length(statsVar) > 1 & statsLayout == "col")	"Statistic")
 		formulaWithin <- as.formula(paste(
 			paste(rowVarForm, collapse = "+"),
 			"~", 
-			paste(colVar, collapse = " + ")
+			paste(colVarUsed, collapse = " + ")
 		))
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
 		if(all(rowVarForm == "."))	dataLong["."] <- NULL
@@ -107,18 +122,20 @@ formatSummaryStatisticsTable <- function(
 	getTotalRow <- function(data)
 		which(rowSums(data[, rowVar] == "Total") == length(rowVar))
 	
-	if(!is.null(rowVar)){
+	if(!is.null(rowVar) | (statsLayout == "row" & length(statsVar) > 1)){
+		
+		rowVarUsed <- c(rowVar, if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
 		
 		# sort data.frame with specified row variables
 		dataLong <- ddply(dataLong, rowVar)
 		
 		# in case than rowVar are factor, can have issues to include additional rows (*invalid factor*), so convert them as character
-		rowVarFact <- names(which(sapply(dataLong[, rowVar, drop = FALSE], is.factor)))
-		if(length(rowVarFact) > 0)
-			dataLong[, rowVarFact] <- colwise(.fun = as.character)(dataLong[, rowVarFact, drop = FALSE])
+		rowVarUsedFact <- names(which(sapply(dataLong[, rowVarUsed, drop = FALSE], is.factor)))
+		if(length(rowVarUsedFact) > 0)
+			dataLong[, rowVarUsedFact] <- colwise(.fun = as.character)(dataLong[, rowVarUsedFact, drop = FALSE])
 	
 		# if more than one rowVar, convert them to different rows
-		rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
+		rowVarInRow <- setdiff(rowVarUsed, rowVarInSepCol)
 		rowVarFinal <- rowVarInRow[length(rowVarInRow)]
 		rowVarToModify <- rowVarInRow[-length(rowVarInRow)]
 		if(length(rowVarToModify) > 0){
@@ -171,7 +188,8 @@ formatSummaryStatisticsTable <- function(
 		## extract extra parameters for flextable (including header)
 		
 		# extract horizontal lines
-		idxHLine <- if(length(statsVar) > 1){
+		# (horizontal line are included at the bottom of the extracted position)
+		idxHLine <- if(length(statsVar) > 1 & statsLayout == "rowInSepCol"){
 			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
 		}else{
 			if(length(rowVarToModify) > 0){
@@ -204,8 +222,9 @@ formatSummaryStatisticsTable <- function(
 			)
 			
 		# label header for rows
+		rowVarLabs <- c(rowVarLab[setdiff(rowVarInRow, "Statistic")], if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
 		colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
-			paste(rowVarLab[rowVarInRow], collapse = "_")
+			paste(rowVarLabs, collapse = "_")
 		colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- rowVarLab[rowVarInSepCol]
 		
 	}
@@ -223,16 +242,26 @@ formatSummaryStatisticsTable <- function(
 	
 	# extract vertical lines (specified by the right border)
 	attributes(dataLong)$vlineParams <- c(
+		# last header line
 		list(
-			list(i = nRowsHeader, part = "header", j = 1:ncol(dataLong))
+			# Statistic in column
+			if(statsLayout == "col" & length(statsVar) > 1){
+				
+				list(i = nRowsHeader, part = "header", 
+					j = c(1, which(unlist(headerDf[nRowsHeader, ]) == statsVar[length(statsVar)]))
+				)
+			}else{
+				list(i = nRowsHeader, part = "header", j = 1:ncol(dataLong))
+			}
 		),
-		lapply(seq_len(nrow(headerDf)-1), function(i){
+		# other header lines
+		lapply(seq_len(nRowsHeader-1), function(i){
 			j <- which(diff(as.numeric(factor(unlist(headerDf[i, ])))) == 1)
 			list(i = i, part = "header", j = j)
 		})
 	)
 	
-	if(!is.null(rowVar)){
+	if(!is.null(rowVar) | (statsLayout == "row" & length(statsVar) > 1)){
 		
 		if(length(headerRow) > 0 && headerRow != ""){
 		

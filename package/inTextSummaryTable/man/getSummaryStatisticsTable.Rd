@@ -17,7 +17,7 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   landscape = FALSE, margin = 1, rowPadBase = 2,
   title = "Table: Descriptive statistics", footer = NULL,
   file = "summaryStatisticsTable.docx", outputType = c("flextable",
-  "data.frame"))
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -151,6 +151,15 @@ Set to NULL (by default) of no footer should be included.}
 If NULL, the summary table is not exported but only returned as output.}
 
 \item{outputType}{String with output type, 'data.frame' or 'flextable'.}
+
+\item{statsLayout}{String with layout for the statistics names 
+(in case more than one statistic is included), among:
+\itemize{
+\item{row: }{Statistics are included in rows in the first column of the table}
+\item{'col': }{Statistics are included in columns (last row of the header)}
+\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
+the variable of \code{rowVar}}
+}}
 }
 \value{
 Depending on the \code{outputType}:
