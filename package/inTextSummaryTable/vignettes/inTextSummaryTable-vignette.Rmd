@@ -458,9 +458,9 @@ All functionalities provided for the summary statistics table are also available
 for the count table.  
 
 In the following example: the counts of subjects and records for the adverse
-events are reformatted as: 'N/m (%)' with the `stats` parameter, and the adverse
-event term are grouped according to the `r labelVars["AEHLGT"]` ('AEHLGT) and
-`r labelVars["AEHLT"]` ('AEHLT') variable.
+events are reformatted as: 'N (%)' and 'm' with the `stats` parameter, and the
+adverse event term are grouped according to the `r labelVars["AEHLGT"]`
+('AEHLGT) and `r labelVars["AEHLT"]` ('AEHLT') variable.
 
 ```{r countTable-AE-extra}
 
@@ -474,9 +474,9 @@ event term are grouped according to the `r labelVars["AEHLGT"]` ('AEHLGT) and
 		title = "Table: Adverse Events",
 		stats = list(
 			'N (%)' = expression(paste0(N, " (", round(PercN, 1), ")")),
-			'm (%)' = expression(paste0(m, " (", round(Percm, 1), ")"))
+			'm' = expression(m)
 		),
-		footer = "Statistics: number and percentage of subjects: N (%) and records: m (%)"
+		footer = "Statistics: number and percentage of subjects: N (%) and number of records: m"
 	)
 
 ```	

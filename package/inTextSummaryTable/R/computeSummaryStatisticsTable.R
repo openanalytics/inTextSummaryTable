@@ -28,7 +28,6 @@
 #' \item{'Max': }{maximum of \code{var}}
 #' \item{'Perc': }{percentage of subjects}
 #' \item{'m': }{number of records}
-#' \item{'Percm': }{percentage of records}
 #' }
 #' }
 #' \item{'countTable': }{
@@ -36,7 +35,6 @@
 #' \item{'N': }{number of subjects}
 #' \item{'PercN': }{percentage of subjects}
 #' \item{'m': }{number of records}
-#' \item{'Percm': }{percentage of records}
 #' }
 #' }
 #' }
@@ -51,7 +49,7 @@
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable
 #' @param dataTotal Data.frame used to extract the Total count, indicated
 #' in 'N' in column header and used for the computation of the percentage:
-#' 'PercN' and 'Percm' parameters.
+#' 'PercN' parameter.
 #' It should contain the variables specified by \code{colVar}.
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' counts across rows in a separated row.
@@ -77,7 +75,6 @@
 #' \item{'Max': }{maximum of \code{var}}
 #' \item{'Perc': }{percentage of subjects}
 #' \item{'m': }{number of records}
-#' \item{'Percm': }{percentage of records}
 #' }
 #' }
 #' \item{'countTable': }{
@@ -85,7 +82,6 @@
 #' \item{'N': }{number of subjects}
 #' \item{'PercN': }{percentage of subjects}
 #' \item{'m': }{number of records}
-#' \item{'Percm': }{percentage of records}
 #' }
 #' }
 #' }
@@ -297,9 +293,8 @@ computeSummaryStatisticsTable <- function(data,
 		idxTotal <- which(x$isTotal)
 		if(length(idxTotal) > 0){
 			PercN <- x$N/x[idxTotal, "N"]*100
-			Percm <- x$m/x[idxTotal, "m"]*100
-		}else PercN <- Percm <- NA
-		cbind(x, PercN = PercN, Percm = Percm)
+		}else PercN <- NA
+		cbind(x, PercN = PercN)
 	})
 
 	# filter records if any 'filterFct' is specified

@@ -98,7 +98,6 @@ The following variables are recognized, if the table is a:
 \item{'Max': }{maximum of \code{var}}
 \item{'Perc': }{percentage of subjects}
 \item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
 \item{'countTable': }{
@@ -106,7 +105,6 @@ The following variables are recognized, if the table is a:
 \item{'N': }{number of subjects}
 \item{'PercN': }{percentage of subjects}
 \item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
 }
@@ -120,7 +118,7 @@ in a row with this variable set to 'Total'.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage:
-'PercN' and 'Percm' parameters.
+'PercN' parameter.
 It should contain the variables specified by \code{colVar}.}
 
 \item{type}{String with type of table: 
@@ -158,7 +156,7 @@ If NULL, the summary table is not exported but only returned as output.}
 \item{row: }{Statistics are included in rows in the first column of the table}
 \item{'col': }{Statistics are included in columns (last row of the header)}
 \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the variable of \code{rowVar}}
+the \code{rowVar} variable(s)}
 }}
 }
 \value{

@@ -82,7 +82,7 @@ group of the nested variable specified in \code{rowVar}}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
 in 'N' in column header and used for the computation of the percentage:
-'PercN' and 'Percm' parameters.
+'PercN' parameter.
 It should contain the variables specified by \code{colVar}.}
 
 \item{stats}{(optional) Named list of expression or call object of summary statistics of interest.
@@ -99,7 +99,6 @@ The following variables are recognized, if the table is a:
 \item{'Max': }{maximum of \code{var}}
 \item{'Perc': }{percentage of subjects}
 \item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
 \item{'countTable': }{
@@ -107,7 +106,6 @@ The following variables are recognized, if the table is a:
 \item{'N': }{number of subjects}
 \item{'PercN': }{percentage of subjects}
 \item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
 }
@@ -145,7 +143,6 @@ either if \code{type} is:
 \item{'Max': }{maximum of \code{var}}
 \item{'Perc': }{percentage of subjects}
 \item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
 \item{'countTable': }{
@@ -153,7 +150,6 @@ either if \code{type} is:
 \item{'N': }{number of subjects}
 \item{'PercN': }{percentage of subjects}
 \item{'m': }{number of records}
-\item{'Percm': }{percentage of records}
 }
 }
 }
