@@ -46,6 +46,7 @@
 #' @param varLabSubgroup String with general label for sub-group, in case
 #' \code{var} is specified for a count table.
 #' This will be included in the table header (see 'rowVarLab' attribute of the output).
+#' Empty by default.
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable
 #' @param dataTotal Data.frame used to extract the Total count, indicated
 #' in 'N' in column header and used for the computation of the percentage:
@@ -118,7 +119,7 @@
 computeSummaryStatisticsTable <- function(data,  
 	var = NULL, 
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
-	varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
+	varLabGeneral = "Variable", varLabSubgroup = "",
 	varIgnore = NULL,
 	colVar = NULL,
 	colTotalInclude = FALSE,

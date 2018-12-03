@@ -1,5 +1,6 @@
 0.0.5
     o roundCustom: format parameter, 'text' by default
+    o set empty label for sub-group variable
 0.0.4
     o statsLayout parameter
     o remove Percm (percentage of records based on dataTotal)
