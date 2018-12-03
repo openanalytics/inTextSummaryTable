@@ -6,7 +6,7 @@
 \usage{
 computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
-  varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
+  varLabGeneral = "Variable", varLabSubgroup = NULL,
   varIgnore = NULL, colVar = NULL, colTotalInclude = FALSE,
   rowVar = NULL, rowVarLab = getLabelVar(rowVar, data = data, labelVars
   = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
@@ -32,7 +32,8 @@ In case of multiple variable in \code{var}, this will be included in the table h
 
 \item{varLabSubgroup}{String with general label for sub-group, in case
 \code{var} is specified for a count table.
-This will be included in the table header (see 'rowVarLab' attribute of the output).}
+This will be included in the table header (see 'rowVarLab' attribute of the output).
+Empty by default.}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 
