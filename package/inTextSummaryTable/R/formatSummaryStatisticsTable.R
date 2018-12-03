@@ -228,6 +228,14 @@ formatSummaryStatisticsTable <- function(
 					dataLong <- dataLong[-idxNARVF, ]
 				}
 			}
+			idxIsNA <- which(is.na(dataLong[, rowVarFinal]))
+			if(length(idxIsNA) > 0){
+				dataIsNa <- dataLong[idxIsNA, ]
+				dataIsNa[, c("rowPadding", rowVarFinal)] <- dataLong[idxIsNA-1,  c("rowPadding", rowVarFinal)]
+				dataLong[idxIsNA-1, ] <- dataIsNa
+				dataLong <- dataLong[-idxIsNA, ] 
+				
+			}
 			
 			dataLong[, c(rowVarToModify, "rowVarFinal")] <- rownames(dataLong) <- NULL
 			

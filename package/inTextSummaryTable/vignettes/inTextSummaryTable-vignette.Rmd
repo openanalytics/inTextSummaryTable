@@ -850,6 +850,7 @@ The variable type is automatically detected by the function.
 	customStatsCat <- expression(paste0(N, " (", round(PercN, 1), ")"))
 	customStatsNum <- expression(paste0(formatC(Mean), "+-", formatC(SE)))
 	
+	# TODO: check horizontal lines
 	getSummaryStatisticsTable(
 		data = dataAll$ADSL,
 		colVar = "TRT01P", 
@@ -861,7 +862,7 @@ The variable type is automatically detected by the function.
 		var = c("RACE", "AGE", "SEX", "WEIGHTBL", "HEIGHT", "BMIBLGR1", "SMOKE"),
 		varLabGeneral = "Characteristic", varLabSubgroup = "Class",
 		labelVars = labelVars,
-		rowPadBase = 5,
+		rowPadBase = 10,
 		title = "Demographic table",
 	)
 
