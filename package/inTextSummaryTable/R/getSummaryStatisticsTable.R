@@ -26,7 +26,7 @@ getSummaryStatisticsTable <- function(
 	dataTotal = NULL, 
 	type = "auto",
 	labelVars = NULL, 
-	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
+	landscape = FALSE, 	margin = 1, rowPadBase = 4, 
 	title = NULL, footer = NULL,
 	file = "summaryStatisticsTable.docx",
 	outputType = c("flextable", "data.frame"),
