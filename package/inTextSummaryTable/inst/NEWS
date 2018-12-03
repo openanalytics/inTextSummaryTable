@@ -1,3 +1,5 @@
+0.0.5
+    o roundCustom: format parameter, 'text' by default
 0.0.4
     o statsLayout parameter
     o remove Percm (percentage of records based on dataTotal)

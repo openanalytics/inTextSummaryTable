@@ -5,12 +5,14 @@
 \title{Custom round function, rounding to the closest digits
 (instead of rounding to the even number in case of 0.5)}
 \usage{
-roundCustom(x, digits = 0)
+roundCustom(x, digits = 0, format = c("text", "number"))
 }
 \arguments{
 \item{x}{numeric vector to round}
 
 \item{digits}{number of digits to consider, 0 by default}
+
+\item{format}{string with format for the number: 'text' (with trailing zeros) or 'number'}
 }
 \value{
 rounded vector

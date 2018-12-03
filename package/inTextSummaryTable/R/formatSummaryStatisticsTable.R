@@ -170,13 +170,20 @@ formatSummaryStatisticsTable <- function(
 				
 				if(!rowSubtotalInclude){
 					
+					# new element:
+					# convert to character in case is a factor
+					val <- as.character(varX[idxRowToRepl])
+					isNAVal <- which(is.na(val))
+					if(length(isNAVal)){
+						val <- val[-isNAVal]
+						idxRowToRepl <- idxRowToRepl[-isNAVal]
+					}
+					
 					dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
 					# fill columns
 					idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
 					# set var element in final row column
-					# convert to character in case is a factor
-					val <- as.character(varX[idxRowToRepl])
-					dataLong[idxNewRow, rowVarFinal] <- ifelse(is.na(val) | val == "", "Non specified", val)
+					dataLong[idxNewRow, rowVarFinal] <- val#ifelse(is.na(val) | val == "", "Non specified", val)
 					# and set to rest to NA
 					dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
 					# save the padding for flextable
@@ -244,7 +251,11 @@ formatSummaryStatisticsTable <- function(
 	}
 	
 	# extract header (in case multiple 'colVar' specified)
-	header <- strsplit(colnames(dataLong), split = "_")
+	header <- sapply(colnames(dataLong), function(x){
+		res <- strsplit(x, split = "_")[[1]]
+		# remove empty header or 'Statistic'
+		res[!res %in% c("", "Statistic")]
+	}, simplify = FALSE)
 	nRowsHeader <- max(sapply(header, length))
 	headerDf <- as.data.frame(
 		do.call(cbind, 
