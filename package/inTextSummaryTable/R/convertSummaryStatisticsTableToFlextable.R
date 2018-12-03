@@ -19,7 +19,7 @@
 convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
 	landscape = FALSE, 
-	margin = 1, rowPadBase = 2,
+	margin = 1, rowPadBase = 4,
 	title = NULL,
 	footer = NULL,
 	fontname = "Times"

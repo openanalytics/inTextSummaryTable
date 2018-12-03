@@ -5,7 +5,7 @@
 \title{Convert summary statistics table to flextable}
 \usage{
 convertSummaryStatisticsTableToFlextable(summaryTable, landscape = FALSE,
-  margin = 1, rowPadBase = 2, title = NULL, footer = NULL,
+  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
   fontname = "Times")
 }
 \arguments{

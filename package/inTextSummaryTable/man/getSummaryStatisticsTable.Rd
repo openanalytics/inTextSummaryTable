@@ -14,7 +14,7 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   colInclude0 = FALSE, colTotalInclude = FALSE,
   subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
   dataTotal = NULL, type = "auto", labelVars = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 2, title = NULL,
+  landscape = FALSE, margin = 1, rowPadBase = 4, title = NULL,
   footer = NULL, file = "summaryStatisticsTable.docx",
   outputType = c("flextable", "data.frame"), statsLayout = c("row",
   "col", "rowInSepCol"), byVar = NULL)

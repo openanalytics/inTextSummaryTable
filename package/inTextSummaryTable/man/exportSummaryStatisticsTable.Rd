@@ -11,7 +11,7 @@ exportSummaryStatisticsTable(summaryTable,
   rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = NULL, labelVars = NULL, file = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 2, title = NULL,
+  landscape = FALSE, margin = 1, rowPadBase = 4, title = NULL,
   footer = NULL, outputType = c("flextable", "data.frame"),
   statsLayout = c("row", "col", "rowInSepCol"), byVar = NULL)
 }

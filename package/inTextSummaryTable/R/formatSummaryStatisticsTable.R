@@ -113,7 +113,6 @@ formatSummaryStatisticsTable <- function(
 		dataLong$StatisticValue <- formatC(dataLong$StatisticValue)
 	
 	# put elements in 'colVar' in different columns (long -> wide format)
-
 	if(!is.null(colVar) | statsLayout == "col"){
 		rowVarForm <- c(
 			if(!is.null(rowVar)) paste(rowVar, collapse = " + "), 
@@ -142,6 +141,7 @@ formatSummaryStatisticsTable <- function(
 		
 		# sort data.frame with specified row variables
 		dataLong <- ddply(dataLong, rowVar)
+		if(".id" %in% colnames(dataLong))	dataLong$`.id` <- NULL
 		
 		# in case than rowVar are factor, can have issues to include additional rows (*invalid factor*), so convert them as character
 		rowVarUsedFact <- names(which(sapply(dataLong[, rowVarUsed, drop = FALSE], is.factor)))
@@ -149,22 +149,33 @@ formatSummaryStatisticsTable <- function(
 			dataLong[, rowVarUsedFact] <- colwise(.fun = as.character)(dataLong[, rowVarUsedFact, drop = FALSE])
 	
 		# if more than one rowVar, convert them to different rows
-		rowVarInRow <- setdiff(rowVarUsed, rowVarInSepCol)
-		rowVarFinal <- rowVarInRow[length(rowVarInRow)]
-		rowVarToModify <- rowVarInRow[-length(rowVarInRow)]
+		rowVarInRow <- setdiff(rowVarUsed, rowVarInSepCol) # row variables to merge
+		rowVarFinal <- rowVarInRow[length(rowVarInRow)] # final column = more nested row variable
+		rowVarToModify <- rowVarInRow[-length(rowVarInRow)] # variables to merge
+		
 		if(length(rowVarToModify) > 0){
+			
+			# save initial value of rowVarFinal for later
+			dataLong$rowVarFinal <- dataLong[, rowVarFinal]
 			
 			dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
 			if(rowTotalInclude)
 				dataLong[getTotalRow(data = dataLong), "rowPadding"] <- 0
 				
+			# include the value in each rowVar in the column of the more nested variable
+			# start by the second more nested variable
 			for(i in rev(seq_along(rowVarToModify))){
 					
 				var <- rowVarToModify[i]
 				varX <- dataLong[, var]
 				
 				# add new rows
-				idxRowToRepl <- which(!duplicated(interaction(dataLong[, rowVarToModify[seq_len(i)]]))) # indices of rows to replicates
+				# get indices of rows to replicates
+				dataVarI <- dataLong[, rowVarToModify[seq_len(i)]]
+				# fix in case value in one column is NA
+				# -> interaction is set to NA (without concatenating other columns)
+				dataVarI[is.na(dataVarI)] <- ""
+				idxRowToRepl <- which(!duplicated(interaction(dataVarI))) 
 				if(rowTotalInclude)
 					idxRowToRepl <- setdiff(idxRowToRepl, getTotalRow(data = dataLong))
 				
@@ -174,20 +185,20 @@ formatSummaryStatisticsTable <- function(
 					# convert to character in case is a factor
 					val <- as.character(varX[idxRowToRepl])
 					isNAVal <- which(is.na(val))
-					if(length(isNAVal)){
+					if(length(isNAVal) > 0){
 						val <- val[-isNAVal]
 						idxRowToRepl <- idxRowToRepl[-isNAVal]
 					}
 					
 					dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
 					# fill columns
-					idxNewRow <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
+					idxRowToRepl <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
 					# set var element in final row column
-					dataLong[idxNewRow, rowVarFinal] <- val#ifelse(is.na(val) | val == "", "Non specified", val)
+					dataLong[idxRowToRepl, rowVarFinal] <- val #ifelse(is.na(val) | val == "", "Non specified", val)
 					# and set to rest to NA
-					dataLong[idxNewRow, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
+					dataLong[idxRowToRepl, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
 					# save the padding for flextable
-					dataLong[idxNewRow, "rowPadding"] <- rowPadding <- rowPadding - 1
+					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
 				
 				}else{
 					# include the variable in the final column
@@ -197,7 +208,33 @@ formatSummaryStatisticsTable <- function(
 									
 			}
 			
-			dataLong[, rowVarToModify] <- rownames(dataLong) <- NULL
+			# if only one element in last nested rowVar (e.g. only one Statistic)
+			# merge with previous row (concatenate values)
+			if(statsLayout == "row" && length(statsVar) > 1){
+				idxNARVF <- which(!is.na(dataLong$rowVarFinal))
+				idxMore2El <- which(diff(idxNARVF) == 1) # consecutive NAs
+				idxNARVF <- idxNARVF[-unique(c(idxMore2El, idxMore2El+1))]
+				if(length(idxNARVF) > 0){
+					# get value of only element (next row)
+					dataNARVF <- dataLong[idxNARVF, ] 
+					# for final rowVar, concatenate the different values
+					dataNARVF[, rowVarFinal] <- paste(
+						dataLong[idxNARVF-1, rowVarFinal], 
+						dataLong[idxNARVF, rowVarFinal]
+					)
+					# get the padding value of the last row
+					dataNARVF[, "rowPadding"] <- dataLong[idxNARVF-1, "rowPadding"]
+					dataLong[idxNARVF-1, ] <- dataNARVF
+					dataLong <- dataLong[-idxNARVF, ]
+				}
+			}
+			
+			dataLong[, c(rowVarToModify, "rowVarFinal")] <- rownames(dataLong) <- NULL
+			
+			# adjust padding:
+			# in case missing element in one of the nested variable
+			# padding should be reduced
+			dataLong$rowPadding <- smoothPadding(pad = dataLong$rowPadding)
 			
 			# save indices of rows to set padding in flextable
 			padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
@@ -209,23 +246,16 @@ formatSummaryStatisticsTable <- function(
 		## extract extra parameters for flextable (including header)
 		
 		# extract horizontal lines
-		# (horizontal line are included at the bottom of the extracted position)
-		idxHLine <- if(length(statsVar) > 1 & statsLayout == "rowInSepCol"){
-			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
+		# (horizontal line are included at the bottom of the extracted row index)
+		idxHLine <- if(length(rowVarToModify) > 0 & statsLayout == "row"){
+			rowsDiffPad <- setdiff(
+				which(diff(dataLong$rowPadding) != 0), # between rows with different paddings
+				if(statsLayout == "row")
+					which(dataLong$rowPadding == max(dataLong$rowPadding)-1) # excepted for rows with (max padding) -1
+			)
+			rowsDiffPad
 		}else{
-			if(length(rowVarToModify) > 0){
-				rowsDiffPad <- which(diff(dataLong$rowPadding) != 0)
-				if(!rowSubtotalInclude){
-					rowsDiffPad
-				}else{
-					c(
-						rowsDiffPad,
-						which(dataLong$rowPadding == 0) - 1 # all rows with sub-total
-					)
-				}
-			}else if(length(rowVarInSepCol) > 0){
-				which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
-			}
+			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
 		}
 		idxHLine <- unique(idxHLine[idxHLine > 0])
 		
@@ -310,4 +340,28 @@ formatSummaryStatisticsTable <- function(
 	
 	return(dataLong)
 	
+}
+
+
+#' Smooth padding, e.g. remove padding bigger than 1
+#' @param pad Integer vector with padding.
+#' @return Integer vector with 'smooth' padding.
+#' @author Laure Cougnaud
+smoothPadding <- function(pad){
+
+	# extract indices in vector which have padding > 1 with previous row
+	idxPaddingTooBig <- which(diff(pad) > 1)+1
+	while(length(idxPaddingTooBig) > 0){
+		# if next rows have same padding, include also their indices
+		idxPad <- lapply(idxPaddingTooBig, function(i){
+			idxExtra <- which(cumsum(abs(diff(pad[seq(from = i, to = length(pad))]))) == 0) + i
+			idx <- c(i, idxExtra)
+		})
+		# set padding to padding of previous row
+		pad[unlist(idxPad)] <- rep(pad[idxPaddingTooBig-1]+1, times = sapply(idxPad, length))
+		idxPaddingTooBig <- which(diff(pad) > 1)
+	}
+	
+	return(pad)
+
 }

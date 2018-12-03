@@ -1,7 +1,10 @@
 0.0.5
     o roundCustom: format parameter, 'text' by default
     o set empty label for when variable specified for count tablee
-	o set empty title by default
+    o set empty title by default
+    o formatSummaryStatisticsTable: merge row if only one element
+    o set rowPadBase to 4
+    o horizontal lines: remove horizontal lines in statsLayout is 'row'
 0.0.4
     o statsLayout parameter
     o remove Percm (percentage of records based on dataTotal)

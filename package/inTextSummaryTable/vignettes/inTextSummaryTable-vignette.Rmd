@@ -289,7 +289,7 @@ The layout of the statistics is specified via the `statsLayout` parameter.
 By default, the statistics are included in rows, after each element of the row
 variable(s).
 
-```{r summaryTable-PP-medianMinMax-statsLayoutRowl}
+```{r summaryTable-PP-medianMinMax-statsLayoutRow}
 
 	getSummaryStatisticsTable(
 		data = dataPP,
