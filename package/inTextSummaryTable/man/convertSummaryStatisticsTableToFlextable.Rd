@@ -5,8 +5,7 @@
 \title{Convert summary statistics table to flextable}
 \usage{
 convertSummaryStatisticsTableToFlextable(summaryTable, landscape = FALSE,
-  margin = 1, rowPadBase = 2,
-  title = "Table: Descriptive statistics", footer = NULL,
+  margin = 1, rowPadBase = 2, title = NULL, footer = NULL,
   fontname = "Times")
 }
 \arguments{
@@ -21,7 +20,7 @@ format.}
 \item{rowPadBase}{Base padding for row (number of spaces)}
 
 \item{title}{Character vector with title(s) for the table.
-Set to NULL if no title should be included.}
+Set to NULL (by default) if no title should be included.}
 
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}

@@ -2,7 +2,7 @@
 #' @param summaryTable Dummary statistics table in long format,
 #' as returned by \code{\link{formatSummaryStatisticsTable}}.
 #' @param title Character vector with title(s) for the table.
-#' Set to NULL if no title should be included.
+#' Set to NULL (by default) if no title should be included.
 #' @param footer Character vector with footer(s) for the table.
 #' Set to NULL (by default) of no footer should be included.
 #' @param rowPadBase Base padding for row (number of spaces)
@@ -20,7 +20,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
 	landscape = FALSE, 
 	margin = 1, rowPadBase = 2,
-	title = "Table: Descriptive statistics",
+	title = NULL,
 	footer = NULL,
 	fontname = "Times"
 ){

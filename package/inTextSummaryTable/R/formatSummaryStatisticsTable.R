@@ -254,7 +254,7 @@ formatSummaryStatisticsTable <- function(
 	header <- sapply(colnames(dataLong), function(x){
 		res <- strsplit(x, split = "_")[[1]]
 		# remove empty header or 'Statistic'
-		res[!res %in% c("", "Statistic")]
+		res[!res %in% c("", "NA", "Statistic")]
 	}, simplify = FALSE)
 	nRowsHeader <- max(sapply(header, length))
 	headerDf <- as.data.frame(

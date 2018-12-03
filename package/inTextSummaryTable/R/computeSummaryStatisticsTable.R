@@ -119,7 +119,7 @@
 computeSummaryStatisticsTable <- function(data,  
 	var = NULL, 
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
-	varLabGeneral = "Variable", varLabSubgroup = "",
+	varLabGeneral = "Variable", varLabSubgroup = NULL,
 	varIgnore = NULL,
 	colVar = NULL,
 	colTotalInclude = FALSE,

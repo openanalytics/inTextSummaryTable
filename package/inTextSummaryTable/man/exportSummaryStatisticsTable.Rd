@@ -11,10 +11,9 @@ exportSummaryStatisticsTable(summaryTable,
   rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = NULL, labelVars = NULL, file = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 2,
-  title = "Table: Descriptive statistics", footer = NULL,
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), byVar = NULL)
+  landscape = FALSE, margin = 1, rowPadBase = 2, title = NULL,
+  footer = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), byVar = NULL)
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
@@ -56,7 +55,7 @@ format.}
 \item{rowPadBase}{Base padding for row (number of spaces)}
 
 \item{title}{Character vector with title(s) for the table.
-Set to NULL if no title should be included.}
+Set to NULL (by default) if no title should be included.}
 
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}

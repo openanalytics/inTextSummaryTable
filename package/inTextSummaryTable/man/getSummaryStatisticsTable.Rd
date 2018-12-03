@@ -6,19 +6,18 @@
 \usage{
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   data = data, labelVars = labelVars), varIgnore = NULL,
-  varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
-  rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars =
-  labelVars), rowOrder = "auto", rowOrderTotalFilterFct = NULL,
+  varLabGeneral = "Variable", varLabSubgroup = NULL, rowVar = NULL,
+  rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
   rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
   colInclude0 = FALSE, colTotalInclude = FALSE,
   subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
   dataTotal = NULL, type = "auto", labelVars = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 2,
-  title = "Table: Descriptive statistics", footer = NULL,
-  file = "summaryStatisticsTable.docx", outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  byVar = NULL)
+  landscape = FALSE, margin = 1, rowPadBase = 2, title = NULL,
+  footer = NULL, file = "summaryStatisticsTable.docx",
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"), byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -36,7 +35,8 @@ In case of multiple variable in \code{var}, this will be included in the table h
 
 \item{varLabSubgroup}{String with general label for sub-group, in case
 \code{var} is specified for a count table.
-This will be included in the table header (see 'rowVarLab' attribute of the output).}
+This will be included in the table header (see 'rowVarLab' attribute of the output).
+Empty by default.}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
@@ -141,7 +141,7 @@ format.}
 \item{rowPadBase}{Base padding for row (number of spaces)}
 
 \item{title}{Character vector with title(s) for the table.
-Set to NULL if no title should be included.}
+Set to NULL (by default) if no title should be included.}
 
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}

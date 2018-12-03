@@ -10,7 +10,7 @@ getSummaryStatisticsTable <- function(
 	# parameters for summary statistics
 	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
 	varIgnore = NULL,
-	varLabGeneral = "Variable", varLabSubgroup = "",
+	varLabGeneral = "Variable", varLabSubgroup = NULL,
 	# row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
@@ -27,7 +27,7 @@ getSummaryStatisticsTable <- function(
 	type = "auto",
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 2, 
-	title = "Table: Descriptive statistics", footer = NULL,
+	title = NULL, footer = NULL,
 	file = "summaryStatisticsTable.docx",
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),

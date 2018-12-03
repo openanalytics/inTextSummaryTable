@@ -28,7 +28,7 @@ exportSummaryStatisticsTable <- function(
 	labelVars = NULL, 
 	file = NULL, landscape = FALSE, 
 	margin = 1, rowPadBase = 2,
-	title = "Table: Descriptive statistics",
+	title = NULL,
 	footer = NULL,
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
