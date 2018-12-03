@@ -10,7 +10,7 @@ getSummaryStatisticsTable <- function(
 	# parameters for summary statistics
 	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
 	varIgnore = NULL,
-	varLabGeneral = "Variable", varLabSubgroup = "Subgroup",
+	varLabGeneral = "Variable", varLabSubgroup = "",
 	# row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
