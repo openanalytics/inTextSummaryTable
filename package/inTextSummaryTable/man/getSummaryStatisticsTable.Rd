@@ -15,9 +15,9 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
   dataTotal = NULL, type = "auto", labelVars = NULL,
   landscape = FALSE, margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, file = "summaryStatisticsTable.docx",
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), byVar = NULL)
+  footer = NULL, file = NULL, outputType = c("flextable",
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
+  byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}

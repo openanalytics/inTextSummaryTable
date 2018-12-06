@@ -5,6 +5,8 @@
     o formatSummaryStatisticsTable: merge row if only one element
     o set rowPadBase to 4
     o horizontal lines: remove horizontal lines in statsLayout is 'row'
+    o subjectProfileSummaryPlot: seVar optional
+    o compute/export[SummaryStatisticsTable]: add defaults for attributes summaryTable
 0.0.4
     o statsLayout parameter
     o remove Percm (percentage of records based on dataTotal)

@@ -28,7 +28,7 @@ getSummaryStatisticsTable <- function(
 	labelVars = NULL, 
 	landscape = FALSE, 	margin = 1, rowPadBase = 4, 
 	title = NULL, footer = NULL,
-	file = "summaryStatisticsTable.docx",
+	file = NULL,
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	byVar = NULL){
@@ -58,10 +58,6 @@ getSummaryStatisticsTable <- function(
 		labelVars = labelVars,
 		byVar = byVar
 	)
-	
-	rowVar <- getAttribute(summaryTable, "rowVar")
-	rowVarLab <- getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars))
-	rowSubtotalInclude <- getAttribute(summaryTable, "rowSubtotalInclude", FALSE)
 	
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 

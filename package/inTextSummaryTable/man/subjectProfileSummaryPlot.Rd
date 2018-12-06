@@ -6,11 +6,12 @@
 \usage{
 subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   labelVars = labelVars), meanVar = "Mean", seVar = "SE",
-  yLab = paste(meanVar, "+-", seVar), facetVar = NULL,
-  facetScale = "free_y", colorVar = NULL,
+  yLab = paste(meanVar, if (!is.null(seVar)) paste("+-", seVar)),
+  facetVar = NULL, facetScale = "free_y", colorVar = NULL,
   colorLab = getLabelVar(colorVar, labelVars = labelVars),
-  colorPalette = NULL, labelVars = NULL, useLinetype = FALSE,
-  linetypePalette = NULL, jitter = NULL, title = NULL)
+  colorPalette = NULL, labelVars = NULL, useLinetype = TRUE,
+  linetypePalette = NULL, useShape = TRUE, shapePalette = NULL,
+  jitter = NULL, title = NULL, ylim = NULL, xlim = NULL)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
