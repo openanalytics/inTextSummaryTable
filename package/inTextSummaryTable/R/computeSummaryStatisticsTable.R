@@ -114,7 +114,7 @@
 #' The computed summary statistics are stored in the 'statsVar' attribute.
 #' @author Laure Cougnaud
 #' @importFrom dplyr n_distinct
-#' @importFrom plyr ddply rbind.fill
+#' @importFrom plyr ddply rbind.fill dlply
 #' @export
 computeSummaryStatisticsTable <- function(data,  
 	var = NULL, 
@@ -349,7 +349,13 @@ computeSummaryStatisticsTable <- function(data,
 		})
 	}
 	
-	# compute specified metrics and extract statistic names
+	# extract statistic names
+	statsVarInit <- setdiff(
+		colnames(summaryTable), 
+		c(rowVar, colVar, ".id", "variable", "variableGroup", "isTotal", "variableInit")
+	)
+	
+	# compute specified metrics
 	if(!is.null(stats)){
 		
 		if(length(stats) > 1 & is.null(names(stats)))
@@ -358,10 +364,26 @@ computeSummaryStatisticsTable <- function(data,
 		# add specified custom statistics in summaryTable
 		addStats <- function(sumTable, stats){
 			
+			# check if stats has the same name than default name
+			statsName <- names(stats)
+			if(!is.null(statsName)){
+				statsNameConflict <- intersect(statsName, statsVarInit)
+				if(length(statsNameConflict) > 0){
+					for(stat in statsNameConflict){
+						if(as.character(stats[[stat]]) == stat){
+							stats <- stats[names(stats) != stat]
+						}else{
+							stop("The statistic name: '", stat, "'",
+								" is a default name used, please choose a different name.")
+						}
+					}
+				}
+			}
+			
 			statsDf <- sapply(stats, function(expr)
 				eval(expr = expr, envir = sumTable)
 			, simplify = FALSE)
-			if(is.null(names(statsDf)))	names(statsDf) <- "Statistic"
+			if(is.null(statsName))	names(statsDf) <- "Statistic"
 			
 			# save in summaryTable
 			sumTable <- cbind(sumTable, statsDf, stringsAsFactors = FALSE)
@@ -374,45 +396,56 @@ computeSummaryStatisticsTable <- function(data,
 			if(is.null(names(stats)))	"Statistic"	else	names(stats)
 		
 		# if statistics specified for each variable:
-		if(length(var) > 1 & any(names(stats) %in% var)){
+		if(any(names(stats) %in% var)){
 	
+			statsVar <- unname(unique(unlist(lapply(stats, getStatColName))))
 			summaryTable <- ddply(summaryTable, "variable", function(x){
 				varI <- unique(x$variableInit)
 				if(varI %in% names(stats)){
 					addStats(sumTable = x, stats = stats[[varI]])
 				}else x
 			})
-			statsVar <- unname(unique(unlist(lapply(stats, getStatColName))))
+			
 			
 		}else{
 			
-			summaryTable <- addStats(sumTable = summaryTable, stats = stats)
 			statsVar <- getStatColName(stats)
+			summaryTable <- addStats(sumTable = summaryTable, stats = stats)
 		
 		}
 
-	}else	statsVar <- setdiff(colnames(summaryTable), 
-				c(rowVar, colVar, ".id", "variable", "variableGroup", "isTotal", "variableInit")
-			)
+	}else	statsVar <- statsVarInit
 
 	colsToRemove <- which(colnames(summaryTable) %in% c(".id", "variableInit"))
 	if(length(colsToRemove) > 0)
 		summaryTable <- summaryTable[, -colsToRemove]
 	
-	attributes(summaryTable)$statsVar <- statsVar
-	
-	attributes(summaryTable)$rowSubtotalInclude <- rowSubtotalInclude
-	
-	attributes(summaryTable)$rowVar <- c(rowVar, 
-		if(length(var) > 1)	c("variable", 
-			if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
-		)
+	# table attributes
+	attrTable <- list(
+			
+		# attributes created from this function
+		statsVar = statsVar,
+		rowSubtotalInclude = rowSubtotalInclude,
+		rowVar = c(rowVar, 
+			if(length(var) > 1)	c("variable", 
+					if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
+			)
+		),
+		rowVarLab = c(rowVarLab, 
+			if(length(var) > 1)	c("variable" = varLabGeneral, 
+				if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varLabSubgroup)
+			)
+		),
+
+		# attributes extracted from the input parameters,
+		# to set similar defaults for the exportSummaryStatisticsTable
+		rowVarInSepCol = rowVarInSepCol,
+		rowTotalInclude = rowTotalInclude,
+		colVar = colVar		
+
 	)
-	attributes(summaryTable)$rowVarLab <- c(rowVarLab, 
-		if(length(var) > 1)	c("variable" = varLabGeneral, 
-			if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varLabSubgroup)
-		)
-	)
+	
+	attributes(summaryTable) <- c(attributes(summaryTable), attrTable)
 	
 	return(summaryTable)
 	

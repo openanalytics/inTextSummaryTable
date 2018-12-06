@@ -12,3 +12,5 @@ examples/
 testPackage/lib
 data/
 test.Rmd
+.docx
+*.pptx

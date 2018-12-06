@@ -20,20 +20,28 @@
 #' @param jitter Numeric with jitter for the x-axis, only used if \code{colorVar} specified.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @author Laure Cougnaud
-#' @importFrom glpgUtilityFct getPatientColorPalette getLabelVar
+#' @importFrom glpgUtilityFct getGLPGColorPalette getGLPGShapePalette getLabelVar
 #' @import ggplot2
 #' @export
 subjectProfileSummaryPlot <- function(data,
 	xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars),
-	meanVar = "Mean", seVar = "SE", yLab = paste(meanVar, "+-", seVar),
+	meanVar = "Mean", seVar = "SE", 
+	yLab = paste(meanVar, if(!is.null(seVar))	paste("+-", seVar)),
 	facetVar = NULL, facetScale = "free_y",
 	colorVar = NULL, colorLab = getLabelVar(colorVar, labelVars = labelVars),
 	colorPalette = NULL,
 	labelVars = NULL,
-	useLinetype = FALSE,
+	useLinetype = TRUE,
 	linetypePalette = NULL,
+	useShape = TRUE,
+	shapePalette = NULL,
 	jitter = NULL,
-	title = NULL){
+	title = NULL,
+	ylim = NULL, xlim = NULL){
+
+	varNotInData <- setdiff(c(meanVar, seVar), colnames(data))
+	if(length(varNotInData) > 0)
+		stop("Variable(s): ", toString(varNotInData), ".")
 
 	if(!is.null(xVar) & is.null(jitter))
 		jitter <- ifelse(is.numeric(data[, xVar]), 
@@ -42,21 +50,30 @@ subjectProfileSummaryPlot <- function(data,
 	pd <- position_dodge(jitter) # move them .05 to the left and right
 
 	# compute minimum and maximum limits for the error bars
-	data[, c("ymin", "ymax")] <- data[, meanVar] + data[, seVar] %*% t(c(-1, 1))
+	includeEB <- !is.null(seVar)
+	if(includeEB)
+		data[, c("ymin", "ymax")] <- data[, meanVar] + data[, seVar] %*% t(c(-1, 1))
+	
+	# in case variable contain spaces or other character not parsed by ggplot2
+	data[, c("xVar", "colorVar", "meanVar")] <-
+		data[, c(xVar, colorVar, meanVar)]
 	
 	# base plot
 	aesBase <- c(
-		if(!is.null(xVar))	list(x = xVar),
-		if(!is.null(colorVar))	list(color = colorVar)
+		if(!is.null(xVar))	list(x = "xVar"),
+		if(!is.null(colorVar))	list(color = "colorVar"),
+		if(!is.null(colorVar) & useShape)	list(shape = "colorVar")
 	)
 	aesLine <- c(
-		list(y = meanVar),
-		list(group = ifelse(!is.null(colorVar), colorVar, 1)),
-		if(!is.null(colorVar) & useLinetype)	list(linetype = colorVar)
+		list(y = "meanVar"),
+		list(group = ifelse(!is.null(colorVar), "colorVar", 1)),
+		if(!is.null(colorVar) & useLinetype)	list(linetype = "colorVar")
 	)
 	gg <- ggplot(data = data, mapping = do.call(aes_string, aesBase)) +
 		geom_line(do.call(aes_string, aesLine), position = pd) +
-		geom_point(aes_string(y = meanVar), position = pd) + 
+		geom_point(aes_string(y = "meanVar"), position = pd)
+
+	if(includeEB)
 		geom_errorbar(aes_string(ymin = "ymin", ymax = "ymax"), position = pd)
 
 	# facetting
@@ -66,14 +83,20 @@ subjectProfileSummaryPlot <- function(data,
 	# palettes
 	if(!is.null(colorVar)){
 		if(is.null(colorPalette))
-			colorPalette <- getPatientColorPalette(x = data[, colorVar])
-		gg <- gg + scale_color_manual(name = "", values = colorPalette)
+			colorPalette <- getGLPGColorPalette(x = data[, colorVar])
+		gg <- gg + scale_color_manual(name = colorLab, values = colorPalette)
 	}
 		
 	if(useLinetype){
-		gg <- gg + if(!is.null(linetypePalette))
-			scale_linetype_manual(name = "", values = linetypePalette)	else
-			scale_linetype_discrete(name = "")				
+		if(is.null(linetypePalette))
+			shapePalette <- getGLPGLinetypePalette(x = data[, colorVar])
+		gg <- gg + scale_linetype_manual(name = colorLab, values = linetypePalette)			
+	}
+	
+	if(useShape){
+		if(is.null(shapePalette))
+			shapePalette <- getGLPGShapePalette(x = data[, colorVar])
+		gg <- gg + scale_shape_manual(name = colorLab, values = shapePalette)			
 	}		
 	
 	# labels for the axes/title
@@ -83,6 +106,12 @@ subjectProfileSummaryPlot <- function(data,
 		gg <- gg + do.call(labs, argsLab)
 	
 	gg <- gg + theme_classic() + theme(legend.position = "bottom")
+	
+	# set limits for the axes
+	if((!is.null(xlim)) | (!is.null(ylim))){
+		argsCoordCart <- list(xlim = xlim, ylim = ylim)
+		gg <- gg + do.call(coord_cartesian, argsCoordCart)
+	}
 	
 	return(gg)
 	

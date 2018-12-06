@@ -7,13 +7,16 @@
 exportSummaryStatisticsTable(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
-  getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
-  rowTotalInclude = FALSE, rowTotalLab = NULL,
+  getLabelVar(rowVar, labelVars = labelVars)),
+  rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
+  rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default
+  = FALSE), rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
-  FALSE), colVar = NULL, labelVars = NULL, file = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), byVar = NULL)
+  FALSE), colVar = getAttribute(summaryTable, "colVar"),
+  labelVars = NULL, file = NULL, landscape = FALSE, margin = 1,
+  rowPadBase = 4, title = NULL, footer = NULL,
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"))
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
