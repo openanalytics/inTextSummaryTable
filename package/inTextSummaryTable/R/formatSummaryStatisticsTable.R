@@ -257,9 +257,11 @@ formatSummaryStatisticsTable <- function(
 		# (horizontal line are included at the bottom of the extracted row index)
 		idxHLine <- if(length(rowVarToModify) > 0 & statsLayout == "row"){
 			rowsDiffPad <- setdiff(
-				which(diff(dataLong$rowPadding) != 0), # between rows with different paddings
-				if(statsLayout == "row")
-					which(dataLong$rowPadding == max(dataLong$rowPadding)-1) # excepted for rows with (max padding) -1
+				seq_len(nrow(dataLong)), # include lines
+				setdiff(
+					which(dataLong$rowPadding == max(dataLong$rowPadding)), # excepted for rows with max padding
+					which(diff(dataLong$rowPadding) != 0) # at the exception of the rows which have different spanning below
+				)
 			)
 			rowsDiffPad
 		}else{
