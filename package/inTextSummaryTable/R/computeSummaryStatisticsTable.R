@@ -172,6 +172,17 @@ computeSummaryStatisticsTable <- function(data,
 	if(!is.null(var) && !is.null(varIgnore))
 		data <- data[!data[, var] %in% varIgnore, ]
 	
+	# convert row and column variable to factor in the data
+	# (if character, variables pre-defined as factor in one summary tables will be lost during rbind.fill)
+	if(!is.null(rowVar))
+		data[, rowVar] <- lapply(data[, rowVar, drop = FALSE], function(x){
+			factor(x, levels = if(is.factor(x))	levels(x)	else	sort(unique(x)))
+		})
+	if(!is.null(colVar))
+		data[, colVar] <- lapply(data[, colVar, drop = FALSE], function(x){
+			factor(x, levels = if(is.factor(x))	levels(x)	else	sort(unique(x)))
+		})
+		
 	# get general statistics (by group if specified)
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
@@ -203,7 +214,20 @@ computeSummaryStatisticsTable <- function(data,
 				colVar = colVar, colInclude0 = colInclude0,
 				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 			)
-			summaryTableRowTotal[, rowVar] <- "Total"
+			
+			# include also the total per column (if required)
+			if(colTotalInclude){
+				summaryTableRowTotalColTotal <- computeSummaryStatisticsByRowColVar(
+					data = data, 
+					var = var, varLab = varLab, type = type,
+					rowInclude0 = rowInclude0,	
+					subjectVar = subjectVar, labelVars = labelVars
+				)
+				summaryTableRowTotalColTotal[, colVar] <- "Total"
+				summaryTableRowTotal <- rbind.fill(summaryTableRowTotal, summaryTableRowTotalColTotal)
+			}
+			
+			summaryTableRowTotal[, rowVar] <- "Total"			
 			
 		}else{
 			warning("The row 'total' is not included because no 'rowVar' is specified.")
@@ -232,16 +256,14 @@ computeSummaryStatisticsTable <- function(data,
 				
 				# remove rows which have NA for the nested sub-variable
 				# otherwise have summary statistics are duplicated (sub-total and initial)
-#				rowVarSubTotalOther <- rowVarForSubTotal[
-#					setdiff(seq_along(rowVarForSubTotal), seq_along(match(rowVarSubTotal, rowVarForSubTotal)))
-#				]
-#				idxMissingSubVar <- which(
-#					rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
-#				)
-#				if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0)
-#					dataForSubTotal <- data[-idxMissingSubVar, ]
-			
-				dataForSubTotal <- data
+				rowVarSubTotalOther <- rowVarForSubTotal[
+					setdiff(seq_along(rowVarForSubTotal), seq_along(match(rowVarSubTotal, rowVarForSubTotal)))
+				]
+				idxMissingSubVar <- which(
+					rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
+				)
+				if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0)
+					dataForSubTotal <- data[-idxMissingSubVar, ]
 				
 				# compute statistics
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
@@ -251,6 +273,19 @@ computeSummaryStatisticsTable <- function(data,
 					colVar = colVar, colInclude0 = colInclude0,
 					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 				)
+				
+				# include also the total per column (if required)
+				if(colTotalInclude){
+					summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
+						data = dataForSubTotal, 
+						var = var, type = type,
+						rowVar = rowVarSubTotal, rowInclude0 = rowInclude0,
+						subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+					)
+					summaryTableRowSubtotalVarColTotal[, colVar] <- "Total"
+					summaryTableRowSubtotalVar <- rbind.fill(summaryTableRowSubtotalVar, summaryTableRowSubtotalVarColTotal)
+				}
+				
 				# set other row variables to 'Total'
 				summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rowVarSubTotal)] <- "Total"
 				# save results
@@ -280,9 +315,12 @@ computeSummaryStatisticsTable <- function(data,
 		if(rowSubtotalInclude)
 			summaryTable <- rbind.fill(summaryTable, summaryTableRowSubtotal)
 		
-		summaryTable[, rowVar] <- lapply(rowVar, function(x)
-			factor(summaryTable[, x], levels = unique(c("Total", rowVarLevels[[x]])))
-		)
+		summaryTable[, rowVar] <- lapply(rowVar, function(x){
+			xVar <- summaryTable[, x]
+			# only add Total is included in the table (case: missing nested var)
+			levelsX <- unique(c(if("Total" %in% xVar)	"Total", rowVarLevels[[x]]))
+			factor(xVar, levels = levelsX)
+		})
 		
 	}
 	
@@ -307,6 +345,15 @@ computeSummaryStatisticsTable <- function(data,
 		colVar = colVar, colInclude0 = colInclude0,
 		subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 	)
+	if(colTotalInclude){
+		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
+			data = dataTotal, 
+			type = "countTable", 
+			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+		)
+		summaryTableTotalCol[, colVar] <- "Total"
+		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalCol)
+	}
 	
 	## column total
 	if(colTotalInclude){
@@ -320,16 +367,6 @@ computeSummaryStatisticsTable <- function(data,
 		summaryTable[, colVar] <- lapply(colVar, function(x)
 			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], "Total")))
 		)
-		
-		# compute also the total count across columns
-		summaryTableTotalAllCols <- computeSummaryStatisticsByRowColVar(
-			data = dataTotal, 
-			type = "countTable", 
-			colInclude0 = colInclude0,
-			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
-		)
-		summaryTableTotalAllCols[, colVar] <- "Total"
-		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalAllCols)
 		
 	}
 	# save total or not in the 'isTotal' column
