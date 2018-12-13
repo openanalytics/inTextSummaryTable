@@ -18,12 +18,15 @@
 #' @author Laure Cougnaud
 convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
-	landscape = FALSE, 
+	landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 4,
 	title = NULL,
 	footer = NULL,
-	fontname = "Times"
+	style = "report",
+	fontname = "Times" #switch(style, 'report' = "Times", 'presentation = "Tahoma')
 ){
+	
+	style <- match.arg(style, choices = c("report", "presentation"))
 	
 	if(!is.data.frame(summaryTable)){
 		
@@ -38,7 +41,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 	}
 	
 	# column border
-	bd <- fp_border()
+	bd <- switch(style,
+		'report' = fp_border(),
+		'presentation' = fp_border(color = "white")
+	)
 	
 	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
 	colsDataFt <- colnames(summaryTable)
@@ -129,8 +135,23 @@ convertSummaryStatisticsTableToFlextable <- function(
 	# set font
 	ft <- ft %>% font(fontname = fontname, part = "all")
 	
-	# adjust to fit in document:
-	widthPage <- getDimPage(type = "width", landscape = landscape, margin = margin)
+	if(style == "presentation"){
+		colorTable <- glpgColor(type = "table")
+		idxRows <- seq_len(nrow(summaryTable))
+		ft <- ft %>% 
+			# header in white on green background
+			bg(bg = colorTable["header"], part = "header") %>%
+			color(color = "white", part = "header") %>%
+			# body with alternated dark and light grey background
+			bg(bg = colorTable["row1"], i = idxRows[idxRows %% 2 == 1], part = "body") %>%
+			bg(bg = colorTable["row2"], i = idxRows[idxRows %% 2 == 0], part = "body")
+	}
+	
+#	# adjust to fit in document:
+	widthPage <- getDimPage(
+		type = "width", landscape = landscape, margin = margin,
+		style = style
+	)
 	varFixed <- getNewCol(intersect(c("Statistic", "Total"), colsDataFt))
 	varFixedWidth <- 0.5
 	ft <- width(ft, j = varFixed, width = 0.5)
@@ -147,16 +168,30 @@ convertSummaryStatisticsTableToFlextable <- function(
 #' @param landscape Logical, if TRUE (by defaut) the table is presented in landscape
 #' format.
 #' @param margin Margin in the document in inches.
+#' @param style string with table style, either 'report' or 'presentation'
 #' @return integer with dimension of interest
 #' @author Laure Cougnaud
-getDimPage <- function(type = c("width", "height"), landscape = TRUE, margin = 1){
+getDimPage <- function(
+	type = c("width", "height"), 
+	landscape = (style == "presentation"), 
+	margin = 1,
+	style = "report"){
+
 	# landscape: 29.7 * 21 cm ~ 11 * 8 inches ~ 2138.4 * 1512 ptx
 	type <- match.arg(type)
-	a4Dim <- c(21, 29.7)/2.54 # inches
+	
+	style <- match.arg(style, choices = c("report", "presentation"))
+	
+	pageDimPortrait <- switch(style,
+		'report' = c(21, 29.7)/2.54,
+		'presentation' = c(7.5, 10.83)
+	)
+	
 	typeDim <- switch(type,
-		'width' = ifelse(landscape, a4Dim[2], a4Dim[1]),
-		'height' = ifelse(landscape, a4Dim[1], a4Dim[2])
+		'width' = ifelse(landscape, pageDimPortrait[2], pageDimPortrait[1]),
+		'height' = ifelse(landscape, pageDimPortrait[1], pageDimPortrait[2])
 	)
 	dimPage <- typeDim - 2 * margin
+	
 	return(dimPage)
 }

@@ -4,7 +4,8 @@
 \alias{getDimPage}
 \title{Return page dimension of interest}
 \usage{
-getDimPage(type = c("width", "height"), landscape = TRUE, margin = 1)
+getDimPage(type = c("width", "height"), landscape = (style ==
+  "presentation"), margin = 1, style = "report")
 }
 \arguments{
 \item{type}{String dimension of interest, 'width' or 'height'.}
@@ -13,6 +14,8 @@ getDimPage(type = c("width", "height"), landscape = TRUE, margin = 1)
 format.}
 
 \item{margin}{Margin in the document in inches.}
+
+\item{style}{string with table style, either 'report' or 'presentation'}
 }
 \value{
 integer with dimension of interest

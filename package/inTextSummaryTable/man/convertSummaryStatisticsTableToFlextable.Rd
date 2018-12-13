@@ -4,9 +4,9 @@
 \alias{convertSummaryStatisticsTableToFlextable}
 \title{Convert summary statistics table to flextable}
 \usage{
-convertSummaryStatisticsTableToFlextable(summaryTable, landscape = FALSE,
-  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
-  fontname = "Times")
+convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
+  == "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  footer = NULL, style = "report", fontname = "Times")
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
@@ -24,6 +24,8 @@ Set to NULL (by default) if no title should be included.}
 
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
+
+\item{style}{string with table style, either 'report' or 'presentation'}
 
 \item{fontname}{String with font name, 'Times' by default}
 }
