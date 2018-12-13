@@ -26,11 +26,12 @@ getSummaryStatisticsTable <- function(
 	dataTotal = NULL, 
 	type = "auto",
 	labelVars = NULL, 
-	landscape = FALSE, 	margin = 1, rowPadBase = 4, 
+	landscape = (style == "presentation"), 	margin = 1, rowPadBase = 4, 
 	title = NULL, footer = NULL,
 	file = NULL,
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
+	style = "report",
 	byVar = NULL){
 
 	statsLayout <- match.arg(statsLayout)
@@ -72,7 +73,8 @@ getSummaryStatisticsTable <- function(
 		file = file, landscape = landscape,
 		margin = margin, rowPadBase = rowPadBase,
 		outputType = outputType,
-		statsLayout = statsLayout
+		statsLayout = statsLayout,
+		style = style
 	)
 	
 	return(ft)

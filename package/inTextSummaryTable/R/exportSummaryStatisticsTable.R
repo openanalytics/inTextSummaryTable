@@ -2,6 +2,8 @@
 #' @param file String with path of the file where the table should be exported.
 #' If NULL, the summary table is not exported but only returned as output.
 #' @param outputType String with output type, 'data.frame' or 'flextable'.
+#' @param style string with table style in case \code{outputType} is 'flextable',
+#'  either 'report' or 'presentation'
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams convertSummaryStatisticsTableToFlextable
 #' @return Depending on the \code{outputType}:
@@ -27,12 +29,13 @@ exportSummaryStatisticsTable <- function(
 	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE),
 	colVar = getAttribute(summaryTable, "colVar"), 
 	labelVars = NULL, 
-	file = NULL, landscape = FALSE, 
+	file = NULL, landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 4,
 	title = NULL,
 	footer = NULL,
 	outputType = c("flextable", "data.frame"),
-	statsLayout = c("row", "col", "rowInSepCol")){
+	statsLayout = c("row", "col", "rowInSepCol"),
+	style = "report"){
 
 	outputType  <- match.arg(outputType)
 	
@@ -57,7 +60,8 @@ exportSummaryStatisticsTable <- function(
 		summaryTableFt <- convertSummaryStatisticsTableToFlextable(
 			summaryTable = summaryTableLong,
 			landscape = landscape, margin = margin, rowPadBase = rowPadBase,
-			title = title, footer = footer
+			title = title, footer = footer,
+			style = style
 		)
 		
 		# include the table(s) in a Word document

@@ -14,10 +14,10 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   colInclude0 = FALSE, colTotalInclude = FALSE,
   subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
   dataTotal = NULL, type = "auto", labelVars = NULL,
-  landscape = FALSE, margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, file = NULL, outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  byVar = NULL)
+  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
+  title = NULL, footer = NULL, file = NULL,
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"), style = "report", byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -159,6 +159,9 @@ If NULL, the summary table is not exported but only returned as output.}
 \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
 the \code{rowVar} variable(s)}
 }}
+
+\item{style}{string with table style in case \code{outputType} is 'flextable',
+either 'report' or 'presentation'}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}

@@ -13,10 +13,10 @@ exportSummaryStatisticsTable(summaryTable,
   = FALSE), rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = getAttribute(summaryTable, "colVar"),
-  labelVars = NULL, file = NULL, landscape = FALSE, margin = 1,
-  rowPadBase = 4, title = NULL, footer = NULL,
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"))
+  labelVars = NULL, file = NULL, landscape = (style ==
+  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  footer = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report")
 }
 \arguments{
 \item{summaryTable}{Dummary statistics table in long format,
@@ -73,6 +73,9 @@ Set to NULL (by default) of no footer should be included.}
 \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
 the \code{rowVar} variable(s)}
 }}
+
+\item{style}{string with table style in case \code{outputType} is 'flextable',
+either 'report' or 'presentation'}
 }
 \value{
 Depending on the \code{outputType}:
