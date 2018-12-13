@@ -229,9 +229,23 @@ computeSummaryStatisticsTable <- function(data,
 			# compute sub-total for each specified rowVar (excepted the last one)
 			summaryTableRowSubtotal <- data.frame()
 			while(length(rowVarSubTotal) > 0){
+				
+				# remove rows which have NA for the nested sub-variable
+				# otherwise have summary statistics are duplicated (sub-total and initial)
+#				rowVarSubTotalOther <- rowVarForSubTotal[
+#					setdiff(seq_along(rowVarForSubTotal), seq_along(match(rowVarSubTotal, rowVarForSubTotal)))
+#				]
+#				idxMissingSubVar <- which(
+#					rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
+#				)
+#				if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0)
+#					dataForSubTotal <- data[-idxMissingSubVar, ]
+			
+				dataForSubTotal <- data
+				
 				# compute statistics
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
-					data = data, 
+					data = dataForSubTotal, 
 					var = var, type = type,
 					rowVar = rowVarSubTotal, rowInclude0 = rowInclude0,
 					colVar = colVar, colInclude0 = colInclude0,
@@ -243,6 +257,7 @@ computeSummaryStatisticsTable <- function(data,
 				summaryTableRowSubtotal <- rbind.fill(summaryTableRowSubtotal, summaryTableRowSubtotalVar)
 				# consider the next variable
 				rowVarSubTotal <- rowVarSubTotal[-length(rowVarSubTotal)]
+				
 			}
 			
 		}
@@ -517,13 +532,13 @@ computeSummaryStatisticsByRowColVar <- function(
 		groupVar <- c(
 			if(!is.null(rowVar)){
 				if(!rowInclude0){
-					data$rowVariables <- interaction(data[, rowVar], drop = TRUE)
+					data$rowVariables <- interactionCustom(data = data, var = rowVar)
 					"rowVariables"
 				}else	rowVar
 			},
 			if(!is.null(colVar)){
 				if(!colInclude0){
-					data$colVariables <- interaction(data[, colVar], drop = TRUE)
+					data$colVariables <- interactionCustom(data = data, var = colVar)
 					"colVariables"
 				}else colVar	
 			}

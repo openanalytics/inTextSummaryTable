@@ -59,3 +59,29 @@ getAttribute <- function(summaryTable, name, default = NULL){
 	return(attribute)
 	
 }
+
+#' Compute the interaction between variable(s),
+#' without propagating the missing values (if present in one of the variable)
+#' unlike the behaviour with \code{\link{interaction}}.
+#' This also ensure that the levels of the final interaction variables
+#' are ordered similarly as the levels of the input \code{var} (if present).
+#' @param data Data.frame with data.
+#' @param var Character vector with variable(s) to consider.
+#' @return factor with interaction between the input \code{var}
+#' @author Laure Cougnaud
+#' @export
+interactionCustom <- function(data, var){
+	
+	# use paste rather than 'interaction', otherwise the missing values are propagated
+	varInteraction <- do.call(paste, data[, var, drop = FALSE])
+	
+	# extract the levels of the output factor ensuring that the order from the
+	# input factors are presered.
+	levelsVarInteraction <- unique(varInteraction[do.call(order, data[, var, drop = FALSE])])
+	
+	# bulid the final output factor
+	varInteractionFact <- factor(varInteraction, levels = levelsVarInteraction)
+	
+	return(varInteractionFact)
+	
+}
