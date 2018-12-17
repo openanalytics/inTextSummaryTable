@@ -208,12 +208,13 @@ formatSummaryStatisticsTable <- function(
 									
 			}
 			
-			# if only one element in last nested rowVar (e.g. only one Statistic)
+			# if only one element in last nested rowVar (e.g. only one Statistic, or counts with categories)
 			# merge with previous row (concatenate values)
-			if(statsLayout == "row" && length(statsVar) > 1){
+			if(statsLayout == "row" && (length(statsVar) > 1 | "variableGroup" %in% rowVar)){
 				idxNARVF <- which(!is.na(dataLong$rowVarFinal))
 				idxMore2El <- which(diff(idxNARVF) == 1) # consecutive NAs
-				idxNARVF <- idxNARVF[-unique(c(idxMore2El, idxMore2El+1))]
+				if(length(idxMore2El) > 0)
+					idxNARVF <- idxNARVF[-unique(c(idxMore2El, idxMore2El+1))]
 				if(length(idxNARVF) > 0){
 					# get value of only element (next row)
 					dataNARVF <- dataLong[idxNARVF, ] 
@@ -234,7 +235,6 @@ formatSummaryStatisticsTable <- function(
 				dataIsNa[, c("rowPadding", rowVarFinal)] <- dataLong[idxIsNA-1,  c("rowPadding", rowVarFinal)]
 				dataLong[idxIsNA-1, ] <- dataIsNa
 				dataLong <- dataLong[-idxIsNA, ] 
-				
 			}
 			
 			dataLong[, c(rowVarToModify, "rowVarFinal")] <- rownames(dataLong) <- NULL
