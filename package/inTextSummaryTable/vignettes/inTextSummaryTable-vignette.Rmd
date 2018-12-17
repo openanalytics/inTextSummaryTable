@@ -197,7 +197,9 @@ The total is included for each column in the header.
 	
 ```
 
-### Variable labels
+### Row variable labels
+
+#### Based on dataset
 
 The **labels used for the variables parameter** (row variables) **are
 automatically extracted from the labels** contained in the _SAS_ dataset, by
@@ -215,6 +217,8 @@ specifying the `labelVars` parameter.
 	
 ```
 
+#### Custom
+
 The label can also be specified directly via the `rowVarLab` parameter.
 
 ```{r summaryTable-PP-rowVarWithLabel-rowVarLab}
@@ -227,6 +231,29 @@ The label can also be specified directly via the `rowVarLab` parameter.
 		rowVarLab = c('PARAM' = "Pharmacokinetics parameter", 'PARCAT1' = "Compound")
 	)
 	
+```
+
+#### Use of superscript in variable labels 
+
+To use a superscript in the variable label, e.g. to reference additional
+information in a specific footnote, the text should be formatted as:
+`text^{superscript}`.
+
+```{r summaryTable-PP-rowVarWithLabel-rowVarLab-superscript}
+
+	getSummaryStatisticsTable(
+		data = dataPP,
+		var = "AVAL",
+		colVar = c("TRTP", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"),
+		rowVarLab = c(
+			'PARAM' = "Pharmacokinetics parameter", 
+			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
+		),
+		# include the footnote
+		footer = "(1) Each compound is labelled according to its Galapagos compound ID."
+	)	
+
 ```
 
 ### Statistics
