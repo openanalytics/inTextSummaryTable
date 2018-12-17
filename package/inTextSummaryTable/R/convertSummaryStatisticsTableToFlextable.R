@@ -117,13 +117,19 @@ convertSummaryStatisticsTableToFlextable <- function(
 		}
 	
 	# add footer
-	if(!is.null(footer))	
-		for(footerI in footer){
-			paramsFooter <- setNames(list(footer), names(colsDataFt[1]))
+	if(!is.null(footer)){
+		for(iFoot in seq_along(footer)){
+			paramsFooter <- setNames(list(footer[iFoot]), names(colsDataFt[1]))
 			ft <- do.call(add_footer, 
-					c(list(x = ft), paramsFooter)
-			) %>% merge_at(j = 1:ncol(summaryTable), part = "footer")
+				c(list(x = ft, top = FALSE), paramsFooter)
+			)
+			ft <- ft %>% merge_at(
+				i = iFoot,
+				j = seq_len(ncol(summaryTable)), part = "footer"
+			)
 		}
+		
+	}
 	
 	# Format superscript (if any)
 	# for body
