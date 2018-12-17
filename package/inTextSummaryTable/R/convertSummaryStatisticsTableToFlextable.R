@@ -126,6 +126,30 @@ convertSummaryStatisticsTableToFlextable <- function(
 			) %>% merge_at(j = 1:ncol(summaryTable), part = "footer")
 		}
 	
+	# if superscript
+#	summaryTableMat <- as.matrix(summaryTable)
+#	idxSuperscriptMat <- grep("\\^\\{.+\\}", summaryTableMat)
+#	if(length(idxSuperscriptMat) > 0){
+#		idxSuperscriptAI <- arrayInd(idxSuperscriptMat, .dim = dim(summaryTableMat))
+#		for(iSP in seq_along(idxSuperscriptMat)){
+#			textInit <- summaryTableMat[idxSuperscriptAI]
+#			idxMatches <- regexec(pattern = "Baseline (.+)", textInit)
+#			textSplit <- regmatches(textInit, idxMatches)
+#			for(el in textSplit){
+#				ft2 <- ft %>% display(
+#					i = idxSuperscriptAI[iSP, 1],
+#					col_key = idxSuperscriptAI[iSP, 2],
+#					pattern = "{{val}}{{pow}}",
+#					formatters = list(
+#						as.formula(paste0("val ~ '", el[1], "'")), 
+#						as.formula(paste0("pow ~ '", el[2], "'"))
+#					),
+#					fprops = list(pow = fp_text(vertical.align = "superscript"))
+#				)
+#			}
+#		}
+#	}
+
 	# set fontsize
 	ft <- fontsize(ft, size = 8, part = "all")
 	
@@ -142,6 +166,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 			# header in white on green background
 			bg(bg = colorTable["header"], part = "header") %>%
 			color(color = "white", part = "header") %>%
+			# footer with white background
+			bg(bg = "white", part = "footer") %>%
 			# body with alternated dark and light grey background
 			bg(bg = colorTable["row1"], i = idxRows[idxRows %% 2 == 1], part = "body") %>%
 			bg(bg = colorTable["row2"], i = idxRows[idxRows %% 2 == 0], part = "body")
