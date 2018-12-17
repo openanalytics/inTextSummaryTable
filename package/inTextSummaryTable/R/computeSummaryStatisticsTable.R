@@ -732,7 +732,7 @@ computeSummaryStatistics <- function(data,
 							m = getNRecords(x)
 						)
 					}
-				})
+				}, .drop = FALSE)
 				if(is.null(var)){
 					res[, ".id"] <- NULL
 				}else{
