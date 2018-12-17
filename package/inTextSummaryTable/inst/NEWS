@@ -3,6 +3,7 @@
     o computeSummaryStatisticsByRowColVar: doesn't propagate NA for interaction of row/colVar variables
     o computeSummaryStatisticsTable: support combine use of colTotalInclude with rowTotalInclude or rowSubtotalInclude
     o new parameter: style
+    o convertSummaryStatisticsTableToFlextable: format superscript inside table to flextable
 0.0.5
     o roundCustom: format parameter, 'text' by default
     o set empty label for when variable specified for count tablee

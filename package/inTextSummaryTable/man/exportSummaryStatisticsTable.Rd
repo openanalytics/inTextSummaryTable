@@ -19,8 +19,7 @@ exportSummaryStatisticsTable(summaryTable,
   statsLayout = c("row", "col", "rowInSepCol"), style = "report")
 }
 \arguments{
-\item{summaryTable}{Dummary statistics table in long format,
-as returned by \code{\link{formatSummaryStatisticsTable}}.}
+\item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.

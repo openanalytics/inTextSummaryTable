@@ -6,11 +6,11 @@
 \usage{
 convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
   == "presentation"), margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, style = "report", fontname = "Times")
+  footer = NULL, style = "report", fontname = "Times",
+  fontsize = 8)
 }
 \arguments{
-\item{summaryTable}{Dummary statistics table in long format,
-as returned by \code{\link{formatSummaryStatisticsTable}}.}
+\item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
 
 \item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
 format.}
@@ -27,7 +27,9 @@ Set to NULL (by default) of no footer should be included.}
 
 \item{style}{string with table style, either 'report' or 'presentation'}
 
-\item{fontname}{String with font name, 'Times' by default}
+\item{fontname}{String with font name, 'Times' by default.}
+
+\item{fontsize}{Integer with font size, 8 by default.}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table

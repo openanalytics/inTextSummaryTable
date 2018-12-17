@@ -1,13 +1,11 @@
 #' Convert summary statistics table to flextable
-#' @param summaryTable Dummary statistics table in long format,
-#' as returned by \code{\link{formatSummaryStatisticsTable}}.
 #' @param title Character vector with title(s) for the table.
 #' Set to NULL (by default) if no title should be included.
 #' @param footer Character vector with footer(s) for the table.
 #' Set to NULL (by default) of no footer should be included.
 #' @param rowPadBase Base padding for row (number of spaces)
-#' @param fontname String with font name, 'Times' by default
 #' @inheritParams getDimPage
+#' @inheritParams formatSuperscriptToFlextable
 #' @inheritParams formatSummaryStatisticsTable
 #' @return \code{\link[flextable]{flextable}} object with summary table
 #' If \code{summaryTable} is a list of summary tables,
@@ -23,7 +21,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	title = NULL,
 	footer = NULL,
 	style = "report",
-	fontname = "Times" #switch(style, 'report' = "Times", 'presentation = "Tahoma')
+	fontname = "Times", #switch(style, 'report' = "Times", 'presentation = "Tahoma')
+	fontsize = 8
 ){
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
@@ -126,32 +125,24 @@ convertSummaryStatisticsTableToFlextable <- function(
 			) %>% merge_at(j = 1:ncol(summaryTable), part = "footer")
 		}
 	
-	# if superscript
-#	summaryTableMat <- as.matrix(summaryTable)
-#	idxSuperscriptMat <- grep("\\^\\{.+\\}", summaryTableMat)
-#	if(length(idxSuperscriptMat) > 0){
-#		idxSuperscriptAI <- arrayInd(idxSuperscriptMat, .dim = dim(summaryTableMat))
-#		for(iSP in seq_along(idxSuperscriptMat)){
-#			textInit <- summaryTableMat[idxSuperscriptAI]
-#			idxMatches <- regexec(pattern = "Baseline (.+)", textInit)
-#			textSplit <- regmatches(textInit, idxMatches)
-#			for(el in textSplit){
-#				ft2 <- ft %>% display(
-#					i = idxSuperscriptAI[iSP, 1],
-#					col_key = idxSuperscriptAI[iSP, 2],
-#					pattern = "{{val}}{{pow}}",
-#					formatters = list(
-#						as.formula(paste0("val ~ '", el[1], "'")), 
-#						as.formula(paste0("pow ~ '", el[2], "'"))
-#					),
-#					fprops = list(pow = fp_text(vertical.align = "superscript"))
-#				)
-#			}
-#		}
-#	}
+	# Format superscript (if any)
+	# for body
+	ft <- formatSuperscriptToFlextable(
+		dataTable = summaryTable, 
+		ft = ft, 
+		fontname = fontname,
+		fontsize = fontsize
+	)
+	# for header
+	ft <- formatSuperscriptToFlextable(
+		dataTable = headerDf, ft = ft, 
+		part = "header",
+		fontname = fontname,
+		fontsize = fontsize
+	)
 
 	# set fontsize
-	ft <- fontsize(ft, size = 8, part = "all")
+	ft <- fontsize(ft, size = fontsize, part = "all")
 	
 	# set header in bold
 	ft <- bold(ft, part = "header")
@@ -220,4 +211,72 @@ getDimPage <- function(
 	dimPage <- typeDim - 2 * margin
 	
 	return(dimPage)
+}
+
+#' Format superscript in a flextable.
+#' Superscript should be indicated as 'a^{b}' in the input summary table.
+#' @param dataTable data.frame with data used in table,
+#' summary table for body or header data.frame for the header.
+#' @param ft Corresponding \code{\link[flextable]{flextable}}.
+#' @param fontname String with font name, 'Times' by default.
+#' @param fontsize Integer with font size, 8 by default.
+#' @return \code{\link[flextable]{flextable}} with superscript.
+#' @importFrom stats as.formula
+#' @importFrom officer fp_text
+#' @importFrom flextable display
+#' @author Laure Cougnaud
+formatSuperscriptToFlextable <- function(
+	dataTable, ft, 
+	fontname = "Times",
+	part = "body",
+	fontsize = 8){
+
+	# extract indices with superscript
+	dataTableMat <- as.matrix(dataTable)
+	idxSuperscriptMat <- grep("\\^\\{.+\\}", dataTableMat)
+	
+	# if any
+	if(length(idxSuperscriptMat) > 0){
+		
+		# convert matrix indices to [row, col]
+		idxSuperscriptAI <- arrayInd(idxSuperscriptMat, .dim = dim(dataTableMat))
+		
+		# for each element with superscript
+		for(iSP in seq_along(idxSuperscriptMat)){
+			
+			textInit <- dataTableMat[idxSuperscriptMat[iSP]]
+			# split text with before/after superscript
+			idxMatches <- regexec(pattern = "(.+)\\^\\{(.+)\\}(.*)", textInit)
+			textSplit <- regmatches(textInit, idxMatches)
+			
+			# for each superscript (in case multiple for the same text)
+			for(el in textSplit){
+				
+				# create formatters: should be list of formula
+				fm <- list(
+					as.formula(paste0("value ~ as.character('", el[2], "')")),
+					as.formula(paste0("pow ~ as.character('", el[3], "')"))
+				)
+				
+				# set superscript in flextable
+				ft <- ft %>% display(
+					i = idxSuperscriptAI[iSP, 1],
+					col_key = idxSuperscriptAI[iSP, 2],
+					pattern = "{{value}}{{pow}}",
+					formatters = fm,
+					fprops = list(pow = 
+						fp_text(
+							vertical.align = "superscript", 
+							font.size = fontsize,
+							font.family = fontname
+						)
+					),
+					part = part
+				)
+			}
+		}
+	}
+	
+	return(ft)
+
 }
