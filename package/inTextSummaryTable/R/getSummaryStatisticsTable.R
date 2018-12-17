@@ -59,15 +59,10 @@ getSummaryStatisticsTable <- function(
 		labelVars = labelVars,
 		byVar = byVar
 	)
-	
+
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
-		rowVar = rowVar,
-		rowVarLab = rowVarLab,
-		rowVarInSepCol = rowVarInSepCol,
-		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
-		rowSubtotalInclude = rowSubtotalInclude,
-		colVar = colVar,
+		rowTotalLab = rowTotalLab,
 		title = title, footer = footer,
 		labelVars = labelVars,
 		file = file, landscape = landscape,
