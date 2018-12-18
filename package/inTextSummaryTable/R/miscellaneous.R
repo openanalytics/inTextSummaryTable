@@ -79,7 +79,7 @@ interactionCustom <- function(data, var){
 	# input factors are presered.
 	levelsVarInteraction <- unique(varInteraction[do.call(order, data[, var, drop = FALSE])])
 	
-	# bulid the final output factor
+	# build the final output factor
 	varInteractionFact <- factor(varInteraction, levels = levelsVarInteraction)
 	
 	return(varInteractionFact)

@@ -5,13 +5,16 @@
 \title{Plot subject summary profile}
 \usage{
 subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
-  labelVars = labelVars), meanVar = "Mean", seVar = "SE",
-  yLab = paste(meanVar, if (!is.null(seVar)) paste("+-", seVar)),
-  facetVar = NULL, facetScale = "free_y", colorVar = NULL,
-  colorLab = getLabelVar(colorVar, labelVars = labelVars),
-  colorPalette = NULL, labelVars = NULL, useLinetype = TRUE,
-  linetypePalette = NULL, useShape = TRUE, shapePalette = NULL,
-  jitter = NULL, title = NULL, ylim = NULL, xlim = NULL)
+  labelVars = labelVars), meanVar = "Mean", seVar = if ("SE" \%in\%
+  colnames(data)) "SE", yLab = paste(meanVar, if (!is.null(seVar))
+  paste("+-", seVar)), facetVar = NULL, facetScale = "free_y",
+  colorVar = NULL, colorLab = getLabelVar(colorVar, labelVars =
+  labelVars), colorPalette = NULL, labelVars = NULL,
+  useLinetype = TRUE, linetypePalette = NULL, useShape = TRUE,
+  shapePalette = NULL, jitter = NULL, title = NULL, ylim = NULL,
+  xlim = NULL, sizePoint = GeomPoint$default_aes$size,
+  sizeLine = GeomLine$default_aes$size,
+  sizeLabel = GeomText$default_aes$size, label = FALSE)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -48,6 +51,16 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 \item{jitter}{Numeric with jitter for the x-axis, only used if \code{colorVar} specified.}
 
 \item{title}{String with title for the plot.}
+
+\item{sizePoint}{Size for the point.}
+
+\item{sizeLine}{Size for the line.}
+
+\item{sizeLabel}{Size for the label, only used if \code{label} is not NULL.}
+
+\item{label}{Logical or expression.
+Points are labelled with \code{meanVar} if set to TRUE,
+or with the specified expression if \code{label} is an expression.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object
