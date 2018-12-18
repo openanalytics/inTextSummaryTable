@@ -257,6 +257,8 @@ formatSuperscriptToFlextable <- function(
 #' if it is not the case.
 #' @param data Data.frame with data.
 #' @param headerDf (optional) Data.frame with header.
+#' @param title Character vector with title(s) for the table.
+#' Set to NULL (by default) if no title should be included.
 #' @return list with:
 #' \itemize{
 #' \item{'ft': }{\code{\link[flextable]{flextable}}}
@@ -265,7 +267,8 @@ formatSuperscriptToFlextable <- function(
 #' }
 #' @author Laure Cougnaud
 #' @import flextable
-createFlextableWithHeader <- function(data, headerDf = NULL){
+createFlextableWithHeader <- function(data, 
+	headerDf = NULL, title = NULL){
 	
 	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
 	colsDataFt <- colnames(data)
@@ -293,6 +296,10 @@ createFlextableWithHeader <- function(data, headerDf = NULL){
 	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
 	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
 	
+	if(!is.null(title))	
+		for(titleI in title)
+			ft <- setHeader(ft, header = titleI)
+	
 	res <- list(ft = ft, colsData = colsDataFt)
 	return(res)
 	
@@ -303,6 +310,9 @@ createFlextableWithHeader <- function(data, headerDf = NULL){
 #' @param ft Corresponding \code{\link[flextable]{flextable}}.
 #' @param border Logical, if TRUE add a border.
 #' @param adjustWidth Logical, if TRUE adjust column widths.
+#' @param title Character vector with title(s) for the table.
+#' Set to NULL (by default) if no title should be included.
+#' Only available if \code{ft} is not specified.
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperscriptToFlextable
 #' @return \code{\link[flextable]{flextable}} with GLPG style.
@@ -320,10 +330,11 @@ getGLPGFlextable <- function(data,
 	style = "report",
 	margin = 1,
 	adjustWidth = TRUE,
-	align = TRUE){
+	align = TRUE,
+	title = NULL){
 	
 	if(is.null(ft))
-		ft <- createFlextableWithHeader(data = data)$ft
+		ft <- createFlextableWithHeader(data = data, title = title)$ft
 	
 	bd <- switch(style,
 		'report' = fp_border(),

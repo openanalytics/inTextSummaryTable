@@ -6,7 +6,8 @@
 \usage{
 getGLPGFlextable(data, ft = NULL, border = TRUE, fontname = "Times",
   fontsize = 8, landscape = (style == "presentation"),
-  style = "report", margin = 1, adjustWidth = TRUE, align = TRUE)
+  style = "report", margin = 1, adjustWidth = TRUE, align = TRUE,
+  title = NULL)
 }
 \arguments{
 \item{data}{data.frame with data used in table.}
@@ -27,6 +28,10 @@ format.}
 \item{margin}{Margin in the document in inches.}
 
 \item{adjustWidth}{Logical, if TRUE adjust column widths.}
+
+\item{title}{Character vector with title(s) for the table.
+Set to NULL (by default) if no title should be included.
+Only available if \code{ft} is not specified.}
 }
 \value{
 \code{\link[flextable]{flextable}} with GLPG style.

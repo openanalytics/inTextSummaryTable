@@ -5,12 +5,15 @@
 \title{Create a flextable, setting the column names to syntactic names
 if it is not the case.}
 \usage{
-createFlextableWithHeader(data, headerDf = NULL)
+createFlextableWithHeader(data, headerDf = NULL, title = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
 \item{headerDf}{(optional) Data.frame with header.}
+
+\item{title}{Character vector with title(s) for the table.
+Set to NULL (by default) if no title should be included.}
 }
 \value{
 list with:
