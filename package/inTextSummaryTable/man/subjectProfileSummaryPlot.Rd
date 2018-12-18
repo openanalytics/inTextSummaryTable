@@ -12,7 +12,8 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   labelVars), colorPalette = NULL, labelVars = NULL,
   useLinetype = TRUE, linetypePalette = NULL, useShape = TRUE,
   shapePalette = NULL, jitter = NULL, title = NULL, ylim = NULL,
-  xlim = NULL, sizePoint = GeomPoint$default_aes$size,
+  xlim = NULL, xAxisLabs = NULL,
+  sizePoint = GeomPoint$default_aes$size,
   sizeLine = GeomLine$default_aes$size,
   sizeLabel = GeomText$default_aes$size, label = FALSE)
 }
@@ -51,6 +52,8 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 \item{jitter}{Numeric with jitter for the x-axis, only used if \code{colorVar} specified.}
 
 \item{title}{String with title for the plot.}
+
+\item{xAxisLabs}{(optional) Named character vector with labels for the x-axis.}
 
 \item{sizePoint}{Size for the point.}
 
