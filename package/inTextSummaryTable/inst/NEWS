@@ -5,6 +5,7 @@
     o new parameter: style
     o convertSummaryStatisticsTableToFlextable: format superscript inside table to flextable
     o new function: getGLPGFlextable
+    o subjectProfileSummaryPlot: xAxisLabs
 0.0.5
     o roundCustom: format parameter, 'text' by default
     o set empty label for when variable specified for count tablee

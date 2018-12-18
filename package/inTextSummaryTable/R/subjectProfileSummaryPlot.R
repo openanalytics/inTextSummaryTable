@@ -24,6 +24,7 @@
 #' @param sizePoint Size for the point.
 #' @param sizeLine Size for the line.
 #' @param sizeLabel Size for the label, only used if \code{label} is not NULL.
+#' @param xAxisLabs (optional) Named character vector with labels for the x-axis.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getGLPGColorPalette getGLPGShapePalette getLabelVar
@@ -45,6 +46,7 @@ subjectProfileSummaryPlot <- function(data,
 	jitter = NULL,
 	title = NULL,
 	ylim = NULL, xlim = NULL,
+	xAxisLabs = NULL,
 	sizePoint = GeomPoint$default_aes$size,
 	sizeLine = GeomLine$default_aes$size,
 	sizeLabel = GeomText$default_aes$size,
@@ -111,7 +113,7 @@ subjectProfileSummaryPlot <- function(data,
 		
 	if(useLinetype){
 		if(is.null(linetypePalette))
-			shapePalette <- getGLPGLinetypePalette(x = data[, colorVar])
+			linetypePalette <- getGLPGLinetypePalette(x = data[, colorVar])
 		gg <- gg + scale_linetype_manual(name = colorLab, values = linetypePalette)			
 	}
 	
@@ -133,6 +135,13 @@ subjectProfileSummaryPlot <- function(data,
 	if((!is.null(xlim)) | (!is.null(ylim))){
 		argsCoordCart <- list(xlim = xlim, ylim = ylim)
 		gg <- gg + do.call(coord_cartesian, argsCoordCart)
+	}
+	
+	if(!is.null(xAxisLabs)){
+		fctScaleX <- match.fun(paste0("scale_x_", 
+			ifelse(is.numeric(data[, xVar]), "continuous", "discrete"))
+		)
+		gg <- gg + fctScaleX(breaks = xAxisLabs)
 	}
 	
 	return(gg)

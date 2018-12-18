@@ -141,7 +141,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 		type = "width", landscape = landscape, margin = margin,
 		style = style
 	)
-	varFixed <- getNewCol(intersect(c("Statistic", "Total"), colsDataFt))
+	varFixed <- getNewCol(intersect(c("Statistic"), colsDataFt))
 	varFixedWidth <- 0.5
 	ft <- width(ft, j = varFixed, width = 0.5)
 	varsOther <- setdiff(names(colsDataFt), varFixed)
@@ -160,6 +160,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 #' @param style string with table style, either 'report' or 'presentation'
 #' @return integer with dimension of interest
 #' @author Laure Cougnaud
+#' @export
 getDimPage <- function(
 	type = c("width", "height"), 
 	landscape = (style == "presentation"), 
@@ -363,16 +364,18 @@ getGLPGFlextable <- function(data,
 	# change color text + background
 	if(style == "presentation"){
 		colorTable <- glpgColor(type = "table")
-		idxRows <- seq_len(nrow(data))
 		ft <- ft %>% 
 			# header in white on green background
 			bg(bg = colorTable["header"], part = "header") %>%
 			color(color = "white", part = "header") %>%
 			# footer with white background
-			bg(bg = "white", part = "footer") %>%
-			# body with alternated dark and light grey background
-			bg(bg = colorTable["row1"], i = idxRows[idxRows %% 2 == 1], part = "body") %>%
-			bg(bg = colorTable["row2"], i = idxRows[idxRows %% 2 == 0], part = "body")
+			bg(bg = "white", part = "footer")
+		# alternate background between elements of first column
+		# body with alternated dark and light grey background
+		xBg <- convertVectToBinary(x = data[, 1])
+		ft <- ft %>%
+			bg(bg = colorTable["row1"], i = which(xBg %% 2 == 0), part = "body") %>%
+			bg(bg = colorTable["row2"], i = which(xBg %% 2 == 1), part = "body")
 	}
 	
 	if(adjustWidth){
@@ -388,5 +391,22 @@ getGLPGFlextable <- function(data,
 		ft <- align(ft, j = seq_len(ncol(data)), align = "center", part = "all")
 
 	return(ft)
+	
+}
+
+#' Convert vector to a bincode of 0/1
+#' based on consecutive values in the vector.
+#' @param x Vector.
+#' @return Integer vector of same length than \code{x}.
+#' @author Laure Cougnaud
+convertVectToBinary <- function(x){
+
+	xBin <- rep(NA, length(x))
+	idxChg <- c(1, which(diff(as.numeric(factor(x, exclude = FALSE))) != 0) + 1)
+	xBin[idxChg] <- rep(c(0, 1), length.out = length(idxChg))
+	for(i in seq_along(xBin)){
+		if(is.na(xBin[i]))	xBin[i] <- xBin[i-1]
+	}
+	return(xBin)
 	
 }
