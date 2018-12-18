@@ -39,41 +39,26 @@ convertSummaryStatisticsTableToFlextable <- function(
 		
 	}
 	
+	# create base flextable with header
+	headerDf <- attributes(summaryTable)$header
+	ftWithHeader <- createFlextableWithHeader(
+		data = summaryTable, 
+		headerDf = headerDf
+	)
+	ft <- ftWithHeader$ft
+	colsDataFt <- ftWithHeader$colsData
+	getNewCol <- function(initCol)
+		na.omit(names(colsDataFt)[match(initCol, colsDataFt)])
+	
 	# column border
 	bd <- switch(style,
 		'report' = fp_border(),
 		'presentation' = fp_border(color = "white")
 	)
-	
-	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
-	colsDataFt <- colnames(summaryTable)
-	names(colsDataFt) <- paste0("col", seq_len(ncol(summaryTable)))
-	colnames(summaryTable) <- names(colsDataFt)
-	
-	headerDf <- attributes(summaryTable)$header	
-	if(!is.null(headerDf))	colnames(headerDf) <- names(colsDataFt)
-	
-	getNewCol <- function(initCol)
-		na.omit(names(colsDataFt)[match(initCol, colsDataFt)])
-	
-	# base flextable
-	ft <- flextable(summaryTable)
-	
-	## headers:
-	setHeader <- function(ft, header){
-		headerList <- as.list(
-			if(is.matrix(header) | is.data.frame(header))	header	else
-				setNames(rep(header, length(colsDataFt)), names(colsDataFt))
-		)
-		ft <- do.call(add_header, c(list(x = ft, top = TRUE), headerList))
-		ft <- merge_h(x = ft, part = "header")
-		return(ft)
-	}
-	if(!is.null(headerDf) & nrow(headerDf) > 1)	ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
-	
-	# set to correct headers	
-	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
-	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
+	ft <- border_remove(ft) %>%
+		border_outer(border = bd, part = "all") %>%
+		hline(border = bd, part = "body") %>%
+		vline(border = bd, part = "body")
 	
 	# set correct alignments
 	rowVar <- attributes(summaryTable)$rowVar
@@ -97,12 +82,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 	if(!is.null(title))	
 		for(titleI in title)
 			ft <- setHeader(ft, header = titleI)
-	
-	# borders
-	ft <- border_remove(ft) %>%
-		border_outer(border = bd, part = "all") %>%
-		hline(border = bd, part = "header") %>%
-		vline(border = bd, part = "body")
 	
 	# horizontal lines
 	if(!is.null(attributes(summaryTable)$hlineParams))
@@ -128,7 +107,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 				j = seq_len(ncol(summaryTable)), part = "footer"
 			)
 		}
-		
 	}
 	
 	# Format superscript (if any)
@@ -146,31 +124,19 @@ convertSummaryStatisticsTableToFlextable <- function(
 		fontname = fontname,
 		fontsize = fontsize
 	)
-
-	# set fontsize
-	ft <- fontsize(ft, size = fontsize, part = "all")
 	
-	# set header in bold
-	ft <- bold(ft, part = "header")
+	# set style
+	ft <- getGLPGFlextable(
+		data = summaryTable, ft = ft, 
+		border = FALSE, adjustWidth = FALSE, align = FALSE,
+		style = style,
+		fontname = fontname,
+		fontsize = fontsize,
+		landscape = landscape,
+		margin = margin
+	)
 	
-	# set font
-	ft <- ft %>% font(fontname = fontname, part = "all")
-	
-	if(style == "presentation"){
-		colorTable <- glpgColor(type = "table")
-		idxRows <- seq_len(nrow(summaryTable))
-		ft <- ft %>% 
-			# header in white on green background
-			bg(bg = colorTable["header"], part = "header") %>%
-			color(color = "white", part = "header") %>%
-			# footer with white background
-			bg(bg = "white", part = "footer") %>%
-			# body with alternated dark and light grey background
-			bg(bg = colorTable["row1"], i = idxRows[idxRows %% 2 == 1], part = "body") %>%
-			bg(bg = colorTable["row2"], i = idxRows[idxRows %% 2 == 0], part = "body")
-	}
-	
-#	# adjust to fit in document:
+	# adjust to fit in document:
 	widthPage <- getDimPage(
 		type = "width", landscape = landscape, margin = margin,
 		style = style
@@ -285,4 +251,131 @@ formatSuperscriptToFlextable <- function(
 	
 	return(ft)
 
+}
+
+#' Create a flextable, setting the column names to syntactic names
+#' if it is not the case.
+#' @param data Data.frame with data.
+#' @param headerDf (optional) Data.frame with header.
+#' @return list with:
+#' \itemize{
+#' \item{'ft': }{\code{\link[flextable]{flextable}}}
+#' \item{'colsData': }{Named vector with original column names,
+#' with names set to new syntactic names.}
+#' }
+#' @author Laure Cougnaud
+#' @import flextable
+createFlextableWithHeader <- function(data, headerDf = NULL){
+	
+	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
+	colsDataFt <- colnames(data)
+	names(colsDataFt) <- paste0("col", seq_len(ncol(data)))
+	colnames(data) <- names(colsDataFt)
+	
+	if(!is.null(headerDf))	colnames(headerDf) <- names(colsDataFt)
+	
+	# base flextable
+	ft <- flextable(data)
+	
+	## headers:
+	setHeader <- function(ft, header){
+		headerList <- as.list(
+			if(is.matrix(header) | is.data.frame(header))	header	else
+				setNames(rep(header, length(colsDataFt)), names(colsDataFt))
+		)
+		ft <- do.call(add_header, c(list(x = ft, top = TRUE), headerList))
+		ft <- merge_h(x = ft, part = "header")
+		return(ft)
+	}
+	if(!is.null(headerDf) && nrow(headerDf) > 1)	ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
+	
+	# set to correct headers	
+	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
+	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
+	
+	res <- list(ft = ft, colsData = colsDataFt)
+	return(res)
+	
+}
+
+#' Format a flextable to fulfill GLPG style.
+#' @param data data.frame with data used in table.
+#' @param ft Corresponding \code{\link[flextable]{flextable}}.
+#' @param border Logical, if TRUE add a border.
+#' @param adjustWidth Logical, if TRUE adjust column widths.
+#' @inheritParams getDimPage
+#' @inheritParams formatSuperscriptToFlextable
+#' @return \code{\link[flextable]{flextable}} with GLPG style.
+#' @author Laure Cougnaud
+#' @import flextable
+#' @importFrom glpgStyle glpgColor
+#' @importFrom officer fp_border
+#' @export
+getGLPGFlextable <- function(data, 
+	ft = NULL, 
+	border = TRUE,
+	fontname = "Times", #switch(style, 'report' = "Times", 'presentation = "Tahoma')
+	fontsize = 8,
+	landscape = (style == "presentation"),
+	style = "report",
+	margin = 1,
+	adjustWidth = TRUE,
+	align = TRUE){
+	
+	if(is.null(ft))
+		ft <- createFlextableWithHeader(data = data)$ft
+	
+	bd <- switch(style,
+		'report' = fp_border(),
+		'presentation' = fp_border(color = "white")
+	)
+	
+	# set fontsize
+	ft <- fontsize(ft, size = fontsize, part = "all")
+	
+	# set header in bold
+	ft <- bold(ft, part = "header")
+	
+	# set font
+	ft <- ft %>% font(fontname = fontname, part = "all")
+	
+	# set border
+	if(border){
+		ft <- border_remove(ft) %>%
+			border_outer(border = bd, part = "all") %>%
+			hline(border = bd, part = "body") %>%
+			vline(border = bd, part = "body") %>%
+			hline(border = bd, part = "header") %>%
+			vline(border = bd, part = "header")
+	}
+	
+	# change color text + background
+	if(style == "presentation"){
+		colorTable <- glpgColor(type = "table")
+		idxRows <- seq_len(nrow(data))
+		ft <- ft %>% 
+			# header in white on green background
+			bg(bg = colorTable["header"], part = "header") %>%
+			color(color = "white", part = "header") %>%
+			# footer with white background
+			bg(bg = "white", part = "footer") %>%
+			# body with alternated dark and light grey background
+			bg(bg = colorTable["row1"], i = idxRows[idxRows %% 2 == 1], part = "body") %>%
+			bg(bg = colorTable["row2"], i = idxRows[idxRows %% 2 == 0], part = "body")
+	}
+	
+	if(adjustWidth){
+		widthPage <- getDimPage(
+			type = "width", landscape = landscape, margin = margin,
+			style = style
+		)
+		width <- widthPage/ncol(data)
+		ft <- width(ft, j = seq_len(ncol(data)), width = width)
+	}
+	
+	if(align)
+		ft <- align(ft, j = seq_len(ncol(data)), align = "center", part = "all")
+
+	return(ft)
+	
 }
