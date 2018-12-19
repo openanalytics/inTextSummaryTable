@@ -24,6 +24,7 @@
 #' \item{'padParams': }{list of list of parameters to be passed to the 
 #' \code{\link[flextable]{padding}} function}
 #' \item{'rowVar': }{column of output with row variable}
+#' \item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
 #' \item{'vlineParams' and 'hlineParams': }{
 #' list of list with correspondingly parameters for
 #' vertical and horizontal lines}
@@ -256,14 +257,13 @@ formatSummaryStatisticsTable <- function(
 		# extract horizontal lines
 		# (horizontal line are included at the bottom of the extracted row index)
 		idxHLine <- if(length(rowVarToModify) > 0 & statsLayout == "row"){
-			rowsDiffPad <- setdiff(
+			setdiff(
 				seq_len(nrow(dataLong)), # include lines
 				setdiff(
 					which(dataLong$rowPadding == max(dataLong$rowPadding)), # excepted for rows with max padding
 					which(diff(dataLong$rowPadding) != 0) # at the exception of the rows which have different spanning below
 				)
 			)
-			rowsDiffPad
 		}else{
 			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
 		}
@@ -277,16 +277,29 @@ formatSummaryStatisticsTable <- function(
 		}
 		
 		dataLong$rowPadding <- NULL
+		hlineParams <- NULL
 		if(length(idxHLine) > 0)
-			attributes(dataLong)$hlineParams <- list(
+			hlineParams <- c(hlineParams, list(
 				list(i = idxHLine, part = "body", j = 1:ncol(dataLong))
-			)
+			))
+		for(var in rowVarInSepCol[-length(rowVarInSepCol)]){
+			i <- which(diff(as.numeric(factor(dataLong[, var], exclude = ""))) != 0)
+			if(length(i) > 0)
+				hlineParams <- c(hlineParams, list(
+					list(
+						i = i, 
+						part = "body", 
+						j = seq(from = which(colnames(dataLong) == var), to = ncol(dataLong))
+					)
+				))
+		}
+		attributes(dataLong)$hlineParams <- hlineParams
 			
 		# label header for rows
 		rowVarLabs <- c(rowVarLab[setdiff(rowVarInRow, "Statistic")], if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
 		colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
 			paste(rowVarLabs, collapse = "_")
-		colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- rowVarLab[rowVarInSepCol]
+		colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- headerRowVarInSepCol <- rowVarLab[rowVarInSepCol]
 		
 	}
 	
@@ -340,6 +353,7 @@ formatSummaryStatisticsTable <- function(
 			)
 			
 			attributes(dataLong)$rowVar <- headerRow
+			attributes(dataLong)$rowVarInSepCol <- headerRowVarInSepCol
 			
 		}
 		
