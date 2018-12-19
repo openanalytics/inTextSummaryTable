@@ -8,16 +8,18 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   data = data, labelVars = labelVars), varIgnore = NULL,
   varLabGeneral = "Variable", varLabSubgroup = NULL, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
-  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
-  rowVarInSepCol = NULL, rowTotalInclude = FALSE, rowTotalLab = NULL,
+  rowVarDataLevels = NULL, rowOrder = "auto",
+  rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
+  rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
-  colInclude0 = FALSE, colTotalInclude = FALSE,
-  subjectVar = "USUBJID", stats = NULL, filterFct = NULL,
-  dataTotal = NULL, type = "auto", labelVars = NULL,
-  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
-  title = NULL, footer = NULL, file = NULL,
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), style = "report", byVar = NULL)
+  colInclude0 = FALSE, colVarDataLevels = NULL,
+  colTotalInclude = FALSE, subjectVar = "USUBJID", stats = NULL,
+  filterFct = NULL, dataTotal = NULL, type = "auto",
+  labelVars = NULL, landscape = (style == "presentation"),
+  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
+  file = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
+  byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -43,6 +45,9 @@ If multiple variables are specified, the variables should be sorted in hierarchi
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
+
+\item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
+(in case of non nested row variable(s)).}
 
 \item{rowOrder}{String or function of named list with method used to order the rows,
 see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
@@ -78,6 +83,9 @@ and are included in multi-columns layout.}
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
+
+\item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
+(in case of non nested column variable(s)).}
 
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}

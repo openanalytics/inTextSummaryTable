@@ -6,8 +6,9 @@
 \usage{
 computeSummaryStatisticsByRowColVar(data, var = NULL,
   varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
-  type = "auto", rowVar = NULL, rowInclude0 = FALSE, colVar = NULL,
-  colInclude0 = FALSE, subjectVar = "USUBJID", labelVars = NULL)
+  type = "auto", rowVar = NULL, rowInclude0 = FALSE,
+  rowVarDataLevels = NULL, colVar = NULL, colInclude0 = FALSE,
+  colVarDataLevels = NULL, subjectVar = "USUBJID", labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -35,6 +36,9 @@ grouping in row in the final table.}
 include rows with \code{rowVar} elements not available in the data
 (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
 
+\item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
+(in case of non nested row variable(s)).}
+
 \item{colVar}{Variable(s) of \code{data} used 
 for grouping in column in the final table. The total 
 for each subgroup across \code{rowVar} is computed.}
@@ -42,6 +46,9 @@ for each subgroup across \code{rowVar} is computed.}
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with \code{colVar} elements not available in the data
 (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
+
+\item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
+(in case of non nested column variable(s)).}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}

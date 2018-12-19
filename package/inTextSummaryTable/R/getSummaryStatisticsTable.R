@@ -13,6 +13,7 @@ getSummaryStatisticsTable <- function(
 	varLabGeneral = "Variable", varLabSubgroup = NULL,
 	# row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVarDataLevels = NULL, 
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL, 
@@ -20,6 +21,7 @@ getSummaryStatisticsTable <- function(
 	rowInclude0 = FALSE, 
 	# column variable
 	colVar = NULL, colInclude0 = FALSE,
+	colVarDataLevels = NULL, 
 	colTotalInclude = FALSE,
 	subjectVar = "USUBJID",
 	stats = NULL, filterFct = NULL,
@@ -44,8 +46,10 @@ getSummaryStatisticsTable <- function(
 		varIgnore = varIgnore,
 		varLabGeneral = varLabGeneral, varLabSubgroup = varLabSubgroup, 
 		colVar = colVar, colInclude0 = colInclude0,
+		colVarDataLevels = colVarDataLevels,
 		colTotalInclude = colTotalInclude, 
 		rowVar = rowVar, rowInclude0 = rowInclude0,
+		rowVarDataLevels = rowVarDataLevels,
 		rowVarInSepCol = rowVarInSepCol,
 		rowVarLab = rowVarLab,
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,

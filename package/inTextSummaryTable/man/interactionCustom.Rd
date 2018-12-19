@@ -8,15 +8,23 @@ unlike the behaviour with \code{\link{interaction}}.
 This also ensure that the levels of the final interaction variables
 are ordered similarly as the levels of the input \code{var} (if present).}
 \usage{
-interactionCustom(data, var)
+interactionCustom(data, var, varDataLevels = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
 \item{var}{Character vector with variable(s) to consider.}
+
+\item{varDataLevels}{(optional) Data.frame with data to consider
+to define the levels of the variable.
+If not specified, only the combinations of variable(s) available in the data are retained.}
 }
 \value{
-factor with interaction between the input \code{var}
+list with:
+\itemize{
+\item{'x': }{factor with interaction between the input \code{var}}
+\item{'dataLevels': }{dtaa.frame with mapping between the \code{var} variable(s) and the new factor levels}
+}
 }
 \description{
 Compute the interaction between variable(s),

@@ -67,21 +67,34 @@ getAttribute <- function(summaryTable, name, default = NULL){
 #' are ordered similarly as the levels of the input \code{var} (if present).
 #' @param data Data.frame with data.
 #' @param var Character vector with variable(s) to consider.
-#' @return factor with interaction between the input \code{var}
+#' @param varDataLevels (optional) Data.frame with data to consider
+#' to define the levels of the variable.
+#' If not specified, only the combinations of variable(s) available in the data are retained.
+#' @return list with:
+#' \itemize{
+#' \item{'x': }{factor with interaction between the input \code{var}}
+#' \item{'dataLevels': }{dtaa.frame with mapping between the \code{var} variable(s) and the new factor levels}
+#' }
 #' @author Laure Cougnaud
-#' @export
-interactionCustom <- function(data, var){
-	
+interactionCustom <- function(data, var, 
+	varDataLevels = NULL){
+
 	# use paste rather than 'interaction', otherwise the missing values are propagated
 	varInteraction <- do.call(paste, data[, var, drop = FALSE])
-	
-	# extract the levels of the output factor ensuring that the order from the
-	# input factors are presered.
-	levelsVarInteraction <- unique(varInteraction[do.call(order, data[, var, drop = FALSE])])
-	
+
+	# extract the levels of the output factor 
+	dataLevels <- (if(!is.null(varDataLevels))	varDataLevels	else	data)[, var, drop = FALSE]
+	# ensure that the order from the input factors are preserved:
+	dataLevels <- unique(dataLevels[do.call(order, dataLevels), , drop = FALSE])
+	dataLevels$factorLevel <- do.call(paste, dataLevels)
+
 	# build the final output factor
-	varInteractionFact <- factor(varInteraction, levels = levelsVarInteraction)
+	if(!all(varInteraction %in% dataLevels$factorLevel))
+		warning("Some variable records are not present in the data used for variable levels.")
+	varInteractionFact <- factor(varInteraction, levels = dataLevels$factorLevel)
 	
-	return(varInteractionFact)
+	res <- list(x = varInteractionFact, dataLevels = dataLevels)
+	
+	return(res)
 	
 }

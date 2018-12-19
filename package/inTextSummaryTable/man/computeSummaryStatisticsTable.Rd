@@ -7,9 +7,10 @@
 computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   varLabGeneral = "Variable", varLabSubgroup = NULL,
-  varIgnore = NULL, colVar = NULL, colTotalInclude = FALSE,
-  rowVar = NULL, rowVarLab = getLabelVar(rowVar, data = data, labelVars
-  = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
+  varIgnore = NULL, colVar = NULL, colVarDataLevels = NULL,
+  colTotalInclude = FALSE, rowVar = NULL, rowVarDataLevels = NULL,
+  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
+  rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, stats = NULL, filterFct = NULL,
@@ -41,11 +42,17 @@ Empty by default.}
 for grouping in column in the final table. The total 
 for each subgroup across \code{rowVar} is computed.}
 
+\item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
+(in case of non nested column variable(s)).}
+
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
 
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
+
+\item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
+(in case of non nested row variable(s)).}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
