@@ -57,7 +57,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	)
 	ft <- border_remove(ft) %>%
 		border_outer(border = bd, part = "all") %>%
-		hline(border = bd, part = "body") %>%
+		hline(border = bd, part = "header") %>%
 		vline(border = bd, part = "body")
 	
 	# set correct alignments
