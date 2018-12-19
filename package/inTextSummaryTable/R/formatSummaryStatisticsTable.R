@@ -294,6 +294,27 @@ formatSummaryStatisticsTable <- function(
 				))
 		}
 		attributes(dataLong)$hlineParams <- hlineParams
+		
+		# merge rows for rowVarInSepCol
+		for(var in rowVarInSepCol){
+			varPrev <- rowVar[seq_len(match(var, rowVar))]
+			varPrevBin <- convertVectToBinary(interactionCustom(dataLong[, varPrev])$x)
+			idx <- which(diff(varPrevBin) == 0)
+			if(length(idx) > 0){
+				idxFact <- cut(seq_along(idx), breaks = c(-Inf, which(diff(idx) != 1), Inf))
+				mergeParams <- NULL
+				for(l in levels(idxFact)){
+					i <- idx[idxFact == l]
+					i <- c(i, max(i)+1)
+					mergeParams <- c(mergeParams, list(list(
+						i = i,
+						j = match(var, colnames(dataLong)),
+						part = "body"
+					)))
+				}
+				attributes(dataLong)$mergeParams <- mergeParams
+			}
+		}
 			
 		# label header for rows
 		rowVarLabs <- c(rowVarLab[setdiff(rowVarInRow, "Statistic")], if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
@@ -353,7 +374,6 @@ formatSummaryStatisticsTable <- function(
 			)
 			
 			attributes(dataLong)$rowVar <- headerRow
-			attributes(dataLong)$rowVarInSepCol <- headerRowVarInSepCol
 			
 		}
 		
