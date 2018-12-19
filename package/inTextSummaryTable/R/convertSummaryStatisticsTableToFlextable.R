@@ -77,8 +77,13 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 	# merge rows
 	rowVarToMerge <- c(rowVar, attributes(summaryTable)$rowVarInSepCol)
-	if(!is.null(rowVarToMerge))
-		ft <- merge_v(ft, j = getNewCol(rowVarToMerge))
+	if(!is.null(rowVar))
+		ft <- merge_v(ft, j = getNewCol(rowVar))
+	
+	if(!is.null(attributes(summaryTable)$mergeParams)){
+		for(params in attributes(summaryTable)$mergeParams)
+			ft <- merge_at(ft, j = params$j, params$i, part = params$part)
+	}
 	
 	# add title and headers
 	if(!is.null(title))	
