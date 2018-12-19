@@ -57,6 +57,7 @@ summaryTable reformatted in long format, with extra attributes:
 \item{'padParams': }{list of list of parameters to be passed to the 
 \code{\link[flextable]{padding}} function}
 \item{'rowVar': }{column of output with row variable}
+\item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
 \item{'vlineParams' and 'hlineParams': }{
 list of list with correspondingly parameters for
 vertical and horizontal lines}

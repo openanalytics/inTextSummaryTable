@@ -73,16 +73,18 @@ counts across rows in a separated row.}
 group of the nested variable specified in \code{rowVar}}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
-include rows with \code{rowVar} elements not available in the data
-(e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
+include rows with no records, based on all combinations 
+of the \code{rowVar} (assuming nested variable(s)).}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
-include columns with \code{colVar} elements not available in the data
-(e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
+include columns with no records, based on all combinations 
+of the \code{columnVar} (assuming nested variable(s)).
+If variable(s) are not nested, possible combinations
+can be specified via \code{colVarDataLevels}.}
 
 \item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
 (in case of non nested column variable(s)).}

@@ -40,7 +40,9 @@ Empty by default.}
 
 \item{colVar}{Variable(s) of \code{data} used 
 for grouping in column in the final table. The total 
-for each subgroup across \code{rowVar} is computed.}
+for each subgroup across \code{rowVar} is computed.
+If variable(s) are not nested, possible combinations
+can be specified via \code{rowVarDataLevels}.}
 
 \item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
 (in case of non nested column variable(s)).}
@@ -127,12 +129,14 @@ Note: the total count per category of the row variables is included
 in a row with this variable set to 'Total'.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
-include rows with \code{rowVar} elements not available in the data
-(e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).}
+include rows with no records, based on all combinations 
+of the \code{rowVar} (assuming nested variable(s)).}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
-include columns with \code{colVar} elements not available in the data
-(e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).}
+include columns with no records, based on all combinations 
+of the \code{columnVar} (assuming nested variable(s)).
+If variable(s) are not nested, possible combinations
+can be specified via \code{colVarDataLevels}.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 
