@@ -121,9 +121,9 @@ computeSummaryStatisticsTable <- function(data,
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
 	varLabGeneral = "Variable", varLabSubgroup = NULL,
 	varIgnore = NULL,
-	colVar = NULL,
+	colVar = NULL, colVarDataLevels = NULL, 
 	colTotalInclude = FALSE,
-	rowVar = NULL, 
+	rowVar = NULL, rowVarDataLevels = NULL, 
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
 	rowVarInSepCol = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
@@ -187,8 +187,8 @@ computeSummaryStatisticsTable <- function(data,
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
 		var = var, varLab = varLab, type = type,
-		rowVar = rowVar, rowInclude0 = rowInclude0,
-		colVar = colVar, colInclude0 = colInclude0,
+		rowVar = rowVar, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
+		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 		subjectVar = subjectVar, labelVars = labelVars
 	)
 	
@@ -197,7 +197,7 @@ computeSummaryStatisticsTable <- function(data,
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
 			data = data, 
 			var = var, varLab = varLab, type = type,
-			rowVar = rowVar, rowInclude0 = rowInclude0,	
+			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
 			subjectVar = subjectVar, labelVars = labelVars
 		)
 		summaryTableColTotal[, colVar] <- "Total"
@@ -211,7 +211,7 @@ computeSummaryStatisticsTable <- function(data,
 			summaryTableRowTotal <- computeSummaryStatisticsByRowColVar(
 				data = data, 
 				var = var, type = type,
-				colVar = colVar, colInclude0 = colInclude0,
+				colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 			)
 			
@@ -219,8 +219,7 @@ computeSummaryStatisticsTable <- function(data,
 			if(colTotalInclude){
 				summaryTableRowTotalColTotal <- computeSummaryStatisticsByRowColVar(
 					data = data, 
-					var = var, varLab = varLab, type = type,
-					rowInclude0 = rowInclude0,	
+					var = var, varLab = varLab, type = type,	
 					subjectVar = subjectVar, labelVars = labelVars
 				)
 				summaryTableRowTotalColTotal[, colVar] <- "Total"
@@ -269,8 +268,8 @@ computeSummaryStatisticsTable <- function(data,
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotal, 
 					var = var, type = type,
-					rowVar = rowVarSubTotal, rowInclude0 = rowInclude0,
-					colVar = colVar, colInclude0 = colInclude0,
+					rowVar = rowVarSubTotal, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
+					colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 				)
 				
@@ -279,7 +278,7 @@ computeSummaryStatisticsTable <- function(data,
 					summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 						data = dataForSubTotal, 
 						var = var, type = type,
-						rowVar = rowVarSubTotal, rowInclude0 = rowInclude0,
+						rowVar = rowVarSubTotal, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 						subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 					)
 					summaryTableRowSubtotalVarColTotal[, colVar] <- "Total"
@@ -342,7 +341,7 @@ computeSummaryStatisticsTable <- function(data,
 	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
 		data = dataTotal, 
 		type = "countTable", 
-		colVar = colVar, colInclude0 = colInclude0,
+		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 		subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 	)
 	if(colTotalInclude){
@@ -507,17 +506,25 @@ computeSummaryStatisticsTable <- function(data,
 #' @param rowVar Variable(s) of \code{data} used for
 #' grouping in row in the final table.
 #' @param rowInclude0 Logical, if TRUE (FALSE by default),
-#' include rows with \code{rowVar} elements not available in the data
-#' (e.g. if a \code{rowVar} is a factor, include all levels even if no records in the data).
+#' include rows with no records, based on all combinations 
+#' of the \code{rowVar} (assuming nested variable(s)).
 #' @param colVar Variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
 #' for each subgroup across \code{rowVar} is computed.
+#' If variable(s) are not nested, possible combinations
+#' can be specified via \code{rowVarDataLevels}.
 #' @param colInclude0 Logical, if TRUE (FALSE by default),
-#' include columns with \code{colVar} elements not available in the data
-#' (e.g. if a \code{colVar} is a factor, include all levels even if no records in the data).
+#' include columns with no records, based on all combinations 
+#' of the \code{columnVar} (assuming nested variable(s)).
+#' If variable(s) are not nested, possible combinations
+#' can be specified via \code{colVarDataLevels}.
 #' @param varLab Named character vector with label for each variable 
 #' specified in \code{var}.
 #' By default, extracted from the \code{labelVars}.
+#' @param rowVarDataLevels Data.frame with levels to consider for the \code{rowVar} variable(s)
+#' (in case of non nested row variable(s)).
+#' @param colVarDataLevels Data.frame with levels to consider for the \code{colVar} variable(s)
+#' (in case of non nested column variable(s)).
 #' @inheritParams computeSummaryStatistics
 #' @inheritParams glpgUtilityFct::getLabelVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
@@ -549,8 +556,8 @@ computeSummaryStatisticsByRowColVar <- function(
 	data, 
 	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
 	type = "auto",
-	rowVar = NULL, rowInclude0 = FALSE,
-	colVar = NULL, colInclude0 = FALSE,
+	rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
+	colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
 	subjectVar = "USUBJID",
 	labelVars = NULL){
 	
@@ -568,14 +575,18 @@ computeSummaryStatisticsByRowColVar <- function(
 		# (variables considered independently)
 		groupVar <- c(
 			if(!is.null(rowVar)){
-				if(!rowInclude0){
-					data$rowVariables <- interactionCustom(data = data, var = rowVar)
+				if((!rowInclude0) | (!is.null(rowVarDataLevels))){
+					resICR <- interactionCustom(data = data, var = rowVar, varDataLevels = rowVarDataLevels)
+					data$rowVariables <- resICR$x
+					rowDataLevels <- resICR$dataLevels
 					"rowVariables"
 				}else	rowVar
 			},
 			if(!is.null(colVar)){
-				if(!colInclude0){
-					data$colVariables <- interactionCustom(data = data, var = colVar)
+				if((!colInclude0) | (!is.null(colVarDataLevels))){
+					resICC <- interactionCustom(data = data, var = colVar, varDataLevels = colVarDataLevels)
+					data$colVariables <- resICC$x
+					colDataLevels <- resICC$dataLevels
 					"colVariables"
 				}else colVar	
 			}
@@ -619,12 +630,12 @@ computeSummaryStatisticsByRowColVar <- function(
 			summaryTable[, ".id"] <- NULL
 	
 		# include original rowVar/colVar
-		if(!is.null(rowVar) & !rowInclude0){
-			summaryTable[, rowVar] <- data[match(summaryTable$rowVariables, data$rowVariables), rowVar]
+		if(!is.null(rowVar) & ((!rowInclude0) | (!is.null(rowVarDataLevels)))){
+			summaryTable[, rowVar] <- rowDataLevels[match(summaryTable$rowVariables, rowDataLevels$factorLevel), rowVar]
 			summaryTable$rowVariables <- NULL
 		}
-		if(!is.null(colVar) & !colInclude0){
-			summaryTable[, colVar] <- data[match(summaryTable$colVariables, data$colVariables), colVar]
+		if(!is.null(colVar) & ((!colInclude0) | (!is.null(colVarDataLevels)))){
+			summaryTable[, colVar] <- colDataLevels[match(summaryTable$colVariables, colDataLevels$factorLevel), colVar]
 			summaryTable$colVariables <- NULL
 		}
 		
