@@ -11,11 +11,13 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   colorVar = NULL, colorLab = getLabelVar(colorVar, labelVars =
   labelVars), colorPalette = NULL, labelVars = NULL,
   useLinetype = TRUE, linetypePalette = NULL, useShape = TRUE,
-  shapePalette = NULL, jitter = NULL, title = NULL, ylim = NULL,
-  xlim = NULL, xAxisLabs = NULL,
+  shapePalette = NULL, jitter = NULL, title = NULL, yLim = NULL,
+  xLim = NULL, xAxisLabs = NULL,
   sizePoint = GeomPoint$default_aes$size,
   sizeLine = GeomLine$default_aes$size,
-  sizeLabel = GeomText$default_aes$size, label = FALSE)
+  sizeLabel = GeomText$default_aes$size, tableText = NULL,
+  tableLabel = NULL, tableHeight = 0.2, label = FALSE,
+  byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -53,6 +55,10 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 
 \item{title}{String with title for the plot.}
 
+\item{yLim}{Vector of the length 2 with limits for the y-axis.}
+
+\item{xLim}{Vector of the length 2 with limits for the x-axis.}
+
 \item{xAxisLabs}{(optional) Named character vector with labels for the x-axis.}
 
 \item{sizePoint}{Size for the point.}
@@ -61,12 +67,26 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 
 \item{sizeLabel}{Size for the label, only used if \code{label} is not NULL.}
 
+\item{tableText}{(optional) Character vector with colname of \code{data}
+or expression from colnames of \code{data} to be represented in
+the table below the plot.
+By default, no table is displayed.}
+
+\item{tableLabel}{Character vector with label for \code{tableText},
+used as label for the x-axis of the table.}
+
+\item{tableHeight}{Numeric of length 1 with height for the table.}
+
 \item{label}{Logical or expression.
 Points are labelled with \code{meanVar} if set to TRUE,
 or with the specified expression if \code{label} is an expression.}
+
+\item{byVar}{Variable(s) of \code{data} for which separated plot(s)
+should be created.}
 }
 \value{
-\code{\link[ggplot2]{ggplot}} object
+\code{\link[ggplot2]{ggplot}} object or list of such
+objects of \code{byVar} is specified.
 }
 \description{
 Plot subject summary profile
