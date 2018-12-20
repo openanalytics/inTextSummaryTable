@@ -818,6 +818,7 @@ the counts of treated-patients presenting this event.
 		type = "count",
 		rowVar = "AEHLT",
 		rowOrder = function(x){
+			x <- subset(x, !isTotal)
 			totalPerCat <- daply(x, "AEHLT", function(y) sum(y$statN))# count across treatments
 			totalForTreatOnly <- daply(x, "AEHLT", function(y)
 				subset(y, TRTP == "treatmentX")$statN
