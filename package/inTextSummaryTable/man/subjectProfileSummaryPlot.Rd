@@ -5,15 +5,15 @@
 \title{Plot subject summary profile}
 \usage{
 subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
-  labelVars = labelVars), meanVar = "Mean", seVar = if ("SE" \%in\%
-  colnames(data)) "SE", yLab = paste(meanVar, if (!is.null(seVar))
-  paste("+-", seVar)), facetVar = NULL, facetScale = "free_y",
-  colorVar = NULL, colorLab = getLabelVar(colorVar, labelVars =
-  labelVars), colorPalette = NULL, labelVars = NULL,
-  useLinetype = TRUE, linetypePalette = NULL, useShape = TRUE,
-  shapePalette = NULL, jitter = NULL, title = NULL, yLim = NULL,
-  xLim = NULL, xAxisLabs = NULL,
-  sizePoint = GeomPoint$default_aes$size,
+  labelVars = labelVars), meanVar = "statMean", seVar = if ("statSE"
+  \%in\% colnames(data)) "statSE", yLab = paste(meanVar, if
+  (!is.null(seVar)) paste("+-", seVar)), facetVar = NULL,
+  facetScale = "free_y", colorVar = NULL,
+  colorLab = getLabelVar(colorVar, labelVars = labelVars),
+  colorPalette = NULL, labelVars = NULL, useLinetype = TRUE,
+  linetypePalette = NULL, useShape = TRUE, shapePalette = NULL,
+  jitter = NULL, title = NULL, yLim = NULL, xLim = NULL,
+  xAxisLabs = NULL, sizePoint = GeomPoint$default_aes$size,
   sizeLine = GeomLine$default_aes$size,
   sizeLabel = GeomText$default_aes$size, tableText = NULL,
   tableLabel = NULL, tableHeight = 0.2, label = FALSE,
