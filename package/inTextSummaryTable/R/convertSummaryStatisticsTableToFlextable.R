@@ -40,7 +40,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	}
 	
 	# create base flextable with header
-	headerDf <- attributes(summaryTable)$header
+	headerDf <- attributes(summaryTable)$summaryTable$header
 	ftWithHeader <- createFlextableWithHeader(
 		data = summaryTable, 
 		headerDf = headerDf,
@@ -62,15 +62,15 @@ convertSummaryStatisticsTableToFlextable <- function(
 		vline(border = bd, part = "body")
 	
 	# set correct alignments
-	rowVar <- attributes(summaryTable)$rowVar
+	rowVar <- attributes(summaryTable)$summaryTable$rowVar
 	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
 	colsAlignCenter <- setdiff(names(colsDataFt), colsAlignLeft)
 	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
 	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
 	
 	## padding
-	if(length(attributes(summaryTable)$padParams) > 0)
-		for(padParams in attributes(summaryTable)$padParams){
+	if(length(attributes(summaryTable)$summaryTable$padParams) > 0)
+		for(padParams in attributes(summaryTable)$summaryTable$padParams){
 			padPars <- grep("^padding", names(padParams), value = TRUE)
 			padParams[padPars] <- lapply(padPars, function(par) padParams[[par]] * rowPadBase)
 			# if title is specified, shift row coordinate of padding by 1
@@ -80,23 +80,23 @@ convertSummaryStatisticsTableToFlextable <- function(
 		}
 	
 	# merge rows
-	rowVarToMerge <- c(rowVar, attributes(summaryTable)$rowVarInSepCol)
+	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$summaryTable$rowVarInSepCol)
 	if(!is.null(rowVar))
 		ft <- merge_v(ft, j = getNewCol(rowVar))
 	
-	if(!is.null(attributes(summaryTable)$mergeParams)){
-		for(params in attributes(summaryTable)$mergeParams)
+	if(!is.null(attributes(summaryTable)$summaryTable$mergeParams)){
+		for(params in attributes(summaryTable)$summaryTable$mergeParams)
 			ft <- merge_at(ft, j = params$j, params$i, part = params$part)
 	}
 	
 	# horizontal lines
-	if(!is.null(attributes(summaryTable)$hlineParams))
-		for(hlineParams in attributes(summaryTable)$hlineParams)
+	if(!is.null(attributes(summaryTable)$summaryTable$hlineParams))
+		for(hlineParams in attributes(summaryTable)$summaryTable$hlineParams)
 			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
 	
 	# vertical lines
-	if(!is.null(attributes(summaryTable)$vlineParams))
-		for(vlineParams in attributes(summaryTable)$vlineParams){
+	if(!is.null(attributes(summaryTable)$summaryTable$vlineParams))
+		for(vlineParams in attributes(summaryTable)$summaryTable$vlineParams){
 			vlineParams$i <- vlineParams$i + length(title)
 			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
 		}
