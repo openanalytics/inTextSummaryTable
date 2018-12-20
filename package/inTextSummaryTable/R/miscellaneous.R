@@ -43,9 +43,9 @@ roundCustom <- function(x, digits = 0, format = c("text", "number")) {
 getAttribute <- function(summaryTable, name, default = NULL){
 	
 	attribute <- if(is.data.frame(summaryTable)){
-		attributes(summaryTable)[[name]]
+		attributes(summaryTable)$summaryTable[[name]]
 	}else{
-		attributeList <- lapply(summaryTable, function(x) attributes(x)[[name]])
+		attributeList <- lapply(summaryTable, function(x) attributes(x)$summaryTable[[name]])
 		# only keep names within the list ('use.names' in unlist concatenate with higher-level element)
 		res <- unlist(attributeList)
 		names(res) <- unlist(lapply(attributeList, names))
