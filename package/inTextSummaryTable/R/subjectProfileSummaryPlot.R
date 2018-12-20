@@ -41,7 +41,7 @@
 #' @export
 subjectProfileSummaryPlot <- function(data,
 	xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars),
-	meanVar = "Mean", seVar = if("SE" %in% colnames(data))	"SE", 
+	meanVar = "statMean", seVar = if("statSE" %in% colnames(data))	"statSE", 
 	yLab = paste(meanVar, if(!is.null(seVar))	paste("+-", seVar)),
 	facetVar = NULL, facetScale = "free_y",
 	colorVar = NULL, colorLab = getLabelVar(colorVar, labelVars = labelVars),
@@ -171,8 +171,7 @@ subjectProfileSummaryPlot <- function(data,
 			levels(data[, xVar])	else	unique(data[, xVar])
 	fctScaleX <- if(is.numeric(data[, xVar])){
 		function(breaks)	scale_x_continuous(breaks = breaks, limits = range(breaks))
-	}else function(breaks)
-		function(breaks)	scale_x_discrete(breaks = breaks, drop = FALSE)
+	}else function(breaks)	scale_x_discrete(breaks = breaks, drop = FALSE)
 	gg <- gg + fctScaleX(breaks = xAxisLabs)
 	
 	res <- if(!is.null(tableText)){
