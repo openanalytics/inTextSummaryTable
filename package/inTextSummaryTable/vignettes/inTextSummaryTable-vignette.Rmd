@@ -979,6 +979,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 	
 	# ensure that order of elements is the one specified in the corresponding numeric variable
 	library(glpgUtilityFct)
+	dataLB[dataLB[, "PARCAT2"] == "", "PARCAT2"] <- "OTHER"
 	dataLB <- convertVarToFactor(
 		data = dataLB, 
 		var = c("PARCAT1", "PARCAT2", "AVISIT", "TRTP", "ANRIND"), 
@@ -992,7 +993,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 	dataLB <- subset(dataLB, AVISIT %in% c("Baseline", "Day 14", "Day 28", "Follow-up"))
 	
 	# create summary table
-	summaryTableLBCount <- getSummaryStatisticsTable(
+	getSummaryStatisticsTable(
 		data = dataLB,
 		rowVar = c("PARCAT1", "PARCAT2", "PARAMCD", "ANRIND"),
 		rowVarInSepCol = "ANRIND",
@@ -1006,7 +1007,6 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		footer = "Statistics: N (%)",
 		landscape = TRUE
 	)
-	summaryTableLBCount
 
 ```
 
