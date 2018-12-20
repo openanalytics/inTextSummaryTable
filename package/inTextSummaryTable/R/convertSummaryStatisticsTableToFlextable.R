@@ -73,6 +73,9 @@ convertSummaryStatisticsTableToFlextable <- function(
 		for(padParams in attributes(summaryTable)$padParams){
 			padPars <- grep("^padding", names(padParams), value = TRUE)
 			padParams[padPars] <- lapply(padPars, function(par) padParams[[par]] * rowPadBase)
+			# if title is specified, shift row coordinate of padding by 1
+			if(!is.null(title) && padParams$part == "header" && "i" %in% names(padParams))
+				padParams$i <- padParams$i + 1
 			ft <- do.call(padding, c(list(x = ft), padParams))
 		}
 	
