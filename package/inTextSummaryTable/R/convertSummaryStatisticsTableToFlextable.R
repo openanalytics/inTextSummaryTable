@@ -43,7 +43,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	headerDf <- attributes(summaryTable)$header
 	ftWithHeader <- createFlextableWithHeader(
 		data = summaryTable, 
-		headerDf = headerDf
+		headerDf = headerDf,
+		title = title
 	)
 	ft <- ftWithHeader$ft
 	colsDataFt <- ftWithHeader$colsData
@@ -84,11 +85,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 		for(params in attributes(summaryTable)$mergeParams)
 			ft <- merge_at(ft, j = params$j, params$i, part = params$part)
 	}
-	
-	# add title and headers
-	if(!is.null(title))	
-		for(titleI in title)
-			ft <- setHeader(ft, header = titleI)
 	
 	# horizontal lines
 	if(!is.null(attributes(summaryTable)$hlineParams))
@@ -304,6 +300,7 @@ createFlextableWithHeader <- function(data,
 	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
 	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
 	
+	# add title
 	if(!is.null(title))	
 		for(titleI in title)
 			ft <- setHeader(ft, header = titleI)

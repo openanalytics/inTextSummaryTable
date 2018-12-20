@@ -282,7 +282,7 @@ For example, the summary table is restricted to the mean+-SE statistics.
 		colVar = c("TRTP", "AVISIT"),
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
-		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE)))),
+		stats = list(expression(paste(formatC(statMean), "+-", formatC(statSE)))),
 		footer = "Statistics: mean +- SE",
 		rowPadBase = 10
 	)
@@ -300,8 +300,8 @@ Multiple statistics can be specified.
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
 		stats =  list(
-			Mean = expression(formatC(Mean)),
-			Median = expression(formatC(Median))
+			Mean = expression(formatC(statMean)),
+			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
 		statsLayout = "col",
@@ -325,8 +325,8 @@ variable(s).
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
 		stats =  list(
-			Mean = expression(formatC(Mean)),
-			Median = expression(formatC(Median))
+			Mean = expression(formatC(statMean)),
+			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
 		statsLayout = "row",
@@ -346,8 +346,8 @@ The statistics can also be included in columns.
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
 		stats =  list(
-			Mean = expression(formatC(Mean)),
-			Median = expression(formatC(Median))
+			Mean = expression(formatC(statMean)),
+			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
 		statsLayout = "col",
@@ -368,8 +368,8 @@ the row variables.
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
 		stats =  list(
-			Mean = expression(formatC(Mean)),
-			Median = expression(formatC(Median))
+			Mean = expression(formatC(statMean)),
+			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
 		statsLayout = "rowInSepCol",
@@ -393,8 +393,8 @@ variables, but as **separated column** are additionally specified via the
 		rowVar = c("PARCAT1", "PARAM"),
 		rowVarInSepCol = "PARAM",
 		labelVars = labelVars,
-		stats =  list(expression(paste0(formatC(Median), 
-			" (", formatC(Min), ", ", formatC(Min), ")"))
+		stats =  list(expression(paste0(formatC(statMedian), 
+			" (", formatC(statMin), ", ", formatC(statMin), ")"))
 		),
 		footer = "Statistics: median (min, max)"
 	)
@@ -415,7 +415,7 @@ are included via the parameter `colTotalInclude` set to TRUE.
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
 		colTotalInclude = TRUE,
-		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE)))),
+		stats = list(expression(paste(formatC(statMean), "+-", formatC(statSE)))),
 		footer = "Statistics: mean +- SE",
 		rowPadBase = 10
 	)
@@ -433,7 +433,7 @@ Multiple variables to be summarized can be specified in the `var` parameter.
 		var = c("AVAL", "CHG"),
 		rowVar = c("PARCAT2", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
-		stats = list(expression(paste(formatC(Mean), "+-", formatC(SE)))),
+		stats = list(expression(paste(formatC(statMean), "+-", formatC(statSE)))),
 		rowPadBase = 10,
 		labelVars = labelVars,
 		title = "Analysis value and change from baseline of the Chemical parameters"
@@ -500,8 +500,8 @@ adverse event term are grouped according to the `r labelVars["AEHLGT"]`
 		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		stats = list(
-			'N (%)' = expression(paste0(N, " (", round(PercN, 1), ")")),
-			'm' = expression(m)
+			'N (%)' = expression(paste0(statN, " (", round(statPercN, 1), ")")),
+			'm' = expression(statm)
 		),
 		footer = "Statistics: number and percentage of subjects: N (%) and number of records: m"
 	)
@@ -540,7 +540,7 @@ subject-level (`ADSL`) dataset.
 		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -572,7 +572,7 @@ The label for the total is customized via the `rowTotalLab` parameter.
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
 		rowTotalInclude = TRUE, rowTotalLab = "Any adverse events",
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -595,7 +595,7 @@ parameter **`rowSubtotalInclude`**.
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
 		rowSubtotalInclude = TRUE,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -638,7 +638,7 @@ category.
 		rowPadBase = 10,
 		title = "Table: Adverse Events: white blood cell analyses",
 		dataTotal = dataTotal,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -656,7 +656,7 @@ low-level AR category are retained.
 	library(plyr)
 	filterFct <- function(x){
 		ddply(x, "AELLT", function(y)
-			if(any(y$N >= 2)) y
+			if(any(y$statN >= 2)) y
 		)
 	}
 		
@@ -669,7 +669,7 @@ low-level AR category are retained.
 		filterFct = filterFct,
 		rowPadBase = 10,
 		title = "Table: Adverse Events",
-		stats = expression(paste0(N, " (", round(PercN, 1), ")")),
+		stats = expression(paste0(statN, " (", round(statPercN, 1), ")")),
 		footer = "Statistics: number and percentage of subjects: N (%)"
 	)
 
@@ -684,7 +684,7 @@ of the low-level AR category are retained.
 
 	filterFct <- function(x){
 		ddply(x, "AELLT", function(y)
-			if(any(subset(y, TRTP == "treatmentX")$N >= 2))	y
+			if(any(subset(y, TRTP == "treatmentX")$statN >= 2))	y
 		)
 	}
 		
@@ -697,7 +697,7 @@ of the low-level AR category are retained.
 		filterFct = filterFct,
 		rowPadBase = 10,
 		title = "Table: Adverse Events",
-		stats = expression(paste0(N, " (", round(PercN, 1), ")")),
+		stats = expression(paste0(statN, " (", round(statPercN, 1), ")")),
 		footer = "Statistics: number and percentage of subjects: N (%)"
 	)
 
@@ -734,7 +734,7 @@ are retained (ordered alphabetically if not specified), e.g. to use a fixed
 		title = "Table: Adverse Events ordered based on total counts",
 		dataTotal = dataTotal,
 		rowSubtotalInclude = TRUE,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -766,7 +766,7 @@ provided for the `rowVar` parameter.
 		title = "Table: Adverse Events ordered based on total counts of high-level category",
 		dataTotal = dataTotal,
 		rowSubtotalInclude = TRUE,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -796,7 +796,7 @@ sorted based on their occurrence on only the treated patients.
 		rowOrderTotalFilterFct = function(x) subset(x, TRTP == "treatmentX"),
 		title = "Table: Adverse Events ordered based on total counts",
 		dataTotal = dataTotal,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -818,9 +818,9 @@ the counts of treated-patients presenting this event.
 		type = "count",
 		rowVar = "AEHLT",
 		rowOrder = function(x){
-			totalPerCat <- daply(x, "AEHLT", function(y) sum(y$N))# count across treatments
+			totalPerCat <- daply(x, "AEHLT", function(y) sum(y$statN))# count across treatments
 			totalForTreatOnly <- daply(x, "AEHLT", function(y)
-				subset(y, TRTP == "treatmentX")$N
+				subset(y, TRTP == "treatmentX")$statN
 			) # counts across treated patients
 			# sort first based on overall count, then counts of treated patients
 			names(totalPerCat)[order(totalPerCat, totalForTreatOnly, decreasing = TRUE)]
@@ -830,7 +830,7 @@ the counts of treated-patients presenting this event.
 		rowPadBase = 10,
 		title = "Table: Adverse Events ordered based on total counts",
 		dataTotal = dataTotal,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
@@ -857,7 +857,7 @@ at once with the `byVar` variable.
 		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 	summaryTables[[1]]
@@ -874,8 +874,8 @@ The variable type is automatically detected by the function.
 
 ```{r mixedTable-SL}
 
-	customStatsCat <- expression(paste0(N, " (", round(PercN, 1), ")"))
-	customStatsNum <- expression(paste0(formatC(Mean), "+-", formatC(SE)))
+	customStatsCat <- expression(paste0(statN, " (", round(statPercN, 1), ")"))
+	customStatsNum <- expression(paste0(formatC(statMean), "+-", formatC(statSE)))
 	
 	# TODO: check horizontal lines
 	getSummaryStatisticsTable(
@@ -951,7 +951,7 @@ or related to the treatment and with high severity.
 		labelVars = labelVars,
 		rowPadBase = 5,
 		dataTotal = dataTotal,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		title = "Table: Adverse events: counts for groups of interest",
 		footer = "Statistics: N (%)"
 	)
@@ -999,7 +999,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		type = "count",
 		labelVars = labelVars,
 		rowPadBase = 10,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		title = "Table: Treatment-emergent laboratory abnormalities",
 		file = "summaryStatisticsTable_LB_count.docx",
 		footer = "Statistics: N (%)",
@@ -1038,7 +1038,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
 		rowTotalInclude = TRUE,
-		stats = list(expression(paste0(N, " (", round(PercN, 1), ")"))),
+		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)",
 		file = "summaryStatisticsTable_AE_count.docx",
 	)
@@ -1065,7 +1065,8 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		colVar = c("TRTP", "AVISIT"),
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
-		stats =  list(expression(paste0(formatC(Median), "\n(", formatC(Min), ", ", formatC(Min), ")"))),
+		stats =  list(expression(paste0(formatC(statMedian), "\n(", 
+			formatC(statMin), ", ", formatC(statMin), ")"))),
 		footer = "Statistics: median (min, max)",
 		file = "summaryStatisticsTable_PP_summaryStatistics.docx"
 	)

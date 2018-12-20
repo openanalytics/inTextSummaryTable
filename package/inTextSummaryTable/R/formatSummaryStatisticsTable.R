@@ -72,7 +72,7 @@ formatSummaryStatisticsTable <- function(
 		dataWithTotal <- ddply(summaryTable, colVar, function(x){
 			idxTotal <- which(x$isTotal)
 			if(length(idxTotal) == 1){
-				x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "N"], ")")
+				x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "statN"], ")")
 				x[-idxTotal, ]
 			}else x
 		})
@@ -88,7 +88,7 @@ formatSummaryStatisticsTable <- function(
 
 	}else{
 		idxTotal <- which(summaryTable$isTotal)
-		nTotal <- summaryTable[idxTotal, "N"]
+		nTotal <- summaryTable[idxTotal, "statN"]
 		dataWithTotal <- summaryTable[-idxTotal, ]
 	}
 		
