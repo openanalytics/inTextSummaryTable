@@ -6,9 +6,9 @@
 \usage{
 subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   labelVars = labelVars), meanVar = "statMean", seVar = if ("statSE"
-  \%in\% colnames(data)) "statSE", yLab = paste(meanVar, if
-  (!is.null(seVar)) paste("+-", seVar)), facetVar = NULL,
-  facetScale = "free_y", colorVar = NULL,
+  \%in\% colnames(data)) "statSE", yLab = paste(sub("^stat", "",
+  meanVar), if (!is.null(seVar)) paste("+-", sub("^stat", "", seVar))),
+  facetVar = NULL, facetScale = "free_y", colorVar = NULL,
   colorLab = getLabelVar(colorVar, labelVars = labelVars),
   colorPalette = NULL, labelVars = NULL, useLinetype = TRUE,
   linetypePalette = NULL, useShape = TRUE, shapePalette = NULL,
@@ -17,7 +17,7 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   sizeLine = GeomLine$default_aes$size,
   sizeLabel = GeomText$default_aes$size, tableText = NULL,
   tableLabel = NULL, tableHeight = 0.2, label = FALSE,
-  byVar = NULL)
+  byVar = NULL, hLine = NULL)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -83,6 +83,11 @@ or with the specified expression if \code{label} is an expression.}
 
 \item{byVar}{Variable(s) of \code{data} for which separated plot(s)
 should be created.}
+
+\item{hLine}{(optional) numeric with y-intercept of dashed line to be added.
+If different thresholds should be used for different elements of the 
+\code{byVar} or \code{facetVar} variables, the vector should be named
+with each corresponding element.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object or list of such

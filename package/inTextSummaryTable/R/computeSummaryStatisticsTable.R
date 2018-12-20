@@ -497,7 +497,7 @@ computeSummaryStatisticsTable <- function(data,
 
 	)
 	
-	attributes(summaryTable) <- c(attributes(summaryTable), attrTable)
+	attributes(summaryTable) <- c(attributes(summaryTable), list(summaryTable = attrTable))
 	
 	return(summaryTable)
 	
