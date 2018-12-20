@@ -6,7 +6,7 @@
 \usage{
 convertVarToFactorWithOrder(data, var, otherVars = NULL,
   method = c("auto", "alphabetical", "total"), totalFilterFct = NULL,
-  totalVar = "N")
+  totalVar = "statN")
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -33,7 +33,8 @@ If no \code{otherVars} is specified, consider all rows.}
 \item{totalFilterFct}{(optional) Function which returns a subset of the data of interest,
 to filter the total data considered for the ordering.}
 
-\item{totalVar}{String with variable of \code{data} considered in case \code{type} is 'total'.}
+\item{totalVar}{String with variable of \code{data} considered in case \code{type} is 'total',
+'statN' by default.}
 }
 \value{
 Factor \code{var} variable of \code{data} with specified order.

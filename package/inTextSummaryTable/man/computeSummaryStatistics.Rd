@@ -36,20 +36,20 @@ depending if \code{type} is:
 \itemize{
 \item{'summary': }{
 \itemize{
-\item{'N': }{number of subjects }
-\item{'m': }{number of records}
-\item{'Mean': }{mean of \code{var}}
-\item{'SD': }{standard deviation of \code{var}}
-\item{'SE': }{standard error of \code{var}}
-\item{'Median': }{median of \code{var}}
-\item{'Min': }{minimum of \code{var}}
-\item{'Max': }{maximum of \code{var}}
+\item{'statN': }{number of subjects }
+\item{'statm': }{number of records}
+\item{'statMean': }{mean of \code{var}}
+\item{'statSD': }{standard deviation of \code{var}}
+\item{'statSE': }{standard error of \code{var}}
+\item{'statMedian': }{median of \code{var}}
+\item{'statMin': }{minimum of \code{var}}
+\item{'statMax': }{maximum of \code{var}}
 }
 }
 \item{'count': }{
 \itemize{
-\item{'N': }{number of subjects}
-\item{'m': }{number of records}
+\item{'statN': }{number of subjects}
+\item{'statm': }{number of records}
 }
 }
 }

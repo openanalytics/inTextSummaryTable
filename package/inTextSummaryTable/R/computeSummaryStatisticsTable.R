@@ -19,22 +19,22 @@
 #' \itemize{
 #' \item{'summaryTable': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'Mean': }{mean of \code{var}}
-#' \item{'SD': }{standard deviation of \code{var}}
-#' \item{'SE': }{standard error of \code{var}}
-#' \item{'Median': }{median of \code{var}}
-#' \item{'Min': }{minimum of \code{var}}
-#' \item{'Max': }{maximum of \code{var}}
-#' \item{'Perc': }{percentage of subjects}
-#' \item{'m': }{number of records}
+#' \item{'statN': }{number of subjects}
+#' \item{'statMean': }{mean of \code{var}}
+#' \item{'statSD': }{standard deviation of \code{var}}
+#' \item{'statSE': }{standard error of \code{var}}
+#' \item{'statMedian': }{median of \code{var}}
+#' \item{'statMin': }{minimum of \code{var}}
+#' \item{'statMax': }{maximum of \code{var}}
+#' \item{'statPerc': }{percentage of subjects}
+#' \item{'statm': }{number of records}
 #' }
 #' }
 #' \item{'countTable': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'PercN': }{percentage of subjects}
-#' \item{'m': }{number of records}
+#' \item{'statN': }{number of subjects}
+#' \item{'statPercN': }{percentage of subjects}
+#' \item{'statm': }{number of records}
 #' }
 #' }
 #' }
@@ -73,22 +73,22 @@
 #' \itemize{
 #' \item{'summaryTable': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'Mean': }{mean of \code{var}}
-#' \item{'SD': }{standard deviation of \code{var}}
-#' \item{'SE': }{standard error of \code{var}}
-#' \item{'Median': }{median of \code{var}}
-#' \item{'Min': }{minimum of \code{var}}
-#' \item{'Max': }{maximum of \code{var}}
-#' \item{'Perc': }{percentage of subjects}
-#' \item{'m': }{number of records}
+#' \item{'statN': }{number of subjects}
+#' \item{'statMean': }{mean of \code{var}}
+#' \item{'statSD': }{standard deviation of \code{var}}
+#' \item{'statSE': }{standard error of \code{var}}
+#' \item{'statMedian': }{median of \code{var}}
+#' \item{'statMin': }{minimum of \code{var}}
+#' \item{'statMax': }{maximum of \code{var}}
+#' \item{'statPerc': }{percentage of subjects}
+#' \item{'statm': }{number of records}
 #' }
 #' }
 #' \item{'countTable': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'PercN': }{percentage of subjects}
-#' \item{'m': }{number of records}
+#' \item{'statN': }{number of subjects}
+#' \item{'statPercN': }{percentage of subjects}
+#' \item{'statm': }{number of records}
 #' }}}
 #' }
 #' \item{statistics specified by \code{statsVar}.
@@ -261,8 +261,9 @@ computeSummaryStatisticsTable <- function(data,
 				idxMissingSubVar <- which(
 					rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
 				)
-				if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0)
-					dataForSubTotal <- data[-idxMissingSubVar, ]
+				dataForSubTotal <- if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0){
+					data[-idxMissingSubVar, ]
+				}else	data
 				
 				# compute statistics
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
@@ -378,9 +379,9 @@ computeSummaryStatisticsTable <- function(data,
 	summaryTable <- ddply(summaryTable, colVar, function(x){
 		idxTotal <- which(x$isTotal)
 		if(length(idxTotal) > 0){
-			PercN <- x$N/x[idxTotal, "N"]*100
-		}else PercN <- NA
-		cbind(x, PercN = PercN)
+			statPercN <- x$statN/x[idxTotal, "statN"]*100
+		}else statPercN <- NA
+		cbind(x, statPercN = statPercN)
 	})
 
 	# filter records if any 'filterFct' is specified
@@ -667,20 +668,20 @@ computeSummaryStatisticsByRowColVar <- function(
 #' \itemize{
 #' \item{'summary': }{
 #' \itemize{
-#' \item{'N': }{number of subjects }
-#' \item{'m': }{number of records}
-#' \item{'Mean': }{mean of \code{var}}
-#' \item{'SD': }{standard deviation of \code{var}}
-#' \item{'SE': }{standard error of \code{var}}
-#' \item{'Median': }{median of \code{var}}
-#' \item{'Min': }{minimum of \code{var}}
-#' \item{'Max': }{maximum of \code{var}}
+#' \item{'statN': }{number of subjects }
+#' \item{'statm': }{number of records}
+#' \item{'statMean': }{mean of \code{var}}
+#' \item{'statSD': }{standard deviation of \code{var}}
+#' \item{'statSE': }{standard error of \code{var}}
+#' \item{'statMedian': }{median of \code{var}}
+#' \item{'statMin': }{minimum of \code{var}}
+#' \item{'statMax': }{maximum of \code{var}}
 #' }
 #' }
 #' \item{'count': }{
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'m': }{number of records}
+#' \item{'statN': }{number of subjects}
+#' \item{'statm': }{number of records}
 #' }
 #' }
 #' }
@@ -720,27 +721,27 @@ computeSummaryStatistics <- function(data,
 			emptyVar <- is.null(val) || length(val) == 0
 			res <- if(!(filterEmptyVar & emptyVar)){
 				data.frame(
-					N = getNSubjects(data),
-					m = getNRecords(data),
-					Mean = ifelse(emptyVar, NA, mean(val)),
-					SD = ifelse(emptyVar, NA, sd(val)),
-					SE = ifelse(emptyVar, NA, sd(val)/sqrt(length(val))),
-					Median = ifelse(emptyVar, NA, median(val)),
-					Min = ifelse(emptyVar, NA, min(val)),
-					Max = ifelse(emptyVar, NA, max(val))
+					statN = getNSubjects(data),
+					statm = getNRecords(data),
+					statMean = ifelse(emptyVar, NA, mean(val)),
+					statSD = ifelse(emptyVar, NA, sd(val)),
+					statSE = ifelse(emptyVar, NA, sd(val)/sqrt(length(val))),
+					statMedian = ifelse(emptyVar, NA, median(val)),
+					statMin = ifelse(emptyVar, NA, min(val)),
+					statMax = ifelse(emptyVar, NA, max(val))
 				)
 			}
 		},
 		'countTable' = {
 			# to avoid that ddply with empty data returns entire data.frame
 			if(nrow(data) == 0){
-				res <- data.frame(N = 0, m = 0)
+				res <- data.frame(statN = 0, statm = 0)
 			}else{
 				res <- ddply(data, var, function(x){
 					if(!(filterEmptyVar & nrow(x) == 0)){
 						data.frame(
-							N = getNSubjects(x),
-							m = getNRecords(x)
+							statN = getNSubjects(x),
+							statm = getNRecords(x)
 						)
 					}
 				}, .drop = FALSE)
@@ -775,7 +776,8 @@ computeSummaryStatistics <- function(data,
 #' }
 #' \item{Function to be applied on each subset to get the order elements of the variable}
 #' }
-#' @param totalVar String with variable of \code{data} considered in case \code{type} is 'total'.
+#' @param totalVar String with variable of \code{data} considered in case \code{type} is 'total',
+#' 'statN' by default.
 #' @param totalFilterFct (optional) Function which returns a subset of the data of interest,
 #' to filter the total data considered for the ordering.
 #' @return Factor \code{var} variable of \code{data} with specified order.
@@ -785,7 +787,7 @@ convertVarToFactorWithOrder <- function(
 	data, var, otherVars = NULL, 
 	method = c("auto", "alphabetical", "total"),
 	totalFilterFct = NULL,
-	totalVar = "N"){
+	totalVar = "statN"){
 
 	if(!is.function(method)){
 		

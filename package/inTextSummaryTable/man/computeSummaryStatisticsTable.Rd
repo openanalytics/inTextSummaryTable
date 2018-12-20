@@ -101,22 +101,22 @@ The following variables are recognized, if the table is a:
 \itemize{
 \item{'summaryTable': }{
 \itemize{
-\item{'N': }{number of subjects}
-\item{'Mean': }{mean of \code{var}}
-\item{'SD': }{standard deviation of \code{var}}
-\item{'SE': }{standard error of \code{var}}
-\item{'Median': }{median of \code{var}}
-\item{'Min': }{minimum of \code{var}}
-\item{'Max': }{maximum of \code{var}}
-\item{'Perc': }{percentage of subjects}
-\item{'m': }{number of records}
+\item{'statN': }{number of subjects}
+\item{'statMean': }{mean of \code{var}}
+\item{'statSD': }{standard deviation of \code{var}}
+\item{'statSE': }{standard error of \code{var}}
+\item{'statMedian': }{median of \code{var}}
+\item{'statMin': }{minimum of \code{var}}
+\item{'statMax': }{maximum of \code{var}}
+\item{'statPerc': }{percentage of subjects}
+\item{'statm': }{number of records}
 }
 }
 \item{'countTable': }{
 \itemize{
-\item{'N': }{number of subjects}
-\item{'PercN': }{percentage of subjects}
-\item{'m': }{number of records}
+\item{'statN': }{number of subjects}
+\item{'statPercN': }{percentage of subjects}
+\item{'statm': }{number of records}
 }
 }
 }
@@ -154,22 +154,22 @@ The data.frame contains the :
 \itemize{
 \item{'summaryTable': }{
 \itemize{
-\item{'N': }{number of subjects}
-\item{'Mean': }{mean of \code{var}}
-\item{'SD': }{standard deviation of \code{var}}
-\item{'SE': }{standard error of \code{var}}
-\item{'Median': }{median of \code{var}}
-\item{'Min': }{minimum of \code{var}}
-\item{'Max': }{maximum of \code{var}}
-\item{'Perc': }{percentage of subjects}
-\item{'m': }{number of records}
+\item{'statN': }{number of subjects}
+\item{'statMean': }{mean of \code{var}}
+\item{'statSD': }{standard deviation of \code{var}}
+\item{'statSE': }{standard error of \code{var}}
+\item{'statMedian': }{median of \code{var}}
+\item{'statMin': }{minimum of \code{var}}
+\item{'statMax': }{maximum of \code{var}}
+\item{'statPerc': }{percentage of subjects}
+\item{'statm': }{number of records}
 }
 }
 \item{'countTable': }{
 \itemize{
-\item{'N': }{number of subjects}
-\item{'PercN': }{percentage of subjects}
-\item{'m': }{number of records}
+\item{'statN': }{number of subjects}
+\item{'statPercN': }{percentage of subjects}
+\item{'statm': }{number of records}
 }}}
 }
 \item{statistics specified by \code{statsVar}.
