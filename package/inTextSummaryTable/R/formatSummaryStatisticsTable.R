@@ -297,7 +297,7 @@ formatSummaryStatisticsTable <- function(
 		
 		# merge rows for rowVarInSepCol
 		for(var in rowVarInSepCol){
-			varPrev <- rowVar[seq_len(match(var, rowVar))]
+			varPrev <- intersect(rowVar[seq_len(match(var, rowVar))], colnames(dataLong))
 			varPrevBin <- convertVectToBinary(interactionCustom(dataLong[, varPrev])$x)
 			idx <- which(diff(varPrevBin) == 0)
 			if(length(idx) > 0){
