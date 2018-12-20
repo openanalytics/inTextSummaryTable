@@ -93,11 +93,11 @@ formatSummaryStatisticsTable <- function(
 	}
 		
 	# convert from wide to long format
-	statsVar <- if(is.null(attributes(summaryTable)$statsVar))
+	statsVar <- if(is.null(attributes(summaryTable)$summaryTable$statsVar))
 		setdiff(colnames(dataWithTotal),  
 			c(rowVar, colVar, "variable", "variableGroup", "isTotal")
 		)	else	
-		attributes(summaryTable)$statsVar
+		attributes(summaryTable)$summaryTable$statsVar
 	dataLong <- melt(dataWithTotal, 
 		id.vars = c(rowVar, colVar),
 		measure.vars = statsVar,
@@ -293,7 +293,7 @@ formatSummaryStatisticsTable <- function(
 					)
 				))
 		}
-		attributes(dataLong)$hlineParams <- hlineParams
+		attributes(dataLong)$summaryTable$hlineParams <- hlineParams
 		
 		# merge rows for rowVarInSepCol
 		for(var in rowVarInSepCol){
@@ -312,7 +312,7 @@ formatSummaryStatisticsTable <- function(
 						part = "body"
 					)))
 				}
-				attributes(dataLong)$mergeParams <- mergeParams
+				attributes(dataLong)$summaryTable$mergeParams <- mergeParams
 			}
 		}
 			
@@ -337,10 +337,10 @@ formatSummaryStatisticsTable <- function(
 		)
 	)
 	colnames(headerDf) <- colnames(dataLong)
-	attributes(dataLong)$header <- headerDf
+	attributes(dataLong)$summaryTable$header <- headerDf
 	
 	# extract vertical lines (specified by the right border)
-	attributes(dataLong)$vlineParams <- c(
+	attributes(dataLong)$summaryTable$vlineParams <- c(
 		# last header line
 		list(
 			# Statistic in column
@@ -373,12 +373,12 @@ formatSummaryStatisticsTable <- function(
 				)
 			)
 			
-			attributes(dataLong)$rowVar <- headerRow
+			attributes(dataLong)$summaryTable$rowVar <- headerRow
 			
 		}
 		
 		if(length(padParams) > 0)
-			attributes(dataLong)$padParams <- padParams
+			attributes(dataLong)$summaryTable$padParams <- padParams
 
 	}
 	

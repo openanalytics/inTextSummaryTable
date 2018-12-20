@@ -30,6 +30,10 @@
 #' @param tableHeight Numeric of length 1 with height for the table.
 #' @param byVar Variable(s) of \code{data} for which separated plot(s)
 #' should be created.
+#' @param hLine (optional) numeric with y-intercept of dashed line to be added.
+#' If different thresholds should be used for different elements of the 
+#' \code{byVar} or \code{facetVar} variables, the vector should be named
+#' with each corresponding element.
 #' @inheritParams subjectProfileSummaryTable
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
@@ -42,7 +46,8 @@
 subjectProfileSummaryPlot <- function(data,
 	xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars),
 	meanVar = "statMean", seVar = if("statSE" %in% colnames(data))	"statSE", 
-	yLab = paste(meanVar, if(!is.null(seVar))	paste("+-", seVar)),
+	yLab = paste(sub("^stat", "", meanVar), 
+		if(!is.null(seVar))	paste("+-", sub("^stat", "", seVar))),
 	facetVar = NULL, facetScale = "free_y",
 	colorVar = NULL, colorLab = getLabelVar(colorVar, labelVars = labelVars),
 	colorPalette = NULL,
@@ -60,7 +65,8 @@ subjectProfileSummaryPlot <- function(data,
 	sizeLabel = GeomText$default_aes$size,
 	tableText = NULL, tableLabel = NULL, tableHeight = 0.2,
 	label = FALSE,
-	byVar = NULL){
+	byVar = NULL,
+	hLine = NULL){
 
 	if(!is.null(byVar)){
 		inputParams <- as.list(environment())
@@ -69,10 +75,13 @@ subjectProfileSummaryPlot <- function(data,
 			byVar <- FALSE
 		}else{
 			res <- dlply(data, byVar, function(dataBy){
+				byEl <- as.character(unique(dataBy[, byVar]))
 				inputParamsBy <- inputParams
 				inputParamsBy$data <- dataBy
 				inputParamsBy$byVar <- NULL
-				inputParamsBy$yLab <- paste(inputParamsBy$yLab, unique(dataBy[, byVar]))
+				inputParamsBy$yLab <- paste(inputParamsBy$yLab, byEl)
+				if(!is.null(inputParams$hLine) && byEl %in% names(inputParams$hLine))
+					inputParamsBy$hLine <- inputParams$hLine[[byEl]]
 				do.call(subjectProfileSummaryPlot, inputParamsBy)		
 			})	
 			return(res)
@@ -84,8 +93,15 @@ subjectProfileSummaryPlot <- function(data,
 		stop("Variable(s): ", toString(varNotInData), "are not in data.")
 
 	if(!is.null(xVar) & is.null(jitter))
-		jitter <- ifelse(is.numeric(data[, xVar]), 
-			ifelse(n_distinct(data[, xVar]) == 1, 0.1, 0.8), 0.3)
+		jitter <- if(is.numeric(data[, xVar])){
+			# only one element
+			if(n_distinct(data[, xVar]) == 1){
+				0.1
+			# multiple element, take 10% of the min diff
+			}else{
+				min(diff(unique(sumTablePlot[, "AVISITN"])))*0.1
+			}
+		}else	0.3
 	
 	pd <- position_dodge(jitter) # move them .05 to the left and right
 
@@ -116,7 +132,21 @@ subjectProfileSummaryPlot <- function(data,
 		list(group = ifelse(!is.null(colorVar), "colorVar", 1)),
 		if(!is.null(colorVar) & useLinetype)	list(linetype = "colorVar")
 	)
-	gg <- ggplot(data = data, mapping = do.call(aes_string, aesBase)) +
+	# base plot
+	gg <- ggplot(data = data, mapping = do.call(aes_string, aesBase))
+	
+	# horizontal line(s)
+	if(!is.null(hLine)){
+		gg <- gg + if(!is.null(facetVar) && !is.null(names(hLine))){
+			dataHLine <- setNames(data.frame(names(hLine), hLine), c(facetVar, "yintercept"))
+			geom_hline(data = dataHLine, aes(yintercept = yintercept))
+		}else{
+			geom_hline(yintercept = hLine)
+		}
+	}
+	
+	# line + points
+	gg <- gg +
 		geom_line(do.call(aes_string, aesLine), position = pd, size = sizeLine) +
 		geom_point(aes(y = meanVar), position = pd, size = sizePoint)
 
@@ -248,7 +278,7 @@ subjectProfileSummaryTable <- function(
 		eval(expr = text, envir = data)
 	}else if(is.character(text)){
 		if(!text %in% colnames(data)){
-			stop("'tableStats' should be among the columns of 'data'.")
+			stop(paste0("'", text, "' should be among the columns of 'data'."))
 		}else{
 			data[, text]
 		}
