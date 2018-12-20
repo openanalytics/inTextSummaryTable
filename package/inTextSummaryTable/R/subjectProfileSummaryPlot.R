@@ -80,8 +80,9 @@ subjectProfileSummaryPlot <- function(data,
 				inputParamsBy$data <- dataBy
 				inputParamsBy$byVar <- NULL
 				inputParamsBy$yLab <- paste(inputParamsBy$yLab, byEl)
-				if(!is.null(inputParams$hLine) && byEl %in% names(inputParams$hLine))
+				if(!is.null(inputParams$hLine) && byEl %in% names(inputParams$hLine)){
 					inputParamsBy$hLine <- inputParams$hLine[[byEl]]
+				}else	inputParamsBy$hLine <- NULL
 				do.call(subjectProfileSummaryPlot, inputParamsBy)		
 			})	
 			return(res)
@@ -99,7 +100,7 @@ subjectProfileSummaryPlot <- function(data,
 				0.1
 			# multiple element, take 10% of the min diff
 			}else{
-				min(diff(unique(sumTablePlot[, "AVISITN"])))*0.1
+				min(diff(unique(data[, xVar])))*0.1
 			}
 		}else	0.3
 	
