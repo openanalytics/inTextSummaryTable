@@ -77,7 +77,7 @@ combineVariables <- function(data, paramsList, newVar,
 		if(nrow(dataRetained) > 0){
 			dataRetained[, newVar] <- paramsLabel[i]
 			dataRetained
-		}
+		}else	dataRetained
 	})
 
 	# combine all data
@@ -88,7 +88,9 @@ combineVariables <- function(data, paramsList, newVar,
 		paramsLabel <- c(labelAll, paramsLabel)
 	}
 
-	dataRetained[, newVar] <- factor(dataRetained[, newVar], levels = paramsLabel)
+	dataRetained[, newVar] <- factor(
+		if(nrow(dataRetained) == 0)	character()	else	dataRetained[, newVar]
+	, levels = paramsLabel)
 
 	return(dataRetained)
 

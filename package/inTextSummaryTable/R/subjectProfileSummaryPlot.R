@@ -68,6 +68,11 @@ subjectProfileSummaryPlot <- function(data,
 	byVar = NULL,
 	hLine = NULL){
 
+	if(!is.null(facetVar) & !is.null(tableText)){
+		warning("Table cannot be used in combination with 'facetVar', no table is included.")
+		tableText <- NULL
+	}
+
 	if(!is.null(byVar)){
 		inputParams <- as.list(environment())
 		if(!byVar %in% colnames(data)){
@@ -202,7 +207,7 @@ subjectProfileSummaryPlot <- function(data,
 			levels(data[, xVar])	else	unique(data[, xVar])
 	fctScaleX <- if(is.numeric(data[, xVar])){
 		function(breaks)	scale_x_continuous(breaks = breaks, limits = range(breaks))
-	}else function(breaks)	scale_x_discrete(breaks = breaks, drop = FALSE)
+	}else function(breaks)	scale_x_discrete(breaks = breaks, labels = names(xAxisLabs), drop = FALSE)
 	gg <- gg + fctScaleX(breaks = xAxisLabs)
 	
 	res <- if(!is.null(tableText)){

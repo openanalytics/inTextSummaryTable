@@ -200,7 +200,8 @@ computeSummaryStatisticsTable <- function(data,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
 			subjectVar = subjectVar, labelVars = labelVars
 		)
-		summaryTableColTotal[, colVar] <- "Total"
+		if(nrow(summaryTableColTotal) > 0)
+			summaryTableColTotal[, colVar] <- "Total"
 		
 	}
 	
@@ -222,11 +223,13 @@ computeSummaryStatisticsTable <- function(data,
 					var = var, varLab = varLab, type = type,	
 					subjectVar = subjectVar, labelVars = labelVars
 				)
-				summaryTableRowTotalColTotal[, colVar] <- "Total"
+				if(nrow(summaryTableRowTotalColTotal) > 0)
+					summaryTableRowTotalColTotal[, colVar] <- "Total"
 				summaryTableRowTotal <- rbind.fill(summaryTableRowTotal, summaryTableRowTotalColTotal)
 			}
 			
-			summaryTableRowTotal[, rowVar] <- "Total"			
+			if(nrow(summaryTableRowTotal) > 0)
+				summaryTableRowTotal[, rowVar] <- "Total"			
 			
 		}else{
 			warning("The row 'total' is not included because no 'rowVar' is specified.")
@@ -251,12 +254,13 @@ computeSummaryStatisticsTable <- function(data,
 		
 			# compute sub-total for each specified rowVar (excepted the last one)
 			summaryTableRowSubtotal <- data.frame()
-			while(length(rowVarSubTotal) > 0){
+			rVST <- rowVarSubTotal
+			while(length(rVST) > 0){
 				
 				# remove rows which have NA for the nested sub-variable
 				# otherwise have summary statistics are duplicated (sub-total and initial)
 				rowVarSubTotalOther <- rowVarForSubTotal[
-					setdiff(seq_along(rowVarForSubTotal), seq_along(match(rowVarSubTotal, rowVarForSubTotal)))
+					setdiff(seq_along(rowVarForSubTotal), seq_along(match(rVST, rowVarForSubTotal)))
 				]
 				idxMissingSubVar <- which(
 					rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
@@ -269,7 +273,7 @@ computeSummaryStatisticsTable <- function(data,
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotal, 
 					var = var, type = type,
-					rowVar = rowVarSubTotal, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
+					rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 					colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 				)
@@ -279,19 +283,21 @@ computeSummaryStatisticsTable <- function(data,
 					summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 						data = dataForSubTotal, 
 						var = var, type = type,
-						rowVar = rowVarSubTotal, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
+						rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 						subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 					)
-					summaryTableRowSubtotalVarColTotal[, colVar] <- "Total"
+					if(nrow(summaryTableRowSubtotalVarColTotal) > 0)
+						summaryTableRowSubtotalVarColTotal[, colVar] <- "Total"
 					summaryTableRowSubtotalVar <- rbind.fill(summaryTableRowSubtotalVar, summaryTableRowSubtotalVarColTotal)
 				}
 				
 				# set other row variables to 'Total'
-				summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rowVarSubTotal)] <- "Total"
+				if(nrow(summaryTableRowSubtotalVar) > 0)
+					summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rVST)] <- "Total"
 				# save results
 				summaryTableRowSubtotal <- rbind.fill(summaryTableRowSubtotal, summaryTableRowSubtotalVar)
 				# consider the next variable
-				rowVarSubTotal <- rowVarSubTotal[-length(rowVarSubTotal)]
+				rVST <- rVST[-length(rVST)]
 				
 			}
 			
@@ -315,10 +321,10 @@ computeSummaryStatisticsTable <- function(data,
 		if(rowSubtotalInclude)
 			summaryTable <- rbind.fill(summaryTable, summaryTableRowSubtotal)
 		
-		summaryTable[, rowVar] <- lapply(rowVar, function(x){
-			xVar <- summaryTable[, x]
+		summaryTable[, rowVar] <- lapply(rowVar, function(var){
+			xVar <- summaryTable[, var]
 			# only add Total is included in the table (case: missing nested var)
-			levelsX <- unique(c(if("Total" %in% xVar)	"Total", rowVarLevels[[x]]))
+			levelsX <- unique(c(if(rowSubtotalInclude && var %in% rowVarSubTotal)	"Total", rowVarLevels[[var]]))
 			factor(xVar, levels = levelsX)
 		})
 		
@@ -351,7 +357,8 @@ computeSummaryStatisticsTable <- function(data,
 			type = "countTable", 
 			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 		)
-		summaryTableTotalCol[, colVar] <- "Total"
+		if(nrow(summaryTableTotalCol) > 0)
+			summaryTableTotalCol[, colVar] <- "Total"
 		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalCol)
 	}
 	
@@ -561,86 +568,82 @@ computeSummaryStatisticsByRowColVar <- function(
 	colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
 	subjectVar = "USUBJID",
 	labelVars = NULL){
-	
-	if(nrow(data) > 0){
 
-		computeSummaryStatisticsCustom <- function(...)
-			computeSummaryStatistics(..., subjectVar = subjectVar)
-			
-		# build variables used for grouping:
-		# 1) consider 'ddply(, .drop = FALSE)' to also include zeros
-		# 2) build interaction of row variable(s), column variable(s) to only consider 
-		# available combinations of row/column variables (if multiple variables in each direction)
-		# otherwise ddply(, .drop = FALSE) with also include combinations of elements non present 
-		# e.g. AE term in an AE group not present
-		# (variables considered independently)
-		groupVar <- c(
-			if(!is.null(rowVar)){
-				if((!rowInclude0) | (!is.null(rowVarDataLevels))){
-					resICR <- interactionCustom(data = data, var = rowVar, varDataLevels = rowVarDataLevels)
-					data$rowVariables <- resICR$x
-					rowDataLevels <- resICR$dataLevels
-					"rowVariables"
-				}else	rowVar
-			},
-			if(!is.null(colVar)){
-				if((!colInclude0) | (!is.null(colVarDataLevels))){
-					resICC <- interactionCustom(data = data, var = colVar, varDataLevels = colVarDataLevels)
-					data$colVariables <- resICC$x
-					colDataLevels <- resICC$dataLevels
-					"colVariables"
-				}else colVar	
-			}
-		)
+	computeSummaryStatisticsCustom <- function(...)
+		computeSummaryStatistics(..., subjectVar = subjectVar)
 		
-		# get general statistics (by group if specified)
-		summaryTable <- ddply(data, groupVar, function(x){
-			# compute statistics for each specified variable
-			# (loop in case multiple are specified)
-			if(is.null(var)){
+	# build variables used for grouping:
+	# 1) consider 'ddply(, .drop = FALSE)' to also include zeros
+	# 2) build interaction of row variable(s), column variable(s) to only consider 
+	# available combinations of row/column variables (if multiple variables in each direction)
+	# otherwise ddply(, .drop = FALSE) with also include combinations of elements non present 
+	# e.g. AE term in an AE group not present
+	# (variables considered independently)
+	groupVar <- c(
+		if(!is.null(rowVar)){
+			if((!rowInclude0) | (!is.null(rowVarDataLevels))){
+				resICR <- interactionCustom(data = data, var = rowVar, varDataLevels = rowVarDataLevels)
+				data$rowVariables <- resICR$x
+				rowDataLevels <- resICR$dataLevels
+				"rowVariables"
+			}else	rowVar
+		},
+		if(!is.null(colVar)){
+			if((!colInclude0) | (!is.null(colVarDataLevels))){
+				resICC <- interactionCustom(data = data, var = colVar, varDataLevels = colVarDataLevels)
+				data$colVariables <- resICC$x
+				colDataLevels <- resICC$dataLevels
+				"colVariables"
+			}else colVar	
+		}
+	)
+	
+	# get general statistics (by group if specified)
+	summaryTable <- ddply(data, groupVar, function(x){
+		# compute statistics for each specified variable
+		# (loop in case multiple are specified)
+		if(is.null(var)){
+			sumTable <- computeSummaryStatisticsCustom(
+				data = x, 
+				var = var, 
+				type = type
+			)
+		}else{
+			summaryTableVarList <- lapply(var, function(varI){
 				sumTable <- computeSummaryStatisticsCustom(
 					data = x, 
-					var = var, 
+					var = varI, 
 					type = type
 				)
-			}else{
-				summaryTableVarList <- lapply(var, function(varI){
-					sumTable <- computeSummaryStatisticsCustom(
-						data = x, 
-						var = varI, 
-						type = type
-					)
-					# only store the variable if more than one specified variable
-					if(!is.null(sumTable) && length(var) > 1){
-						cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
-					}else sumTable
-				})
-				summaryTable <- do.call(rbind.fill, summaryTableVarList)
-				# if multiple variable(s), sort 'variable' in order specified in input
-				if(!is.null(summaryTable) && length(var) > 1){
-					summaryTable$variable <- factor(
-						varLab[summaryTable$variableInit],
-						levels = varLab[var]
-					)
-				}
-				summaryTable
+				# only store the variable if more than one specified variable
+				if(!is.null(sumTable) && length(var) > 1){
+					cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
+				}else sumTable
+			})
+			summaryTable <- do.call(rbind.fill, summaryTableVarList)
+			# if multiple variable(s), sort 'variable' in order specified in input
+			if(!is.null(summaryTable) && length(var) > 1){
+				summaryTable$variable <- factor(
+					varLab[summaryTable$variableInit],
+					levels = varLab[var]
+				)
 			}
-		}, .drop = FALSE)
+			summaryTable
+		}
+	}, .drop = FALSE)
 
-		if(is.null(groupVar))
-			summaryTable[, ".id"] <- NULL
-	
-		# include original rowVar/colVar
-		if(!is.null(rowVar) & ((!rowInclude0) | (!is.null(rowVarDataLevels)))){
-			summaryTable[, rowVar] <- rowDataLevels[match(summaryTable$rowVariables, rowDataLevels$factorLevel), rowVar]
-			summaryTable$rowVariables <- NULL
-		}
-		if(!is.null(colVar) & ((!colInclude0) | (!is.null(colVarDataLevels)))){
-			summaryTable[, colVar] <- colDataLevels[match(summaryTable$colVariables, colDataLevels$factorLevel), colVar]
-			summaryTable$colVariables <- NULL
-		}
-		
-	}else summaryTable <- NULL
+	if(is.null(groupVar))
+		summaryTable[, ".id"] <- NULL
+
+	# include original rowVar/colVar
+	if(!is.null(rowVar) & ((!rowInclude0) | (!is.null(rowVarDataLevels)))){
+		summaryTable[, rowVar] <- rowDataLevels[match(summaryTable$rowVariables, rowDataLevels$factorLevel), rowVar]
+		summaryTable$rowVariables <- NULL
+	}
+	if(!is.null(colVar) & ((!colInclude0) | (!is.null(colVarDataLevels)))){
+		summaryTable[, colVar] <- colDataLevels[match(summaryTable$colVariables, colDataLevels$factorLevel), colVar]
+		summaryTable$colVariables <- NULL
+	}
 		
 	return(summaryTable)
 	
