@@ -8,6 +8,7 @@
     o subjectProfileSummaryPlot: xAxisLabs, byVar, table, hLine
     o [row|col]VarDataLevels
     o re-label all statistics with 'stat' and attributes in 'summaryTable' slot
+    o combineVariables: fix in case empty input data
 0.0.5
     o roundCustom: format parameter, 'text' by default
     o set empty label for when variable specified for count tablee
