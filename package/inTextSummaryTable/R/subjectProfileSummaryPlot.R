@@ -105,7 +105,7 @@ subjectProfileSummaryPlot <- function(data,
 				0.1
 			# multiple element, take 10% of the min diff
 			}else{
-				min(diff(unique(data[, xVar])))*0.1
+				min(diff(sort(unique(data[, xVar]))))*0.1
 			}
 		}else	0.3
 	
@@ -117,7 +117,10 @@ subjectProfileSummaryPlot <- function(data,
 		data[, c("ymin", "ymax")] <- data[, meanVar] + data[, seVar] %*% t(c(-1, 1))
 	
 	# in case variable contain spaces or other character not parsed by ggplot2
-	data[, c("xVar", "meanVar")] <- data[, c(xVar, meanVar)]
+	if(!is.null(xVar))
+		data$xVar <- data[, xVar]
+	if(!is.null(meanVar))
+		data$meanVar <- data[, meanVar]
 	if(!is.null(colorVar))
 		data$colorVar <- data[, colorVar]
 	
@@ -206,9 +209,10 @@ subjectProfileSummaryPlot <- function(data,
 		xAxisLabs <- if(is.factor(data[, xVar]))
 			levels(data[, xVar])	else	unique(data[, xVar])
 	fctScaleX <- if(is.numeric(data[, xVar])){
-		function(breaks)	scale_x_continuous(breaks = breaks, limits = range(breaks))
-	}else function(breaks)	scale_x_discrete(breaks = breaks, labels = names(xAxisLabs), drop = FALSE)
-	gg <- gg + fctScaleX(breaks = xAxisLabs)
+		# limits should take the jitter into account!
+		scale_x_continuous(breaks = unname(xAxisLabs), limits = range(xAxisLabs) + c(-1, 1)*jitter,  labels = names(xAxisLabs))
+	}else	scale_x_discrete(breaks = unname(xAxisLabs), labels = names(xAxisLabs), drop = FALSE)
+	gg <- gg + fctScaleX
 	
 	res <- if(!is.null(tableText)){
 		
@@ -229,7 +233,7 @@ subjectProfileSummaryPlot <- function(data,
 			showLegend = FALSE, yAxisLabs = !is.null(colorVar)
 		)
 		
-		ggTable <- ggTable + fctScaleX(breaks = xAxisLabs)
+		ggTable <- ggTable + fctScaleX
 
 		# remove legend and title x-axis for base plot (will be included in table plot)
 		gg <- gg + theme(legend.position = "none", axis.title.x = element_blank())
