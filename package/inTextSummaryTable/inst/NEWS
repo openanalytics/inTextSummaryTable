@@ -1,5 +1,6 @@
 0.0.7
     o subjectProfileSummaryPlot: fix xAxisLabs specification with jitter x-axis
+    o computeSummaryStatistics: fix for order colVar in case total colum included
 0.0.6
     o getSummaryStatisticsTable: remove sub-total statistics if all nested vars are missing
     o computeSummaryStatisticsByRowColVar: doesn't propagate NA for interaction of row/colVar variables
