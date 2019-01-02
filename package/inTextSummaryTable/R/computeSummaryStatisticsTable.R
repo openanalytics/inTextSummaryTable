@@ -351,16 +351,6 @@ computeSummaryStatisticsTable <- function(data,
 		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 		subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 	)
-	if(colTotalInclude){
-		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
-			data = dataTotal, 
-			type = "countTable", 
-			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
-		)
-		if(nrow(summaryTableTotalCol) > 0)
-			summaryTableTotalCol[, colVar] <- "Total"
-		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalCol)
-	}
 	
 	## column total
 	if(colTotalInclude){
@@ -370,6 +360,21 @@ computeSummaryStatisticsTable <- function(data,
 				if(is.factor(x))	levels(x)	else	sort(unique(x)),
 			simplify = FALSE
 		)
+		
+		# total summary table
+		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
+			data = dataTotal, 
+			type = "countTable", 
+			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+		)
+		if(nrow(summaryTableTotalCol) > 0)
+			summaryTableTotalCol[, colVar] <- "Total"
+		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalCol)
+		summaryTableTotal[, colVar] <- lapply(colVar, function(x)
+			factor(summaryTableTotal[, x], levels = unique(c(colVarLevels[[x]], "Total")))
+		)
+
+		# other summary table
 		summaryTable <- rbind.fill(summaryTable, summaryTableColTotal)
 		summaryTable[, colVar] <- lapply(colVar, function(x)
 			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], "Total")))
