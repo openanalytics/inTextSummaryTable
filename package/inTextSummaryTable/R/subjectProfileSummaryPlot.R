@@ -34,11 +34,13 @@
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element.
+#' @param useShape Logical, if TRUE (by default) \code{colorVar} is also used for the shape.
+#' @param shapePalette Named vector with shape palette for \code{colorVar}.
 #' @inheritParams subjectProfileSummaryTable
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
 #' @author Laure Cougnaud
-#' @importFrom glpgUtilityFct getGLPGColorPalette getGLPGShapePalette getLabelVar
+#' @importFrom glpgUtilityFct getGLPGColorPalette getGLPGShapePalette getGLPGLinetypePalette getLabelVar
 #' @import ggplot2
 #' @import cowplot
 #' @importFrom ggrepel geom_text_repel
@@ -255,7 +257,7 @@ subjectProfileSummaryPlot <- function(data,
 #' Plot a table with \code{ggplot} of a variable of interest 
 #' @param data Data.frame with data for the table.
 #' @param xVar String, variable of \code{data} with variable for the x-axis.
-#' @param label Character vector with colnames of \code{data}
+#' @param text Character vector with colnames of \code{data}
 #' or expression based on colnames of \code{data} to extract
 #' the text label.
 #' @param xLim Vector of the length 2 with limits for the x-axis.

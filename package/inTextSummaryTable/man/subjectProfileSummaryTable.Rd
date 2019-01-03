@@ -15,6 +15,10 @@ subjectProfileSummaryTable(data, xVar, text, xLim = NULL,
 
 \item{xVar}{String, variable of \code{data} with variable for the x-axis.}
 
+\item{text}{Character vector with colnames of \code{data}
+or expression based on colnames of \code{data} to extract
+the text label.}
+
 \item{xLim}{Vector of the length 2 with limits for the x-axis.}
 
 \item{colorVar}{String, variable of \code{data} for coloring.}
@@ -35,10 +39,6 @@ subjectProfileSummaryTable(data, xVar, text, xLim = NULL,
 
 \item{xAxisLabs}{Vector with labels for the x-axis if \code{xVar}
 is discrete or vector with limits if continuous.}
-
-\item{label}{Character vector with colnames of \code{data}
-or expression based on colnames of \code{data} to extract
-the text label.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object

@@ -51,6 +51,10 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 
 \item{linetypePalette}{Vector with linetype(s), in case \code{useLinetype} is TRUE.}
 
+\item{useShape}{Logical, if TRUE (by default) \code{colorVar} is also used for the shape.}
+
+\item{shapePalette}{Named vector with shape palette for \code{colorVar}.}
+
 \item{jitter}{Numeric with jitter for the x-axis, only used if \code{colorVar} specified.}
 
 \item{title}{String with title for the plot.}
