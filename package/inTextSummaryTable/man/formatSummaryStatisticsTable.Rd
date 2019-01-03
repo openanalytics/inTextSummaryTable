@@ -7,11 +7,13 @@
 formatSummaryStatisticsTable(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
-  getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
-  rowTotalInclude = FALSE, rowTotalLab = NULL,
+  getLabelVar(rowVar, labelVars = labelVars)),
+  rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
+  rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default
+  = FALSE), rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
-  FALSE), colVar = NULL, labelVars = NULL, statsLayout = c("row",
-  "col", "rowInSepCol"))
+  FALSE), colVar = getAttribute(summaryTable, "colVar"),
+  labelVars = NULL, statsLayout = c("row", "col", "rowInSepCol"))
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}

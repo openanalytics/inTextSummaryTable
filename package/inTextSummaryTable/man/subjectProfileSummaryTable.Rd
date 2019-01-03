@@ -8,7 +8,10 @@ subjectProfileSummaryTable(data, xVar, text, xLim = NULL,
   colorVar = NULL, colorPalette = NULL,
   colorLab = getLabelVar(colorVar, labelVars = labelVars), xLab = NULL,
   textSize = GeomText$default_aes$size, labelVars = NULL,
-  showLegend = TRUE, yAxisLabs = FALSE, xAxisLabs = NULL)
+  showLegend = TRUE, yAxisLabs = FALSE, xAxisLabs = NULL,
+  style = "report", fontname = switch(style, report = "Times",
+  presentation = "Tahoma"), fontsize = switch(style, report = 8,
+  presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data for the table.}
@@ -39,6 +42,12 @@ the text label.}
 
 \item{xAxisLabs}{Vector with labels for the x-axis if \code{xVar}
 is discrete or vector with limits if continuous.}
+
+\item{style}{String with subject profile style, either 'report' or 'presentation'.}
+
+\item{fontname}{String with font name.}
+
+\item{fontsize}{Numeric vector with font size.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object

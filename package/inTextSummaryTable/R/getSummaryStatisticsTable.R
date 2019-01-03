@@ -34,7 +34,8 @@ getSummaryStatisticsTable <- function(
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	style = "report",
-	byVar = NULL){
+	byVar = NULL,
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
 
 	statsLayout <- match.arg(statsLayout)
 
@@ -73,7 +74,8 @@ getSummaryStatisticsTable <- function(
 		margin = margin, rowPadBase = rowPadBase,
 		outputType = outputType,
 		statsLayout = statsLayout,
-		style = style
+		style = style,
+		fontsize = fontsize
 	)
 	
 	return(ft)
