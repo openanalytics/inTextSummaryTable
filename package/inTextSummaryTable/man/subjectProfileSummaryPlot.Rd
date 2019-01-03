@@ -15,7 +15,8 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   jitter = NULL, title = NULL, yLim = NULL, xLim = NULL,
   xAxisLabs = NULL, sizePoint = GeomPoint$default_aes$size,
   sizeLine = GeomLine$default_aes$size,
-  sizeLabel = GeomText$default_aes$size, tableText = NULL,
+  sizeLabel = GeomText$default_aes$size,
+  widthErrorBar = GeomErrorbar$default_aes$width, tableText = NULL,
   tableLabel = NULL, tableHeight = 0.2, label = FALSE,
   byVar = NULL, hLine = NULL)
 }
@@ -70,6 +71,8 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 \item{sizeLine}{Size for the line.}
 
 \item{sizeLabel}{Size for the label, only used if \code{label} is not NULL.}
+
+\item{widthErrorBar}{Numeric vector of length 1 with width of error bar.}
 
 \item{tableText}{(optional) Character vector with colname of \code{data}
 or expression from colnames of \code{data} to be represented in
