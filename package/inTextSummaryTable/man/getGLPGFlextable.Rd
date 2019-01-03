@@ -4,10 +4,11 @@
 \alias{getGLPGFlextable}
 \title{Format a flextable to fulfill GLPG style.}
 \usage{
-getGLPGFlextable(data, ft = NULL, border = TRUE, fontname = "Times",
-  fontsize = 8, landscape = (style == "presentation"),
-  style = "report", margin = 1, adjustWidth = TRUE, align = TRUE,
-  title = NULL)
+getGLPGFlextable(data, ft = NULL, border = TRUE,
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  fontsize = switch(style, report = 8, presentation = 10),
+  landscape = (style == "presentation"), style = "report",
+  margin = 1, adjustWidth = TRUE, align = TRUE, title = NULL)
 }
 \arguments{
 \item{data}{data.frame with data used in table.}

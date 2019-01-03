@@ -35,7 +35,8 @@ exportSummaryStatisticsTable <- function(
 	footer = NULL,
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
-	style = "report"){
+	style = "report",
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
 
 	outputType  <- match.arg(outputType)
 	
@@ -61,7 +62,7 @@ exportSummaryStatisticsTable <- function(
 			summaryTable = summaryTableLong,
 			landscape = landscape, margin = margin, rowPadBase = rowPadBase,
 			title = title, footer = footer,
-			style = style
+			style = style, fontsize = fontsize
 		)
 		
 		# include the table(s) in a Word document

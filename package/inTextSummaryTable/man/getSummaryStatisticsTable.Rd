@@ -19,7 +19,8 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
   file = NULL, outputType = c("flextable", "data.frame"),
   statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  byVar = NULL)
+  byVar = NULL, fontsize = switch(style, report = 8, presentation =
+  10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -175,6 +176,8 @@ either 'report' or 'presentation'}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
+
+\item{fontsize}{Integer with font size, 8 by default.}
 }
 \value{
 Depending on the \code{outputType}:

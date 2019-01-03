@@ -21,8 +21,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	title = NULL,
 	footer = NULL,
 	style = "report",
-	fontname = "Times", #switch(style, 'report' = "Times", 'presentation = "Tahoma')
-	fontsize = 8
+	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10)
 ){
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
@@ -335,8 +335,8 @@ createFlextableWithHeader <- function(data,
 getGLPGFlextable <- function(data, 
 	ft = NULL, 
 	border = TRUE,
-	fontname = "Times", #switch(style, 'report' = "Times", 'presentation = "Tahoma')
-	fontsize = 8,
+	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	landscape = (style == "presentation"),
 	style = "report",
 	margin = 1,

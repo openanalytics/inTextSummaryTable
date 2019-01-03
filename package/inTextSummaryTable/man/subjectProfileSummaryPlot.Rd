@@ -18,7 +18,9 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   sizeLabel = GeomText$default_aes$size,
   widthErrorBar = GeomErrorbar$default_aes$width, tableText = NULL,
   tableLabel = NULL, tableHeight = 0.2, label = FALSE,
-  byVar = NULL, hLine = NULL)
+  byVar = NULL, hLine = NULL, style = "report",
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -95,6 +97,12 @@ should be created.}
 If different thresholds should be used for different elements of the 
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element.}
+
+\item{style}{String with subject profile style, either 'report' or 'presentation'.}
+
+\item{fontname}{String with font name.}
+
+\item{fontsize}{Numeric vector with font size.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object or list of such

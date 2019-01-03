@@ -70,7 +70,10 @@ subjectProfileSummaryPlot <- function(data,
 	tableText = NULL, tableLabel = NULL, tableHeight = 0.2,
 	label = FALSE,
 	byVar = NULL,
-	hLine = NULL){
+	hLine = NULL,
+	style = "report",
+	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
 
 	if(!is.null(facetVar) & !is.null(tableText)){
 		warning("Table cannot be used in combination with 'facetVar', no table is included.")
@@ -202,7 +205,10 @@ subjectProfileSummaryPlot <- function(data,
 	if(length(argsLab) > 0)
 		gg <- gg + do.call(labs, argsLab)
 	
-	gg <- gg + theme_classic() + theme(legend.position = "bottom")
+	gg <- gg + theme_classic() + theme(
+		legend.position = "bottom",
+		text = element_text(family = fontname, size = fontsize)
+	)
 	
 	# set limits for the axes
 	if((!is.null(xLim)) | (!is.null(yLim))){
@@ -242,7 +248,10 @@ subjectProfileSummaryPlot <- function(data,
 			xLab = xLab,
 			colorVar = colorVar,
 			colorPalette = colorPalette,
-			showLegend = FALSE, yAxisLabs = !is.null(colorVar)
+			showLegend = FALSE, yAxisLabs = !is.null(colorVar),
+			style = style,
+			fontname = fontname,
+			fontsize = fontsize
 		)
 		
 		ggTable <- ggTable + fctScaleX
@@ -281,6 +290,9 @@ subjectProfileSummaryPlot <- function(data,
 #' @param yAxisLabs Logical, if TRUE include the labels in the y-axis.
 #' @param xAxisLabs Vector with labels for the x-axis if \code{xVar}
 #' is discrete or vector with limits if continuous.
+#' @param style String with subject profile style, either 'report' or 'presentation'.
+#' @param fontname String with font name.
+#' @param fontsize Numeric vector with font size.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @author Laure Cougnaud
@@ -294,7 +306,10 @@ subjectProfileSummaryTable <- function(
 	labelVars = NULL,
 	showLegend = TRUE,
 	yAxisLabs = FALSE,
-	xAxisLabs = NULL){
+	xAxisLabs = NULL,
+	style = "report",
+	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
 	
 	data$tableTextLabel <- if(is.expression(text)){
 		eval(expr = text, envir = data)
@@ -351,7 +366,8 @@ subjectProfileSummaryTable <- function(
 			axis.ticks.y = element_blank(),
 			axis.title.y = element_blank(),
 			axis.text.x = element_blank(),
-			axis.ticks.x = element_blank()
+			axis.ticks.x = element_blank(),
+			text = element_text(family = fontname, size = fontsize)
 		),
 		if(is.null(xLab))	list(axis.title.x = element_blank()),
 		if(!yAxisLabs){
