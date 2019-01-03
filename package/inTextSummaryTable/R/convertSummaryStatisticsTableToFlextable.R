@@ -199,6 +199,8 @@ getDimPage <- function(
 #' @param ft Corresponding \code{\link[flextable]{flextable}}.
 #' @param fontname String with font name, 'Times' by default.
 #' @param fontsize Integer with font size, 8 by default.
+#' @param part string with part of the table to consider, 
+#' see \code{\link[flextable]{display}}.
 #' @return \code{\link[flextable]{flextable}} with superscript.
 #' @importFrom stats as.formula
 #' @importFrom officer fp_text
@@ -321,6 +323,7 @@ createFlextableWithHeader <- function(data,
 #' @param title Character vector with title(s) for the table.
 #' Set to NULL (by default) if no title should be included.
 #' Only available if \code{ft} is not specified.
+#' @param align Logical, if TRUE (by default), default alignment is set.
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperscriptToFlextable
 #' @return \code{\link[flextable]{flextable}} with GLPG style.

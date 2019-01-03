@@ -29,6 +29,8 @@ format.}
 
 \item{adjustWidth}{Logical, if TRUE adjust column widths.}
 
+\item{align}{Logical, if TRUE (by default), default alignment is set.}
+
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.
 Only available if \code{ft} is not specified.}
