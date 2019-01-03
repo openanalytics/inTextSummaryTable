@@ -35,6 +35,7 @@
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element.
 #' @param useShape Logical, if TRUE (by default) \code{colorVar} is also used for the shape.
+#' @param widthErrorBar Numeric vector of length 1 with width of error bar.
 #' @param shapePalette Named vector with shape palette for \code{colorVar}.
 #' @inheritParams subjectProfileSummaryTable
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
@@ -65,6 +66,7 @@ subjectProfileSummaryPlot <- function(data,
 	sizePoint = GeomPoint$default_aes$size,
 	sizeLine = GeomLine$default_aes$size,
 	sizeLabel = GeomText$default_aes$size,
+	widthErrorBar = GeomErrorbar$default_aes$width,
 	tableText = NULL, tableLabel = NULL, tableHeight = 0.2,
 	label = FALSE,
 	byVar = NULL,
@@ -166,7 +168,10 @@ subjectProfileSummaryPlot <- function(data,
 			position = pd, size = sizeLabel)
 
 	if(includeEB)
-		gg <- gg + geom_errorbar(aes_string(ymin = "ymin", ymax = "ymax"), position = pd)
+		gg <- gg + geom_errorbar(
+			aes_string(ymin = "ymin", ymax = "ymax"), 
+			position = pd, width = widthErrorBar
+		)
 
 	# facetting
 	if(!is.null(facetVar))
@@ -212,7 +217,12 @@ subjectProfileSummaryPlot <- function(data,
 			levels(data[, xVar])	else	unique(data[, xVar])
 	fctScaleX <- if(is.numeric(data[, xVar])){
 		# limits should take the jitter into account!
-		scale_x_continuous(breaks = unname(xAxisLabs), limits = range(xAxisLabs) + c(-1, 1)*jitter,  labels = names(xAxisLabs))
+		scaleXLim <- max(jitter, GeomErrorbar$default_aes$width/2)
+		scale_x_continuous(
+			breaks = unname(xAxisLabs), 
+			limits = range(xAxisLabs) + c(-1, 1)*scaleXLim, 
+			labels = names(xAxisLabs)
+		)
 	}else	scale_x_discrete(breaks = unname(xAxisLabs), labels = names(xAxisLabs), drop = FALSE)
 	gg <- gg + fctScaleX
 	

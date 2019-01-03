@@ -16,3 +16,4 @@ test.Rmd
 *.pptx
 .~lock*
 *.DOCX
+*.md
