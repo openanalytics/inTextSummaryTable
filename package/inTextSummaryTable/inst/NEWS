@@ -2,6 +2,7 @@
     o subjectProfileSummaryPlot: fixes xAxisLabs specification with jitter x-axis
     o computeSummaryStatistics: fix for order colVar in case total colum included
     o set font presentation to Tahoma and default font size
+    o fix test roundCustom
 0.0.6
     o getSummaryStatisticsTable: remove sub-total statistics if all nested vars are missing
     o computeSummaryStatisticsByRowColVar: doesn't propagate NA for interaction of row/colVar variables
