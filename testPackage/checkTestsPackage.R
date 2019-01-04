@@ -16,7 +16,7 @@ library(vdiffr)
 tmp <- Sys.setlocale(category = "LC_COLLATE", locale = "C")
 
 # create reference figures in 'tests/fig' package
-validate_cases(collect_cases(package = packagePath))
+validate_cases(collect_cases(package = packagePath, filter = "subjectProfileSummaryPlot"))
 
 ## create the package
 library(devtools)
