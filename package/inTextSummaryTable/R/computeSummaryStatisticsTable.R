@@ -133,7 +133,8 @@ computeSummaryStatisticsTable <- function(data,
 	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL,
-	stats = NULL, filterFct = NULL,
+	stats = NULL, statsExtra = NULL,
+	filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
 	labelVars = NULL,
 	byVar = NULL
@@ -188,6 +189,7 @@ computeSummaryStatisticsTable <- function(data,
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
 		var = var, varLab = varLab, varIncludeTotal = varIncludeTotal,
+		statsExtra = statsExtra,
 		type = type,
 		rowVar = rowVar, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
@@ -199,6 +201,7 @@ computeSummaryStatisticsTable <- function(data,
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
 			data = data, 
 			var = var, varLab = varLab, varIncludeTotal = varIncludeTotal, 
+			statsExtra = statsExtra,
 			type = type,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
 			subjectVar = subjectVar, labelVars = labelVars
@@ -214,7 +217,7 @@ computeSummaryStatisticsTable <- function(data,
 			
 			summaryTableRowTotal <- computeSummaryStatisticsByRowColVar(
 				data = data, 
-				var = var, varIncludeTotal = varIncludeTotal, 
+				var = var, varIncludeTotal = varIncludeTotal, statsExtra = statsExtra,
 				type = type,
 				colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
@@ -224,7 +227,7 @@ computeSummaryStatisticsTable <- function(data,
 			if(colTotalInclude){
 				summaryTableRowTotalColTotal <- computeSummaryStatisticsByRowColVar(
 					data = data, 
-					var = var, varIncludeTotal = varIncludeTotal,
+					var = var, varIncludeTotal = varIncludeTotal, statsExtra = statsExtra,
 					varLab = varLab, type = type,	
 					subjectVar = subjectVar, labelVars = labelVars
 				)
@@ -278,6 +281,7 @@ computeSummaryStatisticsTable <- function(data,
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotal, 
 					var = var, varIncludeTotal = varIncludeTotal,
+					statsExtra = statsExtra,
 					type = type,
 					rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 					colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
@@ -289,6 +293,7 @@ computeSummaryStatisticsTable <- function(data,
 					summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 						data = dataForSubTotal, 
 						var = var, varIncludeTotal = varIncludeTotal,
+						statsExtra = statsExtra,
 						type = type,
 						rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 						subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
@@ -580,10 +585,15 @@ computeSummaryStatisticsByRowColVar <- function(
 	rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
 	colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
 	subjectVar = "USUBJID",
-	labelVars = NULL){
+	labelVars = NULL,
+	statsExtra = NULL){
 
 	computeSummaryStatisticsCustom <- function(...)
-		computeSummaryStatistics(..., subjectVar = subjectVar, varIncludeTotal = varIncludeTotal)
+		computeSummaryStatistics(..., 
+			subjectVar = subjectVar, 
+			varIncludeTotal = varIncludeTotal,
+			statsExtra = statsExtra
+		)
 		
 	# build variables used for grouping:
 	# 1) consider 'ddply(, .drop = FALSE)' to also include zeros
@@ -687,6 +697,11 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @param varIncludeTotal Logical, if TRUE (FALSE by default) the total across 
 #' all categories of \code{var} is included.
 #' Only considered if \code{type} is 'countTable'.
+#' @param statsExtra (optional) Named list with functions for additional custom
+#' statistics to be computed, only available for 'summaryTable',
+#' e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+#' Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+#' and return the corresponding summary statistic.
 #' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{
@@ -711,9 +726,11 @@ computeSummaryStatisticsByRowColVar <- function(
 #' }
 #' @author Laure Cougnaud
 #' @importFrom stats na.omit median sd
+#' @importFrom methods formalArgs
 #' @export
 computeSummaryStatistics <- function(data, 
 	var = NULL, varIncludeTotal = FALSE,
+	statsExtra = NULL,
 	subjectVar = "USUBJID",
 	filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
 	type = "auto"){
@@ -746,7 +763,7 @@ computeSummaryStatistics <- function(data,
 			val <- data[, var]
 			emptyVar <- is.null(val) || length(val) == 0
 			res <- if(!(filterEmptyVar & emptyVar)){
-				data.frame(
+				res <- data.frame(
 					statN = getNSubjects(data),
 					statm = getNRecords(data),
 					statMean = ifelse(emptyVar, NA, mean(val)),
@@ -756,8 +773,17 @@ computeSummaryStatistics <- function(data,
 					statMin = ifelse(emptyVar, NA, min(val)),
 					statMax = ifelse(emptyVar, NA, max(val))
 				)
+				if(!is.null(statsExtra)){
+					statsExtraCommon <- intersect(names(statsExtra), colnames(res))
+					if(length(statsExtraCommon) > 0)
+						stop("Please specify names for 'statsExtra' different than default statistics.")
+					resExtra <- sapply(statsExtra, function(fct){
+						switch(formalArgs(fct), 'x' = fct(val), 'data' = fct(data))
+					}, simplify = FALSE)	
+					res <- cbind(res, resExtra)
+				}
+				res
 			}
-			
 		},
 		
 		'countTable' = {

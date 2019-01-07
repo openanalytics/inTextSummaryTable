@@ -15,12 +15,12 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
   colInclude0 = FALSE, colVarDataLevels = NULL,
   colTotalInclude = FALSE, subjectVar = "USUBJID", stats = NULL,
-  filterFct = NULL, dataTotal = NULL, type = "auto",
-  labelVars = NULL, landscape = (style == "presentation"),
-  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
-  file = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  byVar = NULL, colHeaderTotalInclude = TRUE,
+  statsExtra = NULL, filterFct = NULL, dataTotal = NULL,
+  type = "auto", labelVars = NULL, landscape = (style ==
+  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  footer = NULL, file = NULL, outputType = c("flextable",
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
+  style = "report", byVar = NULL, colHeaderTotalInclude = TRUE,
   fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
@@ -127,6 +127,12 @@ The following variables are recognized, if the table is a:
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.}
+
+\item{statsExtra}{(optional) Named list with functions for additional custom
+statistics to be computed, only available for 'summaryTable',
+e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+and return the corresponding summary statistic.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
