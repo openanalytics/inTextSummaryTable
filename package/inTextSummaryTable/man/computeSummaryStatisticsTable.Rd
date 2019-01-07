@@ -7,10 +7,10 @@
 computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   varLabGeneral = "Variable", varLabSubgroup = NULL,
-  varIgnore = NULL, colVar = NULL, colVarDataLevels = NULL,
-  colTotalInclude = FALSE, rowVar = NULL, rowVarDataLevels = NULL,
-  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
-  rowVarInSepCol = NULL, rowOrder = "auto",
+  varIgnore = NULL, varIncludeTotal = FALSE, colVar = NULL,
+  colVarDataLevels = NULL, colTotalInclude = FALSE, rowVar = NULL,
+  rowVarDataLevels = NULL, rowVarLab = getLabelVar(rowVar, data = data,
+  labelVars = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, stats = NULL, filterFct = NULL,
@@ -37,6 +37,10 @@ This will be included in the table header (see 'rowVarLab' attribute of the outp
 Empty by default.}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
+
+\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
+all categories of \code{var} is included.
+Only considered if \code{type} is 'countTable'.}
 
 \item{colVar}{Variable(s) of \code{data} used 
 for grouping in column in the final table. The total 

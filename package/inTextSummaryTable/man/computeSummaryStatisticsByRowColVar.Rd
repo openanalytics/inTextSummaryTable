@@ -6,9 +6,10 @@
 \usage{
 computeSummaryStatisticsByRowColVar(data, var = NULL,
   varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
-  type = "auto", rowVar = NULL, rowInclude0 = FALSE,
-  rowVarDataLevels = NULL, colVar = NULL, colInclude0 = FALSE,
-  colVarDataLevels = NULL, subjectVar = "USUBJID", labelVars = NULL)
+  varIncludeTotal = FALSE, type = "auto", rowVar = NULL,
+  rowInclude0 = FALSE, rowVarDataLevels = NULL, colVar = NULL,
+  colInclude0 = FALSE, colVarDataLevels = NULL,
+  subjectVar = "USUBJID", labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -19,6 +20,10 @@ Missing values, if present, are filtered.}
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
+
+\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
+all categories of \code{var} is included.
+Only considered if \code{type} is 'countTable'.}
 
 \item{type}{String with type of table: 
 \itemize{

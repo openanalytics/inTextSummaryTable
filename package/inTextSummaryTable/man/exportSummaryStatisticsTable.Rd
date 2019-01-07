@@ -13,11 +13,12 @@ exportSummaryStatisticsTable(summaryTable,
   = FALSE), rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = getAttribute(summaryTable, "colVar"),
-  labelVars = NULL, file = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  fontsize = switch(style, report = 8, presentation = 10))
+  colHeaderTotalInclude = TRUE, labelVars = NULL, file = NULL,
+  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
+  title = NULL, footer = NULL, outputType = c("flextable",
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
+  style = "report", fontsize = switch(style, report = 8, presentation =
+  10))
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -44,6 +45,9 @@ group of the nested variable specified in \code{rowVar}}
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
+
+\item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
+(\code{'statN'}) in the header.}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 

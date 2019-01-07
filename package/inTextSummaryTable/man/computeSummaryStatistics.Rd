@@ -4,15 +4,19 @@
 \alias{computeSummaryStatistics}
 \title{Get summary statistics of interest of an unique variable of interest.}
 \usage{
-computeSummaryStatistics(data, var = NULL, subjectVar = "USUBJID",
-  filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type ==
-  "summaryTable"), type = "auto")
+computeSummaryStatistics(data, var = NULL, varIncludeTotal = FALSE,
+  subjectVar = "USUBJID", filterEmptyVar = ((type == "auto" &&
+  is.numeric(data[, var])) | type == "summaryTable"), type = "auto")
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
 \item{var}{String, variable of \code{data} with variable to compute statistics on.
 Missing values, if present, are filtered.}
+
+\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
+all categories of \code{var} is included.
+Only considered if \code{type} is 'countTable'.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}

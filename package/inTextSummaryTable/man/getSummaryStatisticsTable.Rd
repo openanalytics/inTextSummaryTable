@@ -6,7 +6,8 @@
 \usage{
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   data = data, labelVars = labelVars), varIgnore = NULL,
-  varLabGeneral = "Variable", varLabSubgroup = NULL, rowVar = NULL,
+  varLabGeneral = "Variable", varLabSubgroup = NULL,
+  varIncludeTotal = FALSE, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
@@ -19,8 +20,8 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
   file = NULL, outputType = c("flextable", "data.frame"),
   statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  byVar = NULL, fontsize = switch(style, report = 8, presentation =
-  10))
+  byVar = NULL, colHeaderTotalInclude = TRUE,
+  fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -40,6 +41,10 @@ In case of multiple variable in \code{var}, this will be included in the table h
 \code{var} is specified for a count table.
 This will be included in the table header (see 'rowVarLab' attribute of the output).
 Empty by default.}
+
+\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
+all categories of \code{var} is included.
+Only considered if \code{type} is 'countTable'.}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
@@ -176,6 +181,9 @@ either 'report' or 'presentation'}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
+
+\item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
+(\code{'statN'}) in the header.}
 
 \item{fontsize}{Integer with font size, 8 by default.}
 }
