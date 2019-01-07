@@ -121,6 +121,7 @@ computeSummaryStatisticsTable <- function(data,
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
 	varLabGeneral = "Variable", varLabSubgroup = NULL,
 	varIgnore = NULL,
+	varIncludeTotal = FALSE,
 	colVar = NULL, colVarDataLevels = NULL, 
 	colTotalInclude = FALSE,
 	rowVar = NULL, rowVarDataLevels = NULL, 
@@ -186,7 +187,8 @@ computeSummaryStatisticsTable <- function(data,
 	# get general statistics (by group if specified)
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
-		var = var, varLab = varLab, type = type,
+		var = var, varLab = varLab, varIncludeTotal = varIncludeTotal,
+		type = type,
 		rowVar = rowVar, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 		subjectVar = subjectVar, labelVars = labelVars
@@ -196,7 +198,8 @@ computeSummaryStatisticsTable <- function(data,
 		
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
 			data = data, 
-			var = var, varLab = varLab, type = type,
+			var = var, varLab = varLab, varIncludeTotal = varIncludeTotal, 
+			type = type,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
 			subjectVar = subjectVar, labelVars = labelVars
 		)
@@ -211,7 +214,8 @@ computeSummaryStatisticsTable <- function(data,
 			
 			summaryTableRowTotal <- computeSummaryStatisticsByRowColVar(
 				data = data, 
-				var = var, type = type,
+				var = var, varIncludeTotal = varIncludeTotal, 
+				type = type,
 				colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 			)
@@ -220,7 +224,8 @@ computeSummaryStatisticsTable <- function(data,
 			if(colTotalInclude){
 				summaryTableRowTotalColTotal <- computeSummaryStatisticsByRowColVar(
 					data = data, 
-					var = var, varLab = varLab, type = type,	
+					var = var, varIncludeTotal = varIncludeTotal,
+					varLab = varLab, type = type,	
 					subjectVar = subjectVar, labelVars = labelVars
 				)
 				if(nrow(summaryTableRowTotalColTotal) > 0)
@@ -272,7 +277,8 @@ computeSummaryStatisticsTable <- function(data,
 				# compute statistics
 				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotal, 
-					var = var, type = type,
+					var = var, varIncludeTotal = varIncludeTotal,
+					type = type,
 					rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 					colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
@@ -282,7 +288,8 @@ computeSummaryStatisticsTable <- function(data,
 				if(colTotalInclude){
 					summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 						data = dataForSubTotal, 
-						var = var, type = type,
+						var = var, varIncludeTotal = varIncludeTotal,
+						type = type,
 						rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 						subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 					)
@@ -492,7 +499,7 @@ computeSummaryStatisticsTable <- function(data,
 		rowSubtotalInclude = rowSubtotalInclude,
 		rowVar = c(rowVar, 
 			if(length(var) > 1)	c("variable", 
-					if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
+				if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
 			)
 		),
 		rowVarLab = c(rowVarLab, 
@@ -568,6 +575,7 @@ computeSummaryStatisticsTable <- function(data,
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
 	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
+	varIncludeTotal = FALSE,
 	type = "auto",
 	rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
 	colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
@@ -575,7 +583,7 @@ computeSummaryStatisticsByRowColVar <- function(
 	labelVars = NULL){
 
 	computeSummaryStatisticsCustom <- function(...)
-		computeSummaryStatistics(..., subjectVar = subjectVar)
+		computeSummaryStatistics(..., subjectVar = subjectVar, varIncludeTotal = varIncludeTotal)
 		
 	# build variables used for grouping:
 	# 1) consider 'ddply(, .drop = FALSE)' to also include zeros
@@ -649,6 +657,11 @@ computeSummaryStatisticsByRowColVar <- function(
 		summaryTable[, colVar] <- colDataLevels[match(summaryTable$colVariables, colDataLevels$factorLevel), colVar]
 		summaryTable$colVariables <- NULL
 	}
+	
+	if("variableGroup" %in% colnames(summaryTable) && varIncludeTotal)
+		summaryTable[, "variableGroup"] <- factor(summaryTable[, "variableGroup"], 
+			levels = c(setdiff(levels(summaryTable[, "variableGroup"]), "Total"), "Total")
+		)
 		
 	return(summaryTable)
 	
@@ -671,6 +684,9 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @param filterEmptyVar Logical, if TRUE doesn't return any results
 #' if the variable is empty, otherwise return 0 for the counts and NA for summary 
 #' statistics (by default, only TRUE if the final table is 'summaryTable')
+#' @param varIncludeTotal Logical, if TRUE (FALSE by default) the total across 
+#' all categories of \code{var} is included.
+#' Only considered if \code{type} is 'countTable'.
 #' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{
@@ -697,7 +713,7 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @importFrom stats na.omit median sd
 #' @export
 computeSummaryStatistics <- function(data, 
-	var = NULL,
+	var = NULL, varIncludeTotal = FALSE,
 	subjectVar = "USUBJID",
 	filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
 	type = "auto"){
@@ -724,7 +740,9 @@ computeSummaryStatistics <- function(data,
 	getNRecords <- function(x) nrow(x)
 
 	switch(type,
+			
 		'summaryTable' = {
+			
 			val <- data[, var]
 			emptyVar <- is.null(val) || length(val) == 0
 			res <- if(!(filterEmptyVar & emptyVar)){
@@ -739,8 +757,11 @@ computeSummaryStatistics <- function(data,
 					statMax = ifelse(emptyVar, NA, max(val))
 				)
 			}
+			
 		},
+		
 		'countTable' = {
+			
 			# to avoid that ddply with empty data returns entire data.frame
 			if(nrow(data) == 0){
 				res <- data.frame(statN = 0, statm = 0)
@@ -753,13 +774,30 @@ computeSummaryStatistics <- function(data,
 						)
 					}
 				}, .drop = FALSE)
+				if(varIncludeTotal & (!(filterEmptyVar & nrow(data) == 0))){
+					resTotal <- data.frame(
+						statN = getNSubjects(data),
+						statm = getNRecords(data)
+					)
+					resTotal[, var] <- "Total"
+					res <- rbind.fill(res, resTotal)
+					res[, var] <- factor(res[, var], 
+						levels = c(
+							if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var]),
+							"Total"
+						)
+					)
+				}
+					
 				if(is.null(var)){
 					res[, ".id"] <- NULL
 				}else{
 					colnames(res)[match(var, colnames(res))] <- "variableGroup"
 				}
 			}
+			
 		}
+		
 	)
 	
 	return(res)

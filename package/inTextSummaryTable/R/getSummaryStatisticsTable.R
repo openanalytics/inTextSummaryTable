@@ -11,6 +11,7 @@ getSummaryStatisticsTable <- function(
 	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
 	varIgnore = NULL,
 	varLabGeneral = "Variable", varLabSubgroup = NULL,
+	varIncludeTotal = FALSE,
 	# row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarDataLevels = NULL, 
@@ -35,6 +36,7 @@ getSummaryStatisticsTable <- function(
 	statsLayout = c("row", "col", "rowInSepCol"),
 	style = "report",
 	byVar = NULL,
+	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
 
 	statsLayout <- match.arg(statsLayout)
@@ -46,6 +48,7 @@ getSummaryStatisticsTable <- function(
 		var = var, varLab = varLab,
 		varIgnore = varIgnore,
 		varLabGeneral = varLabGeneral, varLabSubgroup = varLabSubgroup, 
+		varIncludeTotal = varIncludeTotal,
 		colVar = colVar, colInclude0 = colInclude0,
 		colVarDataLevels = colVarDataLevels,
 		colTotalInclude = colTotalInclude, 
@@ -68,6 +71,7 @@ getSummaryStatisticsTable <- function(
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
 		rowTotalLab = rowTotalLab,
+		colHeaderTotalInclude = colHeaderTotalInclude,
 		title = title, footer = footer,
 		labelVars = labelVars,
 		file = file, landscape = landscape,

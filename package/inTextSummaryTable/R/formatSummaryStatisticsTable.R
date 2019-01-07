@@ -16,6 +16,8 @@
 #' \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
 #' the \code{rowVar} variable(s)}
 #' }
+#' @param colHeaderTotalInclude Logical, if TRUE include the total of number of patients
+#' (\code{'statN'}) in the header.
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -45,6 +47,7 @@ formatSummaryStatisticsTable <- function(
 	rowTotalLab = NULL,
 	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE), 
 	colVar = getAttribute(summaryTable, "colVar"),
+	colHeaderTotalInclude = TRUE,
 	labelVars = NULL,
 	statsLayout = c("row", "col", "rowInSepCol")
 	){
@@ -65,7 +68,7 @@ formatSummaryStatisticsTable <- function(
 		
 	## format table
 	
-	if(!is.null(colVar)){
+	if(!is.null(colVar) & colHeaderTotalInclude){
 		
 		# add total in column header
 		colVarWithCount <- colVar[length(colVar)] 
@@ -130,8 +133,9 @@ formatSummaryStatisticsTable <- function(
 		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
 		if(all(rowVarForm == "."))	dataLong["."] <- NULL
 	}else{
-		colnames(dataLong)[match("StatisticValue", colnames(dataLong))] <- 
-			paste0("StatisticValue\n(N=",  nTotal, ")")
+		if(colHeaderTotalInclude)
+			colnames(dataLong)[match("StatisticValue", colnames(dataLong))] <- 
+				paste0("StatisticValue\n(N=",  nTotal, ")")
 	}
 	
 	getTotalRow <- function(data)
@@ -257,7 +261,7 @@ formatSummaryStatisticsTable <- function(
 		
 		# extract horizontal lines
 		# (horizontal line are included at the bottom of the extracted row index)
-		idxHLine <- if(length(rowVarToModify) > 0 & statsLayout == "row"){
+		idxHLine <- if(length(rowVarToModify) > 0){
 			setdiff(
 				seq_len(nrow(dataLong)), # include lines
 				setdiff(
@@ -266,7 +270,7 @@ formatSummaryStatisticsTable <- function(
 				)
 			)
 		}else{
-			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = ""))) != 0)
+			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = NA))) != 0)
 		}
 		idxHLine <- unique(idxHLine[idxHLine > 0])
 		
@@ -318,7 +322,9 @@ formatSummaryStatisticsTable <- function(
 		}
 			
 		# label header for rows
-		rowVarLabs <- c(rowVarLab[setdiff(rowVarInRow, "Statistic")], if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
+		rowVarLabs <- c(rowVarLab[setdiff(rowVarInRow, "Statistic")], 
+			if(statsLayout == "row" & length(statsVar) > 1)	"Statistic"
+		)
 		colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
 			paste(rowVarLabs, collapse = "_")
 		colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- headerRowVarInSepCol <- rowVarLab[rowVarInSepCol]
@@ -328,8 +334,8 @@ formatSummaryStatisticsTable <- function(
 	# extract header (in case multiple 'colVar' specified)
 	header <- sapply(colnames(dataLong), function(x){
 		res <- strsplit(x, split = "_")[[1]]
-		# remove empty header or 'Statistic'
-		res[!res %in% c("", "NA", "Statistic")]
+		# remove empty header
+		res[!res %in% c("", "NA")] #formatSummaryStatisticsTable
 	}, simplify = FALSE)
 	nRowsHeader <- max(sapply(header, length))
 	headerDf <- as.data.frame(

@@ -3,6 +3,7 @@
     o createFlextableWithHeader: correct order if multiple title
     o export convertSummaryStatisticsTableToFlextable function
     o export to file in convertSummaryStatisticsTableToFlextable
+    o colHeaderTotalInclude parameter
 0.0.7
     o subjectProfileSummaryPlot: fixes xAxisLabs specification with jitter x-axis
     o computeSummaryStatistics: fix for order colVar in case total colum included
