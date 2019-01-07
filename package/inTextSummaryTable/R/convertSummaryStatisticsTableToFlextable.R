@@ -3,6 +3,8 @@
 #' Set to NULL (by default) if no title should be included.
 #' @param footer Character vector with footer(s) for the table.
 #' Set to NULL (by default) of no footer should be included.
+#' @param file String with path of the file where the table should be exported.
+#' If NULL, the summary table is not exported but only returned as output.
 #' @param rowPadBase Base padding for row (number of spaces)
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperscriptToFlextable
@@ -14,6 +16,7 @@
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
 #' @author Laure Cougnaud
+#' @export
 convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
 	landscape = (style == "presentation"), 
@@ -22,7 +25,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	footer = NULL,
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	fontsize = switch(style, 'report' = 8, 'presentation' = 10)
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
+	file = NULL
 ){
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
@@ -33,8 +37,13 @@ convertSummaryStatisticsTableToFlextable <- function(
 		res <- sapply(summaryTable, function(summaryTableI){
 			inputParamsBy <- inputParams
 			inputParamsBy$summaryTable <- summaryTableI
+			inputParamsBy$file <- NULL # export all tables at once
 			do.call(convertSummaryStatisticsTableToFlextable, inputParamsBy)		
 		}, simplify = FALSE)	
+
+		if(!is.null(file))
+			exportFlextableToDocx(object = res, file = file, landscape = landscape)
+	
 		return(res)
 		
 	}
@@ -63,6 +72,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 	# set correct alignments
 	rowVar <- attributes(summaryTable)$summaryTable$rowVar
+	if(is.null(rowVar))	rowVar <- colnames(summaryTable)[1]
 	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
 	colsAlignCenter <- setdiff(names(colsDataFt), colsAlignLeft)
 	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
@@ -81,8 +91,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 	# merge rows
 	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$summaryTable$rowVarInSepCol)
-	if(!is.null(rowVar))
-		ft <- merge_v(ft, j = getNewCol(rowVar))
+	if(!is.null(rowVarToMerge))
+		ft <- merge_v(ft, j = getNewCol(rowVarToMerge))
 	
 	if(!is.null(attributes(summaryTable)$summaryTable$mergeParams)){
 		for(params in attributes(summaryTable)$summaryTable$mergeParams)
@@ -124,12 +134,13 @@ convertSummaryStatisticsTableToFlextable <- function(
 		fontsize = fontsize
 	)
 	# for header
-	ft <- formatSuperscriptToFlextable(
-		dataTable = headerDf, ft = ft, 
-		part = "header",
-		fontname = fontname,
-		fontsize = fontsize
-	)
+	if(!is.null(headerDf))
+		ft <- formatSuperscriptToFlextable(
+			dataTable = headerDf, ft = ft, 
+			part = "header",
+			fontname = fontname,
+			fontsize = fontsize
+		)
 	
 	# set style
 	ft <- getGLPGFlextable(
@@ -153,6 +164,9 @@ convertSummaryStatisticsTableToFlextable <- function(
 	varsOther <- setdiff(names(colsDataFt), varFixed)
 	varsOtherWidth <- (widthPage - length(varFixed) * varFixedWidth)/length(varsOther)
 	ft <- width(ft, j = varsOther, width = varsOtherWidth)
+	
+	if(!is.null(file))
+		exportFlextableToDocx(object = ft, file = file, landscape = landscape)
 	
 	return(ft)
 	
@@ -307,7 +321,7 @@ createFlextableWithHeader <- function(data,
 	
 	# add title
 	if(!is.null(title))	
-		for(titleI in title)
+		for(titleI in rev(title))
 			ft <- setHeader(ft, header = titleI)
 	
 	res <- list(ft = ft, colsData = colsDataFt)
@@ -418,5 +432,39 @@ convertVectToBinary <- function(x){
 		if(is.na(xBin[i]))	xBin[i] <- xBin[i-1]
 	}
 	return(xBin)
+	
+}
+
+#' Export flextable to docx filr
+#' @param object \code{\link[flextable]{flextable}} object, or list of such objects
+#' @param file String with path of the file where the table should be exported.
+#' If NULL, the summary table is not exported but only returned as output.
+#' @param landscape Logical, if TRUE the file is in landscape format.
+#' @return no returned value, the \code{object} is exported to a docx file.
+#' @import officer
+#' @importFrom magrittr "%>%"
+#' @author Laure Cougnaud
+exportFlextableToDocx <- function(object, file, landscape = FALSE){
+	
+	isListTables <- !inherits(object, "flextable")
+	
+	if(!dir.exists(dirname(file)))	dir.create(dirname(file), recursive = TRUE)
+	
+	doc <- read_docx()
+	if(landscape)	doc <- doc %>% body_end_section_landscape()
+	
+	if(isListTables){
+		for(summaryTableFtI in object){
+			doc <- doc %>% body_add_flextable(value = summaryTableFtI) %>% body_add_break()
+		}
+	}else	doc <- doc %>% body_add_flextable(value = object)
+	
+	if(landscape){
+		doc <- doc %>%
+			# a paragraph needs to be included after the table otherwise the layout is not landscape
+			body_add_par(value = "", style = "Normal") %>%
+			body_end_section_landscape()
+	}
+	print(doc, target = file)
 	
 }
