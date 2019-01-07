@@ -8,7 +8,7 @@ convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
   == "presentation"), margin = 1, rowPadBase = 4, title = NULL,
   footer = NULL, style = "report", fontname = switch(style, report =
   "Times", presentation = "Tahoma"), fontsize = switch(style, report = 8,
-  presentation = 10))
+  presentation = 10), file = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -31,6 +31,9 @@ Set to NULL (by default) of no footer should be included.}
 \item{fontname}{String with font name, 'Times' by default.}
 
 \item{fontsize}{Integer with font size, 8 by default.}
+
+\item{file}{String with path of the file where the table should be exported.
+If NULL, the summary table is not exported but only returned as output.}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table

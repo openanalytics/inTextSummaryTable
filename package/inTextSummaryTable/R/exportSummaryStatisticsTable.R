@@ -1,6 +1,5 @@
 #' Export a summary table in \code{docx} format.
-#' @param file String with path of the file where the table should be exported.
-#' If NULL, the summary table is not exported but only returned as output.
+
 #' @param outputType String with output type, 'data.frame' or 'flextable'.
 #' @param style string with table style in case \code{outputType} is 'flextable',
 #'  either 'report' or 'presentation'
@@ -16,8 +15,6 @@
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
-#' @import officer
-#' @importFrom magrittr "%>%"
 #' @export
 exportSummaryStatisticsTable <- function(
 	summaryTable, 
@@ -42,7 +39,6 @@ exportSummaryStatisticsTable <- function(
 	
 	statsLayout <- match.arg(statsLayout)
 	
-	isListTables <- !is.data.frame(summaryTable)
 	
 	## format table
 	summaryTableLong <- formatSummaryStatisticsTable(
@@ -62,33 +58,12 @@ exportSummaryStatisticsTable <- function(
 			summaryTable = summaryTableLong,
 			landscape = landscape, margin = margin, rowPadBase = rowPadBase,
 			title = title, footer = footer,
-			style = style, fontsize = fontsize
+			style = style, fontsize = fontsize,
+			file = file
 		)
 		
-		# include the table(s) in a Word document
-		if(!is.null(file)){	
-			
-			doc <- read_docx()
-			if(landscape)	doc <- doc %>% body_end_section_landscape()
-			
-			if(isListTables){
-				for(summaryTableFtI in summaryTableFt){
-					doc <- doc %>% body_add_flextable(value = summaryTableFtI) %>% body_add_break()
-				}
-			}else	doc <- doc %>% body_add_flextable(value = summaryTableFt)
-			
-			if(landscape){
-				doc <- doc %>%
-					# a paragraph needs to be included after the table otherwise the layout is not landscape
-					body_add_par(value = "", style = "Normal") %>%
-					body_end_section_landscape()
-			}
-			print(doc, target = file)
-			
-		}
-		
-		
 	}
+	
 	result <- switch(outputType,
 		'data.frame' = summaryTableLong,	
 		'flextable' = summaryTableFt

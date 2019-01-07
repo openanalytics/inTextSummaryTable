@@ -1,3 +1,8 @@
+0.0.8
+    o exportSummaryStatisticsTable: create directory of file if not present
+    o createFlextableWithHeader: correct order if multiple title
+    o export convertSummaryStatisticsTableToFlextable function
+    o export to file in convertSummaryStatisticsTableToFlextable
 0.0.7
     o subjectProfileSummaryPlot: fixes xAxisLabs specification with jitter x-axis
     o computeSummaryStatistics: fix for order colVar in case total colum included
