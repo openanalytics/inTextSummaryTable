@@ -13,9 +13,9 @@ computeSummaryStatisticsTable(data, var = NULL,
   labelVars = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
-  dataTotal = NULL, stats = NULL, filterFct = NULL,
-  rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
-  byVar = NULL)
+  dataTotal = NULL, stats = NULL, statsExtra = NULL,
+  filterFct = NULL, rowInclude0 = FALSE, colInclude0 = FALSE,
+  labelVars = NULL, byVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -126,6 +126,12 @@ The following variables are recognized, if the table is a:
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.}
+
+\item{statsExtra}{(optional) Named list with functions for additional custom
+statistics to be computed, only available for 'summaryTable',
+e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+and return the corresponding summary statistic.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.

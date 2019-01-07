@@ -5,8 +5,9 @@
 \title{Get summary statistics of interest of an unique variable of interest.}
 \usage{
 computeSummaryStatistics(data, var = NULL, varIncludeTotal = FALSE,
-  subjectVar = "USUBJID", filterEmptyVar = ((type == "auto" &&
-  is.numeric(data[, var])) | type == "summaryTable"), type = "auto")
+  statsExtra = NULL, subjectVar = "USUBJID", filterEmptyVar = ((type
+  == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
+  type = "auto")
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -17,6 +18,12 @@ Missing values, if present, are filtered.}
 \item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
 all categories of \code{var} is included.
 Only considered if \code{type} is 'countTable'.}
+
+\item{statsExtra}{(optional) Named list with functions for additional custom
+statistics to be computed, only available for 'summaryTable',
+e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+and return the corresponding summary statistic.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}

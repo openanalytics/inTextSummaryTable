@@ -9,7 +9,7 @@ computeSummaryStatisticsByRowColVar(data, var = NULL,
   varIncludeTotal = FALSE, type = "auto", rowVar = NULL,
   rowInclude0 = FALSE, rowVarDataLevels = NULL, colVar = NULL,
   colInclude0 = FALSE, colVarDataLevels = NULL,
-  subjectVar = "USUBJID", labelVars = NULL)
+  subjectVar = "USUBJID", labelVars = NULL, statsExtra = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -63,6 +63,12 @@ can be specified via \code{colVarDataLevels}.}
 'USUBJID' by default.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
+
+\item{statsExtra}{(optional) Named list with functions for additional custom
+statistics to be computed, only available for 'summaryTable',
+e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+and return the corresponding summary statistic.}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',
