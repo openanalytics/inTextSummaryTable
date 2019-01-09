@@ -14,7 +14,8 @@ formatSummaryStatisticsTable(summaryTable,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, labelVars = NULL,
-  statsLayout = c("row", "col", "rowInSepCol"))
+  statsLayout = c("row", "col", "rowInSepCol"),
+  statsValueLab = "StatisticValue")
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -55,6 +56,9 @@ and are included in multi-columns layout.}
 \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
 the \code{rowVar} variable(s)}
 }}
+
+\item{statsValueLab}{String with label for the statistic value, 
+in case no \code{colVar} is specified: 'StatisticValue' by default.}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:

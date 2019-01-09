@@ -444,6 +444,7 @@ convertVectToBinary <- function(x){
 #' @import officer
 #' @importFrom magrittr "%>%"
 #' @author Laure Cougnaud
+#' @export
 exportFlextableToDocx <- function(object, file, landscape = FALSE){
 	
 	isListTables <- !inherits(object, "flextable")

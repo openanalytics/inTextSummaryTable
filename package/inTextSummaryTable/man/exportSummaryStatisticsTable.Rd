@@ -13,12 +13,12 @@ exportSummaryStatisticsTable(summaryTable,
   = FALSE), rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = getAttribute(summaryTable, "colVar"),
-  colHeaderTotalInclude = TRUE, labelVars = NULL, file = NULL,
-  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
-  title = NULL, footer = NULL, outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  style = "report", fontsize = switch(style, report = 8, presentation =
-  10))
+  colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
+  labelVars = NULL, file = NULL, landscape = (style ==
+  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  footer = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
+  fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -48,6 +48,9 @@ and are included in multi-columns layout.}
 
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}
+
+\item{statsValueLab}{String with label for the statistic value, 
+in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 
