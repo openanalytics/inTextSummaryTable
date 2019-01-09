@@ -26,6 +26,7 @@ exportSummaryStatisticsTable <- function(
 	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE),
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colHeaderTotalInclude = TRUE,
+	statsValueLab = "StatisticValue",
 	labelVars = NULL, 
 	file = NULL, landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 4,
@@ -50,7 +51,8 @@ exportSummaryStatisticsTable <- function(
 		rowSubtotalInclude = rowSubtotalInclude,
 		colVar = colVar,
 		statsLayout = statsLayout,
-		colHeaderTotalInclude = colHeaderTotalInclude
+		colHeaderTotalInclude = colHeaderTotalInclude,
+		statsValueLab = statsValueLab
 	)
 	
 	if(outputType == "flextable" | !is.null(file)){

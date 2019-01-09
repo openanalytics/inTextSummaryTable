@@ -15,12 +15,13 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
   colInclude0 = FALSE, colVarDataLevels = NULL,
   colTotalInclude = FALSE, subjectVar = "USUBJID", stats = NULL,
-  statsExtra = NULL, filterFct = NULL, dataTotal = NULL,
-  type = "auto", labelVars = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, file = NULL, outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  style = "report", byVar = NULL, colHeaderTotalInclude = TRUE,
+  statsExtra = NULL, statsValueLab = "StatisticValue",
+  filterFct = NULL, dataTotal = NULL, type = "auto",
+  labelVars = NULL, landscape = (style == "presentation"),
+  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
+  file = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
+  byVar = NULL, colHeaderTotalInclude = TRUE,
   fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
@@ -133,6 +134,9 @@ statistics to be computed, only available for 'summaryTable',
 e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
 Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 and return the corresponding summary statistic.}
+
+\item{statsValueLab}{String with label for the statistic value, 
+in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.

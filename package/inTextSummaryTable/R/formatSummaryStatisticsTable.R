@@ -18,6 +18,8 @@
 #' }
 #' @param colHeaderTotalInclude Logical, if TRUE include the total of number of patients
 #' (\code{'statN'}) in the header.
+#' @param statsValueLab String with label for the statistic value, 
+#' in case no \code{colVar} is specified: 'StatisticValue' by default.
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -49,7 +51,8 @@ formatSummaryStatisticsTable <- function(
 	colVar = getAttribute(summaryTable, "colVar"),
 	colHeaderTotalInclude = TRUE,
 	labelVars = NULL,
-	statsLayout = c("row", "col", "rowInSepCol")
+	statsLayout = c("row", "col", "rowInSepCol"),
+	statsValueLab = "StatisticValue"
 	){
 		
 	if(!is.data.frame(summaryTable)){
@@ -105,17 +108,17 @@ formatSummaryStatisticsTable <- function(
 	dataLong <- melt(dataWithTotal, 
 		id.vars = c(rowVar, colVar),
 		measure.vars = statsVar,
-		value.name = "StatisticValue",
+		value.name = statsValueLab,
 		variable.name = "Statistic"
 	)
 	
-	emptyStats <- which(is.na(dataLong$StatisticValue))
+	emptyStats <- which(is.na(dataLong[, statsValueLab]))
 	if(length(emptyStats) > 0)
 		dataLong <- dataLong[-emptyStats, ]
 	
 	# format statistic value
-	if(is.numeric(dataLong$StatisticValue))
-		dataLong$StatisticValue <- formatC(dataLong$StatisticValue)
+	if(is.numeric(dataLong[, statsValueLab]))
+		dataLong[, statsValueLab] <- formatC(dataLong[, statsValueLab])
 	
 	# put elements in 'colVar' in different columns (long -> wide format)
 	if(!is.null(colVar) | statsLayout == "col"){
@@ -130,12 +133,12 @@ formatSummaryStatisticsTable <- function(
 			"~", 
 			paste(colVarUsed, collapse = " + ")
 		))
-		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = "StatisticValue")
+		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = statsValueLab)
 		if(all(rowVarForm == "."))	dataLong["."] <- NULL
 	}else{
 		if(colHeaderTotalInclude)
-			colnames(dataLong)[match("StatisticValue", colnames(dataLong))] <- 
-				paste0("StatisticValue\n(N=",  nTotal, ")")
+			colnames(dataLong)[match(statsValueLab, colnames(dataLong))] <- 
+				paste0(statsValueLab, "\n(N=",  nTotal, ")")
 	}
 	
 	getTotalRow <- function(data)
