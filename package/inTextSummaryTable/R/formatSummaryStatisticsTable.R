@@ -20,6 +20,8 @@
 #' (\code{'statN'}) in the header.
 #' @param statsValueLab String with label for the statistic value, 
 #' in case no \code{colVar} is specified: 'StatisticValue' by default.
+#' @param emptyValue Value used to fill the table for missing values.
+#' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -52,7 +54,8 @@ formatSummaryStatisticsTable <- function(
 	colHeaderTotalInclude = TRUE,
 	labelVars = NULL,
 	statsLayout = c("row", "col", "rowInSepCol"),
-	statsValueLab = "StatisticValue"
+	statsValueLab = "StatisticValue",
+	emptyValue = NULL
 	){
 		
 	if(!is.data.frame(summaryTable)){
@@ -133,7 +136,9 @@ formatSummaryStatisticsTable <- function(
 			"~", 
 			paste(colVarUsed, collapse = " + ")
 		))
-		dataLong <- dcast(dataLong, formula = formulaWithin, value.var = statsValueLab)
+		dataLong <- dcast(dataLong, formula = formulaWithin, 
+			value.var = statsValueLab, fill = emptyValue
+		)
 		if(all(rowVarForm == "."))	dataLong["."] <- NULL
 	}else{
 		if(colHeaderTotalInclude)

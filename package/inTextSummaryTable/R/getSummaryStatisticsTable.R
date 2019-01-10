@@ -20,6 +20,7 @@ getSummaryStatisticsTable <- function(
 	rowTotalInclude = FALSE, rowTotalLab = NULL, 
 	rowSubtotalInclude = FALSE,
 	rowInclude0 = FALSE, 
+	emptyValue = NULL,
 	# column variable
 	colVar = NULL, colInclude0 = FALSE,
 	colVarDataLevels = NULL, 
@@ -36,7 +37,7 @@ getSummaryStatisticsTable <- function(
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	style = "report",
-	byVar = NULL,
+	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
 
@@ -66,7 +67,7 @@ getSummaryStatisticsTable <- function(
 		filterFct = filterFct,
 		dataTotal = dataTotal,
 		labelVars = labelVars,
-		byVar = byVar
+		byVar = byVar, byVarLab = byVarLab
 	)
 
 	ft <- exportSummaryStatisticsTable(
@@ -76,6 +77,7 @@ getSummaryStatisticsTable <- function(
 		statsValueLab = statsValueLab,
 		title = title, footer = footer,
 		labelVars = labelVars,
+		emptyValue = emptyValue,
 		file = file, landscape = landscape,
 		margin = margin, rowPadBase = rowPadBase,
 		outputType = outputType,

@@ -27,6 +27,7 @@ exportSummaryStatisticsTable <- function(
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colHeaderTotalInclude = TRUE,
 	statsValueLab = "StatisticValue",
+	emptyValue = NULL,
 	labelVars = NULL, 
 	file = NULL, landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 4,
@@ -52,7 +53,8 @@ exportSummaryStatisticsTable <- function(
 		colVar = colVar,
 		statsLayout = statsLayout,
 		colHeaderTotalInclude = colHeaderTotalInclude,
-		statsValueLab = statsValueLab
+		statsValueLab = statsValueLab,
+		emptyValue = emptyValue
 	)
 	
 	if(outputType == "flextable" | !is.null(file)){

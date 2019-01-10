@@ -15,7 +15,7 @@ formatSummaryStatisticsTable(summaryTable,
   FALSE), colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsLayout = c("row", "col", "rowInSepCol"),
-  statsValueLab = "StatisticValue")
+  statsValueLab = "StatisticValue", emptyValue = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -59,6 +59,9 @@ the \code{rowVar} variable(s)}
 
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
+
+\item{emptyValue}{Value used to fill the table for missing values.
+See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:
