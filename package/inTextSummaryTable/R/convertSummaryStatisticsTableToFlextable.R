@@ -21,7 +21,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
 	landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 4,
-	title = NULL,
+	title = NULL, titleBy = NULL,
 	footer = NULL,
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
@@ -34,12 +34,16 @@ convertSummaryStatisticsTableToFlextable <- function(
 	if(!is.data.frame(summaryTable)){
 		
 		inputParams <- as.list(environment())
-		res <- sapply(summaryTable, function(summaryTableI){
+		res <- sapply(seq_along(summaryTable), function(i){
+			summaryTableI <- summaryTable[[i]]
 			inputParamsBy <- inputParams
 			inputParamsBy$summaryTable <- summaryTableI
 			inputParamsBy$file <- NULL # export all tables at once
+			inputParamsBy$title <- c(inputParams$title, names(summaryTable)[i])
 			do.call(convertSummaryStatisticsTableToFlextable, inputParamsBy)		
 		}, simplify = FALSE)	
+		if(!is.null(names(summaryTable)))
+			names(res) <- names(summaryTable)
 
 		if(!is.null(file))
 			exportFlextableToDocx(object = res, file = file, landscape = landscape)

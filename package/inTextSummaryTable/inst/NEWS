@@ -1,6 +1,7 @@
 0.0.9
     o statsValueLab parameter
     o export exportFlextableToDocx
+    o se, cv, geomMean, geomSD, geomCV function
 0.0.8
     o exportSummaryStatisticsTable: create directory of file if not present
     o createFlextableWithHeader: correct order if multiple title

@@ -12,8 +12,8 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
   rowTotalInclude = FALSE, rowTotalLab = NULL,
-  rowSubtotalInclude = FALSE, rowInclude0 = FALSE, colVar = NULL,
-  colInclude0 = FALSE, colVarDataLevels = NULL,
+  rowSubtotalInclude = FALSE, rowInclude0 = FALSE, emptyValue = NULL,
+  colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
   colTotalInclude = FALSE, subjectVar = "USUBJID", stats = NULL,
   statsExtra = NULL, statsValueLab = "StatisticValue",
   filterFct = NULL, dataTotal = NULL, type = "auto",
@@ -21,8 +21,9 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
   file = NULL, outputType = c("flextable", "data.frame"),
   statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  byVar = NULL, colHeaderTotalInclude = TRUE,
-  fontsize = switch(style, report = 8, presentation = 10))
+  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
+  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
+  report = 8, presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -82,6 +83,9 @@ group of the nested variable specified in \code{rowVar}}
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
 of the \code{rowVar} (assuming nested variable(s)).}
+
+\item{emptyValue}{Value used to fill the table for missing values.
+See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
@@ -191,6 +195,9 @@ either 'report' or 'presentation'}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
+
+\item{byVarLab}{String with label for \code{byVar}, used to set the names
+of the output list of table(s).}
 
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}

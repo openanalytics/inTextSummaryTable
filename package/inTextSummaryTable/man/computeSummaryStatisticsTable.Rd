@@ -15,7 +15,8 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, stats = NULL, statsExtra = NULL,
   filterFct = NULL, rowInclude0 = FALSE, colInclude0 = FALSE,
-  labelVars = NULL, byVar = NULL)
+  labelVars = NULL, byVar = NULL, byVarLab = getLabelVar(byVar, data
+  = data, labelVars = labelVars))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -152,6 +153,9 @@ can be specified via \code{colVarDataLevels}.}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
+
+\item{byVarLab}{String with label for \code{byVar}, used to set the names
+of the output list of table(s).}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',

@@ -6,9 +6,9 @@
 \usage{
 convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
   == "presentation"), margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, style = "report", fontname = switch(style, report =
-  "Times", presentation = "Tahoma"), fontsize = switch(style, report = 8,
-  presentation = 10), file = NULL)
+  titleBy = NULL, footer = NULL, style = "report",
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  fontsize = switch(style, report = 8, presentation = 10), file = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}

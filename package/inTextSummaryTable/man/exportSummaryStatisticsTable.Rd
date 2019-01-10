@@ -14,11 +14,12 @@ exportSummaryStatisticsTable(summaryTable,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
-  labelVars = NULL, file = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  fontsize = switch(style, report = 8, presentation = 10))
+  emptyValue = NULL, labelVars = NULL, file = NULL,
+  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
+  title = NULL, footer = NULL, outputType = c("flextable",
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
+  style = "report", fontsize = switch(style, report = 8, presentation =
+  10))
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -51,6 +52,9 @@ and are included in multi-columns layout.}
 
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
+
+\item{emptyValue}{Value used to fill the table for missing values.
+See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 

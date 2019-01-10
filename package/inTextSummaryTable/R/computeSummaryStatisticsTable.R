@@ -62,6 +62,8 @@
 #' statistics across columns in a separated column.
 #' @param byVar Variable(s) of \code{data} for which separated table(s)
 #' should be created.
+#' @param byVarLab String with label for \code{byVar}, used to set the names
+#' of the output list of table(s).
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; or list of such data.frame if
@@ -116,7 +118,8 @@
 #' @importFrom dplyr n_distinct
 #' @importFrom plyr ddply rbind.fill dlply
 #' @export
-computeSummaryStatisticsTable <- function(data,  
+computeSummaryStatisticsTable <- function(
+	data,  
 	var = NULL, 
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
 	varLabGeneral = "Variable", varLabSubgroup = NULL,
@@ -137,7 +140,7 @@ computeSummaryStatisticsTable <- function(data,
 	filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
 	labelVars = NULL,
-	byVar = NULL
+	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars)
 ){
 	
 	inputParams <- as.list(environment())
@@ -161,6 +164,8 @@ computeSummaryStatisticsTable <- function(data,
 				inputParamsBy$byVar <- NULL
 				do.call(computeSummaryStatisticsTable, inputParamsBy)		
 			})	
+			if(!is.null(byVarLab))
+				names(res) <- paste(byVarLab, names(res), sep = ": ")
 			return(res)
 		}
 	}
@@ -756,6 +761,20 @@ computeSummaryStatistics <- function(data,
 	getNSubjects <- function(x)	as.integer(n_distinct(x[, subjectVar]))
 	getNRecords <- function(x) nrow(x)
 
+	# wrapper to add extra statistics
+	statsExtraFct <- function(res, statsExtra, val = NULL, data){
+		if(!is.null(statsExtra)){
+			statsExtraCommon <- intersect(names(statsExtra), colnames(res))
+			if(length(statsExtraCommon) > 0)
+				stop("Please specify names for 'statsExtra' different than default statistics.")
+			resExtra <- sapply(statsExtra, function(fct){
+				switch(formalArgs(fct), 'x' = fct(val), 'data' = fct(data))
+			}, simplify = FALSE)	
+			res <- cbind(res, resExtra)
+		}
+		return(res)
+	}
+	
 	switch(type,
 			
 		'summaryTable' = {
@@ -768,21 +787,15 @@ computeSummaryStatistics <- function(data,
 					statm = getNRecords(data),
 					statMean = ifelse(emptyVar, NA, mean(val)),
 					statSD = ifelse(emptyVar, NA, sd(val)),
-					statSE = ifelse(emptyVar, NA, sd(val)/sqrt(length(val))),
+					statSE = ifelse(emptyVar, NA, se(val)),
 					statMedian = ifelse(emptyVar, NA, median(val)),
 					statMin = ifelse(emptyVar, NA, min(val)),
 					statMax = ifelse(emptyVar, NA, max(val))
 				)
-				if(!is.null(statsExtra)){
-					statsExtraCommon <- intersect(names(statsExtra), colnames(res))
-					if(length(statsExtraCommon) > 0)
-						stop("Please specify names for 'statsExtra' different than default statistics.")
-					resExtra <- sapply(statsExtra, function(fct){
-						switch(formalArgs(fct), 'x' = fct(val), 'data' = fct(data))
-					}, simplify = FALSE)	
-					res <- cbind(res, resExtra)
-				}
-				res
+				res <- statsExtraFct(
+					res = res, statsExtra = statsExtra, 
+					val = val, data = data
+				)
 			}
 		},
 		
@@ -791,12 +804,20 @@ computeSummaryStatistics <- function(data,
 			# to avoid that ddply with empty data returns entire data.frame
 			if(nrow(data) == 0){
 				res <- data.frame(statN = 0, statm = 0)
+				statsExtraFct(
+					res = res, statsExtra = statsExtra,
+					data = x
+				)
 			}else{
 				res <- ddply(data, var, function(x){
 					if(!(filterEmptyVar & nrow(x) == 0)){
-						data.frame(
+						res <- data.frame(
 							statN = getNSubjects(x),
 							statm = getNRecords(x)
+						)
+						statsExtraFct(
+							res = res, statsExtra = statsExtra,
+							data = x
 						)
 					}
 				}, .drop = FALSE)
@@ -805,6 +826,7 @@ computeSummaryStatistics <- function(data,
 						statN = getNSubjects(data),
 						statm = getNRecords(data)
 					)
+					resTotal <- statsExtraFct(res = resTotal, statsExtra = statsExtra, data = data)
 					resTotal[, var] <- "Total"
 					res <- rbind.fill(res, resTotal)
 					res[, var] <- factor(res[, var], 
