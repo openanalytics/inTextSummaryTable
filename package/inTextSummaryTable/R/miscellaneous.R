@@ -30,6 +30,8 @@ roundCustom <- function(x, digits = 0, format = c("text", "number")) {
 		number = z
 	)
 	
+	return(res)
+	
 }
 
 #' Get specific attribute from a summaryTable or a list of summaryTables
