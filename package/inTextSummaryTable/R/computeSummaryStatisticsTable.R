@@ -806,7 +806,7 @@ computeSummaryStatistics <- function(data,
 				res <- data.frame(statN = 0, statm = 0)
 				statsExtraFct(
 					res = res, statsExtra = statsExtra,
-					data = x
+					data = data
 				)
 			}else{
 				res <- ddply(data, var, function(x){
