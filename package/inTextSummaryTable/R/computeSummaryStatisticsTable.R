@@ -40,6 +40,8 @@
 #' }
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
 #' in the table.
+#' The statistics can be specified for each \code{var} (if multiple),
+#' by specifying a nested list of such parameters named by the variable.
 #' @param varLabGeneral String with general label for variable specified in \code{var}.
 #' In case of multiple variable in \code{var}, this will be included in the table header
 #' (see 'rowVarLab' attribute of the output).
@@ -64,6 +66,8 @@
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
+#' @param colTotalLab String, label for the total column included 
+#' if \code{colTotalInclude} is TRUE, 'Total' by default.
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; or list of such data.frame if
@@ -126,7 +130,7 @@ computeSummaryStatisticsTable <- function(
 	varIgnore = NULL,
 	varIncludeTotal = FALSE,
 	colVar = NULL, colVarDataLevels = NULL, 
-	colTotalInclude = FALSE,
+	colTotalInclude = FALSE, colTotalLab = "Total",
 	rowVar = NULL, rowVarDataLevels = NULL, 
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
 	rowVarInSepCol = NULL,
@@ -212,7 +216,7 @@ computeSummaryStatisticsTable <- function(
 			subjectVar = subjectVar, labelVars = labelVars
 		)
 		if(nrow(summaryTableColTotal) > 0)
-			summaryTableColTotal[, colVar] <- "Total"
+			summaryTableColTotal[, colVar] <- colTotalLab
 		
 	}
 	
@@ -237,7 +241,7 @@ computeSummaryStatisticsTable <- function(
 					subjectVar = subjectVar, labelVars = labelVars
 				)
 				if(nrow(summaryTableRowTotalColTotal) > 0)
-					summaryTableRowTotalColTotal[, colVar] <- "Total"
+					summaryTableRowTotalColTotal[, colVar] <- colTotalLab
 				summaryTableRowTotal <- rbind.fill(summaryTableRowTotal, summaryTableRowTotalColTotal)
 			}
 			
@@ -304,7 +308,7 @@ computeSummaryStatisticsTable <- function(
 						subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 					)
 					if(nrow(summaryTableRowSubtotalVarColTotal) > 0)
-						summaryTableRowSubtotalVarColTotal[, colVar] <- "Total"
+						summaryTableRowSubtotalVarColTotal[, colVar] <- colTotalLab
 					summaryTableRowSubtotalVar <- rbind.fill(summaryTableRowSubtotalVar, summaryTableRowSubtotalVarColTotal)
 				}
 				
@@ -385,16 +389,16 @@ computeSummaryStatisticsTable <- function(
 			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 		)
 		if(nrow(summaryTableTotalCol) > 0)
-			summaryTableTotalCol[, colVar] <- "Total"
+			summaryTableTotalCol[, colVar] <- colTotalLab
 		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalCol)
 		summaryTableTotal[, colVar] <- lapply(colVar, function(x)
-			factor(summaryTableTotal[, x], levels = unique(c(colVarLevels[[x]], "Total")))
+			factor(summaryTableTotal[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
 		)
 
 		# other summary table
 		summaryTable <- rbind.fill(summaryTable, summaryTableColTotal)
 		summaryTable[, colVar] <- lapply(colVar, function(x)
-			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], "Total")))
+			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
 		)
 		
 	}

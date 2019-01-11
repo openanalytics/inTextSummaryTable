@@ -24,7 +24,7 @@ getSummaryStatisticsTable <- function(
 	# column variable
 	colVar = NULL, colInclude0 = FALSE,
 	colVarDataLevels = NULL, 
-	colTotalInclude = FALSE,
+	colTotalInclude = FALSE, colTotalLab = "Total",
 	subjectVar = "USUBJID",
 	stats = NULL, statsExtra = NULL, statsValueLab = "StatisticValue",
 	filterFct = NULL,
@@ -54,6 +54,7 @@ getSummaryStatisticsTable <- function(
 		colVar = colVar, colInclude0 = colInclude0,
 		colVarDataLevels = colVarDataLevels,
 		colTotalInclude = colTotalInclude, 
+		colTotalLab = colTotalLab,
 		rowVar = rowVar, rowInclude0 = rowInclude0,
 		rowVarDataLevels = rowVarDataLevels,
 		rowVarInSepCol = rowVarInSepCol,

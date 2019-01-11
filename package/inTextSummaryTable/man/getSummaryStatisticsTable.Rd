@@ -14,16 +14,17 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, emptyValue = NULL,
   colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
-  colTotalInclude = FALSE, subjectVar = "USUBJID", stats = NULL,
-  statsExtra = NULL, statsValueLab = "StatisticValue",
-  filterFct = NULL, dataTotal = NULL, type = "auto",
-  labelVars = NULL, landscape = (style == "presentation"),
-  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
-  file = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
-  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
-  report = 8, presentation = 10))
+  colTotalInclude = FALSE, colTotalLab = "Total",
+  subjectVar = "USUBJID", stats = NULL, statsExtra = NULL,
+  statsValueLab = "StatisticValue", filterFct = NULL,
+  dataTotal = NULL, type = "auto", labelVars = NULL,
+  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
+  title = NULL, footer = NULL, file = NULL,
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"), style = "report", byVar = NULL,
+  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
+  colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
+  presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -103,6 +104,9 @@ can be specified via \code{colVarDataLevels}.}
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
 
+\item{colTotalLab}{String, label for the total column included 
+if \code{colTotalInclude} is TRUE, 'Total' by default.}
+
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
@@ -131,7 +135,9 @@ The following variables are recognized, if the table is a:
 }
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
-in the table.}
+in the table.
+The statistics can be specified for each \code{var} (if multiple),
+by specifying a nested list of such parameters named by the variable.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',

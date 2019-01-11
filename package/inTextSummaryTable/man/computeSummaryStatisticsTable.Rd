@@ -8,9 +8,10 @@ computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   varLabGeneral = "Variable", varLabSubgroup = NULL,
   varIgnore = NULL, varIncludeTotal = FALSE, colVar = NULL,
-  colVarDataLevels = NULL, colTotalInclude = FALSE, rowVar = NULL,
-  rowVarDataLevels = NULL, rowVarLab = getLabelVar(rowVar, data = data,
-  labelVars = labelVars), rowVarInSepCol = NULL, rowOrder = "auto",
+  colVarDataLevels = NULL, colTotalInclude = FALSE,
+  colTotalLab = "Total", rowVar = NULL, rowVarDataLevels = NULL,
+  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
+  rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, stats = NULL, statsExtra = NULL,
@@ -54,6 +55,9 @@ can be specified via \code{rowVarDataLevels}.}
 
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
+
+\item{colTotalLab}{String, label for the total column included 
+if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
@@ -126,7 +130,9 @@ The following variables are recognized, if the table is a:
 }
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
-in the table.}
+in the table.
+The statistics can be specified for each \code{var} (if multiple),
+by specifying a nested list of such parameters named by the variable.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
