@@ -13,18 +13,19 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
   rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowInclude0 = FALSE, emptyValue = NULL,
-  colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
+  colVar = NULL, colVarTotal = colVar, colVarTotalPerc = colVarTotal,
+  colInclude0 = FALSE, colVarDataLevels = NULL,
   colTotalInclude = FALSE, colTotalLab = "Total",
   subjectVar = "USUBJID", stats = NULL, statsExtra = NULL,
   statsValueLab = "StatisticValue", filterFct = NULL,
-  dataTotal = NULL, type = "auto", labelVars = NULL,
-  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
-  title = NULL, footer = NULL, file = NULL,
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), style = "report", byVar = NULL,
-  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
-  colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
-  presentation = 10))
+  dataTotal = NULL, dataTotalPerc = dataTotal, type = "auto",
+  labelVars = NULL, landscape = (style == "presentation"),
+  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
+  file = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
+  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
+  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
+  report = 8, presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -92,6 +93,12 @@ See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
+\item{colVarTotal}{String with column(s) considered to compute the total by,
+reported in the header of the table, by default same as \code{colVar}.}
+
+\item{colVarTotalPerc}{String with column(s) considered to compute the total by,
+used as denominator for the percentage computation, by default same as \code{colVarTotal}.}
+
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with no records, based on all combinations 
 of the \code{columnVar} (assuming nested variable(s)).
@@ -154,9 +161,12 @@ Note: the total count per category of the row variables is included
 in a row with this variable set to 'Total'.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
-in 'N' in column header and used for the computation of the percentage:
-'PercN' parameter.
-It should contain the variables specified by \code{colVar}.}
+in 'N' in column header.
+It should contain the variables specified by \code{colVarTotal}.}
+
+\item{dataTotalPerc}{Data.frame used to extract the Total count, 
+used for the computation of the percentage: 'statPercN' parameter.
+It should contain the variables specified by \code{colVarTotalPerc}.}
 
 \item{type}{String with type of table: 
 \itemize{

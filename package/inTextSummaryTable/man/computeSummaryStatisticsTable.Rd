@@ -8,16 +8,17 @@ computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   varLabGeneral = "Variable", varLabSubgroup = NULL,
   varIgnore = NULL, varIncludeTotal = FALSE, colVar = NULL,
-  colVarDataLevels = NULL, colTotalInclude = FALSE,
+  colVarDataLevels = NULL, colVarTotal = colVar,
+  colVarTotalPerc = colVarTotal, colTotalInclude = FALSE,
   colTotalLab = "Total", rowVar = NULL, rowVarDataLevels = NULL,
   rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
   rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
   rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
-  dataTotal = NULL, stats = NULL, statsExtra = NULL,
-  filterFct = NULL, rowInclude0 = FALSE, colInclude0 = FALSE,
-  labelVars = NULL, byVar = NULL, byVarLab = getLabelVar(byVar, data
-  = data, labelVars = labelVars))
+  dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
+  statsExtra = NULL, filterFct = NULL, rowInclude0 = FALSE,
+  colInclude0 = FALSE, labelVars = NULL, byVar = NULL,
+  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -52,6 +53,12 @@ can be specified via \code{rowVarDataLevels}.}
 
 \item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
 (in case of non nested column variable(s)).}
+
+\item{colVarTotal}{String with column(s) considered to compute the total by,
+reported in the header of the table, by default same as \code{colVar}.}
+
+\item{colVarTotalPerc}{String with column(s) considered to compute the total by,
+used as denominator for the percentage computation, by default same as \code{colVarTotal}.}
 
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
@@ -101,9 +108,12 @@ group of the nested variable specified in \code{rowVar}}
 'USUBJID' by default.}
 
 \item{dataTotal}{Data.frame used to extract the Total count, indicated
-in 'N' in column header and used for the computation of the percentage:
-'PercN' parameter.
-It should contain the variables specified by \code{colVar}.}
+in 'N' in column header.
+It should contain the variables specified by \code{colVarTotal}.}
+
+\item{dataTotalPerc}{Data.frame used to extract the Total count, 
+used for the computation of the percentage: 'statPercN' parameter.
+It should contain the variables specified by \code{colVarTotalPerc}.}
 
 \item{stats}{(optional) Named list of expression or call object of summary statistics of interest.
 The following variables are recognized, if the table is a: 

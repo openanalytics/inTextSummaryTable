@@ -21,7 +21,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
 	landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 4,
-	title = NULL, titleBy = NULL,
+	title = NULL, 
 	footer = NULL,
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),

@@ -51,23 +51,26 @@
 #' Empty by default.
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable
 #' @param dataTotal Data.frame used to extract the Total count, indicated
-#' in 'N' in column header and used for the computation of the percentage:
-#' 'PercN' parameter.
-#' It should contain the variables specified by \code{colVar}.
+#' in 'N' in column header.
+#' It should contain the variables specified by \code{colVarTotal}.
+#' @param dataTotalPerc Data.frame used to extract the Total count, 
+#' used for the computation of the percentage: 'statPercN' parameter.
+#' It should contain the variables specified by \code{colVarTotalPerc}.
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' counts across rows in a separated row.
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
 #' Note: the total count per category of the row variables is included
 #' in a row with this variable set to 'Total'.
-#' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
-#' statistics across columns in a separated column.
+#' @param colVarTotal String with column(s) considered to compute the total by,
+#' reported in the header of the table, by default same as \code{colVar}.
+#' @param colVarTotalPerc String with column(s) considered to compute the total by,
+#' used as denominator for the percentage computation, by default same as \code{colVarTotal}.
 #' @param byVar Variable(s) of \code{data} for which separated table(s)
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
-#' @param colTotalLab String, label for the total column included 
-#' if \code{colTotalInclude} is TRUE, 'Total' by default.
+#' @inheritParams computeSummaryStatisticsTableTotal
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; or list of such data.frame if
@@ -130,6 +133,8 @@ computeSummaryStatisticsTable <- function(
 	varIgnore = NULL,
 	varIncludeTotal = FALSE,
 	colVar = NULL, colVarDataLevels = NULL, 
+	colVarTotal = colVar, 
+	colVarTotalPerc = colVarTotal,
 	colTotalInclude = FALSE, colTotalLab = "Total",
 	rowVar = NULL, rowVarDataLevels = NULL, 
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
@@ -139,7 +144,7 @@ computeSummaryStatisticsTable <- function(
 	rowSubtotalInclude = FALSE,
 	type = "auto",
 	subjectVar = "USUBJID",	
-	dataTotal = NULL,
+	dataTotal = NULL, dataTotalPerc = dataTotal,
 	stats = NULL, statsExtra = NULL,
 	filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
@@ -356,8 +361,8 @@ computeSummaryStatisticsTable <- function(
 	# data considered to compute the total
 	if(!is.null(dataTotal)){
 		# to have specified order for colVar in case different order 'dataTotal'
-		if(!is.null(colVar)){
-			dataTotal[, colVar] <- lapply(colVar, function(var)
+		if(!is.null(colVarTotal)){
+			dataTotal[, colVarTotal] <- lapply(colVarTotal, function(var)
 				if(is.factor(summaryTable[, var])){
 					factor(dataTotal[, var], levels = levels(summaryTable[, var]))
 				}else dataTotal[, var]
@@ -365,57 +370,78 @@ computeSummaryStatisticsTable <- function(
 		}
 	}else dataTotal <- data
 	
-	# get counts
-	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
-		data = dataTotal, 
-		type = "countTable", 
-		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
-		subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+	# original levels of colVar in summaryTable
+	colVarLevels <- sapply(
+		summaryTable[, colVar, drop = FALSE], function(x)
+			if(is.factor(x))	levels(x)	else	sort(unique(x)),
+		simplify = FALSE
 	)
 	
 	## column total
 	if(colTotalInclude){
 		
-		colVarLevels <- sapply(
-			summaryTable[, colVar, drop = FALSE], function(x)
-				if(is.factor(x))	levels(x)	else	sort(unique(x)),
-			simplify = FALSE
-		)
-		
 		# total summary table
 		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
 			data = dataTotal, 
 			type = "countTable", 
-			subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+			subjectVar = subjectVar, labelVars = labelVars
 		)
 		if(nrow(summaryTableTotalCol) > 0)
 			summaryTableTotalCol[, colVar] <- colTotalLab
-		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalCol)
-		summaryTableTotal[, colVar] <- lapply(colVar, function(x)
-			factor(summaryTableTotal[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
-		)
-
-		# other summary table
+		
 		summaryTable <- rbind.fill(summaryTable, summaryTableColTotal)
 		summaryTable[, colVar] <- lapply(colVar, function(x)
 			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
 		)
 		
 	}
+	
+	# get counts (for column header total)
+	summaryTableTotal <- computeSummaryStatisticsTableTotal(
+		data = dataTotal, 
+		colVar = colVar, colVarTotal = colVarTotal,
+		colTotalLab = colTotalLab,
+		colInclude0 = colInclude0, colTotalInclude = colTotalInclude,
+		colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
+		subjectVar = subjectVar
+	)
+	
 	# save total or not in the 'isTotal' column
 	summaryTableTotal$isTotal <- TRUE
 	summaryTable$isTotal <- FALSE
 	# bind to the summary table
 	summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
 	
+	## compute percentages
+	
+	# get counts (for percentage computation)
+	if(is.null(dataTotalPerc))	dataTotalPerc <- dataTotal
+	if(!all(colVarTotalPerc %in% colnames(summaryTable)))
+		stop("'colVarTotalPerc' are not in the computed summary statistics table.")
+	summaryTableTotalPerc <- if(!setequal(colVarTotal, colVarTotalPerc)){
+		computeSummaryStatisticsTableTotal(
+			data = dataTotalPerc, 
+			colVar = colVar, colVarTotal = colVarTotalPerc,
+			colTotalLab = colTotalLab,
+			colInclude0 = colInclude0, colTotalInclude = colTotalInclude,
+			colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
+			subjectVar = subjectVar
+		)
+	}else	summaryTableTotal
+	summaryTable <- rbind.fill(
+		cbind(summaryTable, isTotalPerc = FALSE), 
+		cbind(summaryTableTotalPerc, isTotalPerc = TRUE)
+	)
+	
 	# compute percentages
-	summaryTable <- ddply(summaryTable, colVar, function(x){
-		idxTotal <- which(x$isTotal)
-		if(length(idxTotal) > 0){
-			statPercN <- x$statN/x[idxTotal, "statN"]*100
-		}else statPercN <- NA
-		cbind(x, statPercN = statPercN)
+	summaryTable <- ddply(summaryTable, colVarTotalPerc, function(x){
+		idxTotalPerc <- which(x$isTotalPerc)
+		if(length(idxTotalPerc) > 0){
+			res <- cbind(x, statPercN = x$statN/x[idxTotalPerc, "statN"]*100)
+			res[-idxTotalPerc, ]
+		}else cbind(x, statPercN = NA)
 	})
+	summaryTable$isTotalPerc <- NULL
 
 	# filter records if any 'filterFct' is specified
 	if(!is.null(filterFct))
@@ -533,6 +559,58 @@ computeSummaryStatisticsTable <- function(
 	attributes(summaryTable) <- c(attributes(summaryTable), list(summaryTable = attrTable))
 	
 	return(summaryTable)
+	
+}
+
+#' Compute summary statistics total table.
+#' @param colVarTotal column considered to compute the total.
+#' @param colTotalLab String, label for the total column included 
+#' if \code{colTotalInclude} is TRUE, 'Total' by default.
+#' @param colVarLevels list with levels of each \code{colVar}
+#' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
+#' statistics across columns in a separated column.
+#' @inheritParams computeSummaryStatisticsByRowColVar
+#' @return data.frame with total table.
+#' @author Laure Cougnaud
+computeSummaryStatisticsTableTotal <- function(
+	data, 
+	colVar = NULL, colVarTotal = colVar,
+	colTotalLab = "Total",
+	colInclude0 = FALSE,
+	colTotalInclude = FALSE,
+	colVarDataLevels = NULL, colVarLevels = NULL,
+	subjectVar = "USUBJID"){
+	
+	# counts by elements in colVar
+	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
+		data = data, 
+		type = "countTable", 
+		colVar = colVarTotal, 
+		colInclude0 = colInclude0, 
+		colVarDataLevels = colVarDataLevels,
+		subjectVar = subjectVar
+	)
+	
+	# counts across all elements of colVar
+	if(colTotalInclude){
+		colVarTotalTI <- setdiff(colVarTotal, colVar)
+		if(length(colVarTotalTI) == 0)	colVarTotalTI <- NULL
+		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
+			data = data, 
+			type = "countTable", 
+			colVar = colVarTotalTI,
+			subjectVar = subjectVar
+		)
+		if(nrow(summaryTableTotalCol) > 0)
+			summaryTableTotalCol[, colVar] <- colTotalLab
+		summaryTableTotal <- rbind.fill(summaryTableTotal, summaryTableTotalCol)
+		if(!is.null(colVarLevels))
+			summaryTableTotal[, colVar] <- lapply(colVar, function(x)
+				factor(summaryTableTotal[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
+			)
+	}
+	
+	return(summaryTableTotal)
 	
 }
 

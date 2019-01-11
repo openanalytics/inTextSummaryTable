@@ -22,13 +22,15 @@ getSummaryStatisticsTable <- function(
 	rowInclude0 = FALSE, 
 	emptyValue = NULL,
 	# column variable
-	colVar = NULL, colInclude0 = FALSE,
+	colVar = NULL, 
+	colVarTotal = colVar, colVarTotalPerc = colVarTotal, 
+	colInclude0 = FALSE,
 	colVarDataLevels = NULL, 
 	colTotalInclude = FALSE, colTotalLab = "Total",
 	subjectVar = "USUBJID",
 	stats = NULL, statsExtra = NULL, statsValueLab = "StatisticValue",
 	filterFct = NULL,
-	dataTotal = NULL, 
+	dataTotal = NULL, dataTotalPerc = dataTotal,
 	type = "auto",
 	labelVars = NULL, 
 	landscape = (style == "presentation"), 	margin = 1, rowPadBase = 4, 
@@ -47,14 +49,19 @@ getSummaryStatisticsTable <- function(
 
 	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
+		# variables
 		var = var, varLab = varLab,
 		varIgnore = varIgnore,
 		varLabGeneral = varLabGeneral, varLabSubgroup = varLabSubgroup, 
 		varIncludeTotal = varIncludeTotal,
-		colVar = colVar, colInclude0 = colInclude0,
+		# columns
+		colVar = colVar, 
+		colVarTotal = colVarTotal, colVarTotalPerc = colVarTotalPerc, 
+		colInclude0 = colInclude0,
 		colVarDataLevels = colVarDataLevels,
 		colTotalInclude = colTotalInclude, 
 		colTotalLab = colTotalLab,
+		# rows
 		rowVar = rowVar, rowInclude0 = rowInclude0,
 		rowVarDataLevels = rowVarDataLevels,
 		rowVarInSepCol = rowVarInSepCol,
@@ -62,11 +69,12 @@ getSummaryStatisticsTable <- function(
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
 		rowTotalInclude = rowTotalInclude,
 		rowSubtotalInclude = rowSubtotalInclude,
+		# extra
 		type = type,
 		subjectVar = subjectVar,
 		stats = stats, statsExtra = statsExtra,
 		filterFct = filterFct,
-		dataTotal = dataTotal,
+		dataTotal = dataTotal, dataTotalPerc = dataTotalPerc,
 		labelVars = labelVars,
 		byVar = byVar, byVarLab = byVarLab
 	)
