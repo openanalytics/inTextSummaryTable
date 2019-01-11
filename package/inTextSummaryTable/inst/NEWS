@@ -1,5 +1,5 @@
 0.0.9
-    o statsValueLab parameter
+    o statsValueLab, dataTotalPerc, colVarTotal, colVarTotalPerc new parameters
     o export exportFlextableToDocx
     o se, cv, geomMean, geomSD, geomCV function
 0.0.8
