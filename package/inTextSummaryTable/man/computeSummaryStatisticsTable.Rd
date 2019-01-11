@@ -14,11 +14,12 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
   rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
-  rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
-  dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
-  statsExtra = NULL, filterFct = NULL, rowInclude0 = FALSE,
-  colInclude0 = FALSE, labelVars = NULL, byVar = NULL,
-  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars))
+  rowSubtotalInclude = FALSE, rowSubtotalInSepRow = FALSE,
+  type = "auto", subjectVar = "USUBJID", dataTotal = NULL,
+  dataTotalPerc = dataTotal, stats = NULL, statsExtra = NULL,
+  filterFct = NULL, rowInclude0 = FALSE, colInclude0 = FALSE,
+  labelVars = NULL, byVar = NULL, byVarLab = getLabelVar(byVar, data
+  = data, labelVars = labelVars))
 }
 \arguments{
 \item{data}{Data.frame with data.}

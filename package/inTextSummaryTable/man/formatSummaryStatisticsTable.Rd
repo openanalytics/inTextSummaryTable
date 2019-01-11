@@ -12,7 +12,9 @@ formatSummaryStatisticsTable(summaryTable,
   rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default
   = FALSE), rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
-  FALSE), colVar = getAttribute(summaryTable, "colVar"),
+  FALSE), rowSubtotalInSepRow = getAttribute(summaryTable,
+  "rowSubtotalInSepRow", default = FALSE),
+  colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsLayout = c("row", "col", "rowInSepCol"),
   statsValueLab = "StatisticValue", emptyValue = NULL)

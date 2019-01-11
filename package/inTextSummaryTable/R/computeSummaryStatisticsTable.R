@@ -142,6 +142,7 @@ computeSummaryStatisticsTable <- function(
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowTotalInclude = FALSE,
 	rowSubtotalInclude = FALSE,
+	rowSubtotalInSepRow = FALSE,
 	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL, dataTotalPerc = dataTotal,
@@ -208,6 +209,12 @@ computeSummaryStatisticsTable <- function(
 		rowVar = rowVar, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 		subjectVar = subjectVar, labelVars = labelVars
+	)
+	# original levels of colVar in summaryTable
+	colVarLevels <- sapply(
+		summaryTable[, colVar, drop = FALSE], function(x)
+			if(is.factor(x))	levels(x)	else	sort(unique(x)),
+		simplify = FALSE
 	)
 	
 	if(colTotalInclude){
@@ -315,11 +322,16 @@ computeSummaryStatisticsTable <- function(
 					if(nrow(summaryTableRowSubtotalVarColTotal) > 0)
 						summaryTableRowSubtotalVarColTotal[, colVar] <- colTotalLab
 					summaryTableRowSubtotalVar <- rbind.fill(summaryTableRowSubtotalVar, summaryTableRowSubtotalVarColTotal)
+					summaryTableRowSubtotalVar[, colVar] <- lapply(colVar, function(x)
+						factor(summaryTableRowSubtotalVar[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
+					)
+				
 				}
 				
 				# set other row variables to 'Total'
 				if(nrow(summaryTableRowSubtotalVar) > 0)
 					summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rVST)] <- "Total"
+				
 				# save results
 				summaryTableRowSubtotal <- rbind.fill(summaryTableRowSubtotal, summaryTableRowSubtotalVar)
 				# consider the next variable
@@ -349,8 +361,8 @@ computeSummaryStatisticsTable <- function(
 		
 		summaryTable[, rowVar] <- lapply(rowVar, function(var){
 			xVar <- summaryTable[, var]
-			# only add Total is included in the table (case: missing nested var)
-			levelsX <- unique(c(if(rowSubtotalInclude && var %in% rowVarSubTotal)	"Total", rowVarLevels[[var]]))
+			# only add Total if included in the table (case: missing nested var)
+			levelsX <- unique(c(if(rowSubtotalInclude && (var %in% rowVarSubTotal | rowSubtotalInSepRow))	"Total", rowVarLevels[[var]]))
 			factor(xVar, levels = levelsX)
 		})
 		
@@ -369,13 +381,6 @@ computeSummaryStatisticsTable <- function(
 			)
 		}
 	}else dataTotal <- data
-	
-	# original levels of colVar in summaryTable
-	colVarLevels <- sapply(
-		summaryTable[, colVar, drop = FALSE], function(x)
-			if(is.factor(x))	levels(x)	else	sort(unique(x)),
-		simplify = FALSE
-	)
 	
 	## column total
 	if(colTotalInclude){
@@ -537,6 +542,7 @@ computeSummaryStatisticsTable <- function(
 		# attributes created from this function
 		statsVar = statsVar,
 		rowSubtotalInclude = rowSubtotalInclude,
+		rowSubtotalInSepRow = rowSubtotalInSepRow,
 		rowVar = c(rowVar, 
 			if(length(var) > 1)	c("variable", 
 				if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
