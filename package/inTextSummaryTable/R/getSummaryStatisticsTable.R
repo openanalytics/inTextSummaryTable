@@ -18,7 +18,7 @@ getSummaryStatisticsTable <- function(
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowVarInSepCol = NULL, 
 	rowTotalInclude = FALSE, rowTotalLab = NULL, 
-	rowSubtotalInclude = FALSE,
+	rowSubtotalInclude = FALSE, rowSubtotalInSepRow = FALSE,
 	rowInclude0 = FALSE, 
 	emptyValue = NULL,
 	# column variable
@@ -69,6 +69,7 @@ getSummaryStatisticsTable <- function(
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
 		rowTotalInclude = rowTotalInclude,
 		rowSubtotalInclude = rowSubtotalInclude,
+		rowSubtotalInSepRow = rowSubtotalInSepRow,
 		# extra
 		type = type,
 		subjectVar = subjectVar,
