@@ -150,7 +150,8 @@ formatSummaryStatisticsTable <- function(
 	getTotalRow <- function(data)
 		which(rowSums(data[, rowVar] == "Total") == length(rowVar))
 	
-	if(!is.null(rowVar) | (statsLayout == "row" & length(statsVar) > 1)){
+	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & length(statsVar) > 1)
+	if(mergeRows){
 		
 		rowVarUsed <- c(rowVar, if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
 		
@@ -226,7 +227,7 @@ formatSummaryStatisticsTable <- function(
 			
 			# if only one element in last nested rowVar (e.g. only one Statistic, or counts with categories)
 			# merge with previous row (concatenate values)
-			if(statsLayout == "row" && (length(statsVar) > 1 | "variableGroup" %in% rowVar)){
+			if(statsLayout != "rowInSepCol" && (length(statsVar) > 1 | "variableGroup" %in% rowVar)){
 				idxNARVF <- which(!is.na(dataLong$rowVarFinal))
 				idxMore2El <- which(diff(idxNARVF) == 1) # consecutive NAs
 				if(length(idxMore2El) > 0)
@@ -379,7 +380,7 @@ formatSummaryStatisticsTable <- function(
 		})
 	)
 	
-	if(!is.null(rowVar) | (statsLayout == "row" & length(statsVar) > 1)){
+	if(mergeRows){
 		
 		if(length(headerRow) > 0 && headerRow != ""){
 		
