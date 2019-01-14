@@ -69,7 +69,6 @@ getSummaryStatisticsTable <- function(
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
 		rowTotalInclude = rowTotalInclude,
 		rowSubtotalInclude = rowSubtotalInclude,
-		rowSubtotalInSepRow = rowSubtotalInSepRow,
 		# extra
 		type = type,
 		subjectVar = subjectVar,
@@ -83,6 +82,7 @@ getSummaryStatisticsTable <- function(
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 
 		rowTotalLab = rowTotalLab,
+		rowSubtotalInSepRow = rowSubtotalInSepRow,
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		statsValueLab = statsValueLab,
 		title = title, footer = footer,

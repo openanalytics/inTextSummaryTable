@@ -10,7 +10,7 @@ exportSummaryStatisticsTable(summaryTable,
   getLabelVar(rowVar, labelVars = labelVars)),
   rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
   rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default
-  = FALSE), rowTotalLab = NULL,
+  = FALSE), rowSubtotalInSepRow = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
   FALSE), colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
@@ -37,6 +37,11 @@ This is only available if \code{rowVar} if not NULL.}
 
 \item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
 counts across rows in a separated row.}
+
+\item{rowSubtotalInSepRow}{Logical, if TRUE (FALSE by default),
+the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
+is included in a separated row labelled 'Total',
+otherwise included in the header row of each category.}
 
 \item{rowTotalLab}{label for the row with total}
 

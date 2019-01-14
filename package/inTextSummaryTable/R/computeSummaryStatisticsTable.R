@@ -70,10 +70,6 @@
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
-#' @param rowSubtotalInSepRow Logical, if TRUE (FALSE by default),
-#' the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
-#' is included in a separated row labelled 'Total',
-#' otherwise included in the header row of each category.
 #' @inheritParams computeSummaryStatisticsTableTotal
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
@@ -146,7 +142,6 @@ computeSummaryStatisticsTable <- function(
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowTotalInclude = FALSE,
 	rowSubtotalInclude = FALSE,
-	rowSubtotalInSepRow = FALSE,
 	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL, dataTotalPerc = dataTotal,
@@ -366,7 +361,7 @@ computeSummaryStatisticsTable <- function(
 		summaryTable[, rowVar] <- lapply(rowVar, function(var){
 			xVar <- summaryTable[, var]
 			# only add Total if included in the table (case: missing nested var)
-			levelsX <- unique(c(if(rowSubtotalInclude && (var %in% rowVarSubTotal | rowSubtotalInSepRow))	"Total", rowVarLevels[[var]]))
+			levelsX <- unique(c(if(rowSubtotalInclude)	"Total", rowVarLevels[[var]]))
 			factor(xVar, levels = levelsX)
 		})
 		
@@ -546,7 +541,6 @@ computeSummaryStatisticsTable <- function(
 		# attributes created from this function
 		statsVar = statsVar,
 		rowSubtotalInclude = rowSubtotalInclude,
-		rowSubtotalInSepRow = rowSubtotalInSepRow,
 		rowVar = c(rowVar, 
 			if(length(var) > 1)	"variable", 
 			# in case only one variable, but still count
