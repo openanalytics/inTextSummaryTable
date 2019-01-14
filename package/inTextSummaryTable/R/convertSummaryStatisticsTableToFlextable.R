@@ -71,8 +71,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	)
 	ft <- border_remove(ft) %>%
 		border_outer(border = bd, part = "all") %>%
-		hline(border = bd, part = "header") %>%
-		vline(border = bd, part = "body")
+		hline(border = bd, part = "header") 
+		#%>%vline(border = bd, part = "body")
 	
 	# set correct alignments
 	rowVar <- attributes(summaryTable)$summaryTable$rowVar
@@ -111,7 +111,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	# vertical lines
 	if(!is.null(attributes(summaryTable)$summaryTable$vlineParams))
 		for(vlineParams in attributes(summaryTable)$summaryTable$vlineParams){
-			vlineParams$i <- vlineParams$i + length(title)
+			if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
 			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
 		}
 	
@@ -417,7 +417,11 @@ getGLPGFlextable <- function(data,
 	
 	if(align)
 		ft <- align(ft, j = seq_len(ncol(data)), align = "center", part = "all")
-
+	
+	# by default, height of each header/footer (excepted the first one) line is quite big
+	ft <- height(ft, height = dim_pretty(ft, part = "header")$heights, part = "header")
+	ft <- height(ft, height = dim_pretty(ft, part = "footer")$heights, part = "footer")
+	
 	return(ft)
 	
 }

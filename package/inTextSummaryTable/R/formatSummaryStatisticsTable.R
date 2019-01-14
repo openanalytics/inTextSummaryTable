@@ -359,17 +359,19 @@ formatSummaryStatisticsTable <- function(
 	# extract vertical lines (specified by the right border)
 	attributes(dataLong)$summaryTable$vlineParams <- c(
 		# last header line
-		list(
-			# Statistic in column
-			if(statsLayout == "col" & length(statsVar) > 1){
-				
-				list(i = nRowsHeader, part = "header", 
-					j = c(1, which(unlist(headerDf[nRowsHeader, ]) == statsVar[length(statsVar)]))
-				)
-			}else{
-				list(i = nRowsHeader, part = "header", j = 1:ncol(dataLong))
-			}
-		),
+		# Statistic in column
+		if(statsLayout == "col" & length(statsVar) > 1){
+			hLastCols <- c(1, which(unlist(headerDf[nRowsHeader, ]) == statsVar[length(statsVar)]))
+			list(
+				list(i = nRowsHeader, part = "header", j = hLastCols),
+				list(part = "body", j = hLastCols)
+			)
+		}else{
+			list(
+				list(i = nRowsHeader, part = "header", j = 1:ncol(dataLong)),
+				list(part = "body")
+			)
+		},
 		# other header lines
 		lapply(seq_len(nRowsHeader-1), function(i){
 			j <- which(diff(as.numeric(factor(unlist(headerDf[i, ])))) == 1)
