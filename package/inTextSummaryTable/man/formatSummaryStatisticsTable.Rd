@@ -41,6 +41,11 @@ counts across rows in a separated row.}
 \item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
 group of the nested variable specified in \code{rowVar}}
 
+\item{rowSubtotalInSepRow}{Logical, if TRUE (FALSE by default),
+the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
+is included in a separated row labelled 'Total',
+otherwise included in the header row of each category.}
+
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
