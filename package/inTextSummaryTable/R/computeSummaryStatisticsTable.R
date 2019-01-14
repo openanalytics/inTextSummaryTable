@@ -544,9 +544,9 @@ computeSummaryStatisticsTable <- function(
 		rowSubtotalInclude = rowSubtotalInclude,
 		rowSubtotalInSepRow = rowSubtotalInSepRow,
 		rowVar = c(rowVar, 
-			if(length(var) > 1)	c("variable", 
-				if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
-			)
+			if(length(var) > 1)	"variable", 
+			# in case only one variable, but still count
+			if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
 		),
 		rowVarLab = c(rowVarLab, 
 			if(length(var) > 1)	c("variable" = varLabGeneral, 
