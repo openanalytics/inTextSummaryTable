@@ -83,6 +83,11 @@ counts across rows in a separated row.}
 \item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
 group of the nested variable specified in \code{rowVar}}
 
+\item{rowSubtotalInSepRow}{Logical, if TRUE (FALSE by default),
+the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
+is included in a separated row labelled 'Total',
+otherwise included in the header row of each category.}
+
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
 of the \code{rowVar} (assuming nested variable(s)).}

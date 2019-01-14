@@ -70,6 +70,10 @@
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
+#' @param rowSubtotalInSepRow Logical, if TRUE (FALSE by default),
+#' the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
+#' is included in a separated row labelled 'Total',
+#' otherwise included in the header row of each category.
 #' @inheritParams computeSummaryStatisticsTableTotal
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
