@@ -22,6 +22,10 @@
 #' in case no \code{colVar} is specified: 'StatisticValue' by default.
 #' @param emptyValue Value used to fill the table for missing values.
 #' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
+#' @param rowSubtotalInSepRow Logical, if TRUE (FALSE by default),
+#' the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
+#' is included in a separated row labelled 'Total',
+#' otherwise included in the header row of each category.
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -50,7 +54,7 @@ formatSummaryStatisticsTable <- function(
 	rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default = FALSE), 
 	rowTotalLab = NULL,
 	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE), 
-	rowSubtotalInSepRow = getAttribute(summaryTable, "rowSubtotalInSepRow", default = FALSE),
+	rowSubtotalInSepRow = FALSE,
 	colVar = getAttribute(summaryTable, "colVar"),
 	colHeaderTotalInclude = TRUE,
 	labelVars = NULL,
@@ -185,7 +189,8 @@ formatSummaryStatisticsTable <- function(
 				var <- rowVarToModify[i]
 				varX <- dataLong[, var]
 				
-				# add new rows
+				## add new rows
+				
 				# get indices of rows to replicates
 				dataVarI <- dataLong[, rowVarToModify[seq_len(i)]]
 				# fix in case value in one column is NA
@@ -216,10 +221,11 @@ formatSummaryStatisticsTable <- function(
 					# save the padding for flextable
 					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
 				
-				# TODO: check when not: rowSubtotalInSepRow
 				}else{
-					# include the variable in the final column
+#					# include the variable in the final column
 					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
+					if(any(dataLong[idxRowToRepl, rowVarFinal] != "Total"))
+						stop("Missing total sub-category")
 					dataLong[idxRowToRepl, rowVarFinal] <- dataLong[idxRowToRepl, var]					
 				}
 									
