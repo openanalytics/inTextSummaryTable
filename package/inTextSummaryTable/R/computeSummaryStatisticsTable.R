@@ -14,7 +14,8 @@
 #' based on total counts (in case \code{rowOrder} is 'total').
 #' @param rowSubtotalInclude Logical, if TRUE (FALSE by default) include also the total for each
 #' group of the nested variable specified in \code{rowVar}
-#' @param stats (optional) Named list of expression or call object of summary statistics of interest.
+#' @param stats (Optionally) named list of expression or call object of summary statistics of interest.
+#' The names are reported in the header.
 #' The following variables are recognized, if the table is a: 
 #' \itemize{
 #' \item{'summaryTable': }{
@@ -59,7 +60,15 @@
 #' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
 #' counts across rows in a separated row.
 #' @param filterFct (optional) Function based on computed statistics of
-#' \code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
+#' \code{rowVar}/code{colVar} which returns a subset of the summary table 
+#' (after statistics computation).
+#' Note: The filtering function should also handle records with :
+#' \itemize{
+#' \item{\code{rowVar}/\code{codeVar} set to 'Total'/\code{colTotalLab} 
+#' if \code{rowTotalInclude}/\code{colTotalInclude} is TRUE}
+#' \item{total for the column header: \code{isTotal} set to TRUE,
+#' and \code{colVar}/\code{rowVar} is NA}
+#' }
 #' Note: the total count per category of the row variables is included
 #' in a row with this variable set to 'Total'.
 #' @param colVarTotal String with column(s) considered to compute the total by,
