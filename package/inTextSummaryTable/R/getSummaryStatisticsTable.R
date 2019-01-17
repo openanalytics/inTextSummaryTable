@@ -7,28 +7,31 @@
 #' @export
 getSummaryStatisticsTable <- function(
 	data, 
-	# parameters for summary statistics
+	## parameters for summary statistics
 	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
 	varIgnore = NULL,
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIncludeTotal = FALSE,
-	# row variables
+	## row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarDataLevels = NULL, 
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowVarInSepCol = NULL, 
-	rowTotalInclude = FALSE, rowTotalLab = NULL, 
-	rowSubtotalInclude = FALSE, rowSubtotalInSepRow = FALSE,
+	# total
+	rowVarTotalInclude = NULL, 
+	rowVarTotalInSepRow = NULL,
+	rowTotalLab = NULL,
 	rowInclude0 = FALSE, 
 	rowAutoMerge = TRUE,
 	emptyValue = NULL,
 	rowVarTotalPerc = NULL,
-	# column variable
+	## column variable
 	colVar = NULL, 
 	colVarTotal = colVar, colVarTotalPerc = colVarTotal, 
 	colInclude0 = FALSE,
 	colVarDataLevels = NULL, 
 	colTotalInclude = FALSE, colTotalLab = "Total",
+	## extra
 	subjectVar = "USUBJID",
 	stats = NULL, statsExtra = NULL, 
 	statsGeneralLab = "Statistic",
@@ -53,28 +56,28 @@ getSummaryStatisticsTable <- function(
 
 	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
-		# variables
+		## variables
 		var = var, varLab = varLab,
 		varIgnore = varIgnore,
 		varGeneralLab = varGeneralLab, varSubgroupLab = varSubgroupLab, 
 		varIncludeTotal = varIncludeTotal,
-		# columns
+		## columns
 		colVar = colVar, 
 		colVarTotal = colVarTotal, colVarTotalPerc = colVarTotalPerc, 
 		colInclude0 = colInclude0,
 		colVarDataLevels = colVarDataLevels,
 		colTotalInclude = colTotalInclude, 
 		colTotalLab = colTotalLab,
-		# rows
+		## rows
 		rowVar = rowVar, rowInclude0 = rowInclude0,
 		rowVarDataLevels = rowVarDataLevels,
 		rowVarInSepCol = rowVarInSepCol,
 		rowVarLab = rowVarLab,
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
-		rowTotalInclude = rowTotalInclude,
-		rowSubtotalInclude = rowSubtotalInclude,
+		# total
+		rowVarTotalInclude = rowVarTotalInclude,
 		rowVarTotalPerc = rowVarTotalPerc,
-		# extra
+		## extra
 		type = type,
 		subjectVar = subjectVar,
 		stats = stats, statsExtra = statsExtra,
@@ -86,9 +89,10 @@ getSummaryStatisticsTable <- function(
 	)
 
 	ft <- exportSummaryStatisticsTable(
-		summaryTable = summaryTable, 
+		summaryTable = summaryTable,
+		# total
 		rowTotalLab = rowTotalLab,
-		rowSubtotalInSepRow = rowSubtotalInSepRow,
+		rowVarTotalInSepRow = rowVarTotalInSepRow,
 		rowAutoMerge = rowAutoMerge,
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		statsValueLab = statsValueLab,

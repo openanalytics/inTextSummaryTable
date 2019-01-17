@@ -25,10 +25,9 @@
 #' in case no \code{colVar} is specified: 'StatisticValue' by default.
 #' @param emptyValue Value used to fill the table for missing values.
 #' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
-#' @param rowSubtotalInSepRow Logical, if TRUE (FALSE by default),
-#' the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
-#' is included in a separated row labelled 'Total',
-#' otherwise included in the header row of each category.
+#' @param rowVarTotalInSepRow Character vector with \code{rowVarTotalInclude}
+#' (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
+#' Otherwise (by default) the total is included in the header row of each category.
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -54,10 +53,11 @@ formatSummaryStatisticsTable <- function(
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
-	rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default = FALSE), 
+	# total
+	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"), 
+	rowVarTotalInSepRow = NULL,
 	rowTotalLab = NULL,
-	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE), 
-	rowSubtotalInSepRow = FALSE,
+	
 	rowAutoMerge = TRUE,
 	colVar = getAttribute(summaryTable, "colVar"),
 	colHeaderTotalInclude = TRUE,
@@ -66,7 +66,7 @@ formatSummaryStatisticsTable <- function(
 	statsValueLab = "StatisticValue",
 	emptyValue = NULL
 	){
-		
+
 	if(!is.data.frame(summaryTable)){
 		
 		inputParams <- as.list(environment())
@@ -170,7 +170,7 @@ formatSummaryStatisticsTable <- function(
 		
 		rowVarUsed <- c(rowVar, if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
 		
-		# sort data.frame with specified row variables
+		# important: sort data.frame with specified row variables!
 		dataLong <- ddply(dataLong, rowVar)
 		if(".id" %in% colnames(dataLong))	dataLong$`.id` <- NULL
 		
@@ -190,8 +190,8 @@ formatSummaryStatisticsTable <- function(
 			dataLong$rowVarFinal <- dataLong[, rowVarFinal]
 			
 			dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
-			if(rowTotalInclude)
-				dataLong[getTotalRow(data = dataLong), "rowPadding"] <- 0
+			idxTotalRow <- getTotalRow(data = dataLong)
+			dataLong[idxTotalRow, "rowPadding"] <- 0
 				
 			# include the value in each rowVar in the column of the more nested variable
 			# start by the second more nested variable
@@ -208,10 +208,19 @@ formatSummaryStatisticsTable <- function(
 				# -> interaction is set to NA (without concatenating other columns)
 				dataVarI[is.na(dataVarI)] <- ""
 				idxRowToRepl <- which(!duplicated(interaction(dataVarI))) 
-				if(rowTotalInclude)
-					idxRowToRepl <- setdiff(idxRowToRepl, getTotalRow(data = dataLong))
+				idxRowToRepl <- setdiff(idxRowToRepl, idxTotalRow)
 				
-				if(!(rowSubtotalInclude & !rowSubtotalInSepRow)){
+				# if the sub-total for this variable is computed and not included in separated row
+				varNested <- rowVarInRow[match(var, rowVarInRow)+1]
+				if(varNested %in% rowVarTotalInclude & !varNested %in% rowVarTotalInSepRow){
+					
+					# include the variable in the final column
+					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
+					if(any(dataLong[idxRowToRepl, rowVarFinal] != "Total"))
+						stop("Missing total sub-category")
+					dataLong[idxRowToRepl, rowVarFinal] <- dataLong[idxRowToRepl, var]
+					
+				}else{
 					
 					# new element:
 					# convert to character in case is a factor
@@ -232,12 +241,6 @@ formatSummaryStatisticsTable <- function(
 					# save the padding for flextable
 					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
 				
-				}else{
-#					# include the variable in the final column
-					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
-					if(any(dataLong[idxRowToRepl, rowVarFinal] != "Total"))
-						stop("Missing total sub-category")
-					dataLong[idxRowToRepl, rowVarFinal] <- dataLong[idxRowToRepl, var]					
 				}
 									
 			}
@@ -302,15 +305,14 @@ formatSummaryStatisticsTable <- function(
 		}
 		idxHLine <- unique(idxHLine[idxHLine > 0])
 		
-		if(rowTotalInclude){
-			idxRowTotal <- which(dataLong[, rowVarFinal] == "Total")
+		if(!is.null(rowVarTotalInclude)){
+			idxRowTotal <- which(dataLong[, rowVarFinal] == "Total" & dataLong$rowPadding == 0)
 			idxHLine <- c(idxHLine, idxRowTotal[length(idxRowTotal)])
 			if(is.null(rowTotalLab))	rowTotalLab <- paste("Any", rowVarLab[rowVarFinal])
 			dataLong[idxRowTotal, rowVarFinal] <- rowTotalLab
 		}
 		
-		dataLong$rowPadding <- NULL
-		hlineParams <- NULL
+		dataLong$rowPadding <- hlineParams <- NULL
 		if(length(idxHLine) > 0)
 			hlineParams <- c(hlineParams, list(
 				list(i = idxHLine, part = "body", j = 1:ncol(dataLong))

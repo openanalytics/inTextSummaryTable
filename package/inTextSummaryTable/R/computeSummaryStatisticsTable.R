@@ -1,8 +1,9 @@
 #' Compute summary statistics for a specific dataset and variables of interest
 #' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
-#' included in separated column in the table.
-#' NULL by default. 
-#' This is only available if \code{rowVar} if not NULL.
+#' included in separated column in the table, NULL by default. 
+#' This is only available if \code{rowVar} if not specified.
+#' Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
+#' separately by this variable.
 #' @param rowOrder String or function of named list with method used to order the rows,
 #' see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
 #' 'total' is only available if the total is available for each \code{rowVar} (\code{rowSubtotalInclude} set to TRUE)
@@ -12,8 +13,9 @@
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
 #' based on total counts (in case \code{rowOrder} is 'total').
-#' @param rowSubtotalInclude Logical, if TRUE (FALSE by default) include also the total for each
-#' group of the nested variable specified in \code{rowVar}
+#' @param rowVarTotalInclude Character vector with \code{rowVar}
+#' for which to include the total for each group.
+#' Specify 'all' to include a row with the total across all \code{rowVar}.
 #' @param stats (Optionally) named list of expression or call object of summary statistics of interest.
 #' The names are reported in the header.
 #' The following variables are recognized, if the table is a: 
@@ -57,15 +59,13 @@
 #' @param dataTotalPerc Data.frame used to extract the Total count, 
 #' used for the computation of the percentage: 'statPercN' parameter.
 #' It should contain the variables specified by \code{colVarTotalPerc}.
-#' @param rowTotalInclude Logical, if TRUE (FALSE by default) include the total
-#' counts across rows in a separated row.
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table 
 #' (after statistics computation).
 #' Note: The filtering function should also handle records with :
 #' \itemize{
 #' \item{\code{rowVar}/\code{codeVar} set to 'Total'/\code{colTotalLab} 
-#' if \code{rowTotalInclude}/\code{colTotalInclude} is TRUE}
+#' if \code{rowVarTotalInclude}/\code{colTotalInclude} is TRUE}
 #' \item{total for the column header: \code{isTotal} set to TRUE,
 #' and \code{colVar}/\code{rowVar} is NA}
 #' }
@@ -133,9 +133,12 @@
 #' included in the final table}
 #' \item{'rowVar': }{column name(s) of summary table with row variable
 #' included in the final table}
+#' \item{'colVar': }{column name(s) of summary table with col variable
+#' included in the final table}
 #' \item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
-#' \item{'rowSubtotalInclude': }{\code{rowSubtotalInclude} checked}
-#' }
+#' \item{'rowVarInSepCol': }{\code{rowVarInSepCol}}
+#' \item{'rowVarTotalInclude': }{\code{rowVarTotalInclude}}
+#' } 
 #' The computed summary statistics are stored in the 'statsVar' attribute.
 #' @author Laure Cougnaud
 #' @importFrom dplyr n_distinct
@@ -156,8 +159,7 @@ computeSummaryStatisticsTable <- function(
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
 	rowVarInSepCol = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
-	rowTotalInclude = FALSE,
-	rowSubtotalInclude = FALSE,
+	rowVarTotalInclude = NULL,
 	rowVarTotalPerc = NULL,
 	type = "auto",
 	subjectVar = "USUBJID",	
@@ -249,137 +251,83 @@ computeSummaryStatisticsTable <- function(
 		
 	}
 	
-	# get total by row (if specified)
-	if(rowTotalInclude){
-		if(!is.null(rowVar)){
+	if(!is.null(rowVarTotalInclude)){
+		
+		# order specified variables as in rowVar
+		rowVarSubTotal <- rowVar[rowVar %in% rowVarTotalInclude]
+		
+		# compute sub-total for each specified rowVar (excepted the last one)
+		summaryTableRowSubtotal <- data.frame()
+		for(rVST in rowVarSubTotal){
 			
-			summaryTableRowTotal <- computeSummaryStatisticsByRowColVar(
-				data = data, 
-				var = var, varIncludeTotal = varIncludeTotal, statsExtra = statsExtra,
+			# remove rows which have NA for the nested sub-variable
+			# otherwise have summary statistics are duplicated (sub-total and initial)
+			rowVarSubTotalOther <- rowVar[
+				setdiff(seq_along(rowVar), seq_len(match(rVST, rowVar)))
+			]
+			idxMissingSubVar <- which(
+				rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
+			)
+			dataForSubTotal <- if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0){
+				data[-idxMissingSubVar, ]
+			}else	data
+	
+			# compute statistics by higher level rowVar
+			rowVarOther <- rowVar[seq_len(match(rVST, rowVar)-1)]
+			if(length(rowVarOther) == 0) rowVarOther <- NULL
+			
+			# compute statistics
+			summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
+				data = dataForSubTotal, 
+				var = var, varIncludeTotal = varIncludeTotal,
+				statsExtra = statsExtra,
 				type = type,
+				rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 				colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 			)
 			
 			# include also the total per column (if required)
 			if(colTotalInclude){
-				summaryTableRowTotalColTotal <- computeSummaryStatisticsByRowColVar(
-					data = data, 
-					var = var, varIncludeTotal = varIncludeTotal, statsExtra = statsExtra,
-					varLab = varLab, type = type,	
-					subjectVar = subjectVar, labelVars = labelVars
-				)
-				if(nrow(summaryTableRowTotalColTotal) > 0)
-					summaryTableRowTotalColTotal[, colVar] <- colTotalLab
-				summaryTableRowTotal <- rbind.fill(summaryTableRowTotal, summaryTableRowTotalColTotal)
-			}
-			
-			if(nrow(summaryTableRowTotal) > 0)
-				summaryTableRowTotal[, rowVar] <- "Total"			
-			
-		}else{
-			warning("The row 'total' is not included because no 'rowVar' is specified.")
-			rowTotalInclude <- FALSE
-		}
-	}
-	
-	if(rowSubtotalInclude){
-		
-		# consider all row variables excepted the last one
-		rowVarForSubTotal <- setdiff(rowVar, rowVarInSepCol)
-		rowVarSubTotal <- rowVarForSubTotal[-length(rowVarForSubTotal)]
-		
-		if(length(rowVarSubTotal) < 1){
-			
-			warning("The row 'sub-total' is not included because only ",
-				"one or no variable is specified in 'rowVar' (without row variable in separated column)."
-			)
-			rowSubtotalInclude <- FALSE
-			
-		}else{
-		
-			# compute sub-total for each specified rowVar (excepted the last one)
-			summaryTableRowSubtotal <- data.frame()
-			rVST <- rowVarSubTotal
-			while(length(rVST) > 0){
-				
-				# remove rows which have NA for the nested sub-variable
-				# otherwise have summary statistics are duplicated (sub-total and initial)
-				rowVarSubTotalOther <- rowVarForSubTotal[
-					setdiff(seq_along(rowVarForSubTotal), seq_along(match(rVST, rowVarForSubTotal)))
-				]
-				idxMissingSubVar <- which(
-					rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
-				)
-				dataForSubTotal <- if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0){
-					data[-idxMissingSubVar, ]
-				}else	data
-				
-				# compute statistics
-				summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
+				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotal, 
 					var = var, varIncludeTotal = varIncludeTotal,
 					statsExtra = statsExtra,
 					type = type,
-					rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
-					colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
+					rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 				)
-				
-				# include also the total per column (if required)
-				if(colTotalInclude){
-					summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
-						data = dataForSubTotal, 
-						var = var, varIncludeTotal = varIncludeTotal,
-						statsExtra = statsExtra,
-						type = type,
-						rowVar = rVST, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
-						subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
-					)
-					if(nrow(summaryTableRowSubtotalVarColTotal) > 0)
-						summaryTableRowSubtotalVarColTotal[, colVar] <- colTotalLab
-					summaryTableRowSubtotalVar <- rbind.fill(summaryTableRowSubtotalVar, summaryTableRowSubtotalVarColTotal)
-					summaryTableRowSubtotalVar[, colVar] <- lapply(colVar, function(x)
-						factor(summaryTableRowSubtotalVar[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
-					)
-				
-				}
-				
-				# set other row variables to 'Total'
-				if(nrow(summaryTableRowSubtotalVar) > 0)
-					summaryTableRowSubtotalVar[, setdiff(rowVarForSubTotal, rVST)] <- "Total"
-				
-				# save results
-				summaryTableRowSubtotal <- rbind.fill(summaryTableRowSubtotal, summaryTableRowSubtotalVar)
-				# consider the next variable
-				rVST <- rVST[-length(rVST)]
-				
+				if(nrow(summaryTableRowSubtotalVarColTotal) > 0)
+					summaryTableRowSubtotalVarColTotal[, colVar] <- colTotalLab
+				summaryTableRowSubtotalVar <- rbind.fill(summaryTableRowSubtotalVar, summaryTableRowSubtotalVarColTotal)
+				summaryTableRowSubtotalVar[, colVar] <- lapply(colVar, function(x)
+					factor(summaryTableRowSubtotalVar[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
+				)
 			}
 			
+			# set other row variables to 'Total'
+			if(nrow(summaryTableRowSubtotalVar) > 0)
+				summaryTableRowSubtotalVar[, setdiff(rowVar, rowVarOther)] <- "Total"
+			
+			# save results
+			summaryTableRowSubtotal <- rbind.fill(summaryTableRowSubtotal, summaryTableRowSubtotalVar)
+			
 		}
-		
-	}
 	
-	# bind the df with row total and subtotal to the summary table
-	# ensure that the order of the levels of the variable are retained
-	if(rowTotalInclude | rowSubtotalInclude){
-		
+		# bind the df with row total and subtotal to the summary table
+		# ensure that the order of the levels of the variable are retained		
 		rowVarLevels <- sapply(
 			summaryTable[, rowVar, drop = FALSE], function(x)
 				if(is.factor(x))	levels(x)	else	sort(unique(x)),
 			simplify = FALSE
 		)
 		
-		if(rowTotalInclude)
-			summaryTable <- rbind.fill(summaryTable, summaryTableRowTotal)
-		
-		if(rowSubtotalInclude)
-			summaryTable <- rbind.fill(summaryTable, summaryTableRowSubtotal)
+		summaryTable <- rbind.fill(summaryTable, summaryTableRowSubtotal)
 		
 		summaryTable[, rowVar] <- lapply(rowVar, function(var){
 			xVar <- summaryTable[, var]
 			# only add Total if included in the table (case: missing nested var)
-			levelsX <- unique(c(if(rowSubtotalInclude)	"Total", rowVarLevels[[var]]))
+			levelsX <- unique(c("Total", rowVarLevels[[var]]))
 			factor(xVar, levels = levelsX)
 		})
 		
@@ -564,7 +512,6 @@ computeSummaryStatisticsTable <- function(
 			
 		# attributes created from this function
 		statsVar = statsVar,
-		rowSubtotalInclude = rowSubtotalInclude,
 		rowVar = c(rowVar, 
 			if(length(var) > 1)	"variable", 
 			# in case only one variable, but still count
@@ -583,7 +530,7 @@ computeSummaryStatisticsTable <- function(
 		# attributes extracted from the input parameters,
 		# to set similar defaults for the exportSummaryStatisticsTable
 		rowVarInSepCol = rowVarInSepCol,
-		rowTotalInclude = rowTotalInclude,
+		rowVarTotalInclude = rowVarTotalInclude,
 		colVar = colVar		
 
 	)

@@ -21,10 +21,9 @@ exportSummaryStatisticsTable <- function(
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"), 
-	rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default = FALSE), 
-	rowSubtotalInSepRow = FALSE,
+	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
 	rowTotalLab = NULL,
-	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE),
+	rowVarTotalInSepRow = NULL,
 	rowAutoMerge = TRUE,
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colHeaderTotalInclude = TRUE,
@@ -44,15 +43,14 @@ exportSummaryStatisticsTable <- function(
 	
 	statsLayout <- match.arg(statsLayout)
 	
-	
 	## format table
 	summaryTableLong <- formatSummaryStatisticsTable(
 		summaryTable = summaryTable,
 		rowVar = rowVar, rowVarLab = rowVarLab,
 		rowVarInSepCol = rowVarInSepCol,
-		rowTotalInclude = rowTotalInclude, rowTotalLab = rowTotalLab,
-		rowSubtotalInclude = rowSubtotalInclude,
-		rowSubtotalInSepRow = rowSubtotalInSepRow,
+		rowVarTotalInSepRow = rowVarTotalInSepRow,
+		rowVarTotalInclude = rowVarTotalInclude,
+		rowTotalLab = rowTotalLab,
 		rowAutoMerge = rowAutoMerge,
 		colVar = colVar,
 		statsLayout = statsLayout,
