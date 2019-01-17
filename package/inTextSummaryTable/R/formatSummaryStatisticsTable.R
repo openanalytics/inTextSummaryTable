@@ -8,6 +8,9 @@
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowTotalLab label for the row with total
+#' @param rowAutoMerge Logical, if TRUE (by default) automatically merging of rows,
+#' e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
+#' or only one statistic per category
 #' @param statsLayout String with layout for the statistics names 
 #' (in case more than one statistic is included), among:
 #' \itemize{
@@ -55,6 +58,7 @@ formatSummaryStatisticsTable <- function(
 	rowTotalLab = NULL,
 	rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude", FALSE), 
 	rowSubtotalInSepRow = FALSE,
+	rowAutoMerge = TRUE,
 	colVar = getAttribute(summaryTable, "colVar"),
 	colHeaderTotalInclude = TRUE,
 	labelVars = NULL,
@@ -123,6 +127,13 @@ formatSummaryStatisticsTable <- function(
 	emptyStats <- which(is.na(dataLong[, statsValueLab]))
 	if(length(emptyStats) > 0)
 		dataLong <- dataLong[-emptyStats, ]
+	
+	# if only one 'stats' and no named, set 'Statistic' to NA 
+	# e.g. in DM table: count per sub-group for categorical variable
+	if(!is.null(rowVar)){
+		idxUniqueStatNotNamed <- which(!duplicated(dataLong[, c(rowVar, colVar)]) & dataLong$Statistic == "Statistic")
+		dataLong[idxUniqueStatNotNamed, "Statistic"] <- NA
+	}
 	
 	# format statistic value
 	if(is.numeric(dataLong[, statsValueLab]))
@@ -233,7 +244,7 @@ formatSummaryStatisticsTable <- function(
 			
 			# if only one element in last nested rowVar (e.g. only one Statistic, or counts with categories)
 			# merge with previous row (concatenate values)
-			if(statsLayout != "rowInSepCol" && (length(statsVar) > 1 | "variableGroup" %in% rowVar)){
+			if(rowAutoMerge && statsLayout != "rowInSepCol" && (length(statsVar) > 1 | "variableGroup" %in% rowVar)){
 				idxNARVF <- which(!is.na(dataLong$rowVarFinal))
 				idxMore2El <- which(diff(idxNARVF) == 1) # consecutive NAs
 				if(length(idxMore2El) > 0)
@@ -339,8 +350,9 @@ formatSummaryStatisticsTable <- function(
 		}
 			
 		# label header for rows
-		rowVarLabs <- c(rowVarLab[setdiff(rowVarInRow, "Statistic")], 
-			if(statsLayout == "row" & length(statsVar) > 1)	"Statistic"
+		rowVarLabs <- c(
+			rowVarLab[setdiff(rowVarInRow, "Statistic")], 
+			if(statsLayout == "row")	rowVarLab["Statistic"]
 		)
 		colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
 			paste(rowVarLabs, collapse = "_")

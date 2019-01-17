@@ -6,18 +6,19 @@
 \usage{
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   data = data, labelVars = labelVars), varIgnore = NULL,
-  varLabGeneral = "Variable", varLabSubgroup = NULL,
+  varGeneralLab = "Variable", varSubgroupLab = NULL,
   varIncludeTotal = FALSE, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
   rowTotalInclude = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = FALSE, rowSubtotalInSepRow = FALSE,
-  rowInclude0 = FALSE, emptyValue = NULL, colVar = NULL,
-  colVarTotal = colVar, colVarTotalPerc = colVarTotal,
-  colInclude0 = FALSE, colVarDataLevels = NULL,
-  colTotalInclude = FALSE, colTotalLab = "Total",
-  subjectVar = "USUBJID", stats = NULL, statsExtra = NULL,
+  rowInclude0 = FALSE, rowAutoMerge = TRUE, emptyValue = NULL,
+  rowVarTotalPerc = NULL, colVar = NULL, colVarTotal = colVar,
+  colVarTotalPerc = colVarTotal, colInclude0 = FALSE,
+  colVarDataLevels = NULL, colTotalInclude = FALSE,
+  colTotalLab = "Total", subjectVar = "USUBJID", stats = NULL,
+  statsExtra = NULL, statsGeneralLab = "Statistic",
   statsValueLab = "StatisticValue", filterFct = NULL,
   dataTotal = NULL, dataTotalPerc = dataTotal, type = "auto",
   labelVars = NULL, landscape = (style == "presentation"),
@@ -31,18 +32,18 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{String, variable of \code{data} with variable to compute statistics on.
-Missing values, if present, are filtered.}
+\item{var}{Character vector with variable, used if 'variable' is specified
+within \code{rowVarTotal}.}
 
 \item{varLab}{Label for the \code{var} variable.}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 
-\item{varLabGeneral}{String with general label for variable specified in \code{var}.
+\item{varGeneralLab}{String with general label for variable specified in \code{var}.
 In case of multiple variable in \code{var}, this will be included in the table header
 (see 'rowVarLab' attribute of the output).}
 
-\item{varLabSubgroup}{String with general label for sub-group, in case
+\item{varSubgroupLab}{String with general label for sub-group, in case
 \code{var} is specified for a count table.
 This will be included in the table header (see 'rowVarLab' attribute of the output).
 Empty by default.}
@@ -92,8 +93,18 @@ otherwise included in the header row of each category.}
 include rows with no records, based on all combinations 
 of the \code{rowVar} (assuming nested variable(s)).}
 
+\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
+e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
+or only one statistic per category}
+
 \item{emptyValue}{Value used to fill the table for missing values.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
+
+\item{rowVarTotalPerc}{Character vector with row(s) considered to compute the total,
+used as denominator for the percentage computation.
+By default the total is only computed by column (NULL by default).
+If the total should be based on the total number of records per variable,
+\code{rowVarTotalPerc} should be set to 'variable'.}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,

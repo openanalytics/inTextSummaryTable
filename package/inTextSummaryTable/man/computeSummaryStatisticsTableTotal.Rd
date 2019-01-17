@@ -5,9 +5,11 @@
 \title{Compute summary statistics total table.}
 \usage{
 computeSummaryStatisticsTableTotal(data, colVar = NULL,
-  colVarTotal = colVar, colTotalLab = "Total", colInclude0 = FALSE,
+  colVarTotal = colVar, rowVarTotal = NULL, var = NULL,
+  varLab = getLabelVar(var, data = data, labelVars = labelVars),
+  colTotalLab = "Total", colInclude0 = FALSE,
   colTotalInclude = FALSE, colVarDataLevels = NULL,
-  colVarLevels = NULL, subjectVar = "USUBJID")
+  colVarLevels = NULL, subjectVar = "USUBJID", labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -18,7 +20,16 @@ for each subgroup across \code{rowVar} is computed.
 If variable(s) are not nested, possible combinations
 can be specified via \code{rowVarDataLevels}.}
 
-\item{colVarTotal}{column considered to compute the total.}
+\item{colVarTotal}{Character vector with column(s) considered to compute the total.}
+
+\item{rowVarTotal}{Character vector with row(s) considered to compute the total.}
+
+\item{var}{Character vector with variable, used if 'variable' is specified
+within \code{rowVarTotal}.}
+
+\item{varLab}{Named character vector with label for each variable 
+specified in \code{var}.
+By default, extracted from the \code{labelVars}.}
 
 \item{colTotalLab}{String, label for the total column included 
 if \code{colTotalInclude} is TRUE, 'Total' by default.}
@@ -39,6 +50,8 @@ statistics across columns in a separated column.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
+
+\item{labelVars}{named string with variable labels (names are the variable code)}
 }
 \value{
 data.frame with total table.
