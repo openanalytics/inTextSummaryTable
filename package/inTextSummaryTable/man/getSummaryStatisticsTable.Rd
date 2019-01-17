@@ -11,23 +11,22 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
-  rowTotalInclude = FALSE, rowTotalLab = NULL,
-  rowSubtotalInclude = FALSE, rowSubtotalInSepRow = FALSE,
-  rowInclude0 = FALSE, rowAutoMerge = TRUE, emptyValue = NULL,
-  rowVarTotalPerc = NULL, colVar = NULL, colVarTotal = colVar,
-  colVarTotalPerc = colVarTotal, colInclude0 = FALSE,
-  colVarDataLevels = NULL, colTotalInclude = FALSE,
-  colTotalLab = "Total", subjectVar = "USUBJID", stats = NULL,
-  statsExtra = NULL, statsGeneralLab = "Statistic",
-  statsValueLab = "StatisticValue", filterFct = NULL,
-  dataTotal = NULL, dataTotalPerc = dataTotal, type = "auto",
-  labelVars = NULL, landscape = (style == "presentation"),
-  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
-  file = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
-  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
-  report = 8, presentation = 10))
+  rowVarTotalInclude = NULL, rowVarTotalInSepRow = NULL,
+  rowTotalLab = NULL, rowInclude0 = FALSE, rowAutoMerge = TRUE,
+  emptyValue = NULL, rowVarTotalPerc = NULL, colVar = NULL,
+  colVarTotal = colVar, colVarTotalPerc = colVarTotal,
+  colInclude0 = FALSE, colVarDataLevels = NULL,
+  colTotalInclude = FALSE, colTotalLab = "Total",
+  subjectVar = "USUBJID", stats = NULL, statsExtra = NULL,
+  statsGeneralLab = "Statistic", statsValueLab = "StatisticValue",
+  filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
+  type = "auto", labelVars = NULL, landscape = (style ==
+  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  footer = NULL, file = NULL, outputType = c("flextable",
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
+  style = "report", byVar = NULL, byVarLab = getLabelVar(byVar, data
+  = data, labelVars = labelVars), colHeaderTotalInclude = TRUE,
+  fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -72,22 +71,20 @@ specify a different ordering method for each variable.}
 based on total counts (in case \code{rowOrder} is 'total').}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table.
-NULL by default. 
-This is only available if \code{rowVar} if not NULL.}
+included in separated column in the table, NULL by default. 
+This is only available if \code{rowVar} if not specified.
+Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
+separately by this variable.}
 
-\item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
-counts across rows in a separated row.}
+\item{rowVarTotalInclude}{Character vector with \code{rowVar}
+for which to include the total for each group.
+Specify 'all' to include a row with the total across all \code{rowVar}.}
+
+\item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
+(not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
+Otherwise (by default) the total is included in the header row of each category.}
 
 \item{rowTotalLab}{label for the row with total}
-
-\item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
-group of the nested variable specified in \code{rowVar}}
-
-\item{rowSubtotalInSepRow}{Logical, if TRUE (FALSE by default),
-the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
-is included in a separated row labelled 'Total',
-otherwise included in the header row of each category.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
@@ -134,7 +131,8 @@ if \code{colTotalInclude} is TRUE, 'Total' by default.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{stats}{(optional) Named list of expression or call object of summary statistics of interest.
+\item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
+The names are reported in the header.
 The following variables are recognized, if the table is a: 
 \itemize{
 \item{'summaryTable': }{
@@ -173,7 +171,15 @@ and return the corresponding summary statistic.}
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
-\code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
+\code{rowVar}/code{colVar} which returns a subset of the summary table 
+(after statistics computation).
+Note: The filtering function should also handle records with :
+\itemize{
+\item{\code{rowVar}/\code{codeVar} set to 'Total'/\code{colTotalLab} 
+if \code{rowVarTotalInclude}/\code{colTotalInclude} is TRUE}
+\item{total for the column header: \code{isTotal} set to TRUE,
+and \code{colVar}/\code{rowVar} is NA}
+}
 Note: the total count per category of the row variables is included
 in a row with this variable set to 'Total'.}
 

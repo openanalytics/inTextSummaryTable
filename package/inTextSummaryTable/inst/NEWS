@@ -3,6 +3,7 @@
     o rowAutoMerge, rowVarTotalPerc
     o formatSummaryStatisticsTable: remove 'Statistic' if only one statsVar specified and not named
     o standardize 'Lab' parameters
+    o standardize row total specification: rowVarTotalInclude/rowVarSubtotalInclude -> rowVarTotalInclude, rowSubtotalInSepRow -> rowVarTotalInSepRow
 0.0.9
     o statsValueLab, dataTotalPerc, colVarTotal, colVarTotalPerc new parameters
     o export exportFlextableToDocx

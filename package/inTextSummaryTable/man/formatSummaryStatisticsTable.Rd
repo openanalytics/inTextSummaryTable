@@ -9,11 +9,9 @@ formatSummaryStatisticsTable(summaryTable,
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
   getLabelVar(rowVar, labelVars = labelVars)),
   rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
-  rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default
-  = FALSE), rowTotalLab = NULL,
-  rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
-  FALSE), rowSubtotalInSepRow = FALSE, rowAutoMerge = TRUE,
-  colVar = getAttribute(summaryTable, "colVar"),
+  rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
+  rowVarTotalInSepRow = NULL, rowTotalLab = NULL,
+  rowAutoMerge = TRUE, colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsLayout = c("row", "col", "rowInSepCol"),
   statsValueLab = "StatisticValue", emptyValue = NULL)
@@ -28,22 +26,20 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table.
-NULL by default. 
-This is only available if \code{rowVar} if not NULL.}
+included in separated column in the table, NULL by default. 
+This is only available if \code{rowVar} if not specified.
+Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
+separately by this variable.}
 
-\item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
-counts across rows in a separated row.}
+\item{rowVarTotalInclude}{Character vector with \code{rowVar}
+for which to include the total for each group.
+Specify 'all' to include a row with the total across all \code{rowVar}.}
+
+\item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
+(not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
+Otherwise (by default) the total is included in the header row of each category.}
 
 \item{rowTotalLab}{label for the row with total}
-
-\item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
-group of the nested variable specified in \code{rowVar}}
-
-\item{rowSubtotalInSepRow}{Logical, if TRUE (FALSE by default),
-the sub-total by row (included if \code{rowSubtotalInSepRow} is TRUE),
-is included in a separated row labelled 'Total',
-otherwise included in the header row of each category.}
 
 \item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
 e.g. in case there is only one sub-category (e.g. categorical variable with only one group)

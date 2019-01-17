@@ -2,8 +2,8 @@
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
 #' @param type String with type of statistics:
 #' \itemize{
-#' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)
-#' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)
+#' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
+#' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
 #' \item{'n (%)':}{number of subjects with 0 digit (percentage with 1 digits)}
 #' }
 #' @return (Optionally named) list of expression or call object of summary statistics of interest

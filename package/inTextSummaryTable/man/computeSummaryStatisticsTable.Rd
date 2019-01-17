@@ -13,11 +13,10 @@ computeSummaryStatisticsTable(data, var = NULL,
   colTotalLab = "Total", rowVar = NULL, rowVarDataLevels = NULL,
   rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
   rowVarInSepCol = NULL, rowOrder = "auto",
-  rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
-  rowSubtotalInclude = FALSE, rowVarTotalPerc = NULL, type = "auto",
-  subjectVar = "USUBJID", dataTotal = NULL,
-  dataTotalPerc = dataTotal, stats = NULL, statsExtra = NULL,
-  statsGeneralLab = "Statistic", filterFct = NULL,
+  rowOrderTotalFilterFct = NULL, rowVarTotalInclude = NULL,
+  rowVarTotalPerc = NULL, type = "auto", subjectVar = "USUBJID",
+  dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
+  statsExtra = NULL, statsGeneralLab = "Statistic", filterFct = NULL,
   rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
   byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
   labelVars))
@@ -77,9 +76,10 @@ grouping in row in the final table.}
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table.
-NULL by default. 
-This is only available if \code{rowVar} if not NULL.}
+included in separated column in the table, NULL by default. 
+This is only available if \code{rowVar} if not specified.
+Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
+separately by this variable.}
 
 \item{rowOrder}{String or function of named list with method used to order the rows,
 see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
@@ -91,11 +91,9 @@ specify a different ordering method for each variable.}
 \item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
 based on total counts (in case \code{rowOrder} is 'total').}
 
-\item{rowTotalInclude}{Logical, if TRUE (FALSE by default) include the total
-counts across rows in a separated row.}
-
-\item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
-group of the nested variable specified in \code{rowVar}}
+\item{rowVarTotalInclude}{Character vector with \code{rowVar}
+for which to include the total for each group.
+Specify 'all' to include a row with the total across all \code{rowVar}.}
 
 \item{rowVarTotalPerc}{Character vector with row(s) considered to compute the total,
 used as denominator for the percentage computation.
@@ -123,7 +121,8 @@ It should contain the variables specified by \code{colVarTotal}.}
 used for the computation of the percentage: 'statPercN' parameter.
 It should contain the variables specified by \code{colVarTotalPerc}.}
 
-\item{stats}{(optional) Named list of expression or call object of summary statistics of interest.
+\item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
+The names are reported in the header.
 The following variables are recognized, if the table is a: 
 \itemize{
 \item{'summaryTable': }{
@@ -159,7 +158,15 @@ Each function has as parameter: either 'x': the variable or 'data': the entire d
 and return the corresponding summary statistic.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
-\code{rowVar}/code{colVar} which returns a subset of the summary table of interest.
+\code{rowVar}/code{colVar} which returns a subset of the summary table 
+(after statistics computation).
+Note: The filtering function should also handle records with :
+\itemize{
+\item{\code{rowVar}/\code{codeVar} set to 'Total'/\code{colTotalLab} 
+if \code{rowVarTotalInclude}/\code{colTotalInclude} is TRUE}
+\item{total for the column header: \code{isTotal} set to TRUE,
+and \code{colVar}/\code{rowVar} is NA}
+}
 Note: the total count per category of the row variables is included
 in a row with this variable set to 'Total'.}
 
@@ -227,9 +234,12 @@ The output contains additional the following attributes:
 included in the final table}
 \item{'rowVar': }{column name(s) of summary table with row variable
 included in the final table}
+\item{'colVar': }{column name(s) of summary table with col variable
+included in the final table}
 \item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
-\item{'rowSubtotalInclude': }{\code{rowSubtotalInclude} checked}
-}
+\item{'rowVarInSepCol': }{\code{rowVarInSepCol}}
+\item{'rowVarTotalInclude': }{\code{rowVarTotalInclude}}
+} 
 The computed summary statistics are stored in the 'statsVar' attribute.
 }
 \description{
