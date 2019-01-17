@@ -1,5 +1,8 @@
 0.0.10
-    o formatSummaryStatisticsTable: fix for  rowSubtotalInSepRow
+    o formatSummaryStatisticsTable: fix for rowSubtotalInSepRow
+    o rowAutoMerge, rowVarTotalPerc
+    o formatSummaryStatisticsTable: remove 'Statistic' if only one statsVar specified and not named
+    o standardize 'Lab' parameters
 0.0.9
     o statsValueLab, dataTotalPerc, colVarTotal, colVarTotalPerc new parameters
     o export exportFlextableToDocx
