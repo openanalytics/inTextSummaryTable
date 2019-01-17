@@ -42,10 +42,10 @@
 #' in the table.
 #' The statistics can be specified for each \code{var} (if multiple),
 #' by specifying a nested list of such parameters named by the variable.
-#' @param varLabGeneral String with general label for variable specified in \code{var}.
+#' @param varGeneralLab String with general label for variable specified in \code{var}.
 #' In case of multiple variable in \code{var}, this will be included in the table header
 #' (see 'rowVarLab' attribute of the output).
-#' @param varLabSubgroup String with general label for sub-group, in case
+#' @param varSubgroupLab String with general label for sub-group, in case
 #' \code{var} is specified for a count table.
 #' This will be included in the table header (see 'rowVarLab' attribute of the output).
 #' Empty by default.
@@ -66,6 +66,13 @@
 #' reported in the header of the table, by default same as \code{colVar}.
 #' @param colVarTotalPerc String with column(s) considered to compute the total by,
 #' used as denominator for the percentage computation, by default same as \code{colVarTotal}.
+#' @param rowVarTotalPerc Character vector with row(s) considered to compute the total,
+#' used as denominator for the percentage computation.
+#' By default the total is only computed by column (NULL by default).
+#' If the total should be based on the total number of records per variable,
+#' \code{rowVarTotalPerc} should be set to 'variable'.
+#' @param var Character vector with variable, used if 'variable' is specified
+#' within \code{rowVarTotal}.
 #' @param byVar Variable(s) of \code{data} for which separated table(s)
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
@@ -129,7 +136,7 @@ computeSummaryStatisticsTable <- function(
 	data,  
 	var = NULL, 
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
-	varLabGeneral = "Variable", varLabSubgroup = NULL,
+	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIgnore = NULL,
 	varIncludeTotal = FALSE,
 	colVar = NULL, colVarDataLevels = NULL, 
@@ -142,10 +149,12 @@ computeSummaryStatisticsTable <- function(
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowTotalInclude = FALSE,
 	rowSubtotalInclude = FALSE,
+	rowVarTotalPerc = NULL,
 	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL, dataTotalPerc = dataTotal,
 	stats = NULL, statsExtra = NULL,
+	statsGeneralLab = "Statistic",
 	filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
 	labelVars = NULL,
@@ -407,7 +416,9 @@ computeSummaryStatisticsTable <- function(
 		colTotalLab = colTotalLab,
 		colInclude0 = colInclude0, colTotalInclude = colTotalInclude,
 		colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
-		subjectVar = subjectVar
+		subjectVar = subjectVar,
+		# not used:
+		var = var, varLab = varLab, labelVars = labelVars
 	)
 	
 	# save total or not in the 'isTotal' column
@@ -422,13 +433,16 @@ computeSummaryStatisticsTable <- function(
 	if(is.null(dataTotalPerc))	dataTotalPerc <- dataTotal
 	if(!all(colVarTotalPerc %in% colnames(summaryTable)))
 		stop("'colVarTotalPerc' are not in the computed summary statistics table.")
-	summaryTableTotalPerc <- if(!setequal(colVarTotal, colVarTotalPerc)){
+	computeTotalPerc <- !setequal(colVarTotal, colVarTotalPerc) | !is.null(rowVarTotalPerc)
+	summaryTableTotalPerc <- if(computeTotalPerc){
 		computeSummaryStatisticsTableTotal(
 			data = dataTotalPerc, 
 			colVar = colVar, colVarTotal = colVarTotalPerc,
 			colTotalLab = colTotalLab,
 			colInclude0 = colInclude0, colTotalInclude = colTotalInclude,
 			colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
+			rowVarTotal = rowVarTotalPerc, 
+			var = var, varLab = varLab, labelVars = labelVars,
 			subjectVar = subjectVar
 		)
 	}else	summaryTableTotal
@@ -438,9 +452,11 @@ computeSummaryStatisticsTable <- function(
 	)
 	
 	# compute percentages
-	summaryTable <- ddply(summaryTable, colVarTotalPerc, function(x){
+	summaryTable <- ddply(summaryTable, c(rowVarTotalPerc, colVarTotalPerc), function(x){
 		idxTotalPerc <- which(x$isTotalPerc)
 		if(length(idxTotalPerc) > 0){
+			if(length(idxTotalPerc) != 1)
+				stop("Multiple total records for the percentage computation.")
 			res <- cbind(x, statPercN = x$statN/x[idxTotalPerc, "statN"]*100)
 			res[-idxTotalPerc, ]
 		}else cbind(x, statPercN = NA)
@@ -521,7 +537,6 @@ computeSummaryStatisticsTable <- function(
 				}else x
 			})
 			
-			
 		}else{
 			
 			statsVar <- getStatColName(stats)
@@ -546,10 +561,14 @@ computeSummaryStatisticsTable <- function(
 			# in case only one variable, but still count
 			if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
 		),
-		rowVarLab = c(rowVarLab, 
-			if(length(var) > 1)	c("variable" = varLabGeneral, 
-				if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varLabSubgroup)
-			)
+		rowVarLab = c(
+			rowVarLab, 
+			if(length(var) > 1)	
+				c(
+					"variable" = varGeneralLab, 
+					if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varSubgroupLab)
+				),
+			if(length(statsVar) > 1)	c("Statistic" = statsGeneralLab)
 		),
 
 		# attributes extracted from the input parameters,
@@ -567,29 +586,58 @@ computeSummaryStatisticsTable <- function(
 }
 
 #' Compute summary statistics total table.
-#' @param colVarTotal column considered to compute the total.
+#' @param colVarTotal Character vector with column(s) considered to compute the total.
 #' @param colTotalLab String, label for the total column included 
 #' if \code{colTotalInclude} is TRUE, 'Total' by default.
+#' @param rowVarTotal Character vector with row(s) considered to compute the total.
+#' @param var Character vector with variable, used if 'variable' is specified
+#' within \code{rowVarTotal}.
 #' @param colVarLevels list with levels of each \code{colVar}
 #' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
 #' statistics across columns in a separated column.
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame with total table.
 #' @author Laure Cougnaud
+#' @importFrom reshape2 melt
 computeSummaryStatisticsTableTotal <- function(
 	data, 
 	colVar = NULL, colVarTotal = colVar,
+	rowVarTotal = NULL, 
+	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars),
 	colTotalLab = "Total",
 	colInclude0 = FALSE,
 	colTotalInclude = FALSE,
 	colVarDataLevels = NULL, colVarLevels = NULL,
-	subjectVar = "USUBJID"){
+	subjectVar = "USUBJID",
+	labelVars = NULL){
+
+	# total is computed based on number of elements available in each 'var'
+	# (and not # elements within each group of 'var')
+	if("variable" %in% rowVarTotal){
+		if(is.null(var)){
+			warning("Total is not computed by variable because no 'var' is specified.")
+			rowVarTotal <- setdiff(rowVarTotal, "variable")
+		}else{
+			data <- melt(
+				data = data, 
+				measure.vars = var, 
+				variable.name = "variableInit",
+				value.name = "value"
+			)	
+			data <- subset(data, !is.na(value))# remove records not in the variable
+			data$variable <- factor(
+				varLab[data$variableInit],
+				levels = varLab[var]
+			)
+		}
+	}
 	
 	# counts by elements in colVar
 	summaryTableTotal <- computeSummaryStatisticsByRowColVar(
 		data = data, 
 		type = "countTable", 
 		colVar = colVarTotal, 
+		rowVar = rowVarTotal,
 		colInclude0 = colInclude0, 
 		colVarDataLevels = colVarDataLevels,
 		subjectVar = subjectVar
@@ -603,6 +651,7 @@ computeSummaryStatisticsTableTotal <- function(
 			data = data, 
 			type = "countTable", 
 			colVar = colVarTotalTI,
+			rowVar = rowVarTotal,
 			subjectVar = subjectVar
 		)
 		if(nrow(summaryTableTotalCol) > 0)

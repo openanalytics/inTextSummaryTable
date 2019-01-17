@@ -10,7 +10,7 @@ getSummaryStatisticsTable <- function(
 	# parameters for summary statistics
 	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
 	varIgnore = NULL,
-	varLabGeneral = "Variable", varLabSubgroup = NULL,
+	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIncludeTotal = FALSE,
 	# row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
@@ -20,7 +20,9 @@ getSummaryStatisticsTable <- function(
 	rowTotalInclude = FALSE, rowTotalLab = NULL, 
 	rowSubtotalInclude = FALSE, rowSubtotalInSepRow = FALSE,
 	rowInclude0 = FALSE, 
+	rowAutoMerge = TRUE,
 	emptyValue = NULL,
+	rowVarTotalPerc = NULL,
 	# column variable
 	colVar = NULL, 
 	colVarTotal = colVar, colVarTotalPerc = colVarTotal, 
@@ -28,7 +30,9 @@ getSummaryStatisticsTable <- function(
 	colVarDataLevels = NULL, 
 	colTotalInclude = FALSE, colTotalLab = "Total",
 	subjectVar = "USUBJID",
-	stats = NULL, statsExtra = NULL, statsValueLab = "StatisticValue",
+	stats = NULL, statsExtra = NULL, 
+	statsGeneralLab = "Statistic",
+	statsValueLab = "StatisticValue",
 	filterFct = NULL,
 	dataTotal = NULL, dataTotalPerc = dataTotal,
 	type = "auto",
@@ -52,7 +56,7 @@ getSummaryStatisticsTable <- function(
 		# variables
 		var = var, varLab = varLab,
 		varIgnore = varIgnore,
-		varLabGeneral = varLabGeneral, varLabSubgroup = varLabSubgroup, 
+		varGeneralLab = varGeneralLab, varSubgroupLab = varSubgroupLab, 
 		varIncludeTotal = varIncludeTotal,
 		# columns
 		colVar = colVar, 
@@ -69,10 +73,12 @@ getSummaryStatisticsTable <- function(
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
 		rowTotalInclude = rowTotalInclude,
 		rowSubtotalInclude = rowSubtotalInclude,
+		rowVarTotalPerc = rowVarTotalPerc,
 		# extra
 		type = type,
 		subjectVar = subjectVar,
 		stats = stats, statsExtra = statsExtra,
+		statsGeneralLab = statsGeneralLab,
 		filterFct = filterFct,
 		dataTotal = dataTotal, dataTotalPerc = dataTotalPerc,
 		labelVars = labelVars,
@@ -83,6 +89,7 @@ getSummaryStatisticsTable <- function(
 		summaryTable = summaryTable, 
 		rowTotalLab = rowTotalLab,
 		rowSubtotalInSepRow = rowSubtotalInSepRow,
+		rowAutoMerge = rowAutoMerge,
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		statsValueLab = statsValueLab,
 		title = title, footer = footer,
