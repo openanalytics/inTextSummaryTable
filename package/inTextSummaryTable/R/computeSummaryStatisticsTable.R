@@ -15,7 +15,6 @@
 #' based on total counts (in case \code{rowOrder} is 'total').
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
 #' for which to include the total for each group.
-#' Specify 'all' to include a row with the total across all \code{rowVar}.
 #' @param stats (Optionally) named list of expression or call object of summary statistics of interest.
 #' The names are reported in the header.
 #' The following variables are recognized, if the table is a: 
