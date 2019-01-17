@@ -12,14 +12,14 @@ exportSummaryStatisticsTable(summaryTable,
   rowTotalInclude = getAttribute(summaryTable, "rowTotalInclude", default
   = FALSE), rowSubtotalInSepRow = FALSE, rowTotalLab = NULL,
   rowSubtotalInclude = getAttribute(summaryTable, "rowSubtotalInclude",
-  FALSE), colVar = getAttribute(summaryTable, "colVar"),
-  colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
-  emptyValue = NULL, labelVars = NULL, file = NULL,
-  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
-  title = NULL, footer = NULL, outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  style = "report", fontsize = switch(style, report = 8, presentation =
-  10))
+  FALSE), rowAutoMerge = TRUE, colVar = getAttribute(summaryTable,
+  "colVar"), colHeaderTotalInclude = TRUE,
+  statsValueLab = "StatisticValue", emptyValue = NULL,
+  labelVars = NULL, file = NULL, landscape = (style ==
+  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  footer = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
+  fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -47,6 +47,10 @@ otherwise included in the header row of each category.}
 
 \item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
 group of the nested variable specified in \code{rowVar}}
+
+\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
+e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
+or only one statistic per category}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,

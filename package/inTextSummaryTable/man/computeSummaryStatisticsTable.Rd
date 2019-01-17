@@ -6,7 +6,7 @@
 \usage{
 computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
-  varLabGeneral = "Variable", varLabSubgroup = NULL,
+  varGeneralLab = "Variable", varSubgroupLab = NULL,
   varIgnore = NULL, varIncludeTotal = FALSE, colVar = NULL,
   colVarDataLevels = NULL, colVarTotal = colVar,
   colVarTotalPerc = colVarTotal, colTotalInclude = FALSE,
@@ -14,27 +14,29 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
   rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowTotalInclude = FALSE,
-  rowSubtotalInclude = FALSE, type = "auto", subjectVar = "USUBJID",
-  dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
-  statsExtra = NULL, filterFct = NULL, rowInclude0 = FALSE,
-  colInclude0 = FALSE, labelVars = NULL, byVar = NULL,
-  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars))
+  rowSubtotalInclude = FALSE, rowVarTotalPerc = NULL, type = "auto",
+  subjectVar = "USUBJID", dataTotal = NULL,
+  dataTotalPerc = dataTotal, stats = NULL, statsExtra = NULL,
+  statsGeneralLab = "Statistic", filterFct = NULL,
+  rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
+  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
+  labelVars))
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{String, variable of \code{data} with variable to compute statistics on.
-Missing values, if present, are filtered.}
+\item{var}{Character vector with variable, used if 'variable' is specified
+within \code{rowVarTotal}.}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
 
-\item{varLabGeneral}{String with general label for variable specified in \code{var}.
+\item{varGeneralLab}{String with general label for variable specified in \code{var}.
 In case of multiple variable in \code{var}, this will be included in the table header
 (see 'rowVarLab' attribute of the output).}
 
-\item{varLabSubgroup}{String with general label for sub-group, in case
+\item{varSubgroupLab}{String with general label for sub-group, in case
 \code{var} is specified for a count table.
 This will be included in the table header (see 'rowVarLab' attribute of the output).
 Empty by default.}
@@ -94,6 +96,12 @@ counts across rows in a separated row.}
 
 \item{rowSubtotalInclude}{Logical, if TRUE (FALSE by default) include also the total for each
 group of the nested variable specified in \code{rowVar}}
+
+\item{rowVarTotalPerc}{Character vector with row(s) considered to compute the total,
+used as denominator for the percentage computation.
+By default the total is only computed by column (NULL by default).
+If the total should be based on the total number of records per variable,
+\code{rowVarTotalPerc} should be set to 'variable'.}
 
 \item{type}{String with type of table: 
 \itemize{
