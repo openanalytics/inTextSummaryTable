@@ -4,6 +4,7 @@
     o formatSummaryStatisticsTable: remove 'Statistic' if only one statsVar specified and not named
     o standardize 'Lab' parameters
     o standardize row total specification: rowVarTotalInclude/rowVarSubtotalInclude -> rowVarTotalInclude, rowSubtotalInSepRow -> rowVarTotalInSepRow
+    o remove border in title, set border within header, remove border hline stub, merge header columns for total and if needed
 0.0.9
     o statsValueLab, dataTotalPerc, colVarTotal, colVarTotalPerc new parameters
     o export exportFlextableToDocx

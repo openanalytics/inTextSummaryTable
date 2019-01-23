@@ -36,8 +36,7 @@ Note that the row total (if \code{rowTotalInclude} is TRUE) is computed
 separately by this variable.}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which to include the total for each group.
-Specify 'all' to include a row with the total across all \code{rowVar}.}
+for which to include the total for each group.}
 
 \item{rowTotalLab}{label for the row with total}
 
