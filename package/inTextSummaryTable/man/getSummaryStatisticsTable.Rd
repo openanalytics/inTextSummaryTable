@@ -223,7 +223,8 @@ If NULL, the summary table is not exported but only returned as output.}
 (in case more than one statistic is included), among:
 \itemize{
 \item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header)}
+\item{'col': }{Statistics are included in columns (last row of the header).
+This option is not compatible with categorical variable(s).}
 \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
 the \code{rowVar} variable(s)}
 }}

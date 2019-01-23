@@ -15,7 +15,8 @@
 #' (in case more than one statistic is included), among:
 #' \itemize{
 #' \item{row: }{Statistics are included in rows in the first column of the table}
-#' \item{'col': }{Statistics are included in columns (last row of the header)}
+#' \item{'col': }{Statistics are included in columns (last row of the header).
+#' This option is not compatible with categorical variable(s).}
 #' \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
 #' the \code{rowVar} variable(s)}
 #' }
@@ -80,7 +81,13 @@ formatSummaryStatisticsTable <- function(
 		
 	}
 		
-	statsLayout <- match.arg(statsLayout)	
+	statsLayout <- match.arg(statsLayout)
+	
+	statsVar <- attributes(summaryTable)$summaryTable$statsVar
+	if(statsLayout == "col" & "variableGroup" %in% rowVar){
+		warning("The layout of the statistics cannot be 'column' if categorical variable(s) are used, the statistics are set in rows.")
+		statsLayout <- "row"
+	}
 		
 	## format table
 	
@@ -118,11 +125,11 @@ formatSummaryStatisticsTable <- function(
 	}
 		
 	# convert from wide to long format
-	statsVar <- if(is.null(attributes(summaryTable)$summaryTable$statsVar))
+	statsVar <- if(is.null(statsVar)){
 		setdiff(colnames(dataWithTotal),  
 			c(rowVar, colVar, "variable", "variableGroup", "isTotal")
-		)	else	
-		attributes(summaryTable)$summaryTable$statsVar
+		)
+	}else{statsVar}
 	dataLong <- melt(dataWithTotal, 
 		id.vars = c(rowVar, colVar),
 		measure.vars = statsVar,
@@ -304,7 +311,7 @@ formatSummaryStatisticsTable <- function(
 		## extract extra parameters for flextable (including header)
 		
 		## extract horizontal lines
-		# rows with indent set to 0 (excepted if all rows have no indent)
+		# rows with indent set to 0 (and no lines if all rows have no indent)
 		idxHLine <- if(length(rowVarToModify) > 0 & !all(dataLong$rowPadding == 0))
 			which(dataLong$rowPadding == 0)-1
 		idxHLine <- unique(idxHLine[idxHLine > 0])
@@ -385,25 +392,14 @@ formatSummaryStatisticsTable <- function(
 		attributes(dataLong)$summaryTable$mergeParams <- mergeParams
 	
 	# extract vertical lines (specified by the right border)
-	attributes(dataLong)$summaryTable$vlineParams <- c(
-		if(statsLayout == "col" & length(statsVar) > 1){# Statistic in column
-			hLastCols <- c(1, which(unlist(headerDf[nRowsHeader, ]) == statsVar[length(statsVar)]))
-			list(
-				list(i = nRowsHeader, part = "header", j = hLastCols),
-				list(part = "body", j = hLastCols)
-			)
-		}else{
-			list(
-				list(i = nRowsHeader, part = "header", j = 1:ncol(dataLong)),
-				list(part = "body")
-			)
-		},
-		# other header lines
-		lapply(seq_len(nRowsHeader-1), function(i){
-			j <- which(diff(as.numeric(factor(unlist(headerDf[i, ])))) == 1)
-			list(i = i, part = "header", j = j)
-		})
-	)
+	vLineParams <- lapply(seq_len(nrow(headerDf)-1), function(i){
+		idx <- diff(as.numeric(factor(unlist(headerDf[i, ]), exclude = "")))
+		j <- which(idx != 0)
+		if(!all(idx == 0))	list(i = i:nrow(headerDf), part = "header", j = j)
+	})
+	if(length(vLineParams) > 0)
+		vLineParams <- c(vLineParams, list(list(j = vLineParams[[length(vLineParams)]]$j, part = "body")))
+	attributes(dataLong)$summaryTable$vlineParams <- vLineParams
 	
 	if(mergeRows){
 		
