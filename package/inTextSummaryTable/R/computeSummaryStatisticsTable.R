@@ -485,7 +485,11 @@ computeSummaryStatisticsTable <- function(
 		# if statistics specified for each variable:
 		if(any(names(stats) %in% var)){
 	
-			statsVar <- unname(unique(unlist(lapply(stats, getStatColName))))
+			# in case more stats are specified than specified var
+			varsUsed <- setdiff(unique(as.character(summaryTable$variableInit)), NA)
+			if(!all(varsUsed %in% names(stats)))
+				stop("If 'stats' is specified for each variable, it should be specified for all variables.")
+			statsVar <- unname(unique(unlist(lapply(stats[varsUsed], getStatColName))))
 			summaryTable <- ddply(summaryTable, "variable", function(x){
 				varI <- unique(x$variableInit)
 				if(varI %in% names(stats)){
