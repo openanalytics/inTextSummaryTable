@@ -12,7 +12,8 @@ formatSummaryStatisticsTable(summaryTable,
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
   rowVarTotalInSepRow = NULL, rowTotalLab = NULL,
   rowAutoMerge = TRUE, colVar = getAttribute(summaryTable, "colVar"),
-  colHeaderTotalInclude = TRUE, labelVars = NULL,
+  colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
+  "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsLayout = c("row", "col", "rowInSepCol"),
   statsValueLab = "StatisticValue", emptyValue = NULL)
 }
@@ -32,8 +33,7 @@ Note that the row total (if \code{rowTotalInclude} is TRUE) is computed
 separately by this variable.}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which to include the total for each group.
-Specify 'all' to include a row with the total across all \code{rowVar}.}
+for which to include the total for each group.}
 
 \item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
@@ -48,6 +48,9 @@ or only one statistic per category}
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
+
+\item{colTotalLab}{String, label for the total column included 
+if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}

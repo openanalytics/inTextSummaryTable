@@ -530,7 +530,8 @@ computeSummaryStatisticsTable <- function(
 		# to set similar defaults for the exportSummaryStatisticsTable
 		rowVarInSepCol = rowVarInSepCol,
 		rowVarTotalInclude = rowVarTotalInclude,
-		colVar = colVar		
+		colVar = colVar,
+		colTotalLab = colTotalLab
 
 	)
 	

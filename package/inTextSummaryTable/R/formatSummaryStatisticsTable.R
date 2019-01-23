@@ -60,6 +60,7 @@ formatSummaryStatisticsTable <- function(
 	
 	rowAutoMerge = TRUE,
 	colVar = getAttribute(summaryTable, "colVar"),
+	colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
 	colHeaderTotalInclude = TRUE,
 	labelVars = NULL,
 	statsLayout = c("row", "col", "rowInSepCol"),
@@ -91,19 +92,24 @@ formatSummaryStatisticsTable <- function(
 		dataWithTotal <- ddply(summaryTable, colVar, function(x){
 			idxTotal <- which(x$isTotal)
 			if(length(idxTotal) == 1){
-				x[, colVarWithCount] <- paste0(x[, colVarWithCount], "\n(N=",  x[idxTotal , "statN"], ")")
+				# for the total column, include the N in all columns (to be merged afterwards)
+				colToModif <- if(all(x[, colVar] == colTotalLab))	colVar	else	colVarWithCount
+				for(col in colToModif)
+					x[, col] <- paste0(x[, col], "\n(N=",  x[idxTotal , "statN"], ")")
 				x[-idxTotal, ]
 			}else x
 		})
 	
 		# ensure that order of columns with Total is as specified in levels of the factor originally
-		colVarWithCountEl <- unique(dataWithTotal[, colVarWithCount])	
-		colVarInit <-  summaryTable[, colVarWithCount]
-		colVarEl <- if(is.factor(colVarInit))	levels(colVarInit)	else	unique(colVarInit)	
-		colVarWithCountElOrdered <- colVarWithCountEl[
-			order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), colVarEl))
-		]
-		dataWithTotal[, colVarWithCount] <- factor(dataWithTotal[, colVarWithCount], levels = colVarWithCountElOrdered)
+		for(col in colVar){
+			colVarWithCountEl <- unique(dataWithTotal[, col])	
+			colVarInit <-  summaryTable[, col]
+			colVarEl <- if(is.factor(colVarInit))	levels(colVarInit)	else	unique(colVarInit)	
+			colVarWithCountElOrdered <- colVarWithCountEl[
+				order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), colVarEl))
+			]
+			dataWithTotal[, col] <- factor(dataWithTotal[, col], levels = colVarWithCountElOrdered)
+		}
 
 	}else{
 		idxTotal <- which(summaryTable$isTotal)
@@ -165,6 +171,7 @@ formatSummaryStatisticsTable <- function(
 	getTotalRow <- function(data)
 		which(rowSums(data[, rowVar] == "Total") == length(rowVar))
 	
+	hlineParams <- mergeParams <- NULL
 	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & length(statsVar) > 1)
 	if(mergeRows){
 		
@@ -266,8 +273,14 @@ formatSummaryStatisticsTable <- function(
 					dataLong <- dataLong[-idxNARVF, ]
 				}
 			}
+			
+			# merge rows, e.g. unique statistic for a subgroup are fill in the sub-group directly
+			colContentTable <- setdiff(colnames(dataLong), c(rowVar, rowVarFinal, "rowVarFinal", "rowPadding"))
 			idxIsNA <- which(is.na(dataLong[, rowVarFinal]))
 			if(length(idxIsNA) > 0){
+				# check if the table content to fill is all NA
+				if(any(!is.na(dataLong[idxIsNA-1, colContentTable])))
+					stop("Issue while merging rows.")
 				dataIsNa <- dataLong[idxIsNA, ]
 				dataIsNa[, c("rowPadding", rowVarFinal)] <- dataLong[idxIsNA-1,  c("rowPadding", rowVarFinal)]
 				dataLong[idxIsNA-1, ] <- dataIsNa
@@ -290,29 +303,19 @@ formatSummaryStatisticsTable <- function(
 	
 		## extract extra parameters for flextable (including header)
 		
-		# extract horizontal lines
-		# (horizontal line are included at the bottom of the extracted row index)
-		idxHLine <- if(length(rowVarToModify) > 0){
-			setdiff(
-				seq_len(nrow(dataLong)), # include lines
-				setdiff(
-					which(dataLong$rowPadding == max(dataLong$rowPadding)), # excepted for rows with max padding
-					which(diff(dataLong$rowPadding) != 0) # at the exception of the rows which have different spanning below
-				)
-			)
-		}else{
-			which(diff(as.numeric(factor(dataLong[, rowVarFinal], exclude = NA))) != 0)
-		}
+		## extract horizontal lines
+		# rows with indent set to 0 (excepted if all rows have no indent)
+		idxHLine <- if(length(rowVarToModify) > 0 & !all(dataLong$rowPadding == 0))
+			which(dataLong$rowPadding == 0)-1
 		idxHLine <- unique(idxHLine[idxHLine > 0])
-		
 		if(!is.null(rowVarTotalInclude)){
 			idxRowTotal <- which(dataLong[, rowVarFinal] == "Total" & dataLong$rowPadding == 0)
-			idxHLine <- c(idxHLine, idxRowTotal[length(idxRowTotal)])
+			idxHLine <- c(idxHLine, idxRowTotal[length(idxRowTotal)]) # + include horizontal line after row total
 			if(is.null(rowTotalLab))	rowTotalLab <- paste("Any", rowVarLab[rowVarFinal])
 			dataLong[idxRowTotal, rowVarFinal] <- rowTotalLab
 		}
 		
-		dataLong$rowPadding <- hlineParams <- NULL
+		dataLong$rowPadding <- NULL
 		if(length(idxHLine) > 0)
 			hlineParams <- c(hlineParams, list(
 				list(i = idxHLine, part = "body", j = 1:ncol(dataLong))
@@ -328,7 +331,6 @@ formatSummaryStatisticsTable <- function(
 					)
 				))
 		}
-		attributes(dataLong)$summaryTable$hlineParams <- hlineParams
 		
 		# merge rows for rowVarInSepCol
 		for(var in rowVarInSepCol){
@@ -337,7 +339,6 @@ formatSummaryStatisticsTable <- function(
 			idx <- which(diff(varPrevBin) == 0)
 			if(length(idx) > 0){
 				idxFact <- cut(seq_along(idx), breaks = c(-Inf, which(diff(idx) != 1), Inf))
-				mergeParams <- NULL
 				for(l in levels(idxFact)){
 					i <- idx[idxFact == l]
 					i <- c(i, max(i)+1)
@@ -347,7 +348,6 @@ formatSummaryStatisticsTable <- function(
 						part = "body"
 					)))
 				}
-				attributes(dataLong)$summaryTable$mergeParams <- mergeParams
 			}
 		}
 			
@@ -369,19 +369,24 @@ formatSummaryStatisticsTable <- function(
 		res[!res %in% c("", "NA")] #formatSummaryStatisticsTable
 	}, simplify = FALSE)
 	nRowsHeader <- max(sapply(header, length))
+	# in less elements in one column, replicate the first element (to have it merged in final ft)
 	headerDf <- as.data.frame(
 		do.call(cbind, 
-			lapply(header, function(x)	c(rep("", nRowsHeader - length(x)), x))
+			lapply(header, function(x)	c(rep(x[1], nRowsHeader - length(x)), x))
 		)
 	)
 	colnames(headerDf) <- colnames(dataLong)
 	attributes(dataLong)$summaryTable$header <- headerDf
 	
+	if(!is.null(hlineParams))
+		attributes(dataLong)$summaryTable$hlineParams <- hlineParams
+	
+	if(!is.null(mergeParams))
+		attributes(dataLong)$summaryTable$mergeParams <- mergeParams
+	
 	# extract vertical lines (specified by the right border)
 	attributes(dataLong)$summaryTable$vlineParams <- c(
-		# last header line
-		# Statistic in column
-		if(statsLayout == "col" & length(statsVar) > 1){
+		if(statsLayout == "col" & length(statsVar) > 1){# Statistic in column
 			hLastCols <- c(1, which(unlist(headerDf[nRowsHeader, ]) == statsVar[length(statsVar)]))
 			list(
 				list(i = nRowsHeader, part = "header", j = hLastCols),

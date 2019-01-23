@@ -71,9 +71,11 @@ convertSummaryStatisticsTableToFlextable <- function(
 	)
 	ft <- border_remove(ft) %>%
 		border_outer(border = bd, part = "all") %>%
-		hline(border = bd, part = "header") 
-		#%>%vline(border = bd, part = "body")
-	
+		border_inner_h(border = bd, part = "header") %>%
+		border_inner_h(border = bd, part = "header")
+	if(!is.null(title))
+		ft <- hline(ft, i = length(title), border = bd, part = "header") 
+
 	# set correct alignments
 	rowVar <- attributes(summaryTable)$summaryTable$rowVar
 	if(is.null(rowVar))	rowVar <- colnames(summaryTable)[1]
@@ -93,6 +95,19 @@ convertSummaryStatisticsTableToFlextable <- function(
 			ft <- do.call(padding, c(list(x = ft), padParams))
 		}
 	
+	# horizontal lines
+	if(!is.null(attributes(summaryTable)$summaryTable$hlineParams))
+		for(hlineParams in attributes(summaryTable)$summaryTable$hlineParams){
+			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
+		}
+	
+	# vertical lines
+	if(!is.null(attributes(summaryTable)$summaryTable$vlineParams))
+		for(vlineParams in attributes(summaryTable)$summaryTable$vlineParams){
+			if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
+			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
+		}
+	
 	# merge rows
 	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$summaryTable$rowVarInSepCol)
 	if(!is.null(rowVarToMerge))
@@ -102,18 +117,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 		for(params in attributes(summaryTable)$summaryTable$mergeParams)
 			ft <- merge_at(ft, j = params$j, params$i, part = params$part)
 	}
-	
-	# horizontal lines
-	if(!is.null(attributes(summaryTable)$summaryTable$hlineParams))
-		for(hlineParams in attributes(summaryTable)$summaryTable$hlineParams)
-			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
-	
-	# vertical lines
-	if(!is.null(attributes(summaryTable)$summaryTable$vlineParams))
-		for(vlineParams in attributes(summaryTable)$summaryTable$vlineParams){
-			if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
-			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
-		}
 	
 	# add footer
 	if(!is.null(footer)){
@@ -317,11 +320,14 @@ createFlextableWithHeader <- function(data,
 		ft <- merge_h(x = ft, part = "header")
 		return(ft)
 	}
-	if(!is.null(headerDf) && nrow(headerDf) > 1)	ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
+	if(!is.null(headerDf) && nrow(headerDf) > 1)
+		ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
 	
 	# set to correct headers	
 	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
 	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
+	
+	ft <- merge_v(ft, part = "header")
 	
 	# add title
 	if(!is.null(title))	
@@ -382,11 +388,13 @@ getGLPGFlextable <- function(data,
 	# set border
 	if(border){
 		ft <- border_remove(ft) %>%
-			border_outer(border = bd, part = "all") %>%
-			hline(border = bd, part = "body") %>%
+			border_outer(border = bd, part = "all")%>% 
 			vline(border = bd, part = "body") %>%
-			hline(border = bd, part = "header") %>%
 			vline(border = bd, part = "header")
+		if(style == "presentation")
+			ft <- ft %>% hline(border = bd, part = "body") %>%
+		if(!is.null(title))
+			ft <- ft %>% hline(j = length(title), border = bd, part = "header") 
 	}
 	
 	# change color text + background

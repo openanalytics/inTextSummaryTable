@@ -92,8 +92,7 @@ specify a different ordering method for each variable.}
 based on total counts (in case \code{rowOrder} is 'total').}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which to include the total for each group.
-Specify 'all' to include a row with the total across all \code{rowVar}.}
+for which to include the total for each group.}
 
 \item{rowVarTotalPerc}{Character vector with row(s) considered to compute the total,
 used as denominator for the percentage computation.
