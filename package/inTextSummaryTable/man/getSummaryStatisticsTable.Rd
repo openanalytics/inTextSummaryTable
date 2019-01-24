@@ -17,17 +17,17 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowVarTotalPerc = NULL, colVar = NULL, colVarTotal = colVar,
   colVarTotalPerc = colVarTotal, colInclude0 = FALSE,
   colVarDataLevels = NULL, colTotalInclude = FALSE,
-  colTotalLab = "Total", subjectVar = "USUBJID", stats = NULL,
-  statsExtra = NULL, statsGeneralLab = "Statistic",
-  statsValueLab = "StatisticValue", filterFct = NULL,
-  dataTotal = NULL, dataTotalPerc = dataTotal, type = "auto",
-  labelVars = NULL, landscape = (style == "presentation"),
-  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
-  file = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
-  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
-  report = 8, presentation = 10))
+  colTotalLab = "Total", stats = NULL, statsExtra = NULL,
+  statsVarBy = NULL, statsGeneralLab = "Statistic",
+  statsValueLab = "StatisticValue", subjectVar = "USUBJID",
+  filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
+  type = "auto", labelVars = NULL, landscape = (style ==
+  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  footer = NULL, file = NULL, outputType = c("flextable",
+  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
+  style = "report", byVar = NULL, byVarLab = getLabelVar(byVar, data
+  = data, labelVars = labelVars), colHeaderTotalInclude = TRUE,
+  fontsize = switch(style, report = 8, presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -132,9 +132,6 @@ statistics across columns in a separated column.}
 \item{colTotalLab}{String, label for the total column included 
 if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
-\item{subjectVar}{String, variable of \code{data} with subject ID,
-'USUBJID' by default.}
-
 \item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
 The names are reported in the header.
 The following variables are recognized, if the table is a: 
@@ -162,17 +159,27 @@ The following variables are recognized, if the table is a:
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.
-The statistics can be specified for each \code{var} (if multiple),
-by specifying a nested list of such parameters named by the variable.}
+The statistics can be specified for each \code{var} (if multiple), 
+by naming each element of the list:
+list(varName1 = list(...), varName2 = list()) and/or for each element in:
+\code{statsVarBy}, by naming each sublist.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
 Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 and return the corresponding summary statistic.}
 
+\item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
+which the statistics should be computed by.
+In this case, \code{stats} (nested list or not) should be additionally nested
+to specify the statistics for each element in \code{statsVarBy}.}
+
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
+
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table 

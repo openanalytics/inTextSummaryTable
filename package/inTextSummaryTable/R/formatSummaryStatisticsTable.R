@@ -181,7 +181,7 @@ formatSummaryStatisticsTable <- function(
 	}
 	
 	getTotalRow <- function(data)
-		which(rowSums(data[, rowVar] == "Total") == length(rowVar))
+		which(rowSums(data[, rowVar, drop = FALSE] == "Total") == length(rowVar))
 	
 	hlineParams <- mergeParams <- NULL
 	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & length(statsVar) > 1)
