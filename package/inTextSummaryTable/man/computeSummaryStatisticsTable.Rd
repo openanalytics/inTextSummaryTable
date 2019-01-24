@@ -14,9 +14,10 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
   rowVarInSepCol = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowVarTotalInclude = NULL,
-  rowVarTotalPerc = NULL, type = "auto", subjectVar = "USUBJID",
-  dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
-  statsExtra = NULL, statsGeneralLab = "Statistic", filterFct = NULL,
+  rowVarTotalByVar = NULL, rowVarTotalPerc = NULL, type = "auto",
+  subjectVar = "USUBJID", dataTotal = NULL,
+  dataTotalPerc = dataTotal, stats = NULL, statsExtra = NULL,
+  statsGeneralLab = "Statistic", filterFct = NULL,
   rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
   byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
   labelVars))
@@ -93,6 +94,10 @@ based on total counts (in case \code{rowOrder} is 'total').}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}
+
+\item{rowVarTotalByVar}{Character vector with extra \code{codeVar}
+for which to compute the row total by.
+Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.}
 
 \item{rowVarTotalPerc}{Character vector with row(s) considered to compute the total,
 used as denominator for the percentage computation.
