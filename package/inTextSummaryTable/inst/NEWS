@@ -5,6 +5,7 @@
     o standardize 'Lab' parameters
     o standardize row total specification: rowVarTotalInclude/rowVarSubtotalInclude -> rowVarTotalInclude, rowSubtotalInSepRow -> rowVarTotalInSepRow
     o remove border in title, minimal h/v lines: only per row/column group, merge header columns for total and if needed
+    o subscript supported: formatSuperscriptToFlextable -> formatSuperSubscriptToFlextable
 0.0.9
     o statsValueLab, dataTotalPerc, colVarTotal, colVarTotalPerc new parameters
     o export exportFlextableToDocx

@@ -32,11 +32,14 @@ getSummaryStatisticsTable <- function(
 	colInclude0 = FALSE,
 	colVarDataLevels = NULL, 
 	colTotalInclude = FALSE, colTotalLab = "Total",
-	## extra
-	subjectVar = "USUBJID",
-	stats = NULL, statsExtra = NULL, 
+	## stats
+	stats = NULL, 
+	statsExtra = NULL, 
+	statsVarBy = NULL,
 	statsGeneralLab = "Statistic",
 	statsValueLab = "StatisticValue",
+	## extra
+	subjectVar = "USUBJID",
 	filterFct = NULL,
 	dataTotal = NULL, dataTotalPerc = dataTotal,
 	type = "auto",
@@ -82,6 +85,7 @@ getSummaryStatisticsTable <- function(
 		type = type,
 		subjectVar = subjectVar,
 		stats = stats, statsExtra = statsExtra,
+		statsVarBy = statsVarBy,
 		statsGeneralLab = statsGeneralLab,
 		filterFct = filterFct,
 		dataTotal = dataTotal, dataTotalPerc = dataTotalPerc,

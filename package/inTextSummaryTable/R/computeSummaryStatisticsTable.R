@@ -13,35 +13,6 @@
 #' @param rowVarTotalByVar Character vector with extra \code{codeVar}
 #' for which to compute the row total by.
 #' Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.
-#' @param stats (Optionally) named list of expression or call object of summary statistics of interest.
-#' The names are reported in the header.
-#' The following variables are recognized, if the table is a: 
-#' \itemize{
-#' \item{'summaryTable': }{
-#' \itemize{
-#' \item{'statN': }{number of subjects}
-#' \item{'statMean': }{mean of \code{var}}
-#' \item{'statSD': }{standard deviation of \code{var}}
-#' \item{'statSE': }{standard error of \code{var}}
-#' \item{'statMedian': }{median of \code{var}}
-#' \item{'statMin': }{minimum of \code{var}}
-#' \item{'statMax': }{maximum of \code{var}}
-#' \item{'statPerc': }{percentage of subjects}
-#' \item{'statm': }{number of records}
-#' }
-#' }
-#' \item{'countTable': }{
-#' \itemize{
-#' \item{'statN': }{number of subjects}
-#' \item{'statPercN': }{percentage of subjects}
-#' \item{'statm': }{number of records}
-#' }
-#' }
-#' }
-#' If \code{stats} if of length 1, the name of the summary statistic is not included
-#' in the table.
-#' The statistics can be specified for each \code{var} (if multiple),
-#' by specifying a nested list of such parameters named by the variable.
 #' @param varGeneralLab String with general label for variable specified in \code{var}.
 #' In case of multiple variable in \code{var}, this will be included in the table header
 #' (see 'rowVarLab' attribute of the output).
@@ -77,14 +48,13 @@
 #' By default the total is only computed by column (NULL by default).
 #' If the total should be based on the total number of records per variable,
 #' \code{rowVarTotalPerc} should be set to 'variable'.
-#' @param var Character vector with variable, used if 'variable' is specified
-#' within \code{rowVarTotal}.
 #' @param byVar Variable(s) of \code{data} for which separated table(s)
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
 #' @inheritParams computeSummaryStatisticsTableTotal
 #' @inheritParams computeSummaryStatisticsByRowColVar
+#' @inheritParams getStatisticsSummaryStatisticsTable
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; or list of such data.frame if
 #' \code{byVar} is specified.
@@ -160,7 +130,9 @@ computeSummaryStatisticsTable <- function(
 	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL, dataTotalPerc = dataTotal,
-	stats = NULL, statsExtra = NULL,
+	stats = NULL, 
+	statsVarBy = NULL,
+	statsExtra = NULL,
 	statsGeneralLab = "Statistic",
 	filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
@@ -452,69 +424,16 @@ computeSummaryStatisticsTable <- function(
 		c(rowVar, colVar, ".id", "variable", "variableGroup", "isTotal", "variableInit")
 	)
 	
-	# compute specified metrics
-	if(!is.null(stats)){
-		
-		if(length(stats) > 1 & is.null(names(stats)))
-			stop("'statsFct' should be named.")
-		
-		# add specified custom statistics in summaryTable
-		addStats <- function(sumTable, stats){
-			
-			# check if stats has the same name than default name
-			statsName <- names(stats)
-			if(!is.null(statsName)){
-				statsNameConflict <- intersect(statsName, statsVarInit)
-				if(length(statsNameConflict) > 0){
-					for(stat in statsNameConflict){
-						if(as.character(stats[[stat]]) == stat){
-							stats <- stats[names(stats) != stat]
-						}else{
-							stop("The statistic name: '", stat, "'",
-								" is a default name used, please choose a different name.")
-						}
-					}
-				}
-			}
-			
-			statsDf <- sapply(stats, function(expr)
-				eval(expr = expr, envir = sumTable)
-			, simplify = FALSE)
-			if(is.null(statsName))	names(statsDf) <- "Statistic"
-			
-			# save in summaryTable
-			sumTable <- cbind(sumTable, statsDf, stringsAsFactors = FALSE)
-			
-			return(sumTable)
-			
-		}
-		
-		getStatColName <- function(stats)
-			if(is.null(names(stats)))	"Statistic"	else	names(stats)
-		
-		# if statistics specified for each variable:
-		if(any(names(stats) %in% var)){
-	
-			# in case more stats are specified than specified var
-			varsUsed <- setdiff(unique(as.character(summaryTable$variableInit)), NA)
-			if(!all(varsUsed %in% names(stats)))
-				stop("If 'stats' is specified for each variable, it should be specified for all variables.")
-			statsVar <- unname(unique(unlist(lapply(stats[varsUsed], getStatColName))))
-			summaryTable <- ddply(summaryTable, "variable", function(x){
-				varI <- unique(x$variableInit)
-				if(varI %in% names(stats)){
-					addStats(sumTable = x, stats = stats[[varI]])
-				}else x
-			})
-			
-		}else{
-			
-			statsVar <- getStatColName(stats)
-			summaryTable <- addStats(sumTable = summaryTable, stats = stats)
-		
-		}
-
-	}else	statsVar <- statsVarInit
+	# compute stats
+	resStats <- getStatisticsSummaryStatisticsTable(
+		summaryTable = summaryTable, 
+		statsVarInit = statsVarInit, 
+		var = var, 
+		stats = stats,
+		statsVarBy = statsVarBy
+	)
+	summaryTable <- resStats$summaryTable
+	statsVar <- resStats$statsVar
 
 	colsToRemove <- which(colnames(summaryTable) %in% c(".id", "variableInit"))
 	if(length(colsToRemove) > 0)
@@ -808,7 +727,7 @@ computeSummaryStatisticsByRowColVar <- function(
 #' Only considered if \code{type} is 'countTable'.
 #' @param statsExtra (optional) Named list with functions for additional custom
 #' statistics to be computed, only available for 'summaryTable',
-#' e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+#' e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
 #' Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 #' and return the corresponding summary statistic.
 #' @return Data.frame with summary statistics in columns,
@@ -872,7 +791,12 @@ computeSummaryStatistics <- function(data,
 			if(length(statsExtraCommon) > 0)
 				stop("Please specify names for 'statsExtra' different than default statistics.")
 			resExtra <- sapply(statsExtra, function(fct){
-				switch(formalArgs(fct), 'x' = fct(val), 'data' = fct(data))
+				switch(
+					formalArgs(fct)[1], 
+					'x' = fct(val), 
+					'data' = fct(data),
+					stop("No parameter 'x' or 'data' for the 'statsExtra' function.")
+				)
 			}, simplify = FALSE)	
 			res <- cbind(res, resExtra)
 		}
@@ -1040,3 +964,133 @@ convertVarToFactorWithOrder <- function(
 		
 }
 
+#' Compute custom statistics specified by the user.
+#' @param summaryTable Summary table.
+#' @param statsVarInit Character vector with initial statistics names.
+#' @param var Character vector with variable, used if 'variable' is specified
+#' within \code{rowVarTotal}.
+#' @param stats (Optionally) named list of expression or call object of summary statistics of interest.
+#' The names are reported in the header.
+#' The following variables are recognized, if the table is a: 
+#' \itemize{
+#' \item{'summaryTable': }{
+#' \itemize{
+#' \item{'statN': }{number of subjects}
+#' \item{'statMean': }{mean of \code{var}}
+#' \item{'statSD': }{standard deviation of \code{var}}
+#' \item{'statSE': }{standard error of \code{var}}
+#' \item{'statMedian': }{median of \code{var}}
+#' \item{'statMin': }{minimum of \code{var}}
+#' \item{'statMax': }{maximum of \code{var}}
+#' \item{'statPerc': }{percentage of subjects}
+#' \item{'statm': }{number of records}
+#' }
+#' }
+#' \item{'countTable': }{
+#' \itemize{
+#' \item{'statN': }{number of subjects}
+#' \item{'statPercN': }{percentage of subjects}
+#' \item{'statm': }{number of records}
+#' }
+#' }
+#' }
+#' If \code{stats} if of length 1, the name of the summary statistic is not included
+#' in the table.
+#' The statistics can be specified for each \code{var} (if multiple), 
+#' by naming each element of the list:
+#' list(varName1 = list(...), varName2 = list()) and/or for each element in:
+#' \code{statsVarBy}, by naming each sublist.
+#' @param statsVarBy String with variable in \code{rowVar}/code{colVar}
+#' which the statistics should be computed by.
+#' In this case, \code{stats} (nested list or not) should be additionally nested
+#' to specify the statistics for each element in \code{statsVarBy}.
+#' @return List with two elements:
+#' \itemize{
+#' \item{'summaryTable': }{summary table updated with statistics specified in \code{stats}}
+#' \item{'statsVar': }{Character vector with statistics names}
+#' }
+#' @author Laure Cougnaud
+getStatisticsSummaryStatisticsTable <- function(
+	summaryTable, statsVarInit, 
+	var = NULL, stats = NULL, statsVarBy = NULL){
+	
+	# compute specified metrics
+	if(!is.null(stats)){
+		
+		if(length(stats) > 1 & is.null(names(stats)))
+			stop("'statsFct' should be named.")
+		
+		# add specified custom statistics in summaryTable
+		addStats <- function(sumTable, stats){
+			
+			# check if stats has the same name than default name
+			statsName <- names(stats)
+			if(!is.null(statsName)){
+				statsNameConflict <- intersect(statsName, statsVarInit)
+				if(length(statsNameConflict) > 0){
+					for(stat in statsNameConflict){
+						if(as.character(stats[[stat]]) == stat){
+							stats <- stats[names(stats) != stat]
+						}else{
+							stop("The statistic name: '", stat, "'",
+									" is a default name used, please choose a different name.")
+						}
+					}
+				}
+			}
+			
+			statsDf <- sapply(stats, function(expr)
+				eval(expr = expr, envir = sumTable)
+			, simplify = FALSE)
+			if(is.null(statsName))	names(statsDf) <- "Statistic"
+			
+			# save in summaryTable
+			sumTable <- cbind(sumTable, statsDf, stringsAsFactors = FALSE)
+			
+			return(sumTable)
+			
+		}
+		
+		getStatColName <- function(stats)
+			if(is.null(names(stats)))	"Statistic"	else	names(stats)
+
+		# variable to compute the statistics by:
+		if(any(names(stats) %in% var)){
+			statsVarByUsed <- c(statsVarBy, "variableInit")
+			# in case more stats are specified than specified var
+			varsUsed <- setdiff(unique(as.character(summaryTable$variableInit)), NA)
+			if(!all(varsUsed %in% names(stats))){
+				stop("If 'stats' is specified for each variable, it should be specified for all variables.")
+			}else stats <- stats[varsUsed]
+			statsVar <- unname(unique(unlist(lapply(stats, function(x)
+				if(!is.null(statsVarBy))	lapply(x, getStatColName)	else	getStatColName(x)))
+			))
+		}else{
+			statsVarByUsed <- statsVarBy
+			statsVar <- if(!is.null(statsVarBy)){
+				unname(unique(unlist(lapply(stats, getStatColName))))
+			}else	getStatColName(stats)
+		}
+#		statsVar <- unname(unique(unlist(lapply(unlist(stats, recursive = FALSE), getStatColName))))
+		
+		summaryTable <- ddply(summaryTable, statsVarByUsed, function(x){
+			statsX <- if("variableInit" %in% statsVarByUsed){
+				stats[[unique(x$variableInit)]]
+			}else stats
+			if(!is.null(statsVarBy))
+				statsX <- statsX[[unique(x[, statsVarBy])]]
+			if(is.null(statsX)){
+				if(!"isTotal" %in% colnames(x) && all(x$isTotal))
+					warning("'stats' missing for:", toString(unique(x[, statsVarByUsed])))
+				x
+			}else	addStats(sumTable = x, stats = statsX)
+		})
+		
+	}else	statsVar <- statsVarInit
+	
+	res <- list(
+		summaryTable = summaryTable,
+		statsVar = statsVar	
+	)
+
+}

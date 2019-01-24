@@ -2,7 +2,7 @@
 % Please edit documentation in R/custom_stats.R
 \name{cv}
 \alias{cv}
-\title{Compute coefficient of variation.}
+\title{Compute percentage coefficient of variation.}
 \usage{
 cv(x, na.rm = FALSE)
 }
@@ -15,7 +15,7 @@ cv(x, na.rm = FALSE)
 Numeric vector of length 1 with coefficient of variation.
 }
 \description{
-Compute coefficient of variation.
+Compute percentage coefficient of variation.
 }
 \author{
 Laure Cougnaud

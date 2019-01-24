@@ -16,7 +16,8 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
   rowVarTotalPerc = NULL, type = "auto", subjectVar = "USUBJID",
   dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
-  statsExtra = NULL, statsGeneralLab = "Statistic", filterFct = NULL,
+  statsVarBy = NULL, statsExtra = NULL,
+  statsGeneralLab = "Statistic", filterFct = NULL,
   rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
   byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
   labelVars))
@@ -145,12 +146,19 @@ The following variables are recognized, if the table is a:
 }
 If \code{stats} if of length 1, the name of the summary statistic is not included
 in the table.
-The statistics can be specified for each \code{var} (if multiple),
-by specifying a nested list of such parameters named by the variable.}
+The statistics can be specified for each \code{var} (if multiple), 
+by naming each element of the list:
+list(varName1 = list(...), varName2 = list()) and/or for each element in:
+\code{statsVarBy}, by naming each sublist.}
+
+\item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
+which the statistics should be computed by.
+In this case, \code{stats} (nested list or not) should be additionally nested
+to specify the statistics for each element in \code{statsVarBy}.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
 Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 and return the corresponding summary statistic.}
 

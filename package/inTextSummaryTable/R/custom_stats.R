@@ -52,7 +52,7 @@ se <- function(x, na.rm = FALSE){
 	return(res)
 }
 
-#' Compute coefficient of variation.
+#' Compute percentage coefficient of variation.
 #' @inheritParams se
 #' @return Numeric vector of length 1 with coefficient of variation.
 #' @author Laure Cougnaud

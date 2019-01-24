@@ -66,7 +66,7 @@ can be specified via \code{colVarDataLevels}.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPercN = function(x) sd(x)/mean(x)*100).
+e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
 Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 and return the corresponding summary statistic.}
 }
