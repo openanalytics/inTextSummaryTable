@@ -15,6 +15,9 @@
 #' based on total counts (in case \code{rowOrder} is 'total').
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
 #' for which to include the total for each group.
+#' @param rowVarTotalByVar Character vector with extra \code{codeVar}
+#' for which to compute the row total by.
+#' Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.
 #' @param stats (Optionally) named list of expression or call object of summary statistics of interest.
 #' The names are reported in the header.
 #' The following variables are recognized, if the table is a: 
@@ -159,6 +162,7 @@ computeSummaryStatisticsTable <- function(
 	rowVarInSepCol = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowVarTotalInclude = NULL,
+	rowVarTotalByVar = NULL,
 	rowVarTotalPerc = NULL,
 	type = "auto",
 	subjectVar = "USUBJID",	
@@ -253,7 +257,7 @@ computeSummaryStatisticsTable <- function(
 	if(!is.null(rowVarTotalInclude)){
 		
 		# order specified variables as in rowVar
-		rowVarSubTotal <- rowVar[rowVar %in% rowVarTotalInclude]
+		rowVarSubTotal <- intersect(rowVar, rowVarTotalInclude)
 		
 		# compute sub-total for each specified rowVar (excepted the last one)
 		summaryTableRowSubtotal <- data.frame()
@@ -274,6 +278,19 @@ computeSummaryStatisticsTable <- function(
 			# compute statistics by higher level rowVar
 			rowVarOther <- rowVar[seq_len(match(rVST, rowVar)-1)]
 			if(length(rowVarOther) == 0) rowVarOther <- NULL
+			
+			# extra variable used to compute the total by
+			rowVarOtherExtra <- if(!is.null(rowVarTotalByVar)){
+				if(!is.null(names(rowVarTotalByVar))){
+					if(!is.null(rowVarTotalByVar[rVST]))
+						rowVarTotalByVar[rVST]
+				}else	rowVarTotalByVar
+			}
+			if(!is.null(rowVarOtherExtra)){
+				if(!rowVarOtherExtra %in% rowVar)
+					stop("'rowVarTotalByVar' not in 'rowVar'.")
+				rowVarOther <- c(rowVarOther, rowVarOtherExtra)
+			}
 			
 			# compute statistics
 			summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(

@@ -19,6 +19,7 @@ getSummaryStatisticsTable <- function(
 	rowVarInSepCol = NULL, 
 	# total
 	rowVarTotalInclude = NULL, 
+	rowVarTotalByVar = NULL,
 	rowVarTotalInSepRow = NULL,
 	rowTotalLab = NULL,
 	rowInclude0 = FALSE, 
@@ -76,6 +77,7 @@ getSummaryStatisticsTable <- function(
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
 		# total
 		rowVarTotalInclude = rowVarTotalInclude,
+		rowVarTotalByVar = rowVarTotalByVar,
 		rowVarTotalPerc = rowVarTotalPerc,
 		## extra
 		type = type,

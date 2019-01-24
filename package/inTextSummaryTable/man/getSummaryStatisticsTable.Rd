@@ -11,22 +11,23 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
-  rowVarTotalInclude = NULL, rowVarTotalInSepRow = NULL,
-  rowTotalLab = NULL, rowInclude0 = FALSE, rowAutoMerge = TRUE,
-  emptyValue = NULL, rowVarTotalPerc = NULL, colVar = NULL,
-  colVarTotal = colVar, colVarTotalPerc = colVarTotal,
-  colInclude0 = FALSE, colVarDataLevels = NULL,
-  colTotalInclude = FALSE, colTotalLab = "Total",
-  subjectVar = "USUBJID", stats = NULL, statsExtra = NULL,
-  statsGeneralLab = "Statistic", statsValueLab = "StatisticValue",
-  filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
-  type = "auto", labelVars = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
-  footer = NULL, file = NULL, outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  style = "report", byVar = NULL, byVarLab = getLabelVar(byVar, data
-  = data, labelVars = labelVars), colHeaderTotalInclude = TRUE,
-  fontsize = switch(style, report = 8, presentation = 10))
+  rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
+  rowVarTotalInSepRow = NULL, rowTotalLab = NULL,
+  rowInclude0 = FALSE, rowAutoMerge = TRUE, emptyValue = NULL,
+  rowVarTotalPerc = NULL, colVar = NULL, colVarTotal = colVar,
+  colVarTotalPerc = colVarTotal, colInclude0 = FALSE,
+  colVarDataLevels = NULL, colTotalInclude = FALSE,
+  colTotalLab = "Total", subjectVar = "USUBJID", stats = NULL,
+  statsExtra = NULL, statsGeneralLab = "Statistic",
+  statsValueLab = "StatisticValue", filterFct = NULL,
+  dataTotal = NULL, dataTotalPerc = dataTotal, type = "auto",
+  labelVars = NULL, landscape = (style == "presentation"),
+  margin = 1, rowPadBase = 4, title = NULL, footer = NULL,
+  file = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
+  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
+  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
+  report = 8, presentation = 10))
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -78,6 +79,10 @@ separately by this variable.}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}
+
+\item{rowVarTotalByVar}{Character vector with extra \code{codeVar}
+for which to compute the row total by.
+Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.}
 
 \item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
