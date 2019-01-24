@@ -72,7 +72,6 @@ getSummaryStatisticsTable <- function(
 		## rows
 		rowVar = rowVar, rowInclude0 = rowInclude0,
 		rowVarDataLevels = rowVarDataLevels,
-		rowVarInSepCol = rowVarInSepCol,
 		rowVarLab = rowVarLab,
 		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
 		# total
@@ -95,6 +94,7 @@ getSummaryStatisticsTable <- function(
 		# total
 		rowTotalLab = rowTotalLab,
 		rowVarTotalInSepRow = rowVarTotalInSepRow,
+		rowVarInSepCol = rowVarInSepCol,
 		rowAutoMerge = rowAutoMerge,
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		statsValueLab = statsValueLab,

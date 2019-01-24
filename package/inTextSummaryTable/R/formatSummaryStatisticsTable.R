@@ -6,6 +6,11 @@
 #' @param rowVar Character vector with variable(s) used for the rows.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order.
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
+#' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
+#' included in separated column in the table, NULL by default. 
+#' This is only available if \code{rowVar} if not specified.
+#' Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
+#' separately by this variable.
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowTotalLab label for the row with total
 #' @param rowAutoMerge Logical, if TRUE (by default) automatically merging of rows,
@@ -53,7 +58,7 @@ formatSummaryStatisticsTable <- function(
 	summaryTable,
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
-	rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
+	rowVarInSepCol = NULL,
 	# total
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"), 
 	rowVarTotalInSepRow = NULL,
@@ -295,6 +300,10 @@ formatSummaryStatisticsTable <- function(
 			}
 			
 			dataLong[, c(rowVarToModify, "rowVarFinal")] <- rownames(dataLong) <- NULL
+			
+			# order columns (in case rowVarInSepCol and row stats)
+			rowColsFinal <- c(rowVarFinal, rowVarInSepCol)
+			dataLong <- dataLong[, c(rowColsFinal, setdiff(colnames(dataLong), rowColsFinal))]
 			
 			# adjust padding:
 			# in case missing element in one of the nested variable

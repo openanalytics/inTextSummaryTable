@@ -31,7 +31,7 @@ getStats <- function(type = c("summary", "count", "n (%)")){
 			m = expression(statm)
 		),
 		'n (%)' = list(
-			expression(paste0(roundCustom(statN, 0), " (", roundCustom(statPercN, 1), ")"))
+			expression(ifelse(statN == 0, 0, paste0(roundCustom(statN, 0), " (", roundCustom(statPercN, 1), ")")))
 		)
 	)
 	

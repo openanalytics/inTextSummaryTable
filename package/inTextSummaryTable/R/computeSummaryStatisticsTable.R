@@ -1,9 +1,4 @@
 #' Compute summary statistics for a specific dataset and variables of interest
-#' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
-#' included in separated column in the table, NULL by default. 
-#' This is only available if \code{rowVar} if not specified.
-#' Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-#' separately by this variable.
 #' @param rowOrder String or function of named list with method used to order the rows,
 #' see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
 #' 'total' is only available if the total is available for each \code{rowVar} (\code{rowSubtotalInclude} set to TRUE)
@@ -138,7 +133,6 @@
 #' \item{'colVar': }{column name(s) of summary table with col variable
 #' included in the final table}
 #' \item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
-#' \item{'rowVarInSepCol': }{\code{rowVarInSepCol}}
 #' \item{'rowVarTotalInclude': }{\code{rowVarTotalInclude}}
 #' } 
 #' The computed summary statistics are stored in the 'statsVar' attribute.
@@ -159,7 +153,6 @@ computeSummaryStatisticsTable <- function(
 	colTotalInclude = FALSE, colTotalLab = "Total",
 	rowVar = NULL, rowVarDataLevels = NULL, 
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
-	rowVarInSepCol = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
 	rowVarTotalInclude = NULL,
 	rowVarTotalByVar = NULL,
@@ -549,7 +542,6 @@ computeSummaryStatisticsTable <- function(
 
 		# attributes extracted from the input parameters,
 		# to set similar defaults for the exportSummaryStatisticsTable
-		rowVarInSepCol = rowVarInSepCol,
 		rowVarTotalInclude = rowVarTotalInclude,
 		colVar = colVar,
 		colTotalLab = colTotalLab
