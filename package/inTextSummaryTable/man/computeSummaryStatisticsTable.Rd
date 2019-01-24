@@ -12,12 +12,11 @@ computeSummaryStatisticsTable(data, var = NULL,
   colVarTotalPerc = colVarTotal, colTotalInclude = FALSE,
   colTotalLab = "Total", rowVar = NULL, rowVarDataLevels = NULL,
   rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
-  rowVarInSepCol = NULL, rowOrder = "auto",
-  rowOrderTotalFilterFct = NULL, rowVarTotalInclude = NULL,
-  rowVarTotalByVar = NULL, rowVarTotalPerc = NULL, type = "auto",
-  subjectVar = "USUBJID", dataTotal = NULL,
-  dataTotalPerc = dataTotal, stats = NULL, statsExtra = NULL,
-  statsGeneralLab = "Statistic", filterFct = NULL,
+  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
+  rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
+  rowVarTotalPerc = NULL, type = "auto", subjectVar = "USUBJID",
+  dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
+  statsExtra = NULL, statsGeneralLab = "Statistic", filterFct = NULL,
   rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
   byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
   labelVars))
@@ -75,12 +74,6 @@ grouping in row in the final table.}
 (in case of non nested row variable(s)).}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
-
-\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table, NULL by default. 
-This is only available if \code{rowVar} if not specified.
-Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-separately by this variable.}
 
 \item{rowOrder}{String or function of named list with method used to order the rows,
 see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
@@ -241,7 +234,6 @@ included in the final table}
 \item{'colVar': }{column name(s) of summary table with col variable
 included in the final table}
 \item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
-\item{'rowVarInSepCol': }{\code{rowVarInSepCol}}
 \item{'rowVarTotalInclude': }{\code{rowVarTotalInclude}}
 } 
 The computed summary statistics are stored in the 'statsVar' attribute.
