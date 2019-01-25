@@ -64,15 +64,23 @@ convertSummaryStatisticsTableToFlextable <- function(
 	getNewCol <- function(initCol)
 		na.omit(names(colsDataFt)[match(initCol, colsDataFt)])
 	
-	# column border
+	## borders
 	bd <- switch(style,
 		'report' = fp_border(),
 		'presentation' = fp_border(color = "white")
 	)
-	ft <- border_remove(ft) %>%
-		border_outer(border = bd, part = "all") %>%
-		border_inner_h(border = bd, part = "header") %>%
-		border_inner_h(border = bd, part = "header")
+	ft <- border_remove(ft)
+	# if no vertical lines, only horizontal line 
+	# between header/stub, top header and bottom stub
+	vline <- attributes(summaryTable)$summaryTable$vline
+	if(!is.null(vline) && vline == "none"){
+		ft <- ft %>% 
+			hline_top(border = bd, part = "header") %>%
+			hline_bottom(border = bd, part = "header") %>%
+			hline_bottom(border = bd, part = "body")
+	}else ft <- border_outer(ft, border = bd, part = "all") # otherwise all border (stub + header)
+	ft <- ft %>% border_inner_h(border = bd, part = "header")
+	
 	if(!is.null(title))
 		ft <- hline(ft, i = length(title), border = bd, part = "header") 
 

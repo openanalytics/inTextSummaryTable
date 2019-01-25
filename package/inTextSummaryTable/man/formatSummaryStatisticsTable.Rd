@@ -14,7 +14,8 @@ formatSummaryStatisticsTable(summaryTable,
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
   "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsLayout = c("row", "col", "rowInSepCol"),
-  statsValueLab = "StatisticValue", emptyValue = NULL)
+  statsValueLab = "StatisticValue", emptyValue = NULL,
+  vline = c("none", "auto"))
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -71,6 +72,12 @@ in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
 \item{emptyValue}{Value used to fill the table for missing values.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
+
+\item{vline}{String mentioning how vertical lines should be included, either: 
+\itemize{
+\item{'none' (default): }{no vertical lines included}
+\item{'auto': }{vertical lines included between sub-groups}
+}}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:
@@ -82,7 +89,9 @@ summaryTable reformatted in long format, with extra attributes:
 \item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
 \item{'vlineParams' and 'hlineParams': }{
 list of list with correspondingly parameters for
-vertical and horizontal lines}
+vertical and horizontal lines
+}
+\item{'vline': }{\code{vline} parameter}
 }
 If \code{summaryTable} is a list of summary tables,
 returns a list of corresponding summary tables in long format.

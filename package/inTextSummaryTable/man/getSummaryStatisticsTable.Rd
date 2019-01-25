@@ -27,7 +27,8 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
   style = "report", byVar = NULL, byVarLab = getLabelVar(byVar, data
   = data, labelVars = labelVars), colHeaderTotalInclude = TRUE,
-  fontsize = switch(style, report = 8, presentation = 10))
+  fontsize = switch(style, report = 8, presentation = 10),
+  vline = "none")
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -254,6 +255,12 @@ of the output list of table(s).}
 (\code{'statN'}) in the header.}
 
 \item{fontsize}{Integer with font size, 8 by default.}
+
+\item{vline}{String mentioning how vertical lines should be included, either: 
+\itemize{
+\item{'none' (default): }{no vertical lines included}
+\item{'auto': }{vertical lines included between sub-groups}
+}}
 }
 \value{
 Depending on the \code{outputType}:
