@@ -37,7 +37,8 @@ exportSummaryStatisticsTable <- function(
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	style = "report",
-	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
+	vline = "none"){
 
 	outputType  <- match.arg(outputType)
 	
@@ -56,7 +57,8 @@ exportSummaryStatisticsTable <- function(
 		statsLayout = statsLayout,
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		statsValueLab = statsValueLab,
-		emptyValue = emptyValue
+		emptyValue = emptyValue,
+		vline = vline
 	)
 	
 	if(outputType == "flextable" | !is.null(file)){

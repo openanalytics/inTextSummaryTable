@@ -18,7 +18,7 @@ exportSummaryStatisticsTable(summaryTable,
   title = NULL, footer = NULL, outputType = c("flextable",
   "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
   style = "report", fontsize = switch(style, report = 8, presentation =
-  10))
+  10), vline = "none")
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -95,6 +95,12 @@ the \code{rowVar} variable(s)}
 either 'report' or 'presentation'}
 
 \item{fontsize}{Integer with font size, 8 by default.}
+
+\item{vline}{String mentioning how vertical lines should be included, either: 
+\itemize{
+\item{'none' (default): }{no vertical lines included}
+\item{'auto': }{vertical lines included between sub-groups}
+}}
 }
 \value{
 Depending on the \code{outputType}:

@@ -34,6 +34,11 @@
 #' @param rowVarTotalInSepRow Character vector with \code{rowVarTotalInclude}
 #' (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
 #' Otherwise (by default) the total is included in the header row of each category.
+#' @param vline String mentioning how vertical lines should be included, either: 
+#' \itemize{
+#' \item{'none' (default): }{no vertical lines included}
+#' \item{'auto': }{vertical lines included between sub-groups}
+#' }
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -45,7 +50,9 @@
 #' \item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
 #' \item{'vlineParams' and 'hlineParams': }{
 #' list of list with correspondingly parameters for
-#' vertical and horizontal lines}
+#' vertical and horizontal lines
+#' }
+#' \item{'vline': }{\code{vline} parameter}
 #' }
 #' If \code{summaryTable} is a list of summary tables,
 #' returns a list of corresponding summary tables in long format.
@@ -71,8 +78,11 @@ formatSummaryStatisticsTable <- function(
 	labelVars = NULL,
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
-	emptyValue = NULL
+	emptyValue = NULL,
+	vline = c("none", "auto")
 	){
+		
+	vline <- match.arg(vline)
 
 	if(!is.data.frame(summaryTable)){
 		
@@ -401,14 +411,17 @@ formatSummaryStatisticsTable <- function(
 		attributes(dataLong)$summaryTable$mergeParams <- mergeParams
 	
 	# extract vertical lines (specified by the right border)
-	vLineParams <- lapply(seq_len(nrow(headerDf)-1), function(i){
-		idx <- diff(as.numeric(factor(unlist(headerDf[i, ]), exclude = "")))
-		j <- which(idx != 0)
-		if(!all(idx == 0))	list(i = i:nrow(headerDf), part = "header", j = j)
-	})
-	if(length(vLineParams) > 0)
-		vLineParams <- c(vLineParams, list(list(j = vLineParams[[length(vLineParams)]]$j, part = "body")))
+	if(vline == "auto"){
+		vLineParams <- lapply(seq_len(nrow(headerDf)-1), function(i){
+			idx <- diff(as.numeric(factor(unlist(headerDf[i, ]), exclude = "")))
+			j <- which(idx != 0)
+			if(!all(idx == 0))	list(i = i:nrow(headerDf), part = "header", j = j)
+		})
+		if(length(vLineParams) > 0)
+			vLineParams <- c(vLineParams, list(list(j = vLineParams[[length(vLineParams)]]$j, part = "body")))
+	}else	vLineParams <- NULL
 	attributes(dataLong)$summaryTable$vlineParams <- vLineParams
+	attributes(dataLong)$summaryTable$vline <- vline
 	
 	if(mergeRows){
 		
