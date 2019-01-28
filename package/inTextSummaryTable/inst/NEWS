@@ -7,6 +7,7 @@
     o remove border in title, minimal h/v lines: only per row/column group, merge header columns for total and if needed
     o subscript supported: formatSuperscriptToFlextable -> formatSuperSubscriptToFlextable
     o vline parameter and default no vertical lines
+    o fix use use rowPadBase
 0.0.9
     o statsValueLab, dataTotalPerc, colVarTotal, colVarTotalPerc new parameters
     o export exportFlextableToDocx

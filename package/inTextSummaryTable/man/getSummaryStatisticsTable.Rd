@@ -22,7 +22,7 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   statsValueLab = "StatisticValue", subjectVar = "USUBJID",
   filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
   type = "auto", labelVars = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
   footer = NULL, file = NULL, outputType = c("flextable",
   "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
   style = "report", byVar = NULL, byVarLab = getLabelVar(byVar, data
@@ -219,7 +219,7 @@ format.}
 
 \item{margin}{Margin in the document in inches.}
 
-\item{rowPadBase}{Base padding for row (number of spaces)}
+\item{rowPadBase}{Base padding for row (in points)}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.}

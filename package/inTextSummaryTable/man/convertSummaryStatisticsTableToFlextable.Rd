@@ -5,7 +5,7 @@
 \title{Convert summary statistics table to flextable}
 \usage{
 convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
-  == "presentation"), margin = 1, rowPadBase = 4, title = NULL,
+  == "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
   footer = NULL, style = "report", fontname = switch(style, report =
   "Times", presentation = "Tahoma"), fontsize = switch(style, report = 8,
   presentation = 10), file = NULL)
@@ -18,7 +18,7 @@ format.}
 
 \item{margin}{Margin in the document in inches.}
 
-\item{rowPadBase}{Base padding for row (number of spaces)}
+\item{rowPadBase}{Base padding for row (in points)}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.}
