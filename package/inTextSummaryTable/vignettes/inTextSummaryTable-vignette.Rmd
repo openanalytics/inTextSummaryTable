@@ -146,7 +146,7 @@ Grouping for the rows can be specified via **multiple nested variables** to the
 `rowVar` parameter, which should be sorted in hierarchical order.
 
 The `rowPadBase` parameter can be used to change the padding between each row
-level.
+level (in point).
 
 ```{r summaryTable-PP-rowVarMultiple}
 
@@ -154,7 +154,7 @@ level.
 		data = dataPP,
 		var = "AVAL",
 		rowVar = c("PARCAT1", "PARAM"),
-		rowPadBase = 10
+		rowPadBase = 0.4*72 # 4 inches in points
 	)
 	
 ```
@@ -283,8 +283,7 @@ For example, the summary table is restricted to the mean+-SE statistics.
 		rowVar = c("PARCAT1", "PARAM"),
 		labelVars = labelVars,
 		stats = list(expression(paste(formatC(statMean), "+-", formatC(statSE)))),
-		footer = "Statistics: mean +- SE",
-		rowPadBase = 10
+		footer = "Statistics: mean +- SE"
 	)
 
 ```
@@ -304,8 +303,7 @@ Multiple statistics can be specified.
 			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
-		statsLayout = "col",
-		rowPadBase = 10
+		statsLayout = "col"
 	)
 
 ```
@@ -329,8 +327,7 @@ variable(s).
 			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
-		statsLayout = "row",
-		rowPadBase = 10
+		statsLayout = "row"
 	)
 
 ```
@@ -350,8 +347,7 @@ The statistics can also be included in columns.
 			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
-		statsLayout = "col",
-		rowPadBase = 10
+		statsLayout = "col"
 	)
 
 ```
@@ -372,8 +368,7 @@ the row variables.
 			Median = expression(formatC(statMedian))
 		),
 		footer = "Statistics: median (min, max)",
-		statsLayout = "rowInSepCol",
-		rowPadBase = 10
+		statsLayout = "rowInSepCol"
 	)
 
 ```
@@ -416,8 +411,7 @@ are included via the parameter `colTotalInclude` set to TRUE.
 		labelVars = labelVars,
 		colTotalInclude = TRUE,
 		stats = list(expression(paste(formatC(statMean), "+-", formatC(statSE)))),
-		footer = "Statistics: mean +- SE",
-		rowPadBase = 10
+		footer = "Statistics: mean +- SE"
 	)
 
 ```
@@ -434,7 +428,6 @@ Multiple variables to be summarized can be specified in the `var` parameter.
 		rowVar = c("PARCAT2", "PARAM"),
 		colVar = c("TRTP", "AVISIT"),
 		stats = list(expression(paste(formatC(statMean), "+-", formatC(statSE)))),
-		rowPadBase = 10,
 		labelVars = labelVars,
 		title = "Analysis value and change from baseline of the Chemical parameters"
 	)
@@ -497,7 +490,6 @@ adverse event term are grouped according to the `r labelVars["AEHLGT"]`
 		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		stats = list(
 			'N (%)' = expression(paste0(statN, " (", round(statPercN, 1), ")")),
@@ -537,8 +529,8 @@ subject-level (`ADSL`) dataset.
 		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
+		colTotalInclude = TRUE,
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
@@ -548,12 +540,14 @@ subject-level (`ADSL`) dataset.
 
 ### Total count of events across rows
 
-#### Entire table
-
-The **total number of events across the entire table per column** is included if
-the parameter **`rowTotalInclude`** is set to TRUE.
+If the total number of events should be included across all elements of a
+specific row variable, this variable is specified in the
+the `rowVarTotalInclude` variable.
 
 The label for the total is customized via the `rowTotalLab` parameter.
+
+For example, the total across all adverse events row variables is included by
+specifying the first row variable.
 
 ```{r countTable-LB-rowTotalInclude}
 
@@ -568,20 +562,17 @@ The label for the total is customized via the `rowTotalLab` parameter.
 		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
-		rowTotalInclude = TRUE, rowTotalLab = "Any adverse events",
+		rowVarTotalInclude = "AEHLGT", rowTotalLab = "Any adverse events",
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
 
 ```
 
-#### Per group of the row variable
-
-The total for **each sub-group of the row variable(s)** is now included via the
-parameter **`rowSubtotalInclude`**.
+The total for **each sub-group of the row variable(s)** is now by specifying
+all row variables in `rowVarTotalInclude`.
 
 ```{r countTable-LB-rowSubtotalInclude}
 	
@@ -591,10 +582,9 @@ parameter **`rowSubtotalInclude`**.
 		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
-		rowSubtotalInclude = TRUE,
+		rowVarTotalInclude = c("AEHLGT", "AEHLT", "AELLT"),
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
@@ -635,7 +625,6 @@ category.
 		rowInclude0 = TRUE, colInclude0 = TRUE,
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events: white blood cell analyses",
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
@@ -667,7 +656,6 @@ low-level AR category are retained.
 		colVar = "TRTP",
 		labelVars = labelVars,
 		filterFct = filterFct,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		stats = expression(paste0(statN, " (", round(statPercN, 1), ")")),
 		footer = "Statistics: number and percentage of subjects: N (%)"
@@ -695,7 +683,6 @@ of the low-level AR category are retained.
 		colVar = "TRTP",
 		labelVars = labelVars,
 		filterFct = filterFct,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		stats = expression(paste0(statN, " (", round(statPercN, 1), ")")),
 		footer = "Statistics: number and percentage of subjects: N (%)"
@@ -713,8 +700,9 @@ This variable is either:
 * a string with the name of an implemented method to order the rows, among:
      + `alphabetical`: categories are ordered **alphabetically**
      + `auto`: order of the categories in the **input variable** (factor levels) 
-are retained (ordered alphabetically if not specified), e.g. to use a fixed
-       ordering
+are retained (ordered alphabetically if not specified), e.g. to use the
+       ordering based on the corresponding numeric variable  in the dataset
+       ('AEHLGTCD' for 'AEHLGT')
      + `total`: categories are ordered based on the **total of
   the sub-category**
 * a custom ordering function to apply in the data to order the rows
@@ -730,10 +718,9 @@ are retained (ordered alphabetically if not specified), e.g. to use a fixed
 		rowOrder = "total",
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events ordered based on total counts",
 		dataTotal = dataTotal,
-		rowSubtotalInclude = TRUE,
+		rowVarTotalInclude = c("AEHLT", "AELLT"),
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
@@ -762,10 +749,9 @@ provided for the `rowVar` parameter.
 		rowOrder = list(AEHLGT = "auto", 'AEHLT' = "total", AELLT = "alphabetical"),
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events ordered based on total counts of high-level category",
 		dataTotal = dataTotal,
-		rowSubtotalInclude = TRUE,
+		rowVarTotalInclude = c("AEHLT", "AELLT"),
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)"
 	)
@@ -791,7 +777,6 @@ sorted based on their occurrence on only the treated patients.
 		rowOrder = "total",
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		# consider only the counts of the treated patients to order the rows
 		rowOrderTotalFilterFct = function(x) subset(x, TRTP == "treatmentX"),
 		title = "Table: Adverse Events ordered based on total counts",
@@ -828,7 +813,6 @@ the counts of treated-patients presenting this event.
 		},
 		colVar = "TRTP", colTotalInclude = TRUE,
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events ordered based on total counts",
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
@@ -855,7 +839,6 @@ at once with the `byVar` variable.
 		byVar = "AEHLGT", 
 		colVar = "TRTP", colTotalInclude = TRUE,
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
@@ -878,7 +861,6 @@ The variable type is automatically detected by the function.
 	customStatsCat <- expression(paste0(statN, " (", round(statPercN, 1), ")"))
 	customStatsNum <- expression(paste0(formatC(statMean), "+-", formatC(statSE)))
 	
-	# TODO: check horizontal lines
 	getSummaryStatisticsTable(
 		data = dataAll$ADSL,
 		colVar = "TRT01P", 
@@ -888,9 +870,8 @@ The variable type is automatically detected by the function.
 			BMIBLGR1 = customStatsCat, SMOKE = customStatsCat
 		),
 		var = c("RACE", "AGE", "SEX", "WEIGHTBL", "HEIGHT", "BMIBLGR1", "SMOKE"),
-		varLabGeneral = "Characteristic", varLabSubgroup = "Class",
+		varGeneralLab = "Characteristic", varSubgroupLab = "Class",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Demographic table",
 	)
 
@@ -948,9 +929,7 @@ or related to the treatment and with high severity.
 		data = dataAEGroup,
 		colVar = "TRTP", 
 		rowVar = "AEGRP", 
-		varLabGeneral = "Characteristic", varLabSubgroup = "Class",
 		labelVars = labelVars,
-		rowPadBase = 5,
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		title = "Table: Adverse events: counts for groups of interest",
@@ -1000,7 +979,6 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		colVar = c("TRTP", "AVISIT"),  
 		type = "count",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		title = "Table: Treatment-emergent laboratory abnormalities",
 		file = "summaryStatisticsTable_LB_count.docx",
@@ -1035,10 +1013,9 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
 		colVar = "TRTP",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
-		rowTotalInclude = TRUE,
+		rowVarTotalInclude = "AEHLGT",
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)",
 		file = "summaryStatisticsTable_AE_count.docx",
@@ -1086,7 +1063,6 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		colVar = c("TRTP", "AVISIT"),  
 		type = "count",
 		labelVars = labelVars,
-		rowPadBase = 10,
 		stats = list(expression(paste0("[X.XX]"))),
 		title = "Table: Treatment-emergent laboratory abnormalities (mock-up)",
 		file = "summaryStatisticsTable_LB_mockUp_count.docx",
