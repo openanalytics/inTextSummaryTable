@@ -176,6 +176,9 @@ which the statistics should be computed by.
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}
 
+\item{statsGeneralLab}{String with general label for statistics, 'Statistic' by default.
+Only included if no \code{statsVar} if longer than 1.}
+
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
