@@ -162,6 +162,9 @@ e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
 Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 and return the corresponding summary statistic.}
 
+\item{statsGeneralLab}{String with general label for statistics, 'Statistic' by default.
+Only included if no \code{statsVar} if longer than 1.}
+
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table 
 (after statistics computation).
