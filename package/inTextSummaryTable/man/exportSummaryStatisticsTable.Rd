@@ -71,7 +71,7 @@ format.}
 
 \item{margin}{Margin in the document in inches.}
 
-\item{rowPadBase}{Base padding for row (in points)}
+\item{rowPadBase}{Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.}
