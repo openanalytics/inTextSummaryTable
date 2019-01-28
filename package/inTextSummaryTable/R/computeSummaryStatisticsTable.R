@@ -52,6 +52,8 @@
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
+#' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
+#' Only included if no \code{statsVar} if longer than 1.
 #' @inheritParams computeSummaryStatisticsTableTotal
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @inheritParams getStatisticsSummaryStatisticsTable
