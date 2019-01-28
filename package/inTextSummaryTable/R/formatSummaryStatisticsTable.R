@@ -115,7 +115,7 @@ formatSummaryStatisticsTable <- function(
 			idxTotal <- which(x$isTotal)
 			if(length(idxTotal) == 1){
 				# for the total column, include the N in all columns (to be merged afterwards)
-				colToModif <- if(all(x[, colVar] == colTotalLab))	colVar	else	colVarWithCount
+				colToModif <- if(all(!is.na(x[, colVar])) && all(x[, colVar] == colTotalLab))	colVar	else	colVarWithCount
 				for(col in colToModif)
 					x[, col] <- paste0(x[, col], "\n(N=",  x[idxTotal , "statN"], ")")
 				x[-idxTotal, ]
