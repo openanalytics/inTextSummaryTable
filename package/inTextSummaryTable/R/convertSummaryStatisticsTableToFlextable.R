@@ -5,7 +5,7 @@
 #' Set to NULL (by default) of no footer should be included.
 #' @param file String with path of the file where the table should be exported.
 #' If NULL, the summary table is not exported but only returned as output.
-#' @param rowPadBase Base padding for row (number of spaces)
+#' @param rowPadBase Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperSubscriptToFlextable
 #' @inheritParams formatSummaryStatisticsTable
@@ -20,7 +20,7 @@
 convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
 	landscape = (style == "presentation"), 
-	margin = 1, rowPadBase = 4,
+	margin = 1, rowPadBase = 14.4,
 	title = NULL, 
 	footer = NULL,
 	style = "report",
@@ -96,7 +96,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	if(length(attributes(summaryTable)$summaryTable$padParams) > 0)
 		for(padParams in attributes(summaryTable)$summaryTable$padParams){
 			padPars <- grep("^padding", names(padParams), value = TRUE)
-			padParams[padPars] <- lapply(padPars, function(par) padParams[[par]] * rowPadBase)
+			padParams[padPars] <- sapply(padPars, function(par) padParams[[par]] * rowPadBase, simplify = FALSE)
 			# if title is specified, shift row coordinate of padding by 1
 			if(!is.null(title) && padParams$part == "header" && "i" %in% names(padParams))
 				padParams$i <- padParams$i + 1

@@ -44,7 +44,7 @@ getSummaryStatisticsTable <- function(
 	dataTotal = NULL, dataTotalPerc = dataTotal,
 	type = "auto",
 	labelVars = NULL, 
-	landscape = (style == "presentation"), 	margin = 1, rowPadBase = 4, 
+	landscape = (style == "presentation"), 	margin = 1, rowPadBase = 14.4, 
 	title = NULL, footer = NULL,
 	file = NULL,
 	outputType = c("flextable", "data.frame"),

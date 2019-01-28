@@ -31,7 +31,7 @@ exportSummaryStatisticsTable <- function(
 	emptyValue = NULL,
 	labelVars = NULL, 
 	file = NULL, landscape = (style == "presentation"), 
-	margin = 1, rowPadBase = 4,
+	margin = 1, rowPadBase = 14.4,
 	title = NULL,
 	footer = NULL,
 	outputType = c("flextable", "data.frame"),

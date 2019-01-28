@@ -14,11 +14,11 @@ exportSummaryStatisticsTable(summaryTable,
   rowAutoMerge = TRUE, colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
   emptyValue = NULL, labelVars = NULL, file = NULL,
-  landscape = (style == "presentation"), margin = 1, rowPadBase = 4,
-  title = NULL, footer = NULL, outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  style = "report", fontsize = switch(style, report = 8, presentation =
-  10), vline = "none")
+  landscape = (style == "presentation"), margin = 1,
+  rowPadBase = 14.4, title = NULL, footer = NULL,
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"), style = "report", fontsize = switch(style,
+  report = 8, presentation = 10), vline = "none")
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -71,7 +71,7 @@ format.}
 
 \item{margin}{Margin in the document in inches.}
 
-\item{rowPadBase}{Base padding for row (number of spaces)}
+\item{rowPadBase}{Base padding for row (in points)}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.}
