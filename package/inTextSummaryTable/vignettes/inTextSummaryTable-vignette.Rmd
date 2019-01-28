@@ -1015,7 +1015,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		labelVars = labelVars,
 		title = "Table: Adverse Events",
 		dataTotal = dataTotal,
-		rowTotalInclude = TRUE,
+		rowVarTotalInclude = "AEHLGT",
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: N (%)",
 		file = "summaryStatisticsTable_AE_count.docx",
