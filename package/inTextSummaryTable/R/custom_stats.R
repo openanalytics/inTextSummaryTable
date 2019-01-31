@@ -4,34 +4,41 @@
 #' \itemize{
 #' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 #' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
-#' \item{'n (\%)':}{number of subjects with 0 digit (percentage with 1 digits)}
+#' \item{'N (\%)':}{number of subjects with 0 digit (percentage with 1 digits)}
+#' \item{'median (range)'}{median (minimum, maximum)}
 #' }
 #' @return (Optionally named) list of expression or call object of summary statistics of interest
 #' @author Laure Cougnaud
 #' @export
-getStats <- function(type = c("summary", "count", "n (%)")){
+getStats <- function(type = c(
+	"summary", "count", "N (%)", 
+	"median (range)")){
 	
 	type <- match.arg(type)
 	
 	stats <- switch(
 		type,
 		summary = list(
-			n = expression(statN),
+			N = expression(statN),
 			Mean = expression(statMean),
 			SD = expression(statSD),
 			Median = expression(statMedian),
 			Min = expression(statMin),
 			Max = expression(statMax),
-			`%` = expression(statPerc),
+			`%` = expression(statPercN),
 			m = expression(statm)
 		),
 		count = list(
-			n = expression(statN),
-			`%` = expression(statPerc),
+			N = expression(statN),
+			`%` = expression(statPercN),
 			m = expression(statm)
 		),
-		'n (%)' = list(
-			expression(ifelse(statN == 0, 0, paste0(roundCustom(statN, 0), " (", roundCustom(statPercN, 1), ")")))
+		'N (%)' = list(
+			'N (%)' = 
+				expression(ifelse(statN == 0, 0, paste0(roundCustom(statN, 0), " (", roundCustom(statPercN, 1), ")")))
+		),
+		'median (range)' = list('median (range)' =
+			expression(paste0(statMedian, " (", statMin, ",",  statMax, ")"))
 		)
 	)
 	

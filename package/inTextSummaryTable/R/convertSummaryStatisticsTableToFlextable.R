@@ -6,6 +6,14 @@
 #' @param file String with path of the file where the table should be exported.
 #' If NULL, the summary table is not exported but only returned as output.
 #' @param rowPadBase Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)
+#' @param style string with table style in case \code{outputType} is 'flextable',
+#'  either 'report' or 'presentation'.
+#' This parameter affects the fontsize, font family, color of the text and background, 
+#' and table dimensions of the table.
+#' @param fontname String with font name, by default:
+#' 'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.
+#' @param fontsize Integer with font size, by default:
+#' 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperSubscriptToFlextable
 #' @inheritParams formatSummaryStatisticsTable

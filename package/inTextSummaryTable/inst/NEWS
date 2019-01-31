@@ -1,3 +1,6 @@
+1.0.0
+    o fix getStats
+    o formatSummaryStatisticsTable: remove 'Statistics' column if all the same
 0.0.10
     o formatSummaryStatisticsTable: fix for rowSubtotalInSepRow
     o rowAutoMerge, rowVarTotalPerc, rowVarTotalExtra
