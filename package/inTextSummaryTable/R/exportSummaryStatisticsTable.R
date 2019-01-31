@@ -1,8 +1,6 @@
 #' Export a summary table in \code{docx} format.
 
 #' @param outputType String with output type, 'data.frame' or 'flextable'.
-#' @param style string with table style in case \code{outputType} is 'flextable',
-#'  either 'report' or 'presentation'
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams convertSummaryStatisticsTableToFlextable
 #' @return Depending on the \code{outputType}:
@@ -38,6 +36,7 @@ exportSummaryStatisticsTable <- function(
 	statsLayout = c("row", "col", "rowInSepCol"),
 	style = "report",
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
+	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none"){
 
 	outputType  <- match.arg(outputType)
@@ -69,7 +68,8 @@ exportSummaryStatisticsTable <- function(
 			landscape = landscape, margin = margin, rowPadBase = rowPadBase,
 			title = title, footer = footer,
 			style = style, fontsize = fontsize,
-			file = file
+			file = file,
+			fontname = fontname
 		)
 		
 	}

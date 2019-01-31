@@ -53,6 +53,7 @@ getSummaryStatisticsTable <- function(
 	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
+	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none"){
 
 	statsLayout <- match.arg(statsLayout)
@@ -112,6 +113,7 @@ getSummaryStatisticsTable <- function(
 		statsLayout = statsLayout,
 		style = style,
 		fontsize = fontsize,
+		fontname = fontname,
 		vline = vline
 	)
 	

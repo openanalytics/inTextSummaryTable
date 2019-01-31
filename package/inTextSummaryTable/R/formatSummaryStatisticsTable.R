@@ -60,6 +60,7 @@
 #' @importFrom glpgUtilityFct getLabelVar
 #' @importFrom reshape2 melt dcast
 #' @importFrom plyr colwise
+#' @importFrom dplyr n_distinct
 #' @importFrom stats as.formula
 formatSummaryStatisticsTable <- function(
 	summaryTable,
@@ -152,13 +153,15 @@ formatSummaryStatisticsTable <- function(
 		variable.name = "Statistic"
 	)
 	
+	if(length(statsVar) == 1 && n_distinct(dataLong$Statistic) == 1)	dataLong$Statistic <- NULL
+	
 	emptyStats <- which(is.na(dataLong[, statsValueLab]))
 	if(length(emptyStats) > 0)
 		dataLong <- dataLong[-emptyStats, ]
 	
 	# if only one 'stats' and no named, set 'Statistic' to NA 
 	# e.g. in DM table: count per sub-group for categorical variable
-	if(!is.null(rowVar)){
+	if(!is.null(rowVar) & "Statistic" %in% colnames(dataLong)){
 		idxUniqueStatNotNamed <- which(!duplicated(dataLong[, c(rowVar, colVar)]) & dataLong$Statistic == "Statistic")
 		dataLong[idxUniqueStatNotNamed, "Statistic"] <- NA
 	}
@@ -337,7 +340,11 @@ formatSummaryStatisticsTable <- function(
 		if(!is.null(rowVarTotalInclude)){
 			idxRowTotal <- which(dataLong[, rowVarFinal] == "Total" & dataLong$rowPadding == 0)
 			idxHLine <- c(idxHLine, idxRowTotal[length(idxRowTotal)]) # + include horizontal line after row total
-			if(is.null(rowTotalLab))	rowTotalLab <- paste("Any", rowVarLab[rowVarFinal])
+			if(is.null(rowTotalLab)){
+				rowTotalLabVars <- rowVarLab[rowVarInRow]
+				rowTotalLabVars <- rowTotalLabVars[!is.na(rowTotalLabVars)]
+				rowTotalLab <- paste("Any", toString(rowTotalLabVars))
+			}
 			dataLong[idxRowTotal, rowVarFinal] <- rowTotalLab
 		}
 		
