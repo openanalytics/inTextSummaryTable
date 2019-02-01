@@ -277,16 +277,20 @@ formatSuperSubscriptToFlextable <- function(
 				for(el in textSplit){
 					
 					# create formatters: should be list of formula
-					fm <- list(
-						as.formula(paste0("value ~ as.character('", el[2], "')")),
-						as.formula(paste0("pow ~ as.character('", el[3], "')"))
+					fm <- c(
+						list(
+							as.formula(paste0("value ~ as.character('", el[2], "')")),
+							as.formula(paste0("pow ~ as.character('", el[3], "')"))
+						),
+						if(el[4] != "")
+							list(as.formula(paste0("value2 ~ as.character('", el[4], "')")))
 					)
 					
 					# set superscript/subscript in flextable
 					ft <- ft %>% display(
 						i = idxSuperscriptAI[iSP, 1],
 						col_key = idxSuperscriptAI[iSP, 2],
-						pattern = "{{value}}{{pow}}",
+						pattern = paste0("{{value}}{{pow}}", if(el[4] != "") "{{value2}}"),
 						formatters = fm,
 						fprops = list(pow = 
 							fp_text(
