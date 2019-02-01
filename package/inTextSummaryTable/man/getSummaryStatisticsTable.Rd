@@ -28,6 +28,7 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   style = "report", byVar = NULL, byVarLab = getLabelVar(byVar, data
   = data, labelVars = labelVars), colHeaderTotalInclude = TRUE,
   fontsize = switch(style, report = 8, presentation = 10),
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
   vline = "none")
 }
 \arguments{
@@ -246,7 +247,9 @@ the \code{rowVar} variable(s)}
 }}
 
 \item{style}{string with table style in case \code{outputType} is 'flextable',
-either 'report' or 'presentation'}
+ either 'report' or 'presentation'.
+This parameter affects the fontsize, font family, color of the text and background, 
+and table dimensions of the table.}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
@@ -257,7 +260,11 @@ of the output list of table(s).}
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}
 
-\item{fontsize}{Integer with font size, 8 by default.}
+\item{fontsize}{Integer with font size, by default:
+8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}
+
+\item{fontname}{String with font name, by default:
+'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}
 
 \item{vline}{String mentioning how vertical lines should be included, either: 
 \itemize{

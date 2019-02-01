@@ -26,11 +26,16 @@ Set to NULL (by default) if no title should be included.}
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
 
-\item{style}{string with table style, either 'report' or 'presentation'}
+\item{style}{string with table style in case \code{outputType} is 'flextable',
+ either 'report' or 'presentation'.
+This parameter affects the fontsize, font family, color of the text and background, 
+and table dimensions of the table.}
 
-\item{fontname}{String with font name, 'Times' by default.}
+\item{fontname}{String with font name, by default:
+'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}
 
-\item{fontsize}{Integer with font size, 8 by default.}
+\item{fontsize}{Integer with font size, by default:
+8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}
 
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}

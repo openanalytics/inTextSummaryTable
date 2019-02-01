@@ -18,7 +18,8 @@ exportSummaryStatisticsTable(summaryTable,
   rowPadBase = 14.4, title = NULL, footer = NULL,
   outputType = c("flextable", "data.frame"), statsLayout = c("row",
   "col", "rowInSepCol"), style = "report", fontsize = switch(style,
-  report = 8, presentation = 10), vline = "none")
+  report = 8, presentation = 10), fontname = switch(style, report =
+  "Times", presentation = "Tahoma"), vline = "none")
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -92,9 +93,15 @@ the \code{rowVar} variable(s)}
 }}
 
 \item{style}{string with table style in case \code{outputType} is 'flextable',
-either 'report' or 'presentation'}
+ either 'report' or 'presentation'.
+This parameter affects the fontsize, font family, color of the text and background, 
+and table dimensions of the table.}
 
-\item{fontsize}{Integer with font size, 8 by default.}
+\item{fontsize}{Integer with font size, by default:
+8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}
+
+\item{fontname}{String with font name, by default:
+'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}
 
 \item{vline}{String mentioning how vertical lines should be included, either: 
 \itemize{

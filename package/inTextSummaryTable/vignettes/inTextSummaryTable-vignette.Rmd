@@ -131,7 +131,7 @@ sub-category/class** of the specified variable are extracted.
 
 ```{r data-AE}
 
-	dataAE <-  subset(dataAll$ADAE, FASFL == "Y")
+	dataAE <-  subset(dataAll$ADAE, FASFL == "Y" & TRTEMFL == "Y")
 	dataAEInterest <- subset(dataAE, AESOC %in% c("Infections and infestations", "General disorders and administration site conditions", "Ear and labyrinth disorders"))
 
 ```
@@ -164,8 +164,8 @@ statistics for empty categories**. These categories are specified via additional
 		colVar = "TRTP",
 		labelVars = labelVars,
 		title = "Table: Adverse Events: white blood cell analyses",
-		stats = getStats("N (%)"),
-		footer = "Statistics: N (%)"
+		stats = getStats("n (%)"),
+		footer = "Statistics: n (%)"
 	)
 
 ```
@@ -232,13 +232,18 @@ range:
 
 ```{r stats-meanSE}
 
+	stop("test")
 	getSummaryStatisticsTable(
 		data = dataSL,
 		var = c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL"),
+		varGeneralLab = "Parameter", statsGeneralLab = "",
+		colVar = "ACTARM",
 		stats = list(
 			`median` = expression(statMedian),
 			`(min, max)` = expression(paste0("(", statMin, ",", statMax, ")"))
-		)
+		),
+		file = file.path("tables", "Table_statsLayout_rowInSepCol.docx"),
+		statsLayout = "rowInSepCol"
 	)
 
 ```
@@ -261,7 +266,7 @@ available in the `getStats` function: summary statistics, count table, ...
 	getSummaryStatisticsTable(
 		data = dataSL,
 		var = "SEX",
-		stats = getStats("N (%)")
+		stats = getStats("n (%)")
 	)
 	
 	# all summary stats
@@ -284,7 +289,7 @@ The statistics can also be provided for each statistical variable separately:
 		var = c("AGE", "RACE"),
 		stats = list(
 			AGE = getStats("median (range)"),
-			RACE = getStats("N (%)")
+			RACE = getStats("n (%)")
 		)
 	)
 
@@ -411,8 +416,8 @@ fixed number of digits:
 			HEIGHT = statsDMNum(1),
 			WEIGHTBL = statsDMNum(1),
 			BMIBL = statsDMNum(1),
-			RACE = getStats("N (%)"),
-			SEX = getStats("N (%)")
+			RACE = getStats("n (%)"),
+			SEX = getStats("n (%)")
 		)
 	)
 
@@ -451,23 +456,25 @@ hierarchical order.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = "AEDECOD",
-		stats = getStats("N (%)"),
-		labelVars = labelVars
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		file = file.path("tables", "Table_AE_1rowVar.docx")
 	)
 	
 	# multiple nested row variables
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		stats = getStats("N (%)"),
-		labelVars = labelVars
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		file = file.path("tables", "Table_AE_2rowVar.docx")
 	)
 	
 	# unique column variable
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
 	
@@ -476,8 +483,9 @@ hierarchical order.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
-		labelVars = labelVars
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		file = file.path("tables", "Table_AE_rowColVar.docx")
 	)
 
 ```
@@ -501,8 +509,10 @@ variables, but as **separated column** are additionally specified via the
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD", "AESEV"),
 		rowVarInSepCol = "AESEV",
-		stats = getStats("N (%)"),
-		labelVars = labelVars
+		colVar = "TRTP",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		file = file.path("tables", "Table_exampleRowVarInSepCol.docx")
 	)
 	
 ```
@@ -532,7 +542,7 @@ are retained (ordered alphabetically if not specified), e.g. to use the ordering
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD", "AESEV"),
 		rowVarInSepCol = "AESEV",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
 
@@ -550,7 +560,7 @@ provided for the `rowVar` parameter.
 		rowVar = c("AESOC", "AEDECOD", "AESEV"),
 		rowVarInSepCol = "AESEV",
 		rowOrder = list(AESOC = "total", 'AEDECOD' = "alphabetical", AESEV = "auto"),
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
 
@@ -571,7 +581,7 @@ The categories of the adverse events on only the treated patients.
 		rowVar = c("AESOC", "AEDECOD", "AESEV"),
 		colVar = "TRTP",
 		rowVarInSepCol = "AESEV",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		rowOrder = "total",
 		# consider only the counts of the treated patients to order the rows
@@ -609,7 +619,7 @@ the counts of treated-patients presenting this event.
 		labelVars = labelVars,
 		title = "Table: Adverse Events ordered based on total counts",
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
-		footer = "Statistics: N (%)"
+		footer = "Statistics: n (%)"
 	)
 
 ```
@@ -629,7 +639,7 @@ specifying the `labelVars` parameter.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
 	
@@ -649,7 +659,7 @@ specified), `rowVarLab` is set to this unique label.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
@@ -685,12 +695,13 @@ subject-level (`ADSL`) dataset.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
 		dataTotal = dataTotal,
-		labelVars = labelVars
+		labelVars = labelVars,
+		file = file.path("tables", "Table_dataTotal.docx")
 	)
 
 ```
@@ -714,12 +725,13 @@ This column is by default labelled 'Total', but this can be customized with the
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
 		colTotalInclude = TRUE, colTotalLab = "All treatments",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
 		dataTotal = dataTotal,
-		labelVars = labelVars
+		labelVars = labelVars,
+		file = file.path("tables", "Table_dataTotal.docx")
 	)
 
 ```
@@ -740,7 +752,7 @@ with the label specified in `rowTotalLab`.
 		rowVarTotalInclude = "AESOC", rowTotalLab = "Any AE", 
 		rowVarTotalInSepRow = "Any AE",
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
@@ -761,7 +773,7 @@ of this variable.
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarTotalInclude = "AEDECOD", 
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
@@ -782,7 +794,7 @@ variable is additionally specified in `rowVarTotalInSepRow`.
 		rowVarTotalInclude = "AEDECOD",
 		rowVarTotalInSepRow = "AEDECOD",
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
@@ -811,7 +823,7 @@ This is not displayed if `colHeaderTotalInclude` is set to FALSE.
 		rowVarTotalInclude = "AEDECOD",
 		rowVarTotalInSepRow = "AEDECOD",
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
@@ -839,7 +851,7 @@ In general, labels (for variable, row and column) can be specified via the
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
 		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
@@ -958,25 +970,26 @@ a custom filtering functions is specified via the `filterFct` parameter.
 		
 	# SOC with AE terms with at least 2 subjects
 	getSummaryStatisticsTable(
-		data = dataAE,
+		data = subset(dataAE, TRTEMFL == "Y"),
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		filterFct = function(x)
 			ddply(x, "AESOC", function(y)
 				if(any(y$statN >= 2))	y			
 			),
-		labelVars = labelVars
+		labelVars = labelVars,
+		file = file.path("tables", "Table_TEAE_filterFct.docx")
 	)
 	
 	# AE term with at least one term with more than 25% in the treatment
 	getSummaryStatisticsTable(
-		data = dataAE,
+		data = subset(dataAE, TRTEMFL == "Y"),
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		filterFct = function(x)
 			ddply(x, "AEDECOD", function(xTerm){
 				xTermTreatment <- subset(xTerm, grepl("75 mg", TRTP))
@@ -1008,7 +1021,7 @@ By default, the table is styled for a CSR report.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
 		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
@@ -1030,7 +1043,7 @@ In this case, the color/style follows _Galapagos_ style guidelines.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
 		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
@@ -1080,7 +1093,7 @@ The supporting data displayed in the `flextable` object is outputted to a R
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTP",
-		stats = getStats("N (%)"),
+		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
 		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
@@ -1152,7 +1165,7 @@ or related to the treatment and with high severity.
 		dataTotal = dataTotal,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		title = "Table: Adverse events: counts for groups of interest",
-		footer = "Statistics: N (%)"
+		footer = "Statistics: n (%)"
 	)
 
 ```
@@ -1194,10 +1207,9 @@ or related to the treatment and with high severity.
 		rowAutoMerge = TRUE,
 		title = "Table: demographic data and baseline characteristics",
 		footer = "N=number of subjects with data; n=number of subjects with this observation",
-		file = file.path("tables_CSR", "Table_DemographicData.docx")
+		file = file.path("tables", "Table_DemographicData.docx")
 	)
-
-
+	
 ```
 
 ## Laboratory abnormalities
@@ -1231,19 +1243,25 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 	# specific analysis visits
 	dataLB <- subset(dataLB, AVISIT %in% c("Baseline", "Day 14", "Day 28", "Follow-up"))
 	
+	dataLB$ANRIND <- factor(dataLB$ANRIND, 
+		levels = c('L', 'N', 'H', 'H+L'),
+		labels = c("Low", "Normal", "High", "High+Low")
+	)
+	
 	# create summary table
 	getSummaryStatisticsTable(
 		data = dataLB,
-		rowVar = c("PARCAT1", "PARCAT2", "PARAMCD", "ANRIND"),
+		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "ANRIND"),
 		rowVarInSepCol = "ANRIND",
+		rowVarLab = c(PARAM = "Laboratory Parameter\nn (%)", labelVars["ANRIND"]),
 		colVar = c("TRTP", "AVISIT"),  
 		type = "count",
 		labelVars = labelVars,
-		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
-		title = "Table: Treatment-emergent laboratory abnormalities",
-		file = "summaryStatisticsTable_LB_count.docx",
-		footer = "Statistics: N (%)",
-		landscape = TRUE
+		stats = getStats("n (%)"),
+		title = "Table: Laboratory abnormalities",
+		footer = "Statistics: n (%)",
+		landscape = TRUE,
+		file = file.path("tables", "Table_LB.docx")
 	)
 
 ```
@@ -1277,7 +1295,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		dataTotal = dataTotal,
 		rowVarTotalInclude = "AEHLGT",
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
-		footer = "Statistics: N (%)",
+		footer = "Statistics: n (%)",
 		file = "summaryStatisticsTable_AE_count.docx",
 	)
 
@@ -1286,28 +1304,54 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 ## Pharmacokinetic parameters
 
 ```{r example-PP}
-	
-	dataPP <- dataAll$ADPP
-	
-	# ensure that order of elements is the one specified in the corresponding numeric variable
-	library(glpgUtilityFct)
-	dataPP <- convertVarToFactor(
-		data = dataPP, 
-		var = c("PARCAT1", "PARAM", "AVISIT", "TRTP"), 
-		varNum = c("PARCAT1N", "PARAMN", "AVISITN", "TRTPN")
+
+	# format labels with subscript
+	paramLabelPK <- c(
+		CTROUGH = "C_{trough} (ng/mL)", 
+		TLAG = "t_{lag} (h)",
+		TMAX = 't_{max} (h)', 
+		CMAX = "C_{max} (ng/mL)",
+		AUCTAU = "AUC_{0-t} (ng.h/mL)",
+		AUC08H = "AUC_{0-8h} (ng.h/mL)"
 	)
+	dataPP$PARAMRF <- paramLabelPK[dataPP$PARAMCD]
+	
+	# for each PK parameter: number of decimals if max number dicmals of AVAL based on:
+	# 2 decimals for values < 10
+	# 1 decimal for values > 10 and < 1000
+	# No decimals for value > 1000.
+	customNDec <- function(x)	ifelse(x > 1000, 0, ifelse(x > 10, 1, 2))
+	nMaxDec <- daply(dataPP, "PARAMRF", function(x) max(customNDec(x$AVAL), na.rm = TRUE))
+	
+	# Values are arithmetic mean (CV%) except median (min-max) for tmax
+	# [mean, median]: + 1 digit
+	nMaxDecTMax <- unname(nMaxDec[paramLabelPK["TMAX"]])
+	statsPP <- sapply(nMaxDec, function(nMaxDec){
+		list(
+			bquote(
+				ifelse(statMean == 0, 0, paste0(
+						roundCustom(statMean, .(nMaxDec + 1)), " (",
+						roundCustom(statCVPerc, .(nMaxDec)), ")"
+					)
+				)
+			)
+		)
+	}, simplify = FALSE)
 	
 	getSummaryStatisticsTable(
-		data = dataPP,
+		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
 		var = "AVAL",
-		colVar = c("TRTP", "AVISIT"),
-		rowVar = c("PARCAT1", "PARAM"),
-		labelVars = labelVars,
-		stats =  list(expression(paste0(formatC(statMedian), "\n(", 
-			formatC(statMin), ", ", formatC(statMin), ")"))),
-		footer = "Statistics: median (min, max)",
-		file = "summaryStatisticsTable_PP_summaryStatistics.docx"
-	)
+		colVar = "TRTP",
+		rowVar = c("PARCAT1", "PARAMRF"),
+		rowVarLab = c(
+			'PARAMRF' = "Pharmacokinetics parameter", 
+			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
+		),
+		statsExtra = list(statCVPerc = cv),
+		stats = statsPP, statsVarBy = "PARAMRF",
+		# include the footnote
+		footer = "(1) Each compound is labelled according to its Galapagos compound ID."
+	)	
 
 ```
 
@@ -1326,7 +1370,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		stats = list(expression(paste0("[X.XX]"))),
 		title = "Table: Treatment-emergent laboratory abnormalities (mock-up)",
 		file = "summaryStatisticsTable_LB_mockUp_count.docx",
-		footer = "Statistics: N (%)",
+		footer = "Statistics: n (%)",
 		landscape = TRUE
 	)
 
