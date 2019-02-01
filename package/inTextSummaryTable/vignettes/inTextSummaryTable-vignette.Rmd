@@ -1161,6 +1161,45 @@ or related to the treatment and with high severity.
 
 # Use cases
 
+## Demographics table
+
+```{r useCase-demoTable}
+
+	# data of interest
+	dataDM <- subset(dataAll$ADSL, SAFFL == "Y")
+	
+	# variables of interest
+	varsDMNum <- c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL")
+	varsDMCat <- c("RACE", "SEX")
+	varsDM <- c(varsDMNum, varsDMCat)
+	
+	# order categorical variables according to their numeric variable
+	dataDM <- convertVarToFactor(
+		data = dataDM,
+		var = c("SEX", "RACE"),
+		varNum = c("SEXN", "RACEN")
+	)
+	dataDM$ACTARMCD <- with(dataDM, reorder(ACTARM, ACTARMCD, unique))
+	
+	# create the table
+	getSummaryStatisticsTable(
+		data = dataDM, 
+		var = varsDM,
+		varGeneralLab = "Parameter",
+		statsGeneralLab = "",
+		colVar = "ACTARM", colTotalInclude = TRUE,
+		rowVarTotalPerc = "variable",
+		statsLayout = "row",
+		labelVars = labelVars,
+		rowAutoMerge = TRUE,
+		title = "Table: demographic data and baseline characteristics",
+		footer = "N=number of subjects with data; n=number of subjects with this observation",
+		file = file.path("tables_CSR", "Table_DemographicData.docx")
+	)
+
+
+```
+
 ## Laboratory abnormalities
 
 The laboratory parameters are grouped by category, and the visit is indicated in
