@@ -162,7 +162,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 			dataTable = headerDf, ft = ft, 
 			part = "header",
 			fontname = fontname,
-			fontsize = fontsize
+			fontsize = fontsize,
+			iBase = length(title)
 		)
 	
 	# set style
@@ -238,6 +239,7 @@ getDimPage <- function(
 #' @param fontsize Integer with font size, 8 by default.
 #' @param part string with part of the table to consider, 
 #' see \code{\link[flextable]{display}}.
+#' @param iBase Integer with base row index (if different than 0).
 #' @return \code{\link[flextable]{flextable}} with superscript/subscript.
 #' @importFrom stats as.formula
 #' @importFrom officer fp_text
@@ -247,7 +249,8 @@ formatSuperSubscriptToFlextable <- function(
 	dataTable, ft, 
 	fontname = "Times",
 	part = "body",
-	fontsize = 8){
+	fontsize = 8,
+	iBase = 0){
 
 	patterns <- c("superscript" = "(.+)\\^\\{(.+)\\}(.*)", "subscript" = "(.+)_\\{(.+)\\}(.*)")
 	
@@ -288,7 +291,7 @@ formatSuperSubscriptToFlextable <- function(
 					
 					# set superscript/subscript in flextable
 					ft <- ft %>% display(
-						i = idxSuperscriptAI[iSP, 1],
+						i = idxSuperscriptAI[iSP, 1] + iBase,
 						col_key = idxSuperscriptAI[iSP, 2],
 						pattern = paste0("{{value}}{{pow}}", if(el[4] != "") "{{value2}}"),
 						formatters = fm,

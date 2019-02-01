@@ -6,7 +6,7 @@
 Superscript should be indicated as 'a^{b}' and subscript as 'a_{b}' the input summary table.}
 \usage{
 formatSuperSubscriptToFlextable(dataTable, ft, fontname = "Times",
-  part = "body", fontsize = 8)
+  part = "body", fontsize = 8, iBase = 0)
 }
 \arguments{
 \item{dataTable}{data.frame with data used in table,
@@ -20,6 +20,8 @@ summary table for body or header data.frame for the header.}
 see \code{\link[flextable]{display}}.}
 
 \item{fontsize}{Integer with font size, 8 by default.}
+
+\item{iBase}{Integer with base row index (if different than 0).}
 }
 \value{
 \code{\link[flextable]{flextable}} with superscript/subscript.

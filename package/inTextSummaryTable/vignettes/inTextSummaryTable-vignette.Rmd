@@ -232,7 +232,6 @@ range:
 
 ```{r stats-meanSE}
 
-	stop("test")
 	getSummaryStatisticsTable(
 		data = dataSL,
 		var = c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL"),
@@ -537,13 +536,30 @@ are retained (ordered alphabetically if not specified), e.g. to use the ordering
 ##### Common order for all row variables
 
 ```{r rowOrder-common}
-	
+
+	# 'auto'
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
-		rowVar = c("AESOC", "AEDECOD", "AESEV"),
-		rowVarInSepCol = "AESEV",
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarLab = labelVars[c("AEDECOD")],
+		rowVarTotalInclude = c("AESOC", "AEDECOD"),
+		colVar = "TRTP", colTotalInclude = TRUE,
 		stats = getStats("n (%)"),
-		labelVars = labelVars
+		labelVars = labelVars,
+		file = file.path("tables", "Table_rowOrder_alphabetical.docx")
+	)
+	
+	# total counts
+	getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarLab = labelVars[c("AEDECOD")],
+		rowVarTotalInclude = c("AESOC", "AEDECOD"),
+		colVar = "TRTP", colTotalInclude = TRUE,
+		rowOrder = "total",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		file = file.path("tables", "Table_rowOrder_total.docx")
 	)
 
 ```
@@ -557,11 +573,14 @@ provided for the `rowVar` parameter.
 
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
-		rowVar = c("AESOC", "AEDECOD", "AESEV"),
-		rowVarInSepCol = "AESEV",
-		rowOrder = list(AESOC = "total", 'AEDECOD' = "alphabetical", AESEV = "auto"),
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarLab = labelVars[c("AEDECOD")],
+		rowVarTotalInclude = c("AESOC", "AEDECOD"),
+		colVar = "TRTP", colTotalInclude = TRUE,
+		rowOrder = c(AESOC = "alphabetical", AEDECOD = "total"),
 		stats = getStats("n (%)"),
-		labelVars = labelVars
+		labelVars = labelVars,
+		file = file.path("tables", "Table_rowOrder_differentPerVar.docx")
 	)
 
 ```
@@ -578,14 +597,16 @@ The categories of the adverse events on only the treated patients.
 
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
-		rowVar = c("AESOC", "AEDECOD", "AESEV"),
-		colVar = "TRTP",
-		rowVarInSepCol = "AESEV",
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarLab = labelVars[c("AEDECOD")],
+		rowVarTotalInclude = c("AESOC", "AEDECOD"),
+		colVar = "TRTP", colTotalInclude = TRUE,
+		rowOrder = "total",
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
-		rowOrder = "total",
 		# consider only the counts of the treated patients to order the rows
 		rowOrderTotalFilterFct = function(x) subset(x, TRTP == "treatmentX"),
+		file = file.path("tables", "Table_rowOrder_filterFct.docx")
 	)
 
 ```
@@ -869,7 +890,7 @@ The pharmacokinetics data is used for demonstration.
 
 ```{r data-ADSL}
 	
-	dataPP <- dataAll$ADPP
+	dataPP <- subset(dataAll$ADPP, SAFFL == "Y")
 	
 	# ensure that order of elements is the one specified in the corresponding numeric variable
 	library(glpgUtilityFct)
@@ -905,15 +926,15 @@ footnote or specify custom variable labels.
 		AUC08H = "AUC_{0-8h} (ng.h/mL)"
 	)
 	dataPP$PARAMRF <- paramLabelPK[dataPP$PARAMCD]
-
+	
 	getSummaryStatisticsTable(
 		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
 		var = "AVAL",
 		colVar = "TRTP",
 		rowVar = c("PARCAT1", "PARAMRF"),
 		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter", 
-			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
+			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
+			'PARCAT1' = "" 
 		),
 		stats = list(expression(paste0(roundCustom(statMean, 1), "\n(", roundCustom(statSE, 2),")"))),
 		# include the footnote
@@ -1344,13 +1365,18 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		colVar = "TRTP",
 		rowVar = c("PARCAT1", "PARAMRF"),
 		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter", 
-			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
+			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
+			'PARCAT1' = "" 
 		),
 		statsExtra = list(statCVPerc = cv),
 		stats = statsPP, statsVarBy = "PARAMRF",
 		# include the footnote
-		footer = "(1) Each compound is labelled according to its Galapagos compound ID."
+		footer = c(
+			"Mean (CV%) indicated for each parameter.",
+			"(1) Each compound is labelled according to its Galapagos compound ID."
+		),
+		file = file.path("tables", "Table_superscriptSubscriptTitleFootnote.docx"),
+		title = "Table: PK Parameters (Safety Analysis Set)"
 	)	
 
 ```
