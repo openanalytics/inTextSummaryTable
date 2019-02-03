@@ -964,8 +964,7 @@ For example, pharmacokinetic tables are created for each compound:
 		byVar = "PARCAT1", 
 		labelVars = labelVars,
 		stats = list(expression(paste0(roundCustom(statMean, 1), "\n(", roundCustom(statSE, 2),")"))),
-		# include the footnote
-		footer = "(1) Each compound is labelled according to its Galapagos compound ID."
+		file = file.path("tables", "Table_byVar.docx")
 	)	
 	# print the list of tables in the rmarkdown document
 	glpgUtilityFct::knitPrintListObjects(summaryTableList) 
@@ -983,11 +982,6 @@ a custom filtering functions is specified via the `filterFct` parameter.
 ```{r countTable-AE-filterFct-rowVar1}
 
 	library(plyr)
-	filterFct <- function(x){
-		ddply(x, "AESOC", function(y)
-			if(any(y$statN >= 2)) y
-		)
-	}
 		
 	# SOC with AE terms with at least 2 subjects
 	getSummaryStatisticsTable(
@@ -1001,7 +995,8 @@ a custom filtering functions is specified via the `filterFct` parameter.
 				if(any(y$statN >= 2))	y			
 			),
 		labelVars = labelVars,
-		file = file.path("tables", "Table_TEAE_filterFct.docx")
+		title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 2 patients in System Organ Class",
+		file = file.path("tables", "Table_TEAE_filterFct_nPatientsMoreThan2.docx")
 	)
 	
 	# AE term with at least one term with more than 25% in the treatment
@@ -1014,9 +1009,11 @@ a custom filtering functions is specified via the `filterFct` parameter.
 		filterFct = function(x)
 			ddply(x, "AEDECOD", function(xTerm){
 				xTermTreatment <- subset(xTerm, grepl("75 mg", TRTP))
-				if(any(xTermTreatment$statPercN >= 10))	xTerm		
+				if(any(xTermTreatment$statPercN >= 20))	xTerm		
 			}),
-		labelVars = labelVars
+		labelVars = labelVars,
+		title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 20% patients in treatment category",
+		file = file.path("tables", "Table_TEAE_filterFct_perPatientsMore20PercTreatment.docx")
 	)
 	
 ```
@@ -1045,12 +1042,13 @@ By default, the table is styled for a CSR report.
 		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
-		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
+		title = "Table: Adverse Events by System Organ Class and Preferred Term",
 		footer = c(
 			"N=number of subjects with data; n=number of subjects with this observation",
 			"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population"
 		),
-		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
+		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+		file = file.path("tables", "Table_style_report.docx")
 	)
 
 ```
@@ -1067,13 +1065,14 @@ In this case, the color/style follows _Galapagos_ style guidelines.
 		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
-		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
+		title = "Table: Adverse Events by System Organ Class and Preferred Term",
 		footer = c(
 			"N=number of subjects with data; n=number of subjects with this observation",
 			"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population"
 		),
 		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
-		style = "presentation"
+		style = "presentation",
+		file = file.path("tables", "Table_style_presentation.docx")
 	)
 
 ```
@@ -1117,7 +1116,7 @@ The supporting data displayed in the `flextable` object is outputted to a R
 		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
-		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
+		title = "Table: Adverse Events by System Organ Class and Preferred Term",
 		footer = c(
 			"N=number of subjects with data; n=number of subjects with this observation",
 			"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population"
@@ -1387,17 +1386,18 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 
 	# create summary table
 	getSummaryStatisticsTable(
-		data = dataLB,
-		rowVar = c("PARCAT1", "PARCAT2", "PARAMCD", "ANRIND"),
+		data = subset(dataLB, PARCAT2 %in% c("ENZYMES", "LIPIDS")),
+		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "ANRIND"),
 		rowVarInSepCol = "ANRIND",
 		colVar = c("TRTP", "AVISIT"),  
 		type = "count",
 		labelVars = labelVars,
+		rowVarLab = c(PARAM = "Parameter", labelVars["ANRIND"]),
 		stats = list(expression(paste0("[X.XX]"))),
 		title = "Table: Treatment-emergent laboratory abnormalities (mock-up)",
-		file = "summaryStatisticsTable_LB_mockUp_count.docx",
 		footer = "Statistics: n (%)",
-		landscape = TRUE
+		landscape = TRUE,
+		file = file.path("tables", "Table_mockUp.docx")
 	)
 
 ```
