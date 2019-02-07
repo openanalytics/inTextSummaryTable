@@ -100,3 +100,14 @@ interactionCustom <- function(data, var,
 	return(res)
 	
 }
+
+#' Get number of decimals.
+#' @param x Numeric vector.
+#' @return Numeric vector of same length than \code{x}
+#' with the number of decimals
+#' @author Laure Cougnaud
+#' @export
+getNDecimals <- function(x)
+	nchar(sub("-*[[:digit:]]+\\.*([[:digit:]]+)*", 
+		"\\1", as.character(sapply(x, format, scientific = FALSE)))
+	)
