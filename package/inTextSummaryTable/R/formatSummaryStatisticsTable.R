@@ -303,13 +303,16 @@ formatSummaryStatisticsTable <- function(
 			colContentTable <- setdiff(colnames(dataLong), c(rowVar, rowVarFinal, "rowVarFinal", "rowPadding"))
 			idxIsNA <- which(is.na(dataLong[, rowVarFinal]))
 			if(length(idxIsNA) > 0){
-				# check if the table content to fill is all NA
-				if(any(!is.na(dataLong[idxIsNA-1, colContentTable])))
-					stop("Issue while merging rows.")
-				dataIsNa <- dataLong[idxIsNA, ]
-				dataIsNa[, c("rowPadding", rowVarFinal)] <- dataLong[idxIsNA-1,  c("rowPadding", rowVarFinal)]
-				dataLong[idxIsNA-1, ] <- dataIsNa
-				dataLong <- dataLong[-idxIsNA, ] 
+				# check if the table content to fill (previous row) is all NA
+				idxIsNaButNotContent <- which(any(!is.na(dataLong[idxIsNA-1, colContentTable])))
+				# don't consider the case that it is NA, e.g. if subgroup in input data is NA
+				idxIsNA  <- idxIsNA[-idxIsNaButNotContent]
+				if(length(idxIsNA) > 0){
+					dataIsNa <- dataLong[idxIsNA, ]
+					dataIsNa[, c("rowPadding", rowVarFinal)] <- dataLong[idxIsNA-1,  c("rowPadding", rowVarFinal)]
+					dataLong[idxIsNA-1, ] <- dataIsNa
+					dataLong <- dataLong[-idxIsNA, ] 
+				}
 			}
 			
 			dataLong[, c(rowVarToModify, "rowVarFinal")] <- rownames(dataLong) <- NULL
