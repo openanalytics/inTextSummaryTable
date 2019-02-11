@@ -20,7 +20,9 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   tableLabel = NULL, tableHeight = 0.2, label = FALSE,
   byVar = NULL, hLine = NULL, style = "report",
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
-  fontsize = switch(style, report = 8, presentation = 10))
+  fontsize = switch(style, report = 8, presentation = 10),
+  themeFct = switch(style, report = theme_classic, presentation =
+  theme_bw))
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -103,6 +105,8 @@ with each corresponding element.}
 \item{fontname}{String with font name.}
 
 \item{fontsize}{Numeric vector with font size.}
+
+\item{themeFct}{Function with ggplot2 theme.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object or list of such

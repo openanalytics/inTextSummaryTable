@@ -73,7 +73,8 @@ subjectProfileSummaryPlot <- function(data,
 	hLine = NULL,
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
+	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw)){
 
 	if(!is.null(facetVar) & !is.null(tableText)){
 		warning("Table cannot be used in combination with 'facetVar', no table is included.")
@@ -205,7 +206,7 @@ subjectProfileSummaryPlot <- function(data,
 	if(length(argsLab) > 0)
 		gg <- gg + do.call(labs, argsLab)
 	
-	gg <- gg + theme_classic() + theme(
+	gg <- gg + themeFct() + theme(
 		legend.position = "bottom",
 		text = element_text(family = fontname, size = fontsize)
 	)
@@ -251,7 +252,8 @@ subjectProfileSummaryPlot <- function(data,
 			showLegend = FALSE, yAxisLabs = !is.null(colorVar),
 			style = style,
 			fontname = fontname,
-			fontsize = fontsize
+			fontsize = fontsize,
+			themeFct = themeFct
 		)
 		
 		ggTable <- ggTable + fctScaleX
@@ -293,6 +295,7 @@ subjectProfileSummaryPlot <- function(data,
 #' @param style String with subject profile style, either 'report' or 'presentation'.
 #' @param fontname String with font name.
 #' @param fontsize Numeric vector with font size.
+#' @param themeFct Function with ggplot2 theme.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @author Laure Cougnaud
@@ -309,7 +312,8 @@ subjectProfileSummaryTable <- function(
 	xAxisLabs = NULL,
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	fontsize = switch(style, 'report' = 8, 'presentation' = 10)){
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
+	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw)){
 	
 	data$tableTextLabel <- if(is.expression(text)){
 		eval(expr = text, envir = data)
@@ -367,7 +371,11 @@ subjectProfileSummaryTable <- function(
 			axis.title.y = element_blank(),
 			axis.text.x = element_blank(),
 			axis.ticks.x = element_blank(),
-			text = element_text(family = fontname, size = fontsize)
+			text = element_text(family = fontname, size = fontsize),
+			panel.grid.major = element_blank(),
+			panel.grid.minor = element_blank(),
+			panel.border = element_blank(),
+			panel.background = element_blank()
 		),
 		if(is.null(xLab))	list(axis.title.x = element_blank()),
 		if(!yAxisLabs){
@@ -377,7 +385,7 @@ subjectProfileSummaryTable <- function(
 		},
 		if(!showLegend)	list(legend.position = "none")
 	)
-	ggTable <- ggTable + theme_classic() + do.call(theme, argsTheme)
+	ggTable <- ggTable + themeFct() + do.call(theme, argsTheme)
 	
 	return(ggTable)
 

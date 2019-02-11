@@ -11,7 +11,8 @@ subjectProfileSummaryTable(data, xVar, text, xLim = NULL,
   showLegend = TRUE, yAxisLabs = FALSE, xAxisLabs = NULL,
   style = "report", fontname = switch(style, report = "Times",
   presentation = "Tahoma"), fontsize = switch(style, report = 8,
-  presentation = 10))
+  presentation = 10), themeFct = switch(style, report = theme_classic,
+  presentation = theme_bw))
 }
 \arguments{
 \item{data}{Data.frame with data for the table.}
@@ -48,6 +49,8 @@ is discrete or vector with limits if continuous.}
 \item{fontname}{String with font name.}
 
 \item{fontsize}{Numeric vector with font size.}
+
+\item{themeFct}{Function with ggplot2 theme.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object
