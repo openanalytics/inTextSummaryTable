@@ -3,6 +3,7 @@
     o formatSummaryStatisticsTable: remove 'Statistics' column if all the same
     o getNDecimals
     o getColorTable/colorTable parameter, pageDim parameter
+    o subjectProfileSummaryPlot: themeFct parameter, remove box and grid lines for table
 0.0.10
     o formatSummaryStatisticsTable: fix for rowSubtotalInSepRow
     o rowAutoMerge, rowVarTotalPerc, rowVarTotalExtra
