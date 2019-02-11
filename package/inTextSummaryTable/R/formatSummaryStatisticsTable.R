@@ -409,8 +409,11 @@ formatSummaryStatisticsTable <- function(
 	# in less elements in one column, replicate the first element (to have it merged in final ft)
 	headerDf <- as.data.frame(
 		do.call(cbind, 
-			lapply(header, function(x)	c(rep(x[1], nRowsHeader - length(x)), x))
-		)
+			lapply(header, function(x){
+				x1 <- if(length(x) == 0)	""	else	x[1] # fix in case var is empty
+				c(rep(x1, nRowsHeader - length(x)), x)
+			}
+		))
 	)
 	colnames(headerDf) <- colnames(dataLong)
 	attributes(dataLong)$summaryTable$header <- headerDf
