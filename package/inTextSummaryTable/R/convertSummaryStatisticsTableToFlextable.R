@@ -422,7 +422,7 @@ getGLPGFlextable <- function(data,
 			vline(border = bd, part = "body") %>%
 			vline(border = bd, part = "header")
 		if(style == "presentation")
-			ft <- ft %>% hline(border = bd, part = "body") %>%
+			ft <- ft %>% hline(border = bd, part = "body")
 		if(!is.null(title))
 			ft <- ft %>% hline(j = length(title), border = bd, part = "header") 
 	}
