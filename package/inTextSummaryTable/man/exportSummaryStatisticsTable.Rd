@@ -17,9 +17,10 @@ exportSummaryStatisticsTable(summaryTable,
   landscape = (style == "presentation"), margin = 1,
   rowPadBase = 14.4, title = NULL, footer = NULL,
   outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), style = "report", fontsize = switch(style,
+  "col", "rowInSepCol"), style = "report",
+  colorTable = getColorTable(style = style), fontsize = switch(style,
   report = 8, presentation = 10), fontname = switch(style, report =
-  "Times", presentation = "Tahoma"), vline = "none")
+  "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -108,6 +109,9 @@ and table dimensions of the table.}
 \item{'none' (default): }{no vertical lines included}
 \item{'auto': }{vertical lines included between sub-groups}
 }}
+
+\item{pageDim}{Numeric vector of length 2 with page width and height in inches
+in portrait format.}
 }
 \value{
 Depending on the \code{outputType}:

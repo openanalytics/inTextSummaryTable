@@ -8,7 +8,8 @@ getGLPGFlextable(data, ft = NULL, border = TRUE,
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   fontsize = switch(style, report = 8, presentation = 10),
   landscape = (style == "presentation"), style = "report",
-  margin = 1, adjustWidth = TRUE, align = TRUE, title = NULL)
+  margin = 1, adjustWidth = TRUE, colorTable = getColorTable(style =
+  style), align = TRUE, title = NULL, pageDim = NULL)
 }
 \arguments{
 \item{data}{data.frame with data used in table.}
@@ -30,11 +31,17 @@ format.}
 
 \item{adjustWidth}{Logical, if TRUE adjust column widths.}
 
+\item{colorTable}{Named character vector with color for the table,
+see output of \code{\link{getColorTable}} for required elements.}
+
 \item{align}{Logical, if TRUE (by default), default alignment is set.}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.
 Only available if \code{ft} is not specified.}
+
+\item{pageDim}{Numeric vector of length 2 with page width and height in inches
+in portrait format.}
 }
 \value{
 \code{\link[flextable]{flextable}} with GLPG style.

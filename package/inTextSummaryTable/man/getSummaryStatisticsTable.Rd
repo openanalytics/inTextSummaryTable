@@ -25,11 +25,11 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
   footer = NULL, file = NULL, outputType = c("flextable",
   "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  style = "report", byVar = NULL, byVarLab = getLabelVar(byVar, data
-  = data, labelVars = labelVars), colHeaderTotalInclude = TRUE,
-  fontsize = switch(style, report = 8, presentation = 10),
-  fontname = switch(style, report = "Times", presentation = "Tahoma"),
-  vline = "none")
+  style = "report", colorTable = getColorTable(style = style),
+  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
+  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
+  report = 8, presentation = 10), fontname = switch(style, report =
+  "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -271,6 +271,9 @@ of the output list of table(s).}
 \item{'none' (default): }{no vertical lines included}
 \item{'auto': }{vertical lines included between sub-groups}
 }}
+
+\item{pageDim}{Numeric vector of length 2 with page width and height in inches
+in portrait format.}
 }
 \value{
 Depending on the \code{outputType}:

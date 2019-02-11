@@ -49,12 +49,13 @@ getSummaryStatisticsTable <- function(
 	file = NULL,
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
-	style = "report",
+	style = "report", 
+	colorTable = getColorTable(style = style),
 	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	vline = "none"){
+	vline = "none", pageDim = NULL){
 
 	statsLayout <- match.arg(statsLayout)
 
@@ -111,10 +112,10 @@ getSummaryStatisticsTable <- function(
 		margin = margin, rowPadBase = rowPadBase,
 		outputType = outputType,
 		statsLayout = statsLayout,
-		style = style,
+		style = style, colorTable = colorTable,
 		fontsize = fontsize,
 		fontname = fontname,
-		vline = vline
+		vline = vline, pageDim = pageDim
 	)
 	
 	return(ft)

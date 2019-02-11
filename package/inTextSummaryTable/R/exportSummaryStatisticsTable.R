@@ -34,10 +34,10 @@ exportSummaryStatisticsTable <- function(
 	footer = NULL,
 	outputType = c("flextable", "data.frame"),
 	statsLayout = c("row", "col", "rowInSepCol"),
-	style = "report",
+	style = "report", colorTable = getColorTable(style = style),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	vline = "none"){
+	vline = "none", pageDim = NULL){
 
 	outputType  <- match.arg(outputType)
 	
@@ -69,7 +69,9 @@ exportSummaryStatisticsTable <- function(
 			title = title, footer = footer,
 			style = style, fontsize = fontsize,
 			file = file,
-			fontname = fontname
+			fontname = fontname,
+			colorTable = colorTable,
+			pageDim = pageDim
 		)
 		
 	}

@@ -6,9 +6,10 @@
 \usage{
 convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
   == "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
-  footer = NULL, style = "report", fontname = switch(style, report =
-  "Times", presentation = "Tahoma"), fontsize = switch(style, report = 8,
-  presentation = 10), file = NULL)
+  footer = NULL, style = "report", colorTable = getColorTable(style =
+  style), fontname = switch(style, report = "Times", presentation =
+  "Tahoma"), fontsize = switch(style, report = 8, presentation = 10),
+  file = NULL, pageDim = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -39,6 +40,9 @@ and table dimensions of the table.}
 
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
+
+\item{pageDim}{Numeric vector of length 2 with page width and height in inches
+in portrait format.}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table

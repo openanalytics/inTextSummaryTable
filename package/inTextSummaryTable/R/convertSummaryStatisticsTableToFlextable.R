@@ -32,9 +32,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 	title = NULL, 
 	footer = NULL,
 	style = "report",
+	colorTable = getColorTable(style = style),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
-	file = NULL
+	file = NULL, pageDim = NULL
 ){
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
@@ -73,10 +74,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 		na.omit(names(colsDataFt)[match(initCol, colsDataFt)])
 	
 	## borders
-	bd <- switch(style,
-		'report' = fp_border(),
-		'presentation' = fp_border(color = "white")
-	)
+	bd <- fp_border(color = colorTable["line"])
 	ft <- border_remove(ft)
 	# if no vertical lines, only horizontal line 
 	# between header/stub, top header and bottom stub
@@ -174,12 +172,15 @@ convertSummaryStatisticsTableToFlextable <- function(
 		fontname = fontname,
 		fontsize = fontsize,
 		landscape = landscape,
-		margin = margin
+		margin = margin,
+		colorTable = colorTable,
+		pageDim = pageDim
 	)
 	
 	# adjust to fit in document:
 	widthPage <- getDimPage(
 		type = "width", landscape = landscape, margin = margin,
+		pageDim = pageDim,
 		style = style
 	)
 	varFixed <- getNewCol(intersect(c("Statistic"), colsDataFt))
@@ -202,6 +203,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 #' format.
 #' @param margin Margin in the document in inches.
 #' @param style string with table style, either 'report' or 'presentation'
+#' @param pageDim Numeric vector of length 2 with page width and height in inches
+#' in portrait format.
 #' @return integer with dimension of interest
 #' @author Laure Cougnaud
 #' @export
@@ -209,6 +212,7 @@ getDimPage <- function(
 	type = c("width", "height"), 
 	landscape = (style == "presentation"), 
 	margin = 1,
+	pageDim = NULL,
 	style = "report"){
 
 	# landscape: 29.7 * 21 cm ~ 11 * 8 inches ~ 2138.4 * 1512 ptx
@@ -216,10 +220,11 @@ getDimPage <- function(
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
 	
-	pageDimPortrait <- switch(style,
-		'report' = c(21, 29.7)/2.54,
-		'presentation' = c(7.5, 10.83)
-	)
+	pageDimPortrait <- 	if(is.null(pageDim))
+		switch(style,
+			'report' = c(21, 29.7)/2.54,
+			'presentation' = c(7.5, 10.83)
+		)	else	pageDim
 	
 	typeDim <- switch(type,
 		'width' = ifelse(landscape, pageDimPortrait[2], pageDimPortrait[1]),
@@ -378,12 +383,13 @@ createFlextableWithHeader <- function(data,
 #' Set to NULL (by default) if no title should be included.
 #' Only available if \code{ft} is not specified.
 #' @param align Logical, if TRUE (by default), default alignment is set.
+#' @param colorTable Named character vector with color for the table,
+#' see output of \code{\link{getColorTable}} for required elements.
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperSubscriptToFlextable
 #' @return \code{\link[flextable]{flextable}} with GLPG style.
 #' @author Laure Cougnaud
 #' @import flextable
-#' @importFrom glpgStyle glpgColor
 #' @importFrom officer fp_border
 #' @export
 getGLPGFlextable <- function(data, 
@@ -395,16 +401,15 @@ getGLPGFlextable <- function(data,
 	style = "report",
 	margin = 1,
 	adjustWidth = TRUE,
+	colorTable = getColorTable(style = style),
 	align = TRUE,
-	title = NULL){
+	title = NULL,
+	pageDim = NULL){
 	
 	if(is.null(ft))
 		ft <- createFlextableWithHeader(data = data, title = title)$ft
 	
-	bd <- switch(style,
-		'report' = fp_border(),
-		'presentation' = fp_border(color = "white")
-	)
+	bd <- fp_border(color = colorTable["line"])
 	
 	# set fontsize
 	ft <- fontsize(ft, size = fontsize, part = "all")
@@ -428,26 +433,29 @@ getGLPGFlextable <- function(data,
 	}
 	
 	# change color text + background
-	if(style == "presentation"){
-		colorTable <- glpgColor(type = "table")
-		ft <- ft %>% 
-			# header in white on green background
-			bg(bg = colorTable["header"], part = "header") %>%
-			color(color = "white", part = "header") %>%
-			# footer with white background
-			bg(bg = "white", part = "footer")
+	ft <- ft %>% 
+		# header
+		color(color = colorTable["header"], part = "header") %>%
+		bg(bg = colorTable["headerBackground"], part = "header") %>%
+		# footer
+		color(color = colorTable["footer"], part = "footer") %>%
+		bg(bg = colorTable["footerBackground"], part = "footer") %>%
+		# text color
+		color(color = colorTable["body"], part = "body")
+	
+	if(all(c("bodyBackground1", "bodyBackground2") %in% names(colorTable))){
 		# alternate background between elements of first column
-		# body with alternated dark and light grey background
 		xBg <- convertVectToBinary(x = data[, 1])
 		ft <- ft %>%
-			bg(bg = colorTable["row1"], i = which(xBg %% 2 == 0), part = "body") %>%
-			bg(bg = colorTable["row2"], i = which(xBg %% 2 == 1), part = "body")
-	}
+			bg(bg = colorTable["bodyBackground1"], i = which(xBg %% 2 == 0), part = "body") %>%
+			bg(bg = colorTable["bodyBackground2"], i = which(xBg %% 2 == 1), part = "body")
+	}else	ft <- ft %>% bg(bg = colorTable["bodyBackground"], part = "body")
 	
 	if(adjustWidth){
 		widthPage <- getDimPage(
 			type = "width", landscape = landscape, margin = margin,
-			style = style
+			style = style,
+			pageDim = NULL
 		)
 		width <- widthPage/ncol(data)
 		ft <- width(ft, j = seq_len(ncol(data)), width = width)
@@ -461,6 +469,42 @@ getGLPGFlextable <- function(data,
 	ft <- height(ft, height = dim_pretty(ft, part = "footer")$heights, part = "footer")
 	
 	return(ft)
+	
+}
+
+#' Get table color
+#' @inheritParams getDimPage
+#' @return Named character vector with color for the different parts of the table,
+#' should at least contain font/background color for:
+#' \itemize{
+#' \item{header: }{'header'/'headerBackground'}
+#' \item{body: }{'body' for body text and either 'bodyBackground' or 
+#' 'bodyBackground1'/'bodyBackground2': for body common background or background 
+#' for alternate rows}
+#' \item{footer: }{'footer'/'footerBackground'}
+#' \item{line: }{'line'}
+#' }
+#' @author Laure Cougnaud
+#' @importFrom glpgStyle glpgColor
+#' @export
+getColorTable <- function(style = c("report", "presentation")){
+	
+	colorTable <- switch(style,
+		'report' = {
+			# black font on white background
+			c(
+				'header' = rgbCustom(0, 0, 0),
+				'headerBackground' = rgbCustom(255, 255, 255),
+				'body' = rgbCustom(0, 0, 0), 
+				'bodyBackground' = rgbCustom(255, 255, 255),
+				'footer' = rgbCustom(0, 0, 0),
+				'footerBackground' = rgbCustom(255, 255, 255),
+				'line' = rgbCustom(255, 255, 255)
+			)
+			
+		},
+		'presentation' = glpgColor(type = "table")
+	)
 	
 }
 
