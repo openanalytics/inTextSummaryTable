@@ -14,6 +14,8 @@
 #' 'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.
 #' @param fontsize Integer with font size, by default:
 #' 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.
+#' @param margin Margin in the document in inches, currently only used to specify the
+#' width of the table: [width page extracted from \code{dimPage} - 2* margin]
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperSubscriptToFlextable
 #' @inheritParams formatSummaryStatisticsTable
