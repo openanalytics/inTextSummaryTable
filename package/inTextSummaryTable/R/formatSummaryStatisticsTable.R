@@ -303,11 +303,22 @@ formatSummaryStatisticsTable <- function(
 			colContentTable <- setdiff(colnames(dataLong), c(rowVar, rowVarFinal, "rowVarFinal", "rowPadding"))
 			idxIsNA <- which(is.na(dataLong[, rowVarFinal]))
 			if(length(idxIsNA) > 0){
-				# check if the table content to fill (previous row) is all NA
-				idxIsNaButNotContent <- which(any(!is.na(dataLong[idxIsNA-1, colContentTable])))
+				
+				# first case: values are the same than in previous row
+				# e.g. only total included (e.g. rest is NA)
+				idxIsNaSameValueAsPreviousRow <- rowSums(
+					dataLong[idxIsNA-1, colContentTable, drop = FALSE] == 
+					dataLong[idxIsNA, colContentTable, drop = FALSE]
+				) == length(colContentTable)
+	
+				# second case: table content to fill (previous row) is all NA
+				idxIsNaButNotContent <- rowSums(is.na(dataLong[idxIsNA-1, colContentTable, drop = FALSE])) == length(colContentTable)
+				
+				idxIsNaToRemove <- which(!idxIsNaButNotContent & !idxIsNaSameValueAsPreviousRow)
+				
 				# don't consider the case that it is NA, e.g. if subgroup in input data is NA
-				if(length(idxIsNaButNotContent) > 0)
-					idxIsNA  <- idxIsNA[-idxIsNaButNotContent]
+				if(length(idxIsNaToRemove) > 0)
+					idxIsNA  <- idxIsNA[-idxIsNaToRemove]
 				if(length(idxIsNA) > 0){
 					dataIsNa <- dataLong[idxIsNA, ]
 					dataIsNa[, c("rowPadding", rowVarFinal)] <- dataLong[idxIsNA-1,  c("rowPadding", rowVarFinal)]
