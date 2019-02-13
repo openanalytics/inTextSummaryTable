@@ -17,7 +17,8 @@ convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
 \item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
 format.}
 
-\item{margin}{Margin in the document in inches.}
+\item{margin}{Margin in the document in inches, currently only used to specify the
+width of the table: [width page extracted from \code{dimPage} - 2* margin]}
 
 \item{rowPadBase}{Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)}
 
