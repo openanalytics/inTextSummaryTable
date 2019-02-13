@@ -491,6 +491,9 @@ getGLPGFlextable <- function(data,
 #' @export
 getColorTable <- function(style = c("report", "presentation")){
 	
+	# colors are specified based on the scale from 0 to 255
+	rgbCustom <- function(...) rgb(..., maxColorValue = 255)
+	
 	colorTable <- switch(style,
 		'report' = {
 			# black font on white background
