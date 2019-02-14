@@ -484,6 +484,7 @@ hierarchical order.
 		colVar = "TRTP",
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
+		colHeaderTotalInclude = FALSE,
 		file = file.path("tables", "Table_AE_rowColVar.docx")
 	)
 

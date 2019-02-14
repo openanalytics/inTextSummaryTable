@@ -90,12 +90,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 			hline_bottom(border = bd, part = "header") %>%
 			hline_bottom(border = bd, part = "body")
 	}else ft <- border_outer(ft, border = bd, part = "all") # otherwise all border (stub + header)
-	idxLineHeader <- length(title) + seq_along(nrow(headerDf))
-	if(length(idxLineHeader) > 0)
-		ft <- ft %>% hline(i = idxLineHeader, border = bd, part = "header")
-	
 	if(!is.null(title))
-		ft <- hline(ft, i = length(title), border = bd, part = "header") 
+		ft <- ft %>% hline(i = length(title), border = bd, part = "header")
 
 	# set correct alignments
 	rowVar <- attributes(summaryTable)$summaryTable$rowVar
@@ -344,38 +340,31 @@ createFlextableWithHeader <- function(data,
 	headerDf = NULL, title = NULL){
 	
 	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
-	colsDataFt <- colnames(data)
-	names(colsDataFt) <- paste0("col", seq_len(ncol(data)))
+	colsDataFt <- setNames(colnames(data), paste0("col", seq_len(ncol(data))))
 	colnames(data) <- names(colsDataFt)
 	
-	if(!is.null(headerDf))	colnames(headerDf) <- names(colsDataFt)
+	if(!is.null(headerDf)){
+		colnames(headerDf) <- names(colsDataFt)
+	}else{
+		headerDf <- colsDataFt
+	}
+	
+	# add title
+	if(!is.null(title)){
+		titleDf <- replicate(length(colsDataFt), title)
+		if(is.matrix(titleDf))	colnames(titleDf) <- names(colsDataFt)
+		headerDf <- rbind.data.frame(titleDf, headerDf, stringsAsFactors = FALSE)
+	}
+
+	mapping <- as.data.frame(t(headerDf), stringsAsFactors = FALSE)
+	mapping$`col_keys` <- rownames(mapping)
 	
 	# base flextable
 	ft <- flextable(data)
 	
-	## headers:
-	setHeader <- function(ft, header){
-		headerList <- as.list(
-			if(is.matrix(header) | is.data.frame(header))	header	else
-				setNames(rep(header, length(colsDataFt)), names(colsDataFt))
-		)
-		ft <- do.call(add_header, c(list(x = ft, top = TRUE), headerList))
-		ft <- merge_h(x = ft, part = "header")
-		return(ft)
-	}
-	if(!is.null(headerDf) && nrow(headerDf) > 1)
-		ft <- setHeader(ft, header = headerDf[-nrow(headerDf), ])
-	
-	# set to correct headers	
-	newHeaders <- if(!is.null(headerDf))	headerDf[nrow(headerDf), ]	else	colsDataFt
-	ft <- do.call(set_header_labels, c(list(x = ft), as.list(newHeaders)))
-	
-	ft <- merge_v(ft, part = "header")
-	
-	# add title
-	if(!is.null(title))	
-		for(titleI in rev(title))
-			ft <- setHeader(ft, header = titleI)
+	ft <- set_header_df(x = ft, mapping = mapping) %>%
+		merge_h(part = "header") %>%
+		merge_v(part = "header")
 	
 	res <- list(ft = ft, colsData = colsDataFt)
 	return(res)
