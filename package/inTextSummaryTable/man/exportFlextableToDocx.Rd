@@ -4,7 +4,8 @@
 \alias{exportFlextableToDocx}
 \title{Export flextable to docx filr}
 \usage{
-exportFlextableToDocx(object, file, landscape = FALSE)
+exportFlextableToDocx(object, file, landscape = FALSE, breaksAfter = if
+  (!inherits(object, "flextable")) seq_along(object) else 1)
 }
 \arguments{
 \item{object}{\code{\link[flextable]{flextable}} object, or list of such objects}
@@ -13,6 +14,10 @@ exportFlextableToDocx(object, file, landscape = FALSE)
 If NULL, the summary table is not exported but only returned as output.}
 
 \item{landscape}{Logical, if TRUE the file is in landscape format.}
+
+\item{breaksAfter}{In case \code{object} is list: 
+integer vector with indices of list item after which a page break should 
+be included in the final document.}
 }
 \value{
 no returned value, the \code{object} is exported to a docx file.

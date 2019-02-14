@@ -22,6 +22,7 @@ getStats <- function(type = c(
 			n = expression(roundCustom(statN, 0)),
 			Mean = expression(formatC(statMean)),
 			SD = expression(formatC(statSD)),
+			SE = expression(formatC(statSE)),
 			Median = expression(formatC(statMedian)),
 			Min = expression(formatC(statMin)),
 			Max = expression(formatC(statMax)),

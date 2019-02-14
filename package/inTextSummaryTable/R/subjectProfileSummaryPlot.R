@@ -83,7 +83,7 @@ subjectProfileSummaryPlot <- function(data,
 
 	if(!is.null(byVar)){
 		inputParams <- as.list(environment())
-		if(!byVar %in% colnames(data)){
+		if(!all(byVar %in% colnames(data))){
 			warning("'byVar' is not available in the 'data' so is not used.")
 			byVar <- FALSE
 		}else{
