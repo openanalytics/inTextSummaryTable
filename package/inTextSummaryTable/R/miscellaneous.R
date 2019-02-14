@@ -111,3 +111,23 @@ getNDecimals <- function(x)
 	nchar(sub("-*[[:digit:]]+\\.*([[:digit:]]+)*", 
 		"\\1", as.character(sapply(x, format, scientific = FALSE)))
 	)
+
+#' Include hline at the bottom of a row
+#' (fix in case cells are merged)
+#' @param ft flextable
+#' @param data Data.frame with data on which the table (indices computation) is based on.
+#' @param iBase Base index, 0 by default
+#' @return update flextable object
+#' @import flextable
+#' @importFrom officer fp_border
+#' @author Laure Cougnaud
+hlineBottom <- function(ft, data, iBase = 0, part = "body", bd = fp_border()){
+	
+	idxHlineHeader <- iBase + apply(data, 2, function(x) sum(!duplicated(x)))
+	for(j in seq_along(idxHlineHeader)){
+		ft <- ft %>% hline(border = bd, i = idxHlineHeader[j], j = j, part = part)
+	}
+	
+	return(ft)
+	
+}
