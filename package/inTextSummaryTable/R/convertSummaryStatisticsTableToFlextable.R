@@ -78,54 +78,12 @@ convertSummaryStatisticsTableToFlextable <- function(
 	getNewCol <- function(initCol)
 		na.omit(names(colsDataFt)[match(initCol, colsDataFt)])
 	
-	## borders
-	bd <- fp_border(color = colorTable["line"])
-	ft <- border_remove(ft)
-	# if no vertical lines, only horizontal line 
-	# between header/stub, top header and bottom stub
-	vline <- attributes(summaryTable)$summaryTable$vline
-	if(!is.null(vline) && vline == "none"){
-		ft <- ft %>% 
-			hline_top(border = bd, part = "header") %>%
-			hline_bottom(border = bd, part = "header") %>%
-			hline_bottom(border = bd, part = "body")
-	}else ft <- border_outer(ft, border = bd, part = "all") # otherwise all border (stub + header)
-	if(!is.null(title))
-		ft <- ft %>% hline(i = length(title), border = bd, part = "header")
-
-	# set correct alignments
 	rowVar <- attributes(summaryTable)$summaryTable$rowVar
 	if(is.null(rowVar))	rowVar <- colnames(summaryTable)[1]
-	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
-	colsAlignCenter <- setdiff(names(colsDataFt), colsAlignLeft)
-	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
-	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
-	
-	## padding
-	if(length(attributes(summaryTable)$summaryTable$padParams) > 0)
-		for(padParams in attributes(summaryTable)$summaryTable$padParams){
-			padPars <- grep("^padding", names(padParams), value = TRUE)
-			padParams[padPars] <- sapply(padPars, function(par) padParams[[par]] * rowPadBase, simplify = FALSE)
-			# if title is specified, shift row coordinate of padding by 1
-			if(!is.null(title) && padParams$part == "header" && "i" %in% names(padParams))
-				padParams$i <- padParams$i + 1
-			ft <- do.call(padding, c(list(x = ft), padParams))
-		}
-	
-	# horizontal lines
-	if(!is.null(attributes(summaryTable)$summaryTable$hlineParams))
-		for(hlineParams in attributes(summaryTable)$summaryTable$hlineParams){
-			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
-		}
-	
-	# vertical lines
-	if(!is.null(attributes(summaryTable)$summaryTable$vlineParams))
-		for(vlineParams in attributes(summaryTable)$summaryTable$vlineParams){
-			if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
-			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
-		}
 	
 	# merge rows
+	# important: merge rows before setting horizontal lines
+	# otherwise might encounter issues
 	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$summaryTable$rowVarInSepCol)
 	if(!is.null(rowVarToMerge))
 		ft <- merge_v(ft, j = getNewCol(rowVarToMerge))
@@ -148,6 +106,57 @@ convertSummaryStatisticsTableToFlextable <- function(
 			)
 		}
 	}
+
+	# set correct alignments
+	colsAlignLeft <- getNewCol(c("Statistic", rowVar))
+	colsAlignCenter <- setdiff(names(colsDataFt), colsAlignLeft)
+	ft <- align(ft, j = colsAlignLeft, align = "left", part = "all")
+	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
+	
+	## padding
+	if(length(attributes(summaryTable)$summaryTable$padParams) > 0)
+		for(padParams in attributes(summaryTable)$summaryTable$padParams){
+			padPars <- grep("^padding", names(padParams), value = TRUE)
+			padParams[padPars] <- sapply(padPars, function(par) padParams[[par]] * rowPadBase, simplify = FALSE)
+			# if title is specified, shift row coordinate of padding by 1
+			if(!is.null(title) && padParams$part == "header" && "i" %in% names(padParams))
+				padParams$i <- padParams$i + 1
+			ft <- do.call(padding, c(list(x = ft), padParams))
+		}
+	
+	## borders
+	bd <- fp_border(color = colorTable["line"])
+	ft <- border_remove(ft)
+	# if no vertical lines, only horizontal line 
+	# between header/stub, top header and bottom stub
+	vline <- attributes(summaryTable)$summaryTable$vline
+	if(!is.null(vline) && vline == "none"){
+		ft <- ft %>% 
+			hline_top(border = bd, part = "header") %>%
+			hline_bottom(border = bd, part = "body")
+#		ft <- hlineBottom(ft, data = summaryTable, part = "body", bd = bd)
+		# border at the bottom of the header
+		# issue in flextable: hline_bottom(part = "header") 
+		# only include border at the bottom of non merged cells
+		if(!is.null(headerDf)){
+			ft <- hlineBottom(ft, iBase = length(title), data = headerDf, part = "header")
+		}else ft <- ft %>% hline_bottom(border = bd, part = "header")
+	}else ft <- border_outer(ft, border = bd, part = "all") # otherwise all border (stub + header)
+	if(!is.null(title))
+		ft <- ft %>% hline(i = length(title), border = bd, part = "header")
+	
+	# horizontal lines
+	if(!is.null(attributes(summaryTable)$summaryTable$hlineParams))
+		for(hlineParams in attributes(summaryTable)$summaryTable$hlineParams){
+			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
+		}
+	
+	# vertical lines
+	if(!is.null(attributes(summaryTable)$summaryTable$vlineParams))
+		for(vlineParams in attributes(summaryTable)$summaryTable$vlineParams){
+			if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
+			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
+		}
 	
 	# Format superscript (if any)
 	# for body
