@@ -153,7 +153,7 @@ computeSummaryStatisticsTable <- function(
 			" are not available in 'dataTotal'.")
 
 	if(!is.null(byVar)){
-		if(!byVar %in% colnames(data)){
+		if(!all(byVar %in% colnames(data))){
 			warning("'byVar' is not available in the 'data' so is not used.")
 			byVar <- FALSE
 		}else{
@@ -163,8 +163,15 @@ computeSummaryStatisticsTable <- function(
 				inputParamsBy$byVar <- NULL
 				do.call(computeSummaryStatisticsTable, inputParamsBy)		
 			})	
-			if(!is.null(byVarLab))
-				names(res) <- paste(byVarLab, names(res), sep = ": ")
+			if(!is.null(byVarLab)){
+				uniqueNameDf <- unique(data[, byVar, drop = FALSE])
+				newName <- do.call(paste, 
+					c(mapply(paste, byVarLab[byVar], uniqueNameDf, sep = ": ", SIMPLIFY = FALSE),
+					sep = "\n")
+				)
+				initName <- do.call(paste, c(uniqueNameDf, sep = "."))
+				names(res) <- newName[match(names(res), initName)]
+			}
 			return(res)
 		}
 	}

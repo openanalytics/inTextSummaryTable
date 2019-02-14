@@ -4,6 +4,10 @@
     o getNDecimals
     o getColorTable/colorTable parameter, pageDim parameter
     o subjectProfileSummaryPlot: themeFct parameter, remove box and grid lines for table
+    o computeSummaryStatisticsTable: fix for multiple variables in byVar
+    o exportFlextableToDocx: breaksAfter
+    o convertSummaryStatisticsTableToFlextable: remove fixed width for statistic column
+    o getStats: summary add SE
 0.0.10
     o formatSummaryStatisticsTable: fix for rowSubtotalInSepRow
     o rowAutoMerge, rowVarTotalPerc, rowVarTotalExtra

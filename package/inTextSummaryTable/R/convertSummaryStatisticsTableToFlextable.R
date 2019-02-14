@@ -50,7 +50,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 			inputParamsBy <- inputParams
 			inputParamsBy$summaryTable <- summaryTableI
 			inputParamsBy$file <- NULL # export all tables at once
-			inputParamsBy$title <- c(inputParams$title, names(summaryTable)[i])
+			inputParamsBy$title <- c(
+				inputParams$title, 
+				strsplit(names(summaryTable)[i], split = "\n")[[1]]
+			)
 			do.call(convertSummaryStatisticsTableToFlextable, inputParamsBy)		
 		}, simplify = FALSE)	
 		if(!is.null(names(summaryTable)))
@@ -87,7 +90,9 @@ convertSummaryStatisticsTableToFlextable <- function(
 			hline_bottom(border = bd, part = "header") %>%
 			hline_bottom(border = bd, part = "body")
 	}else ft <- border_outer(ft, border = bd, part = "all") # otherwise all border (stub + header)
-	ft <- ft %>% border_inner_h(border = bd, part = "header")
+	idxLineHeader <- length(title) + seq_along(nrow(headerDf))
+	if(length(idxLineHeader) > 0)
+		ft <- ft %>% hline(i = idxLineHeader, border = bd, part = "header")
 	
 	if(!is.null(title))
 		ft <- hline(ft, i = length(title), border = bd, part = "header") 
@@ -185,12 +190,13 @@ convertSummaryStatisticsTableToFlextable <- function(
 		pageDim = pageDim,
 		style = style
 	)
-	varFixed <- getNewCol(intersect(c("Statistic"), colsDataFt))
-	varFixedWidth <- 0.5
-	ft <- width(ft, j = varFixed, width = 0.5)
-	varsOther <- setdiff(names(colsDataFt), varFixed)
-	varsOtherWidth <- (widthPage - length(varFixed) * varFixedWidth)/length(varsOther)
-	ft <- width(ft, j = varsOther, width = varsOtherWidth)
+#	varFixed <- getNewCol(intersect(c("Statistic"), colsDataFt))
+#	varFixedWidth <- 0.5
+#	ft <- width(ft, j = varFixed, width = 0.5)
+#	varsOther <- setdiff(names(colsDataFt), varFixed)
+#	varsOtherWidth <- (widthPage - length(varFixed) * varFixedWidth)/length(varsOther)
+	widthCol <- widthPage/length(colsDataFt)
+	ft <- width(ft, j = names(colsDataFt), width = widthCol)
 	
 	if(!is.null(file))
 		exportFlextableToDocx(object = ft, file = file, landscape = landscape)
@@ -504,7 +510,7 @@ getColorTable <- function(style = c("report", "presentation")){
 				'bodyBackground' = rgbCustom(255, 255, 255),
 				'footer' = rgbCustom(0, 0, 0),
 				'footerBackground' = rgbCustom(255, 255, 255),
-				'line' = rgbCustom(255, 255, 255)
+				'line' = rgbCustom(0, 0, 0)
 			)
 			
 		},
@@ -535,12 +541,18 @@ convertVectToBinary <- function(x){
 #' @param file String with path of the file where the table should be exported.
 #' If NULL, the summary table is not exported but only returned as output.
 #' @param landscape Logical, if TRUE the file is in landscape format.
+#' @param breaksAfter In case \code{object} is list: 
+#' integer vector with indices of list item after which a page break should 
+#' be included in the final document.
 #' @return no returned value, the \code{object} is exported to a docx file.
 #' @import officer
 #' @importFrom magrittr "%>%"
 #' @author Laure Cougnaud
 #' @export
-exportFlextableToDocx <- function(object, file, landscape = FALSE){
+exportFlextableToDocx <- function(
+	object, file, landscape = FALSE,
+	breaksAfter = if(!inherits(object, "flextable"))	seq_along(object)	else	1
+	){
 	
 	isListTables <- !inherits(object, "flextable")
 	
@@ -550,8 +562,10 @@ exportFlextableToDocx <- function(object, file, landscape = FALSE){
 	if(landscape)	doc <- doc %>% body_end_section_landscape()
 	
 	if(isListTables){
-		for(summaryTableFtI in object){
-			doc <- doc %>% body_add_flextable(value = summaryTableFtI) %>% body_add_break()
+		for(i in seq_along(object)){
+			doc <- doc %>% body_add_flextable(value = object[[i]]) 
+			if(i %in% breaksAfter)	
+				doc <- doc %>% body_add_break()
 		}
 	}else	doc <- doc %>% body_add_flextable(value = object)
 	
