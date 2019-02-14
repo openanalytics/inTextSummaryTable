@@ -425,7 +425,7 @@ formatSummaryStatisticsTable <- function(
 				c(rep(x1, nRowsHeader - length(x)), x)
 			}
 		))
-	)
+	, stringsAsFactors = FALSE)
 	colnames(headerDf) <- colnames(dataLong)
 	attributes(dataLong)$summaryTable$header <- headerDf
 	
