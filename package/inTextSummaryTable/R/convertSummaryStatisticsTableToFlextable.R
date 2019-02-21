@@ -355,7 +355,7 @@ createFlextableWithHeader <- function(data,
 	if(!is.null(headerDf)){
 		colnames(headerDf) <- names(colsDataFt)
 	}else{
-		headerDf <- colsDataFt
+		headerDf <- as.data.frame(t(colsDataFt))
 	}
 	
 	# add title
