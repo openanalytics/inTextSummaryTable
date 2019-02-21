@@ -132,7 +132,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	vline <- attributes(summaryTable)$summaryTable$vline
 	if(!is.null(vline) && vline == "none"){
 		ft <- ft %>% 
-			hline_top(border = bd, part = "header") %>%
+#			hline_top(border = bd, part = "header") %>%
 			hline_bottom(border = bd, part = "body")
 #		ft <- hlineBottom(ft, data = summaryTable, part = "body", bd = bd)
 		# border at the bottom of the header
