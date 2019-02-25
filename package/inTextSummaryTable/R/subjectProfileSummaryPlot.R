@@ -75,7 +75,7 @@ subjectProfileSummaryPlot <- function(data,
 	sizeLine = GeomLine$default_aes$size,
 	sizeLabel = GeomText$default_aes$size,
 	widthErrorBar = GeomErrorbar$default_aes$width,
-	tableText = NULL, tableLabel = NULL, tableHeight = 0.2,
+	tableText = NULL, tableLabel = NULL, tableHeight = 0.1,
 	label = FALSE,
 	byVar = NULL,
 	hLine = NULL, hLineColor = "black",
@@ -305,7 +305,9 @@ subjectProfileSummaryPlot <- function(data,
 		ggTable <- ggTable + fctScaleX
 
 		# remove legend and title x-axis for base plot (will be included in table plot)
-		gg <- gg + theme(legend.position = "none", axis.title.x = element_blank())
+		plotMargin <- themeFct()$plot.margin
+		plotMargin <- margin(t = plotMargin[1], r = plotMargin[2], b = 0, l = plotMargin[4]) # remove bottom margin
+		gg <- gg + theme(legend.position = "none", axis.title.x = element_blank(), plot.margin = plotMargin)
 		
 		# combine base and table plot
 		if(tableHeight > 1 | tableHeight < 0)
@@ -394,8 +396,8 @@ subjectProfileSummaryTable <- function(
 		ggTable <- coord_cartesian(xlim = xLim)
 	
 	# labels
-	if(!is.null(xLab))
-		ggTable <- ggTable + labs(x = xLab)
+	# if no x-label, set labs(x = NULL) to remove bottom margin
+	ggTable <- ggTable + labs(x = if(!is.null(xLab))	xLab)
 	
 	# color palette
 	if(!is.null(colorVar)){
@@ -407,8 +409,14 @@ subjectProfileSummaryTable <- function(
 	if(!is.null(xAxisLabs)){
 		ggTable <- if(is.numeric(data[, xVar])){
 			ggTable + scale_x_continuous(limits = xAxisLabs)
-		}else ggTable + scale_x_discrete(breaks = xAxisLabs)
+		}else{
+			ggTable + scale_x_discrete(breaks = xAxisLabs)
+		}
 	}
+	
+	# default: expand by 0.6 units on each side
+	# cowplot cut labels if change expand_scale
+	ggTable <- ggTable + scale_y_discrete(expand = expand_scale(add = 0.2))
 
 	# theme
 	argsTheme <- c(
@@ -421,7 +429,8 @@ subjectProfileSummaryTable <- function(
 			panel.grid.major = element_blank(),
 			panel.grid.minor = element_blank(),
 			panel.border = element_blank(),
-			panel.background = element_blank()
+			panel.background = element_blank(),
+			plot.margin = unit(c(0,0,0,0), "mm")
 		),
 		if(is.null(xLab))	list(axis.title.x = element_blank()),
 		if(!yAxisLabs){
