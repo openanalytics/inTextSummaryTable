@@ -34,9 +34,17 @@
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element.
+#' @param hLine String with color for \code{hLine}.
+#' @param vLine (optional) numeric with x-intercept of dashed line to be added.
+#' If different thresholds should be used for different elements of the 
+#' \code{byVar} or \code{facetVar} variables, the vector should be named
+#' with each corresponding element.
+#' @param vLine String with color for \code{vLine}.
 #' @param useShape Logical, if TRUE (by default) \code{colorVar} is also used for the shape.
 #' @param widthErrorBar Numeric vector of length 1 with width of error bar.
 #' @param shapePalette Named vector with shape palette for \code{colorVar}.
+#' @param themeIncludeVerticalGrid Logical, if TRUE (by default)
+#' include theme vertical grid lines (if present in \code{themeFct}).
 #' @inheritParams subjectProfileSummaryTable
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
@@ -70,11 +78,13 @@ subjectProfileSummaryPlot <- function(data,
 	tableText = NULL, tableLabel = NULL, tableHeight = 0.2,
 	label = FALSE,
 	byVar = NULL,
-	hLine = NULL,
+	hLine = NULL, hLineColor = "black",
+	vLine = NULL, vLineColor = "black",
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
-	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw)){
+	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
+	themeIncludeVerticalGrid = TRUE){
 
 	if(!is.null(facetVar) & !is.null(tableText)){
 		warning("Table cannot be used in combination with 'facetVar', no table is included.")
@@ -87,15 +97,25 @@ subjectProfileSummaryPlot <- function(data,
 			warning("'byVar' is not available in the 'data' so is not used.")
 			byVar <- FALSE
 		}else{
+			
+			# get parameter in case possibility to have it by 'byVar' element
+			# only works if default is NULL
+			getParamByEl <- function(x, el){
+				if(!is.null(x) && !is.null(names(x))){
+					if(el %in% names(x)){
+						inputParams$hLine[[el]]
+					}else	NULL
+				}else	x
+			}
+			
 			res <- dlply(data, byVar, function(dataBy){
 				byEl <- as.character(unique(dataBy[, byVar]))
 				inputParamsBy <- inputParams
 				inputParamsBy$data <- dataBy
 				inputParamsBy$byVar <- NULL
 				inputParamsBy$yLab <- paste(inputParamsBy$yLab, byEl)
-				if(!is.null(inputParams$hLine) && byEl %in% names(inputParams$hLine)){
-					inputParamsBy$hLine <- inputParams$hLine[[byEl]]
-				}else	inputParamsBy$hLine <- NULL
+				inputParamsBy$hLine <- getParamByEl(x = inputParamsBy$hLine, el = byEl)
+				inputParamsBy$vLine <- getParamByEl(x = inputParamsBy$vLine, el = byEl)
 				do.call(subjectProfileSummaryPlot, inputParamsBy)		
 			})	
 			return(res)
@@ -153,14 +173,32 @@ subjectProfileSummaryPlot <- function(data,
 	gg <- ggplot(data = data, mapping = do.call(aes_string, aesBase))
 	
 	# horizontal line(s)
-	if(!is.null(hLine)){
-		gg <- gg + if(!is.null(facetVar) && !is.null(names(hLine))){
-			dataHLine <- setNames(data.frame(names(hLine), hLine), c(facetVar, "yintercept"))
-			geom_hline(data = dataHLine, aes(yintercept = yintercept))
+	setLines <- function(inputLine, typeLine = c("hline", "vline"), color){
+		typeLine <- match.arg(typeLine)
+		paramName <- switch(typeLine, "hline" = "yintercept", "vline" = "xintercept")
+		geomFct <- match.fun(paste0("geom_", typeLine))
+		if(!is.null(facetVar) & !is.null(names(inputLine))){
+			dataLine <- setNames(data.frame(names(inputLine), inputLine), c(facetVar, "line"))
+			do.call(geomFct, 
+				list(
+					data = dataLine, 
+					color = color,
+					do.call(aes_string, setNames(list("line"), paramName))
+				)
+			)
 		}else{
-			geom_hline(yintercept = hLine)
+			do.call(geomFct, 
+				c(
+					setNames(list(inputLine), paramName),
+					list(color = color)
+				)
+			)
 		}
 	}
+	if(!is.null(hLine))
+		gg <- gg + setLines(inputLine = hLine, typeLine = "hline", color = hLineColor)
+	if(!is.null(vLine))
+		gg <- gg + setLines(inputLine = vLine, typeLine = "vline", color = vLineColor)
 	
 	# line + points
 	gg <- gg +
@@ -206,10 +244,18 @@ subjectProfileSummaryPlot <- function(data,
 	if(length(argsLab) > 0)
 		gg <- gg + do.call(labs, argsLab)
 	
-	gg <- gg + themeFct() + theme(
-		legend.position = "bottom",
-		text = element_text(family = fontname, size = fontsize)
+	argsTheme <- c(
+		list(
+			legend.position = "bottom",
+			text = element_text(family = fontname, size = fontsize)
+		),
+		if(!themeIncludeVerticalGrid)
+			list(
+				panel.grid.major.x = element_blank(),
+				panel.grid.minor.x = element_blank()
+			)
 	)
+	gg <- gg + themeFct() + do.call(theme, argsTheme)
 	
 	# set limits for the axes
 	if((!is.null(xLim)) | (!is.null(yLim))){
