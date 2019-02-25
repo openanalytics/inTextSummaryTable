@@ -206,6 +206,10 @@ computeSummaryStatisticsTable <- function(
 		colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
 		subjectVar = subjectVar, labelVars = labelVars
 	)
+	
+	if(nrow(summaryTable) == 0)
+		stop("No data available (or all missing values).")
+	
 	# original levels of colVar in summaryTable
 	colVarLevels <- sapply(
 		summaryTable[, colVar, drop = FALSE], function(x)
@@ -370,7 +374,8 @@ computeSummaryStatisticsTable <- function(
 	
 	# save total or not in the 'isTotal' column
 	summaryTableTotal$isTotal <- TRUE
-	summaryTable$isTotal <- FALSE
+	if(nrow(summaryTable) > 0)
+		summaryTable$isTotal <- FALSE
 	# bind to the summary table
 	summaryTable <- rbind.fill(summaryTable, summaryTableTotal)
 	
