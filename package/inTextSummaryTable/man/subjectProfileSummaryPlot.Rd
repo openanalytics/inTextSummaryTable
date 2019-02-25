@@ -17,7 +17,7 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   sizeLine = GeomLine$default_aes$size,
   sizeLabel = GeomText$default_aes$size,
   widthErrorBar = GeomErrorbar$default_aes$width, tableText = NULL,
-  tableLabel = NULL, tableHeight = 0.2, label = FALSE,
+  tableLabel = NULL, tableHeight = 0.1, label = FALSE,
   byVar = NULL, hLine = NULL, hLineColor = "black", vLine = NULL,
   vLineColor = "black", style = "report", fontname = switch(style,
   report = "Times", presentation = "Tahoma"), fontsize = switch(style,
@@ -37,7 +37,10 @@ e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.}
 
 \item{seVar}{String, variable of \code{data} with the standard error.}
 
-\item{yLab}{String with label for the y-axis.}
+\item{yLab}{String with label for the y-axis.
+If different labels should be used for different elements of
+\code{byVar} variable, the vector should be named
+with each corresponding element.}
 
 \item{facetVar}{String, variable of \code{data} for facetting.}
 

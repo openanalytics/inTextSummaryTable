@@ -5,6 +5,9 @@
 #' @param meanVar String, variable of \code{data} with the mean variable.
 #' @param seVar String, variable of \code{data} with the standard error.
 #' @param yLab String with label for the y-axis.
+#' If different labels should be used for different elements of
+#' \code{byVar} variable, the vector should be named
+#' with each corresponding element.
 #' @param facetVar String, variable of \code{data} for facetting.
 #' @param facetScale String with type of scale used for facetting, 'free_y' by default
 #' (fixed scale in the x-axis and free in the y-axis).
@@ -100,12 +103,10 @@ subjectProfileSummaryPlot <- function(data,
 			
 			# get parameter in case possibility to have it by 'byVar' element
 			# only works if default is NULL
-			getParamByEl <- function(x, el){
+			getParamByEl <- function(x, el, default = x){
 				if(!is.null(x) && !is.null(names(x))){
-					if(el %in% names(x)){
-						inputParams$hLine[[el]]
-					}else	NULL
-				}else	x
+					if(el %in% names(x))	x[[el]]	else	NULL
+				}else	default
 			}
 			
 			res <- dlply(data, byVar, function(dataBy){
@@ -113,7 +114,7 @@ subjectProfileSummaryPlot <- function(data,
 				inputParamsBy <- inputParams
 				inputParamsBy$data <- dataBy
 				inputParamsBy$byVar <- NULL
-				inputParamsBy$yLab <- paste(inputParamsBy$yLab, byEl)
+				inputParamsBy$yLab <- getParamByEl(x = inputParamsBy$yLab, el = byEl, default = paste(inputParamsBy$yLab, byEl))
 				inputParamsBy$hLine <- getParamByEl(x = inputParamsBy$hLine, el = byEl)
 				inputParamsBy$vLine <- getParamByEl(x = inputParamsBy$vLine, el = byEl)
 				do.call(subjectProfileSummaryPlot, inputParamsBy)		
