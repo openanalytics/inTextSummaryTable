@@ -1,7 +1,7 @@
 1.1.0
     o createFlextableWithHeader: fix in case no headerDf and ft are specified
     o convertSummaryStatisticsTableToFlextable: remove line on top title
-    o subjectProfileSummaryPlot: themeIncludeVerticalGrid, vLine
+    o subjectProfileSummaryPlot: themeIncludeVerticalGrid, vLine, fix when only one value in x-axis
     o computeSummaryStatisticsTable: fix when no data
 1.0.0
     o fix getStats
