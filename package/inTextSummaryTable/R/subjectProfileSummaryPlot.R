@@ -288,6 +288,16 @@ subjectProfileSummaryPlot <- function(data,
 			data[data[, xVar] %in% xAxisLabs, ]
 		}else	data
 
+		if(is.null(xLim)){
+			if(is.numeric(data[, xVar])){
+				xLim <- range(data[, xVar])	
+			}else{
+				dataTable[, xVar] <- factor(dataTable[, xVar], 
+					levels = if(is.factor(data[, xVar]))	levels(data[, xVar])	else	unique(data[, xVar])
+				)
+			}
+		}
+
 		# create plot with table
 		ggTable <- subjectProfileSummaryTable(
 			data = dataTable, xVar = xVar, 
@@ -394,7 +404,7 @@ subjectProfileSummaryTable <- function(
 
 	# axis limits
 	if(!is.null(xLim))
-		ggTable <- coord_cartesian(xlim = xLim)
+		ggTable <- ggTable + coord_cartesian(xlim = xLim)
 	
 	# labels
 	# if no x-label, set labs(x = NULL) to remove bottom margin
