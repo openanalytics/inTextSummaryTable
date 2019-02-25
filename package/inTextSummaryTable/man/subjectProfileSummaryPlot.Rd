@@ -18,11 +18,12 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   sizeLabel = GeomText$default_aes$size,
   widthErrorBar = GeomErrorbar$default_aes$width, tableText = NULL,
   tableLabel = NULL, tableHeight = 0.2, label = FALSE,
-  byVar = NULL, hLine = NULL, style = "report",
-  fontname = switch(style, report = "Times", presentation = "Tahoma"),
-  fontsize = switch(style, report = 8, presentation = 10),
-  themeFct = switch(style, report = theme_classic, presentation =
-  theme_bw))
+  byVar = NULL, hLine = NULL, hLineColor = "black", vLine = NULL,
+  vLineColor = "black", style = "report", fontname = switch(style,
+  report = "Times", presentation = "Tahoma"), fontsize = switch(style,
+  report = 8, presentation = 10), themeFct = switch(style, report =
+  theme_classic, presentation = theme_bw),
+  themeIncludeVerticalGrid = TRUE)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -100,6 +101,11 @@ If different thresholds should be used for different elements of the
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element.}
 
+\item{vLine}{(optional) numeric with x-intercept of dashed line to be added.
+If different thresholds should be used for different elements of the 
+\code{byVar} or \code{facetVar} variables, the vector should be named
+with each corresponding element.}
+
 \item{style}{String with subject profile style, either 'report' or 'presentation'.}
 
 \item{fontname}{String with font name.}
@@ -107,6 +113,13 @@ with each corresponding element.}
 \item{fontsize}{Numeric vector with font size.}
 
 \item{themeFct}{Function with ggplot2 theme.}
+
+\item{themeIncludeVerticalGrid}{Logical, if TRUE (by default)
+include theme vertical grid lines (if present in \code{themeFct}).}
+
+\item{hLine}{String with color for \code{hLine}.}
+
+\item{vLine}{String with color for \code{vLine}.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object or list of such
