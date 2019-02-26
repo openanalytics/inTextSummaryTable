@@ -7,7 +7,7 @@
 #' @param yLab String with label for the y-axis.
 #' If different labels should be used for different elements of
 #' \code{byVar} variable, the vector should be named
-#' with each corresponding element.
+#' with each corresponding element (collapsed with '.' if multiple).
 #' @param facetVar String, variable of \code{data} for facetting.
 #' @param facetScale String with type of scale used for facetting, 'free_y' by default
 #' (fixed scale in the x-axis and free in the y-axis).
@@ -36,12 +36,12 @@
 #' @param hLine (optional) numeric with y-intercept of dashed line to be added.
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
-#' with each corresponding element.
+#' with each corresponding element (collapsed with '.' if multiple).
 #' @param hLine String with color for \code{hLine}.
 #' @param vLine (optional) numeric with x-intercept of dashed line to be added.
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
-#' with each corresponding element.
+#' with each corresponding element (collapsed with '.' if multiple).
 #' @param vLine String with color for \code{vLine}.
 #' @param useShape Logical, if TRUE (by default) \code{colorVar} is also used for the shape.
 #' @param widthErrorBar Numeric vector of length 1 with width of error bar.
@@ -110,11 +110,13 @@ subjectProfileSummaryPlot <- function(data,
 			}
 			
 			res <- dlply(data, byVar, function(dataBy){
-				byEl <- as.character(unique(dataBy[, byVar]))
+				byVarEl <- as.character(unlist(unique(dataBy[, byVar])))
+				byElST <- paste0(byVarEl, collapse = " ")
+				byEl <- paste0(byVarEl, collapse = ".")
 				inputParamsBy <- inputParams
 				inputParamsBy$data <- dataBy
 				inputParamsBy$byVar <- NULL
-				inputParamsBy$yLab <- getParamByEl(x = inputParamsBy$yLab, el = byEl, default = paste(inputParamsBy$yLab, byEl))
+				inputParamsBy$yLab <- getParamByEl(x = inputParamsBy$yLab, el = byEl, default = paste(inputParamsBy$yLab, byElST))
 				inputParamsBy$hLine <- getParamByEl(x = inputParamsBy$hLine, el = byEl)
 				inputParamsBy$vLine <- getParamByEl(x = inputParamsBy$vLine, el = byEl)
 				do.call(subjectProfileSummaryPlot, inputParamsBy)		
@@ -266,9 +268,11 @@ subjectProfileSummaryPlot <- function(data,
 	
 	# set limits in the x-axis
 	# even if not specified, to have correct alignment with table
-	if(is.null(xAxisLabs))
+	if(is.null(xAxisLabs)){
 		xAxisLabs <- if(is.factor(data[, xVar]))
 			levels(data[, xVar])	else	unique(data[, xVar])
+		names(xAxisLabs) <- xAxisLabs
+	}
 	fctScaleX <- if(is.numeric(data[, xVar])){
 		# limits should take the jitter into account!
 		scaleXLim <- max(jitter, GeomErrorbar$default_aes$width/2)
