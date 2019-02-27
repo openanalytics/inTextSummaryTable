@@ -215,6 +215,8 @@ The data.frame contains the :
 \item{'statMin': }{minimum of \code{var}}
 \item{'statMax': }{maximum of \code{var}}
 \item{'statPerc': }{percentage of subjects}
+\item{'statPercTotalN': }{total number of subjects based on \code{dataTotalPerc},
+denominator of \code{statPerc}}
 \item{'statm': }{number of records}
 }
 }
@@ -222,6 +224,8 @@ The data.frame contains the :
 \itemize{
 \item{'statN': }{number of subjects}
 \item{'statPercN': }{percentage of subjects}
+\item{'statPercTotalN': }{total number of subjects based on \code{dataTotalPerc},
+denominator of \code{statPerc}}
 \item{'statm': }{number of records}
 }}}
 }

@@ -75,6 +75,8 @@
 #' \item{'statMin': }{minimum of \code{var}}
 #' \item{'statMax': }{maximum of \code{var}}
 #' \item{'statPerc': }{percentage of subjects}
+#' \item{'statPercTotalN': }{total number of subjects based on \code{dataTotalPerc},
+#' denominator of \code{statPerc}}
 #' \item{'statm': }{number of records}
 #' }
 #' }
@@ -82,6 +84,8 @@
 #' \itemize{
 #' \item{'statN': }{number of subjects}
 #' \item{'statPercN': }{percentage of subjects}
+#' \item{'statPercTotalN': }{total number of subjects based on \code{dataTotalPerc},
+#' denominator of \code{statPerc}}
 #' \item{'statm': }{number of records}
 #' }}}
 #' }
@@ -409,9 +413,10 @@ computeSummaryStatisticsTable <- function(
 		if(length(idxTotalPerc) > 0){
 			if(length(idxTotalPerc) != 1)
 				stop("Multiple total records for the percentage computation.")
-			res <- cbind(x, statPercN = x$statN/x[idxTotalPerc, "statN"]*100)
+			statPercTotalN <- x[idxTotalPerc, "statN"]
+			res <- cbind(x, statPercTotalN = statPercTotalN, statPercN = x$statN/statPercTotalN*100)
 			res[-idxTotalPerc, ]
-		}else cbind(x, statPercN = NA)
+		}else cbind(x, statPercTotalN = NA, statPercN = NA)
 	})
 	summaryTable$isTotalPerc <- NULL
 
