@@ -3,7 +3,7 @@
     o convertSummaryStatisticsTableToFlextable: remove line on top title
     o subjectProfileSummaryPlot: themeIncludeVerticalGrid, vLine, fix table when only one value in x-axis
     o subjectProfileSummaryPlot: fix when xVar is numeric and xAxisLabs not specified, multiple byVar 
-    o computeSummaryStatisticsTable: fix when no data
+    o computeSummaryStatisticsTable: fix when no data, include 'statPercTotalN' column
 1.0.0
     o fix getStats
     o formatSummaryStatisticsTable: remove 'Statistics' column if all the same
