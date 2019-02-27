@@ -40,7 +40,7 @@ e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.}
 \item{yLab}{String with label for the y-axis.
 If different labels should be used for different elements of
 \code{byVar} variable, the vector should be named
-with each corresponding element.}
+with each corresponding element (collapsed with '.' if multiple).}
 
 \item{facetVar}{String, variable of \code{data} for facetting.}
 
@@ -102,12 +102,12 @@ should be created.}
 \item{hLine}{(optional) numeric with y-intercept of dashed line to be added.
 If different thresholds should be used for different elements of the 
 \code{byVar} or \code{facetVar} variables, the vector should be named
-with each corresponding element.}
+with each corresponding element (collapsed with '.' if multiple).}
 
 \item{vLine}{(optional) numeric with x-intercept of dashed line to be added.
 If different thresholds should be used for different elements of the 
 \code{byVar} or \code{facetVar} variables, the vector should be named
-with each corresponding element.}
+with each corresponding element (collapsed with '.' if multiple).}
 
 \item{style}{String with subject profile style, either 'report' or 'presentation'.}
 
