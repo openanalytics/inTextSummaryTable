@@ -23,7 +23,7 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   report = "Times", presentation = "Tahoma"), fontsize = switch(style,
   report = 8, presentation = 10), themeFct = switch(style, report =
   theme_classic, presentation = theme_bw),
-  themeIncludeVerticalGrid = TRUE)
+  themeIncludeVerticalGrid = TRUE, ggExtra = NULL)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -119,6 +119,8 @@ with each corresponding element (collapsed with '.' if multiple).}
 
 \item{themeIncludeVerticalGrid}{Logical, if TRUE (by default)
 include theme vertical grid lines (if present in \code{themeFct}).}
+
+\item{ggExtra}{Extra \code{ggplot} command to be added in main plot.}
 
 \item{hLine}{String with color for \code{hLine}.}
 
