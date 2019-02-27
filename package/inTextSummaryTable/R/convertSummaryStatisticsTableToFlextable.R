@@ -133,14 +133,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	if(!is.null(vline) && vline == "none"){
 		ft <- ft %>% 
 #			hline_top(border = bd, part = "header") %>%
-			hline_bottom(border = bd, part = "body")
-#		ft <- hlineBottom(ft, data = summaryTable, part = "body", bd = bd)
-		# border at the bottom of the header
-		# issue in flextable: hline_bottom(part = "header") 
-		# only include border at the bottom of non merged cells
-		if(!is.null(headerDf)){
-			ft <- hlineBottom(ft, iBase = length(title), data = headerDf, part = "header")
-		}else ft <- ft %>% hline_bottom(border = bd, part = "header")
+			hline_bottom(border = bd, part = "body") %>%
+			hline_bottom(border = bd, part = "header")
 	}else ft <- border_outer(ft, border = bd, part = "all") # otherwise all border (stub + header)
 	if(!is.null(title))
 		ft <- ft %>% hline(i = length(title), border = bd, part = "header")
@@ -157,6 +151,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 			if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
 			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
 		}
+	
+	# important! in case cells are merged in a column, 
+	# correct the position of horizontal lines
+	ft <- ft %>% fix_border_issues()
 	
 	# Format superscript (if any)
 	# for body
