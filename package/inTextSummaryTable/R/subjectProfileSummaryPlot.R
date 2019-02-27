@@ -48,6 +48,7 @@
 #' @param shapePalette Named vector with shape palette for \code{colorVar}.
 #' @param themeIncludeVerticalGrid Logical, if TRUE (by default)
 #' include theme vertical grid lines (if present in \code{themeFct}).
+#' @param ggExtra Extra \code{ggplot} command to be added in main plot.
 #' @inheritParams subjectProfileSummaryTable
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
@@ -87,7 +88,8 @@ subjectProfileSummaryPlot <- function(data,
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
-	themeIncludeVerticalGrid = TRUE){
+	themeIncludeVerticalGrid = TRUE,
+	ggExtra = NULL){
 
 	if(!is.null(facetVar) & !is.null(tableText)){
 		warning("Table cannot be used in combination with 'facetVar', no table is included.")
@@ -164,16 +166,16 @@ subjectProfileSummaryPlot <- function(data,
 	# base plot
 	aesBase <- c(
 		if(!is.null(xVar))	list(x = "xVar"),
-		if(!is.null(colorVar))	list(color = "colorVar"),
-		if(!is.null(colorVar) & useShape)	list(shape = "colorVar")
+		if(!is.null(colorVar))	list(color = "colorVar")
 	)
 	aesLine <- c(
+		aesBase,
 		list(y = "meanVar"),
 		list(group = ifelse(!is.null(colorVar), "colorVar", 1)),
 		if(!is.null(colorVar) & useLinetype)	list(linetype = "colorVar")
 	)
 	# base plot
-	gg <- ggplot(data = data, mapping = do.call(aes_string, aesBase))
+	gg <- ggplot()
 	
 	# horizontal line(s)
 	setLines <- function(inputLine, typeLine = c("hline", "vline"), color){
@@ -205,16 +207,31 @@ subjectProfileSummaryPlot <- function(data,
 	
 	# line + points
 	gg <- gg +
-		geom_line(do.call(aes_string, aesLine), position = pd, size = sizeLine) +
-		geom_point(aes(y = meanVar), position = pd, size = sizePoint)
+		geom_line(
+			mapping = do.call(aes_string, aesLine), 
+			position = pd, size = sizeLine, data = data
+		) +
+		geom_point(
+			mapping = do.call(aes_string, 
+				c(
+					aesBase, 
+					list(y = "meanVar"),
+					if(!is.null(colorVar) & useShape)	list(shape = "colorVar")
+				)
+			), 
+			position = pd, size = sizePoint, data = data
+		)
 
 	if(!(is.logical(label) && !label))
-		gg <- gg + geom_text_repel(aes(label = textLabel, y = meanVar), 
+		gg <- gg + geom_text_repel(
+			mapping = do.call(aes_string, c(aesBase, list(label = "textLabel", y = "meanVar"))), 
+			data = data,
 			position = pd, size = sizeLabel)
 
 	if(includeEB)
 		gg <- gg + geom_errorbar(
-			aes_string(ymin = "ymin", ymax = "ymax"), 
+			mapping = do.call(aes_string, c(aesBase, list(ymin = "ymin", ymax = "ymax"))), 
+			data = data,
 			position = pd, width = widthErrorBar
 		)
 
@@ -283,6 +300,8 @@ subjectProfileSummaryPlot <- function(data,
 		)
 	}else	scale_x_discrete(breaks = unname(xAxisLabs), labels = names(xAxisLabs), drop = FALSE)
 	gg <- gg + fctScaleX
+	
+	if(!is.null(ggExtra))	gg <- gg + ggExtra
 	
 	res <- if(!is.null(tableText)){
 		
