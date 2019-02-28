@@ -76,7 +76,7 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 
 \item{sizePoint}{Size for the point.}
 
-\item{sizeLine}{Size for the line.}
+\item{sizeLine}{Size for the line linking means and error bars.}
 
 \item{sizeLabel}{Size for the label, only used if \code{label} is not NULL.}
 

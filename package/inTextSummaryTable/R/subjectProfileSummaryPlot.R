@@ -20,7 +20,7 @@
 #' Points are labelled with \code{meanVar} if set to TRUE,
 #' or with the specified expression if \code{label} is an expression.
 #' @param sizePoint Size for the point.
-#' @param sizeLine Size for the line.
+#' @param sizeLine Size for the line linking means and error bars.
 #' @param sizeLabel Size for the label, only used if \code{label} is not NULL.
 #' @param xAxisLabs (optional) Named character vector with labels for the x-axis.
 #' @param yLim Vector of the length 2 with limits for the y-axis.
@@ -226,12 +226,14 @@ subjectProfileSummaryPlot <- function(data,
 		gg <- gg + geom_text_repel(
 			mapping = do.call(aes_string, c(aesBase, list(label = "textLabel", y = "meanVar"))), 
 			data = data,
-			position = pd, size = sizeLabel)
+			position = pd, size = sizeLabel
+		)
 
 	if(includeEB)
 		gg <- gg + geom_errorbar(
 			mapping = do.call(aes_string, c(aesBase, list(ymin = "ymin", ymax = "ymax"))), 
 			data = data,
+			size = sizeLine,
 			position = pd, width = widthErrorBar
 		)
 
@@ -387,15 +389,16 @@ subjectProfileSummaryTable <- function(
 	colorVar = NULL, colorPalette = NULL,
 	colorLab = getLabelVar(colorVar, labelVars = labelVars),
 	xLab = NULL,
-	textSize = GeomText$default_aes$size,
 	labelVars = NULL,
 	showLegend = TRUE,
 	yAxisLabs = FALSE,
 	xAxisLabs = NULL,
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
-	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw)){
+	fontsize = switch(style, 'report' = 8, 'presentation' = 10), # pt
+	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
+	textSize = fontsize/ggplot2:::.pt
+	){
 	
 	data$tableTextLabel <- if(is.expression(text)){
 		eval(expr = text, envir = data)
