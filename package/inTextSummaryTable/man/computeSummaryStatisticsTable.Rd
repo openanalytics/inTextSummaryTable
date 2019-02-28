@@ -76,9 +76,17 @@ grouping in row in the final table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
-\item{rowOrder}{String or function of named list with method used to order the rows,
-see the \code{method} parameter of \code{\link{convertVarToFactorWithOrder}}.
-'total' is only available if the total is available for each \code{rowVar} (\code{rowSubtotalInclude} set to TRUE)
+\item{rowOrder}{String or function of named list with method used to order the rows.
+\itemize{
+\item{String among:}{
+\itemize{
+\item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
+\item{'alphabetical': }{\code{var} is order in alphabetical order}
+\item{'total': }{\code{var} is ordered based on the total sum of number of subjects, 
+across all columns, in decreasing order.}
+}}
+\item{Function to be applied on each subset to get the order elements of the variable}
+}
 If a string, the same method is used for all \code{rowVar},
 otherwise the list is named with the \code{rowVar} variable, to
 specify a different ordering method for each variable.}

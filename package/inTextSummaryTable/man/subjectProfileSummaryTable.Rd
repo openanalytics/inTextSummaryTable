@@ -7,12 +7,11 @@
 subjectProfileSummaryTable(data, xVar, text, xLim = NULL,
   colorVar = NULL, colorPalette = NULL,
   colorLab = getLabelVar(colorVar, labelVars = labelVars), xLab = NULL,
-  textSize = GeomText$default_aes$size, labelVars = NULL,
-  showLegend = TRUE, yAxisLabs = FALSE, xAxisLabs = NULL,
-  style = "report", fontname = switch(style, report = "Times",
-  presentation = "Tahoma"), fontsize = switch(style, report = 8,
-  presentation = 10), themeFct = switch(style, report = theme_classic,
-  presentation = theme_bw))
+  labelVars = NULL, showLegend = TRUE, yAxisLabs = FALSE,
+  xAxisLabs = NULL, style = "report", fontname = switch(style, report
+  = "Times", presentation = "Tahoma"), fontsize = switch(style, report =
+  8, presentation = 10), themeFct = switch(style, report = theme_classic,
+  presentation = theme_bw), textSize = fontsize/ggplot2:::.pt)
 }
 \arguments{
 \item{data}{Data.frame with data for the table.}
@@ -33,8 +32,6 @@ the text label.}
 
 \item{xLab}{String with label for the x-axis.}
 
-\item{textSize}{Size for the text.}
-
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 
 \item{showLegend}{Logical, should the legend be displayed? TRUE by default.}
@@ -51,6 +48,8 @@ is discrete or vector with limits if continuous.}
 \item{fontsize}{Numeric vector with font size.}
 
 \item{themeFct}{Function with ggplot2 theme.}
+
+\item{textSize}{Size for the text.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object
