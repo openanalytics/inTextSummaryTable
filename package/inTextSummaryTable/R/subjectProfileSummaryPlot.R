@@ -15,6 +15,9 @@
 #' to differenciate the variable specified via \code{colorVar} in the mean line.
 #' @param linetypePalette Vector with linetype(s), in case \code{useLinetype} is TRUE.
 #' @param title String with title for the plot.
+#' If different labels should be used for different elements of
+#' \code{byVar} variable, the vector should be named
+#' with each corresponding element (collapsed with '.' if multiple).
 #' @param jitter Numeric with jitter for the x-axis, only used if \code{colorVar} specified.
 #' @param label Logical or expression.
 #' Points are labelled with \code{meanVar} if set to TRUE,
@@ -121,6 +124,7 @@ subjectProfileSummaryPlot <- function(data,
 				inputParamsBy$yLab <- getParamByEl(x = inputParamsBy$yLab, el = byEl, default = paste(inputParamsBy$yLab, byElST))
 				inputParamsBy$hLine <- getParamByEl(x = inputParamsBy$hLine, el = byEl)
 				inputParamsBy$vLine <- getParamByEl(x = inputParamsBy$vLine, el = byEl)
+				inputParamsBy$title <- getParamByEl(x = inputParamsBy$title, el = byEl)
 				do.call(subjectProfileSummaryPlot, inputParamsBy)		
 			})	
 			return(res)
@@ -312,16 +316,6 @@ subjectProfileSummaryPlot <- function(data,
 		dataTable <- if(!is.null(xAxisLabs)){
 			data[data[, xVar] %in% xAxisLabs, ]
 		}else	data
-
-		if(is.null(xLim)){
-			if(is.numeric(data[, xVar])){
-				xLim <- range(data[, xVar])	
-			}else{
-				dataTable[, xVar] <- factor(dataTable[, xVar], 
-					levels = if(is.factor(data[, xVar]))	levels(data[, xVar])	else	unique(data[, xVar])
-				)
-			}
-		}
 
 		# create plot with table
 		ggTable <- subjectProfileSummaryTable(

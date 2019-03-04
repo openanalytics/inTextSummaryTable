@@ -66,7 +66,10 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 
 \item{jitter}{Numeric with jitter for the x-axis, only used if \code{colorVar} specified.}
 
-\item{title}{String with title for the plot.}
+\item{title}{String with title for the plot.
+If different labels should be used for different elements of
+\code{byVar} variable, the vector should be named
+with each corresponding element (collapsed with '.' if multiple).}
 
 \item{yLim}{Vector of the length 2 with limits for the y-axis.}
 
