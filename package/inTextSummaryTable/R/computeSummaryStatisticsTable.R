@@ -1105,7 +1105,7 @@ getStatisticsSummaryStatisticsTable <- function(
 				stats[[unique(x$variableInit)]]
 			}else stats
 			if(!is.null(statsVarBy))
-				statsX <- statsX[[unique(x[, statsVarBy])]]
+				statsX <- statsX[[as.character(unique(x[, statsVarBy]))]]
 			if(is.null(statsX)){
 				if(!"isTotal" %in% colnames(x) && all(x$isTotal))
 					warning("'stats' missing for:", toString(unique(x[, statsVarByUsed])))
