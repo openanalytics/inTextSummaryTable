@@ -125,6 +125,7 @@ subjectProfileSummaryPlot <- function(data,
 				inputParamsBy$hLine <- getParamByEl(x = inputParamsBy$hLine, el = byEl)
 				inputParamsBy$vLine <- getParamByEl(x = inputParamsBy$vLine, el = byEl)
 				inputParamsBy$title <- getParamByEl(x = inputParamsBy$title, el = byEl)
+				inputParamsBy$ggExtra <- getParamByEl(x = inputParamsBy$ggExtra, el = byEl)
 				do.call(subjectProfileSummaryPlot, inputParamsBy)		
 			})	
 			return(res)
