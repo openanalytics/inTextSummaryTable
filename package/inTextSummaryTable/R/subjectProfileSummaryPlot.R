@@ -115,7 +115,7 @@ subjectProfileSummaryPlot <- function(data,
 			}
 			
 			res <- dlply(data, byVar, function(dataBy){
-				byVarEl <- as.character(unlist(unique(dataBy[, byVar])))
+				byVarEl <- as.matrix(unique(dataBy[, byVar, drop = FALSE]))
 				byElST <- paste0(byVarEl, collapse = " ")
 				byEl <- paste0(byVarEl, collapse = ".")
 				inputParamsBy <- inputParams
