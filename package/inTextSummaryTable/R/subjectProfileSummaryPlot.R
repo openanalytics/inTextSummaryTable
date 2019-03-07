@@ -484,7 +484,7 @@ subjectProfileSummaryTable <- function(
 			# consider levels of color variable factor to
 			# set correct palette in case color palette specified for some elements
 			# without data (not represented in the plot)
-			colorPaletteAxes <- unname(colorPaletteTreatment[levels(droplevels(data$colorVar))])
+			colorPaletteAxes <- unname(colorPalette[levels(droplevels(data$colorVar))])
 			list(axis.text.y = element_text(colour = colorPaletteAxes))
 		},
 		if(!showLegend)	list(legend.position = "none")
