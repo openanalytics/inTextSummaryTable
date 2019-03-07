@@ -22,6 +22,9 @@
 #' @param label Logical or expression.
 #' Points are labelled with \code{meanVar} if set to TRUE,
 #' or with the specified expression if \code{label} is an expression.
+#' @param labelPadding Amount of padding around labelled points,
+#' 1.5 lines by default, see parameter \code{point.padding} of the
+#' \code{\link[ggrepel]{geom_text_repel}} function.
 #' @param sizePoint Size for the point.
 #' @param sizeLine Size for the line linking means and error bars.
 #' @param sizeLabel Size for the label, only used if \code{label} is not NULL.
@@ -41,11 +44,13 @@
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
 #' @param hLine String with color for \code{hLine}.
+#' @param hLineLty String with linetype for \code{hLine}.
 #' @param vLine (optional) numeric with x-intercept of dashed line to be added.
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
 #' @param vLine String with color for \code{vLine}.
+#' @param vLineLty String with linetype for \code{vLine}.
 #' @param useShape Logical, if TRUE (by default) \code{colorVar} is also used for the shape.
 #' @param widthErrorBar Numeric vector of length 1 with width of error bar.
 #' @param shapePalette Named vector with shape palette for \code{colorVar}.
@@ -83,10 +88,10 @@ subjectProfileSummaryPlot <- function(data,
 	sizeLabel = GeomText$default_aes$size,
 	widthErrorBar = GeomErrorbar$default_aes$width,
 	tableText = NULL, tableLabel = NULL, tableHeight = 0.1,
-	label = FALSE,
+	label = FALSE, labelPadding = unit(1, "lines"),
 	byVar = NULL,
-	hLine = NULL, hLineColor = "black",
-	vLine = NULL, vLineColor = "black",
+	hLine = NULL, hLineColor = "black", hLineLty = "solid",
+	vLine = NULL, vLineColor = "black", vLineLty = "solid",
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
@@ -183,7 +188,7 @@ subjectProfileSummaryPlot <- function(data,
 	gg <- ggplot()
 	
 	# horizontal line(s)
-	setLines <- function(inputLine, typeLine = c("hline", "vline"), color){
+	setLines <- function(inputLine, typeLine = c("hline", "vline"), color, linetype){
 		typeLine <- match.arg(typeLine)
 		paramName <- switch(typeLine, "hline" = "yintercept", "vline" = "xintercept")
 		geomFct <- match.fun(paste0("geom_", typeLine))
@@ -193,6 +198,7 @@ subjectProfileSummaryPlot <- function(data,
 				list(
 					data = dataLine, 
 					color = color,
+					linetype = linetype,
 					do.call(aes_string, setNames(list("line"), paramName))
 				)
 			)
@@ -200,15 +206,21 @@ subjectProfileSummaryPlot <- function(data,
 			do.call(geomFct, 
 				c(
 					setNames(list(inputLine), paramName),
-					list(color = color)
+					list(color = color, linetype = linetype)
 				)
 			)
 		}
 	}
 	if(!is.null(hLine))
-		gg <- gg + setLines(inputLine = hLine, typeLine = "hline", color = hLineColor)
+		gg <- gg + setLines(inputLine = hLine, 
+			typeLine = "hline", color = hLineColor,
+			linetype = hLineLty
+		)
 	if(!is.null(vLine))
-		gg <- gg + setLines(inputLine = vLine, typeLine = "vline", color = vLineColor)
+		gg <- gg + setLines(inputLine = vLine, 
+			typeLine = "vline", color = vLineColor,
+			linetype = vLineLty
+		)
 	
 	# line + points
 	gg <- gg +
@@ -231,7 +243,8 @@ subjectProfileSummaryPlot <- function(data,
 		gg <- gg + geom_text_repel(
 			mapping = do.call(aes_string, c(aesBase, list(label = "textLabel", y = "meanVar"))), 
 			data = data,
-			position = pd, size = sizeLabel
+			point.padding = labelPadding,
+			position = pd, size = sizeLabel,
 		)
 
 	if(includeEB)
