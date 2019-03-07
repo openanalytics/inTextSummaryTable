@@ -18,12 +18,13 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   sizeLabel = GeomText$default_aes$size,
   widthErrorBar = GeomErrorbar$default_aes$width, tableText = NULL,
   tableLabel = NULL, tableHeight = 0.1, label = FALSE,
-  byVar = NULL, hLine = NULL, hLineColor = "black", vLine = NULL,
-  vLineColor = "black", style = "report", fontname = switch(style,
-  report = "Times", presentation = "Tahoma"), fontsize = switch(style,
-  report = 8, presentation = 10), themeFct = switch(style, report =
-  theme_classic, presentation = theme_bw),
-  themeIncludeVerticalGrid = TRUE, ggExtra = NULL)
+  labelPadding = unit(1, "lines"), byVar = NULL, hLine = NULL,
+  hLineColor = "black", hLineLty = "solid", vLine = NULL,
+  vLineColor = "black", vLineLty = "solid", style = "report",
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  fontsize = switch(style, report = 8, presentation = 10),
+  themeFct = switch(style, report = theme_classic, presentation =
+  theme_bw), themeIncludeVerticalGrid = TRUE, ggExtra = NULL)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -99,6 +100,10 @@ used as label for the x-axis of the table.}
 Points are labelled with \code{meanVar} if set to TRUE,
 or with the specified expression if \code{label} is an expression.}
 
+\item{labelPadding}{Amount of padding around labelled points,
+1.5 lines by default, see parameter \code{point.padding} of the
+\code{\link[ggrepel]{geom_text_repel}} function.}
+
 \item{byVar}{Variable(s) of \code{data} for which separated plot(s)
 should be created.}
 
@@ -107,10 +112,14 @@ If different thresholds should be used for different elements of the
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
 
+\item{hLineLty}{String with linetype for \code{hLine}.}
+
 \item{vLine}{(optional) numeric with x-intercept of dashed line to be added.
 If different thresholds should be used for different elements of the 
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
+
+\item{vLineLty}{String with linetype for \code{vLine}.}
 
 \item{style}{String with subject profile style, either 'report' or 'presentation'.}
 
