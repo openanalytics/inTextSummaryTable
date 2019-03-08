@@ -188,36 +188,39 @@ subjectProfileSummaryPlot <- function(data,
 	gg <- ggplot()
 	
 	# horizontal line(s)
-	setLines <- function(inputLine, typeLine = c("hline", "vline"), color, linetype){
+	setLines <- function(gg, inputLine, typeLine = c("hline", "vline"), color, linetype){
 		typeLine <- match.arg(typeLine)
 		paramName <- switch(typeLine, "hline" = "yintercept", "vline" = "xintercept")
 		geomFct <- match.fun(paste0("geom_", typeLine))
+		dataLine <- data.frame(line = inputLine, color = color, linetype = linetype, stringsAsFactors = FALSE)
 		if(!is.null(facetVar) & !is.null(names(inputLine))){
-			dataLine <- setNames(data.frame(names(inputLine), inputLine), c(facetVar, "line"))
-			do.call(geomFct, 
-				list(
-					data = dataLine, 
-					color = color,
-					linetype = linetype,
-					do.call(aes_string, setNames(list("line"), paramName))
-				)
-			)
-		}else{
-			do.call(geomFct, 
-				c(
-					setNames(list(inputLine), paramName),
-					list(color = color, linetype = linetype)
-				)
+			dataLine <- cbind(
+				dataLine,
+				setNames(data.frame(names(inputLine)), facetVar)
 			)
 		}
+		for(i in seq_len(nrow(dataLine)))
+			gg <- gg + do.call(geomFct, 
+				list(
+					data = dataLine[i, ], 
+					do.call(aes_string, setNames(list("line"), paramName)),
+					color = dataLine[i, "color"],
+					linetype = dataLine[i, "linetype"]
+				)
+			)
+		return(gg)
 	}
 	if(!is.null(hLine))
-		gg <- gg + setLines(inputLine = hLine, 
+		gg <- setLines(
+			gg = gg,
+			inputLine = hLine, 
 			typeLine = "hline", color = hLineColor,
 			linetype = hLineLty
 		)
 	if(!is.null(vLine))
-		gg <- gg + setLines(inputLine = vLine, 
+		gg <- setLines(
+			gg = gg,
+			inputLine = vLine, 
 			typeLine = "vline", color = vLineColor,
 			linetype = vLineLty
 		)
