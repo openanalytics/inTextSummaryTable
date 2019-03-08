@@ -245,6 +245,7 @@ subjectProfileSummaryPlot <- function(data,
 			data = data,
 			point.padding = labelPadding,
 			position = pd, size = sizeLabel,
+			seed = 123
 		)
 
 	if(includeEB)
