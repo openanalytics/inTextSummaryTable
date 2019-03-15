@@ -112,12 +112,16 @@ If different thresholds should be used for different elements of the
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
 
+\item{hLineColor}{String with color for \code{hLine}.}
+
 \item{hLineLty}{String with linetype for \code{hLine}.}
 
 \item{vLine}{(optional) numeric with x-intercept of dashed line to be added.
 If different thresholds should be used for different elements of the 
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
+
+\item{vLineColor}{String with color for \code{vLine}.}
 
 \item{vLineLty}{String with linetype for \code{vLine}.}
 
@@ -133,10 +137,6 @@ with each corresponding element (collapsed with '.' if multiple).}
 include theme vertical grid lines (if present in \code{themeFct}).}
 
 \item{ggExtra}{Extra \code{ggplot} command to be added in main plot.}
-
-\item{hLine}{String with color for \code{hLine}.}
-
-\item{vLine}{String with color for \code{vLine}.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object or list of such

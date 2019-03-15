@@ -16,6 +16,8 @@
 #' 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.
 #' @param margin Margin in the document in inches, currently only used to specify the
 #' width of the table: [width page extracted from \code{dimPage} - 2* margin]
+#' @param colorTable Named character vector with color for the table background/body/text/line,
+#' e.g. created with the \code{\link{getColorTable}} function.
 #' @inheritParams getDimPage
 #' @inheritParams formatSuperSubscriptToFlextable
 #' @inheritParams formatSummaryStatisticsTable
@@ -490,6 +492,7 @@ getGLPGFlextable <- function(data,
 #' }
 #' @author Laure Cougnaud
 #' @importFrom glpgStyle glpgColor
+#' @importFrom grDevices rgb
 #' @export
 getColorTable <- function(style = c("report", "presentation")){
 	

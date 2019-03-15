@@ -43,13 +43,13 @@
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
-#' @param hLine String with color for \code{hLine}.
+#' @param hLineColor String with color for \code{hLine}.
 #' @param hLineLty String with linetype for \code{hLine}.
 #' @param vLine (optional) numeric with x-intercept of dashed line to be added.
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
-#' @param vLine String with color for \code{vLine}.
+#' @param vLineColor String with color for \code{vLine}.
 #' @param vLineLty String with linetype for \code{vLine}.
 #' @param useShape Logical, if TRUE (by default) \code{colorVar} is also used for the shape.
 #' @param widthErrorBar Numeric vector of length 1 with width of error bar.
