@@ -260,6 +260,9 @@ the \code{rowVar} variable(s)}
 This parameter affects the fontsize, font family, color of the text and background, 
 and table dimensions of the table.}
 
+\item{colorTable}{Named character vector with color for the table background/body/text/line,
+e.g. created with the \code{\link{getColorTable}} function.}
+
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
 
