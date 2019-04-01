@@ -57,6 +57,8 @@
 #' @param themeIncludeVerticalGrid Logical, if TRUE (by default)
 #' include theme vertical grid lines (if present in \code{themeFct}).
 #' @param ggExtra Extra \code{ggplot} command to be added in main plot.
+#' @param ... Additional parameters for \code{\link[ggrepel]{geom_text_repel}}
+#' used for the \code{label}.
 #' @inheritParams subjectProfileSummaryTable
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
@@ -88,7 +90,7 @@ subjectProfileSummaryPlot <- function(data,
 	sizeLabel = GeomText$default_aes$size,
 	widthErrorBar = GeomErrorbar$default_aes$width,
 	tableText = NULL, tableLabel = NULL, tableHeight = 0.1,
-	label = FALSE, labelPadding = unit(1, "lines"),
+	label = FALSE, labelPadding = unit(1, "lines"), 
 	byVar = NULL,
 	hLine = NULL, hLineColor = "black", hLineLty = "solid",
 	vLine = NULL, vLineColor = "black", vLineLty = "solid",
@@ -97,7 +99,8 @@ subjectProfileSummaryPlot <- function(data,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
 	themeIncludeVerticalGrid = TRUE,
-	ggExtra = NULL){
+	ggExtra = NULL,
+	...){
 
 	if(!is.null(facetVar) & !is.null(tableText)){
 		warning("Table cannot be used in combination with 'facetVar', no table is included.")
@@ -105,7 +108,7 @@ subjectProfileSummaryPlot <- function(data,
 	}
 
 	if(!is.null(byVar)){
-		inputParams <- as.list(environment())
+		inputParams <- c(as.list(environment()), list(...))
 		if(!all(byVar %in% colnames(data))){
 			warning("'byVar' is not available in the 'data' so is not used.")
 			byVar <- FALSE
@@ -168,9 +171,20 @@ subjectProfileSummaryPlot <- function(data,
 		data$colorVar <- data[, colorVar]
 	
 	if(!(is.logical(label) && !label)){
-		data$textLabel <- if(is.expression(label)){
-			eval(expr = label, envir = data)
-		}else data[, meanVar]
+		if(is.list(label)){
+			if(all(sapply(label, is.expression))){
+				stop("If 'label' is a list, should be a list of expressions.")
+			}else{
+				if(!"textLabel" %in% names(label))
+					stop("If 'label' is a list, should contain at least 'textLabel'.")
+				for(labelI in names(label))
+					data[, labelI] <- eval(expr = label[[labelI]], envir = data)
+			}
+		}else	if(is.expression(label)){
+			data$textLabel <- eval(expr = label, envir = data)
+		}else	if(is.logical(label)){
+				data$textLabel <- data[, meanVar]
+		}
 	}
 		
 	# base plot
@@ -246,9 +260,9 @@ subjectProfileSummaryPlot <- function(data,
 		gg <- gg + geom_text_repel(
 			mapping = do.call(aes_string, c(aesBase, list(label = "textLabel", y = "meanVar"))), 
 			data = data,
-			point.padding = labelPadding,
 			position = pd, size = sizeLabel,
-			seed = 123
+			seed = 123, point.padding = labelPadding, 
+			...
 		)
 
 	if(includeEB)
