@@ -24,7 +24,7 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   fontsize = switch(style, report = 8, presentation = 10),
   themeFct = switch(style, report = theme_classic, presentation =
-  theme_bw), themeIncludeVerticalGrid = TRUE, ggExtra = NULL)
+  theme_bw), themeIncludeVerticalGrid = TRUE, ggExtra = NULL, ...)
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
@@ -137,6 +137,9 @@ with each corresponding element (collapsed with '.' if multiple).}
 include theme vertical grid lines (if present in \code{themeFct}).}
 
 \item{ggExtra}{Extra \code{ggplot} command to be added in main plot.}
+
+\item{...}{Additional parameters for \code{\link[ggrepel]{geom_text_repel}}
+used for the \code{label}.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object or list of such
