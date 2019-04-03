@@ -96,9 +96,13 @@ used as label for the x-axis of the table.}
 
 \item{tableHeight}{Numeric of length 1 with height for the table.}
 
-\item{label}{Logical or expression.
+\item{label}{Logical or expression or list of expression.
 Points are labelled with \code{meanVar} if set to TRUE,
-or with the specified expression if \code{label} is an expression.}
+or with the specified expression if \code{label} is an expression.
+If a list is specified, 'textLabel' (required) 
+should contain expression to extract label, 
+and 'textHjust' and 'textVjust' (optional) may contain expression 
+specifying horizontal and vertical adjustment of the label.}
 
 \item{labelPadding}{Amount of padding around labelled points,
 1.5 lines by default, see parameter \code{point.padding} of the
@@ -138,7 +142,8 @@ include theme vertical grid lines (if present in \code{themeFct}).}
 
 \item{ggExtra}{Extra \code{ggplot} command to be added in main plot.}
 
-\item{...}{Additional parameters for \code{\link[ggrepel]{geom_text_repel}}
+\item{...}{Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
+\code{\link[ggplot2]{geom_text}}
 used for the \code{label}.}
 }
 \value{
