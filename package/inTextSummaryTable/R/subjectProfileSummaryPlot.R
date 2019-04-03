@@ -19,9 +19,13 @@
 #' \code{byVar} variable, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
 #' @param jitter Numeric with jitter for the x-axis, only used if \code{colorVar} specified.
-#' @param label Logical or expression.
+#' @param label Logical or expression or list of expression.
 #' Points are labelled with \code{meanVar} if set to TRUE,
 #' or with the specified expression if \code{label} is an expression.
+#' If a list is specified, 'textLabel' (required) 
+#' should contain expression to extract label, 
+#' and 'textHjust' and 'textVjust' (optional) may contain expression 
+#' specifying horizontal and vertical adjustment of the label.
 #' @param labelPadding Amount of padding around labelled points,
 #' 1.5 lines by default, see parameter \code{point.padding} of the
 #' \code{\link[ggrepel]{geom_text_repel}} function.
@@ -57,7 +61,8 @@
 #' @param themeIncludeVerticalGrid Logical, if TRUE (by default)
 #' include theme vertical grid lines (if present in \code{themeFct}).
 #' @param ggExtra Extra \code{ggplot} command to be added in main plot.
-#' @param ... Additional parameters for \code{\link[ggrepel]{geom_text_repel}}
+#' @param ... Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
+#' \code{\link[ggplot2]{geom_text}}
 #' used for the \code{label}.
 #' @inheritParams subjectProfileSummaryTable
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
@@ -172,7 +177,7 @@ subjectProfileSummaryPlot <- function(data,
 	
 	if(!(is.logical(label) && !label)){
 		if(is.list(label)){
-			if(all(sapply(label, is.expression))){
+			if(!all(sapply(label, is.expression))){
 				stop("If 'label' is a list, should be a list of expressions.")
 			}else{
 				if(!"textLabel" %in% names(label))
@@ -256,14 +261,33 @@ subjectProfileSummaryPlot <- function(data,
 			position = pd, size = sizePoint, data = data
 		)
 
-	if(!(is.logical(label) && !label))
-		gg <- gg + geom_text_repel(
-			mapping = do.call(aes_string, c(aesBase, list(label = "textLabel", y = "meanVar"))), 
-			data = data,
-			position = pd, size = sizeLabel,
-			seed = 123, point.padding = labelPadding, 
-			...
+	if(!(is.logical(label) && !label)){
+		
+		# aes parameters
+		aesJust <- setNames(c("textHjust", "textVjust"), c("hjust", "vjust"))[c("textHjust", "textVjust") %in% names(label)]
+		aesArgs <- c(aesBase, list(label = "textLabel", y = "meanVar"))
+		geomTextFct <- "geom_text_repel"
+		if(length(aesJust) > 0){
+			geomTextFct <- "geom_text"
+			aesArgs <- c(aesArgs, aesJust)
+		}
+		
+		# geom_text(_repel) paremeters
+		geomTextArgs <- c(
+			list(
+				mapping = do.call(aes_string, aesArgs), 
+				data = data,
+				position = pd, size = sizeLabel,
+				...
+			),
+			if(geomTextFct == "geom_text_repel")
+				list(
+					seed = 123, 
+					point.padding = labelPadding
+				)
 		)
+		gg <- gg + do.call(geomTextFct, geomTextArgs)
+	}
 
 	if(includeEB)
 		gg <- gg + geom_errorbar(

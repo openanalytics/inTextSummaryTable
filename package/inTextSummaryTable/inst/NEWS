@@ -1,5 +1,5 @@
 1.2.0
-    o subjectProfileSummaryPlot: possibility to pass any parameters for geom_text_repel
+    o subjectProfileSummaryPlot: possibility to pass any parameters for geom_text_repel and list of expression/horizontal and vertical adjustments for label
 1.1.0
     o createFlextableWithHeader: fix in case no headerDf and ft are specified
     o convertSummaryStatisticsTableToFlextable: remove line on top title
