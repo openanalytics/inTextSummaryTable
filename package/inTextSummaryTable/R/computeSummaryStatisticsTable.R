@@ -157,7 +157,7 @@ computeSummaryStatisticsTable <- function(
 	inputParams <- as.list(environment())
 	
 	if(nrow(data) == 0)
-		stop("The specified dataset is empty.")
+		stop("No data to report.")
 	
 	if(!is.null(dataTotal) && !all(colVar %in% colnames(dataTotal)))
 		stop("The variable(s) specified in 'colVar': ",
