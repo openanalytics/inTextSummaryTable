@@ -13,6 +13,7 @@ formatSummaryStatisticsTable(summaryTable,
   rowAutoMerge = TRUE, colVar = getAttribute(summaryTable, "colVar"),
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
   "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
+  statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"),
   statsValueLab = "StatisticValue", emptyValue = NULL,
   vline = c("none", "auto"))
@@ -56,6 +57,9 @@ if \code{colTotalInclude} is TRUE, 'Total' by default.}
 (\code{'statN'}) in the header.}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
+
+\item{statsVar}{Character vector with columns of \code{summaryTable} with
+statistic variables.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:

@@ -16,8 +16,9 @@ exportSummaryStatisticsTable(summaryTable,
   emptyValue = NULL, labelVars = NULL, file = NULL,
   landscape = (style == "presentation"), margin = 1,
   rowPadBase = 14.4, title = NULL, footer = NULL,
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), style = "report",
+  outputType = c("flextable", "data.frame"),
+  statsVar = getAttribute(summaryTable, "statsVar"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), fontsize = switch(style,
   report = 8, presentation = 10), fontname = switch(style, report =
   "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL)
@@ -83,6 +84,9 @@ Set to NULL (by default) if no title should be included.}
 Set to NULL (by default) of no footer should be included.}
 
 \item{outputType}{String with output type, 'data.frame' or 'flextable'.}
+
+\item{statsVar}{Character vector with columns of \code{summaryTable} with
+statistic variables.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:

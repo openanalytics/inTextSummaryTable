@@ -39,6 +39,8 @@
 #' \item{'none' (default): }{no vertical lines included}
 #' \item{'auto': }{vertical lines included between sub-groups}
 #' }
+#' @param statsVar Character vector with columns of \code{summaryTable} with
+#' statistic variables.
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -64,6 +66,7 @@
 #' @importFrom stats as.formula
 formatSummaryStatisticsTable <- function(
 	summaryTable,
+	# row
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = NULL,
@@ -71,12 +74,14 @@ formatSummaryStatisticsTable <- function(
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"), 
 	rowVarTotalInSepRow = NULL,
 	rowTotalLab = NULL,
-	
 	rowAutoMerge = TRUE,
+	# column
 	colVar = getAttribute(summaryTable, "colVar"),
 	colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
 	colHeaderTotalInclude = TRUE,
 	labelVars = NULL,
+	# stats
+	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
 	emptyValue = NULL,
@@ -99,45 +104,50 @@ formatSummaryStatisticsTable <- function(
 		
 	statsLayout <- match.arg(statsLayout)
 	
-	statsVar <- attributes(summaryTable)$summaryTable$statsVar
 	if(statsLayout == "col" & "variableGroup" %in% rowVar){
 		warning("The layout of the statistics cannot be 'column' if categorical variable(s) are used, the statistics are set in rows.")
 		statsLayout <- "row"
 	}
 		
 	## format table
-	
-	if(!is.null(colVar) & colHeaderTotalInclude){
+	if("isTotal" %in% colnames(summaryTable)){
 		
-		# add total in column header
-		colVarWithCount <- colVar[length(colVar)] 
+		if(!is.null(colVar) & colHeaderTotalInclude){
+			
+			# add total in column header
+			colVarWithCount <- colVar[length(colVar)] 
+			
+			dataWithTotal <- ddply(summaryTable, colVar, function(x){
+				idxTotal <- which(x$isTotal)
+				if(length(idxTotal) == 1){
+					# for the total column, include the N in all columns (to be merged afterwards)
+					colToModif <- if(all(!is.na(x[, colVar])) && all(x[, colVar] == colTotalLab))	colVar	else	colVarWithCount
+					for(col in colToModif)
+						x[, col] <- paste0(x[, col], "\n(N=",  x[idxTotal , "statN"], ")")
+					x[-idxTotal, ]
+				}else x
+			})
 		
-		dataWithTotal <- ddply(summaryTable, colVar, function(x){
-			idxTotal <- which(x$isTotal)
-			if(length(idxTotal) == 1){
-				# for the total column, include the N in all columns (to be merged afterwards)
-				colToModif <- if(all(!is.na(x[, colVar])) && all(x[, colVar] == colTotalLab))	colVar	else	colVarWithCount
-				for(col in colToModif)
-					x[, col] <- paste0(x[, col], "\n(N=",  x[idxTotal , "statN"], ")")
-				x[-idxTotal, ]
-			}else x
-		})
+			# ensure that order of columns with Total is as specified in levels of the factor originally
+			for(col in colVar){
+				colVarWithCountEl <- unique(dataWithTotal[, col])	
+				colVarInit <-  summaryTable[, col]
+				colVarEl <- if(is.factor(colVarInit))	levels(colVarInit)	else	unique(colVarInit)	
+				colVarWithCountElOrdered <- colVarWithCountEl[
+					order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), colVarEl))
+				]
+				dataWithTotal[, col] <- factor(dataWithTotal[, col], levels = colVarWithCountElOrdered)
+			}
 	
-		# ensure that order of columns with Total is as specified in levels of the factor originally
-		for(col in colVar){
-			colVarWithCountEl <- unique(dataWithTotal[, col])	
-			colVarInit <-  summaryTable[, col]
-			colVarEl <- if(is.factor(colVarInit))	levels(colVarInit)	else	unique(colVarInit)	
-			colVarWithCountElOrdered <- colVarWithCountEl[
-				order(match(sub("(.+)\n\\(N=.+\\)", "\\1", colVarWithCountEl), colVarEl))
-			]
-			dataWithTotal[, col] <- factor(dataWithTotal[, col], levels = colVarWithCountElOrdered)
+		}else{
+			idxTotal <- which(summaryTable$isTotal)
+			nTotal <- summaryTable[idxTotal, "statN"]
+			dataWithTotal <- summaryTable[-idxTotal, ]
 		}
-
+		
 	}else{
-		idxTotal <- which(summaryTable$isTotal)
-		nTotal <- summaryTable[idxTotal, "statN"]
-		dataWithTotal <- summaryTable[-idxTotal, ]
+		dataWithTotal <- summaryTable
+		nTotal <- NA
 	}
 		
 	# convert from wide to long format

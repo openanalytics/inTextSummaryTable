@@ -1,6 +1,7 @@
 1.2.1
     o getNDecimals: fix when NA value, new: getMaxNDecimals
     o convertSummaryStatisticsTableToFlextable: format superscript/subscript in title
+    o formatSummaryStatisticsTable: statsVar input param
 1.2.0
     o subjectProfileSummaryPlot: possibility to pass any parameters for geom_text_repel and list of expression/horizontal and vertical adjustments for label
 1.1.0
