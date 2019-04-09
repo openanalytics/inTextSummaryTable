@@ -2,7 +2,8 @@
 % Please edit documentation in R/miscellaneous.R
 \name{getNDecimals}
 \alias{getNDecimals}
-\title{Get number of decimals.}
+\title{Get number of decimals in a numeric vector.
+Note: NA is returned if the element is missing (NA).}
 \usage{
 getNDecimals(x)
 }
@@ -14,7 +15,8 @@ Numeric vector of same length than \code{x}
 with the number of decimals
 }
 \description{
-Get number of decimals.
+Get number of decimals in a numeric vector.
+Note: NA is returned if the element is missing (NA).
 }
 \author{
 Laure Cougnaud

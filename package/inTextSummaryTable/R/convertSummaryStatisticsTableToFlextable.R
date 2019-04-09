@@ -166,6 +166,15 @@ convertSummaryStatisticsTableToFlextable <- function(
 		fontname = fontname,
 		fontsize = fontsize
 	)
+	# for title
+	if(!is.null(title))
+		ft <- formatSuperSubscriptToFlextable(
+			dataTable = data.frame(title), ft = ft, 
+			part = "header",
+			fontname = fontname,
+			fontsize = fontsize,
+			bold = TRUE
+		)
 	# for header
 	if(!is.null(headerDf))
 		ft <- formatSuperSubscriptToFlextable(
@@ -258,6 +267,7 @@ getDimPage <- function(
 #' @param part string with part of the table to consider, 
 #' see \code{\link[flextable]{display}}.
 #' @param iBase Integer with base row index (if different than 0).
+#' @param bold Logical (FALSE by default) should the superscript/subscript be indicated in bold?
 #' @return \code{\link[flextable]{flextable}} with superscript/subscript.
 #' @importFrom stats as.formula
 #' @importFrom officer fp_text
@@ -268,7 +278,8 @@ formatSuperSubscriptToFlextable <- function(
 	fontname = "Times",
 	part = "body",
 	fontsize = 8,
-	iBase = 0){
+	iBase = 0,
+	bold = FALSE){
 
 	patterns <- c("superscript" = "(.+)\\^\\{(.+)\\}(.*)", "subscript" = "(.+)_\\{(.+)\\}(.*)")
 	
@@ -317,7 +328,8 @@ formatSuperSubscriptToFlextable <- function(
 							fp_text(
 								vertical.align = patternName, 
 								font.size = fontsize,
-								font.family = fontname
+								font.family = fontname,
+								bold = bold
 							)
 						),
 						part = part
