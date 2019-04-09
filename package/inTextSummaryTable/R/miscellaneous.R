@@ -101,13 +101,25 @@ interactionCustom <- function(data, var,
 	
 }
 
-#' Get number of decimals.
+#' Get number of decimals in a numeric vector.
+#' Note: NA is returned if the element is missing (NA).
 #' @param x Numeric vector.
 #' @return Numeric vector of same length than \code{x}
 #' with the number of decimals
 #' @author Laure Cougnaud
 #' @export
 getNDecimals <- function(x)
-	nchar(sub("-*[[:digit:]]+\\.*([[:digit:]]+)*", 
-		"\\1", as.character(sapply(x, format, scientific = FALSE)))
+	nchar(
+		ifelse(is.na(x), NA_character_,
+			sub("-*[[:digit:]]+\\.*([[:digit:]]+)*", 
+			"\\1", as.character(sapply(x, format, scientific = FALSE)))
+		)
 	)
+
+#' Get maximum number of decimals in a variable
+#' @inheritParams getNDecimals
+#' @return Integer with maximum number of decimals in a character vector.
+#' @author Laure Cougnaud
+#' @export
+getMaxNDecimals <- function(x)
+	max(getNDecimals(x), na.rm = TRUE)
