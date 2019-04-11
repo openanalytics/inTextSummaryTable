@@ -29,12 +29,15 @@
 #' This will be included in the table header (see 'rowVarLab' attribute of the output).
 #' Empty by default.
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable
-#' @param dataTotal Data.frame used to extract the Total count, indicated
+#' @param dataTotal Data.frame used to extract the Total count per column, indicated
 #' in 'N' in column header.
 #' It should contain the variables specified by \code{colVarTotal}.
-#' @param dataTotalPerc Data.frame used to extract the Total count, 
+#' @param dataTotalPerc Data.frame used to extract the Total count per column, 
 #' used for the computation of the percentage: 'statPercN' parameter.
 #' It should contain the variables specified by \code{colVarTotalPerc}.
+#' @param dataTotalRow Data.frame used to extract the total count per row
+#' variable, in case \code{rowVarTotalInclude} is specified,
+#' or list of such data.frame for each variable (named by variable).
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table 
 #' (after statistics computation).
@@ -144,6 +147,7 @@ computeSummaryStatisticsTable <- function(
 	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL, dataTotalPerc = dataTotal,
+	dataTotalRow = NULL,
 	stats = NULL, 
 	statsVarBy = NULL,
 	statsExtra = NULL,
@@ -253,17 +257,28 @@ computeSummaryStatisticsTable <- function(
 		summaryTableRowSubtotal <- data.frame()
 		for(rVST in rowVarSubTotal){
 			
+			dataForSubTotal <- if(!is.null(dataTotalRow)){
+				if(is.data.frame(dataTotalRow)){
+					dataTotalRow
+				}else{
+					if(rVST %in% names(dataTotalRow)){
+						dataTotalRow[[rVST]]
+					}else	stop(paste0("'dataTotalRow' missing for: ", rVST, "."))
+				}
+			}else	data
+	
 			# remove rows which have NA for the nested sub-variable
 			# otherwise have summary statistics are duplicated (sub-total and initial)
 			rowVarSubTotalOther <- rowVar[
 				setdiff(seq_along(rowVar), seq_len(match(rVST, rowVar)))
 			]
-			idxMissingSubVar <- which(
-				rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
-			)
-			dataForSubTotal <- if(length(rowVarSubTotalOther) > 0 && length(idxMissingSubVar) > 0){
-				data[-idxMissingSubVar, ]
-			}else	data
+			if(length(rowVarSubTotalOther) > 0){
+				idxMissingSubVar <- which(
+					rowSums(is.na(dataForSubTotal[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
+				)
+				if(length(idxMissingSubVar) > 0)
+					dataForSubTotal <- dataForSubTotal[-idxMissingSubVar, ]
+			}
 	
 			# compute statistics by higher level rowVar
 			rowVarOther <- rowVar[seq_len(match(rVST, rowVar)-1)]

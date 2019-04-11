@@ -21,15 +21,16 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   statsVarBy = NULL, statsGeneralLab = "Statistic",
   statsValueLab = "StatisticValue", subjectVar = "USUBJID",
   filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
-  type = "auto", labelVars = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
-  footer = NULL, file = NULL, outputType = c("flextable",
-  "data.frame"), statsLayout = c("row", "col", "rowInSepCol"),
-  style = "report", colorTable = getColorTable(style = style),
-  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
-  labelVars), colHeaderTotalInclude = TRUE, fontsize = switch(style,
-  report = 8, presentation = 10), fontname = switch(style, report =
-  "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL)
+  dataTotalRow = NULL, type = "auto", labelVars = NULL,
+  landscape = (style == "presentation"), margin = 1,
+  rowPadBase = 14.4, title = NULL, footer = NULL, file = NULL,
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"), style = "report",
+  colorTable = getColorTable(style = style), byVar = NULL,
+  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
+  colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
+  presentation = 10), fontname = switch(style, report = "Times",
+  presentation = "Tahoma"), vline = "none", pageDim = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -207,13 +208,17 @@ and \code{colVar}/\code{rowVar} is NA}
 Note: the total count per category of the row variables is included
 in a row with this variable set to 'Total'.}
 
-\item{dataTotal}{Data.frame used to extract the Total count, indicated
+\item{dataTotal}{Data.frame used to extract the Total count per column, indicated
 in 'N' in column header.
 It should contain the variables specified by \code{colVarTotal}.}
 
-\item{dataTotalPerc}{Data.frame used to extract the Total count, 
+\item{dataTotalPerc}{Data.frame used to extract the Total count per column, 
 used for the computation of the percentage: 'statPercN' parameter.
 It should contain the variables specified by \code{colVarTotalPerc}.}
+
+\item{dataTotalRow}{Data.frame used to extract the total count per row
+variable, in case \code{rowVarTotalInclude} is specified,
+or list of such data.frame for each variable (named by variable).}
 
 \item{type}{String with type of table: 
 \itemize{
