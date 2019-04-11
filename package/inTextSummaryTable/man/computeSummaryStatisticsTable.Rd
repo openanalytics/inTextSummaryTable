@@ -15,8 +15,8 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowOrder = "auto", rowOrderTotalFilterFct = NULL,
   rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
   rowVarTotalPerc = NULL, type = "auto", subjectVar = "USUBJID",
-  dataTotal = NULL, dataTotalPerc = dataTotal, stats = NULL,
-  statsVarBy = NULL, statsExtra = NULL,
+  dataTotal = NULL, dataTotalPerc = dataTotal, dataTotalRow = NULL,
+  stats = NULL, statsVarBy = NULL, statsExtra = NULL,
   statsGeneralLab = "Statistic", filterFct = NULL,
   rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
   byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
@@ -119,13 +119,17 @@ If the total should be based on the total number of records per variable,
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{dataTotal}{Data.frame used to extract the Total count, indicated
+\item{dataTotal}{Data.frame used to extract the Total count per column, indicated
 in 'N' in column header.
 It should contain the variables specified by \code{colVarTotal}.}
 
-\item{dataTotalPerc}{Data.frame used to extract the Total count, 
+\item{dataTotalPerc}{Data.frame used to extract the Total count per column, 
 used for the computation of the percentage: 'statPercN' parameter.
 It should contain the variables specified by \code{colVarTotalPerc}.}
+
+\item{dataTotalRow}{Data.frame used to extract the total count per row
+variable, in case \code{rowVarTotalInclude} is specified,
+or list of such data.frame for each variable (named by variable).}
 
 \item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
 The names are reported in the header.
