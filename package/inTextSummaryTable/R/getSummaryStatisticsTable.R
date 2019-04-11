@@ -96,6 +96,7 @@ getSummaryStatisticsTable <- function(
 		byVar = byVar, byVarLab = byVarLab
 	)
 
+	if(is.null(summaryTable))	return(invisible())
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
 		# total
