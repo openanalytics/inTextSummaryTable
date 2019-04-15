@@ -10,22 +10,22 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   varIncludeTotal = FALSE, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
-  rowOrderTotalFilterFct = NULL, rowVarInSepCol = NULL,
-  rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
-  rowVarTotalInSepRow = NULL, rowTotalLab = NULL,
-  rowInclude0 = FALSE, rowAutoMerge = TRUE, emptyValue = NULL,
-  rowVarTotalPerc = NULL, colVar = NULL, colVarTotal = colVar,
-  colVarTotalPerc = colVarTotal, colInclude0 = FALSE,
-  colVarDataLevels = NULL, colTotalInclude = FALSE,
-  colTotalLab = "Total", stats = NULL, statsExtra = NULL,
-  statsVarBy = NULL, statsGeneralLab = "Statistic",
-  statsValueLab = "StatisticValue", subjectVar = "USUBJID",
-  filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
-  dataTotalRow = NULL, type = "auto", labelVars = NULL,
-  landscape = (style == "presentation"), margin = 1,
-  rowPadBase = 14.4, title = NULL, footer = NULL, file = NULL,
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), style = "report",
+  rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
+  rowVarInSepCol = NULL, rowVarTotalInclude = NULL,
+  rowVarTotalByVar = NULL, rowVarTotalInSepRow = NULL,
+  rowTotalLab = NULL, rowInclude0 = FALSE, rowAutoMerge = TRUE,
+  emptyValue = NULL, rowVarTotalPerc = NULL, colVar = NULL,
+  colVarTotal = colVar, colVarTotalPerc = colVarTotal,
+  colInclude0 = FALSE, colVarDataLevels = NULL,
+  colTotalInclude = FALSE, colTotalLab = "Total", stats = NULL,
+  statsExtra = NULL, statsVarBy = NULL,
+  statsGeneralLab = "Statistic", statsValueLab = "StatisticValue",
+  subjectVar = "USUBJID", filterFct = NULL, dataTotal = NULL,
+  dataTotalPerc = dataTotal, dataTotalRow = NULL, type = "auto",
+  labelVars = NULL, landscape = (style == "presentation"),
+  margin = 1, rowPadBase = 14.4, title = NULL, footer = NULL,
+  file = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), byVar = NULL,
   byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
   colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
@@ -81,6 +81,9 @@ specify a different ordering method for each variable.}
 
 \item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
 based on total counts (in case \code{rowOrder} is 'total').}
+
+\item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
+(if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table, NULL by default. 

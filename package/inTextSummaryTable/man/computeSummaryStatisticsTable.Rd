@@ -13,10 +13,11 @@ computeSummaryStatisticsTable(data, var = NULL,
   colTotalLab = "Total", rowVar = NULL, rowVarDataLevels = NULL,
   rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
   rowOrder = "auto", rowOrderTotalFilterFct = NULL,
-  rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
-  rowVarTotalPerc = NULL, type = "auto", subjectVar = "USUBJID",
-  dataTotal = NULL, dataTotalPerc = dataTotal, dataTotalRow = NULL,
-  stats = NULL, statsVarBy = NULL, statsExtra = NULL,
+  rowOrderCatLast = "Other", rowVarTotalInclude = NULL,
+  rowVarTotalByVar = NULL, rowVarTotalPerc = NULL, type = "auto",
+  subjectVar = "USUBJID", dataTotal = NULL,
+  dataTotalPerc = dataTotal, dataTotalRow = NULL, stats = NULL,
+  statsVarBy = NULL, statsExtra = NULL,
   statsGeneralLab = "Statistic", filterFct = NULL,
   rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
   byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
@@ -93,6 +94,9 @@ specify a different ordering method for each variable.}
 
 \item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
 based on total counts (in case \code{rowOrder} is 'total').}
+
+\item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
+(if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}

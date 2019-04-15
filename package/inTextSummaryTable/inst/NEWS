@@ -1,6 +1,7 @@
 1.3.0
     o computeSummaryStatisticsTable: dataTotalRow
     o get/computeSummaryStatisticTable: message and return NULL if no data
+    o computeSummaryStatisticsTable: rowOrderCatLast
 1.2.1
     o getNDecimals: fix when NA value, new: getMaxNDecimals
     o convertSummaryStatisticsTableToFlextable: format superscript/subscript in title
