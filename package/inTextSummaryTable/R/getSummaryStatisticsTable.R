@@ -15,7 +15,7 @@ getSummaryStatisticsTable <- function(
 	## row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarDataLevels = NULL, 
-	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
+	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
 	rowVarInSepCol = NULL, 
 	# total
 	rowVarTotalInclude = NULL, 
@@ -79,7 +79,9 @@ getSummaryStatisticsTable <- function(
 		rowVar = rowVar, rowInclude0 = rowInclude0,
 		rowVarDataLevels = rowVarDataLevels,
 		rowVarLab = rowVarLab,
-		rowOrder = rowOrder, rowOrderTotalFilterFct = rowOrderTotalFilterFct,
+		rowOrder = rowOrder, 
+		rowOrderTotalFilterFct = rowOrderTotalFilterFct,
+		rowOrderCatLast = rowOrderCatLast,
 		# total
 		rowVarTotalInclude = rowVarTotalInclude,
 		rowVarTotalByVar = rowVarTotalByVar,

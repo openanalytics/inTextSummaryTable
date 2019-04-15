@@ -6,7 +6,7 @@
 \usage{
 convertVarToFactorWithOrder(data, var, otherVars = NULL,
   method = c("auto", "alphabetical", "total"), totalFilterFct = NULL,
-  totalVar = "statN")
+  totalVar = "statN", catLast = "Other")
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -35,6 +35,10 @@ to filter the total data considered for the ordering.}
 
 \item{totalVar}{String with variable of \code{data} considered in case \code{type} is 'total',
 'statN' by default.}
+
+\item{catLast}{String with last category (if any).
+By default, category labelled 'Other' is last.
+Set to NULL if no specific category should be included as last element.}
 }
 \value{
 Factor \code{var} variable of \code{data} with specified order.

@@ -16,6 +16,8 @@
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
 #' based on total counts (in case \code{rowOrder} is 'total').
+#' @param rowOrderCatLast String with category to be printed last of each \code{rowVar}
+#' (if any, set to NULL if none). By default, category labelled 'Other' is printed last.
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
 #' for which to include the total for each group.
 #' @param rowVarTotalByVar Character vector with extra \code{codeVar}
@@ -140,7 +142,7 @@ computeSummaryStatisticsTable <- function(
 	colTotalInclude = FALSE, colTotalLab = "Total",
 	rowVar = NULL, rowVarDataLevels = NULL, 
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
-	rowOrder = "auto", rowOrderTotalFilterFct = NULL,
+	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
 	rowVarTotalInclude = NULL,
 	rowVarTotalByVar = NULL,
 	rowVarTotalPerc = NULL,
@@ -456,8 +458,9 @@ computeSummaryStatisticsTable <- function(
 			convertVarToFactorWithOrder(
 				data = summaryTable, var = var, 
 				method = methodVar,
+				catLast = rowOrderCatLast,
 				totalFilterFct = rowOrderTotalFilterFct,
-				otherVars = setdiff(rowVar, var)
+				otherVars = setdiff(rowVar, var),
 			)
 		})
 	}
@@ -946,6 +949,9 @@ computeSummaryStatistics <- function(data,
 #' 'statN' by default.
 #' @param totalFilterFct (optional) Function which returns a subset of the data of interest,
 #' to filter the total data considered for the ordering.
+#' @param catLast String with last category (if any).
+#' By default, category labelled 'Other' is last.
+#' Set to NULL if no specific category should be included as last element.
 #' @return Factor \code{var} variable of \code{data} with specified order.
 #' @importFrom plyr daply
 #' @author Laure Cougnaud
@@ -953,7 +959,8 @@ convertVarToFactorWithOrder <- function(
 	data, var, otherVars = NULL, 
 	method = c("auto", "alphabetical", "total"),
 	totalFilterFct = NULL,
-	totalVar = "statN"){
+	totalVar = "statN",
+	catLast = "Other"){
 
 	if(!is.function(method)){
 		
@@ -962,11 +969,15 @@ convertVarToFactorWithOrder <- function(
 		res <- switch(method,
 			'auto' = if(is.factor(data[, var]))
 				data[, var]	else	
-				convertVarToFactorWithOrder(data = data, var = var, method = "alphabetical"),
+				convertVarToFactorWithOrder(
+					data = data, var = var, catLast = catLast,
+					method = "alphabetical"
+				),
 			'alphabetical' = {
 				varLevels <- c(
 					if("Total" %in% data[, var])	"Total", 
-					sort(setdiff(unique(data[, var]), "Total"), decreasing = TRUE)
+					sort(setdiff(unique(data[, var]), c(catLast, "Total")), decreasing = TRUE),
+					if(catLast %in% data[, var])	catLast
 				)
 				factor(data[, var])
 			},
@@ -989,7 +1000,8 @@ convertVarToFactorWithOrder <- function(
 					totalPerVar <- daply(dataForTotal, var, function(x) sum(x[, totalVar], na.rm = TRUE))
 					varLevels <- c(
 						if("Total" %in% data[, var])	"Total", 
-						setdiff(names(sort(totalPerVar, decreasing = TRUE)), "Total")
+						setdiff(names(sort(totalPerVar, decreasing = TRUE)), c("Total", catLast)),
+						if(catLast %in% data[, var])	catLast
 					)
 					varLevels <- c(varLevels, setdiff(as.character(unique(data[, var])), varLevels))
 					factor(data[, var], levels = varLevels)
