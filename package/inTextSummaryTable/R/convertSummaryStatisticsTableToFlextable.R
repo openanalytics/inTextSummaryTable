@@ -91,33 +91,39 @@ convertSummaryStatisticsTableToFlextable <- function(
 	# important: merge rows before setting horizontal lines
 	# otherwise might encounter issues
 	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$rowVarInSepCol)
-	if(!is.null(rowVarToMerge)){
-		for(col in rowVarToMerge){
-			# check and remove lines which have padding for this column
-			# to avoid that lines with same element in row header and row body are merged
-			iNotToMerge <- if(hasPadding){
+	for(col in rowVarToMerge){
+		# vector with # duplicates
+		countDupl <- rle(x = summaryTable[, rowVarToMerge])$lengths
+		countDuplIdx <- which(countDupl > 1) # only duplicated
+		for(idx in countDuplIdx){
+			# indices of duplicated rows
+			i <- seq.int(
+				from = ifelse(idx == 1, 1, cumsum(countDupl)[idx-1]+1), 
+				length = countDupl[idx]
+			)
+			if(hasPadding){
+				# extract padding spec for this column:
 				idxPadCol <- sapply(padParams, function(x)
 					x$part == "body" & 
-					x$j == match(col, colnames(summaryTable)) & 
-					!is.null(x$padding.left)
+					x$j == match(col, colnames(summaryTable))
 				)
-				# Note: might have multiple different padding for the same column
-				unlist(sapply(padParams[idxPadCol], function(x) x$i))
+				padParamsCol <- padParams[idxPadCol]
+				if(length(padParamsCol) > 0){
+					# extract padding for each row
+					iPad <- sapply(i, function(iP){
+						padIP <- unlist(lapply(padParamsCol, function(pad)
+							if(iP %in% pad$i)	pad$padding.left	
+						))
+						ifelse(is.null(padIP), 0, max(padIP))
+					})
+					# remove row(s) which have a different padding
+					iKept <- unique(unlist(lapply(which(diff(iPad) == 0), function(x) x+c(0, 1))))
+					i <- i[iKept]
+				}
 			}
-			# vector with # duplicates
-			countDupl <- rle(x = summaryTable[, rowVarToMerge])$lengths
-			countDuplIdx <- which(countDupl > 1) # only duplicated
-			for(idx in countDuplIdx){
-				# indices of duplicated rows
-				i <- seq.int(
-					from = ifelse(idx == 1, 1, cumsum(countDupl)[idx-1]+1), 
-					length = countDupl[idx]
-				)
-				# remove row with padding
-				i <- setdiff(i, iNotToMerge)
-				# merge rows
-				if(length(i) > 1)
-					ft <- merge_at(ft, j = getNewCol(col), i = i)
+			# merge rows
+			if(length(i) > 1){
+				ft <- merge_at(ft, j = getNewCol(col), i = i)
 			}
 		}
 	}
