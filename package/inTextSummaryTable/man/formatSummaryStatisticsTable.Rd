@@ -8,9 +8,10 @@ formatSummaryStatisticsTable(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
   getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
-  rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-  rowVarTotalInSepRow = NULL, rowTotalLab = NULL,
-  rowAutoMerge = TRUE, colVar = getAttribute(summaryTable, "colVar"),
+  rowVarFormat = NULL, rowVarTotalInclude = getAttribute(summaryTable,
+  "rowVarTotalInclude"), rowVarTotalInSepRow = NULL,
+  rowTotalLab = NULL, rowAutoMerge = TRUE,
+  colVar = getAttribute(summaryTable, "colVar"),
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
   "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsVar = getAttribute(summaryTable, "statsVar"),
@@ -32,6 +33,10 @@ included in separated column in the table, NULL by default.
 This is only available if \code{rowVar} if not specified.
 Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
 separately by this variable.}
+
+\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
+Currently, only possibility is to set the variable elements in bold, with:
+list(var1 = "bold").}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}
@@ -96,6 +101,8 @@ list of list with correspondingly parameters for
 vertical and horizontal lines
 }
 \item{'vline': }{\code{vline} parameter}
+\item{'formatParams': }{list of list with special formatting for the table,
+currently only used if \code{rowVarFormat} if specified.}
 }
 If \code{summaryTable} is a list of summary tables,
 returns a list of corresponding summary tables in long format.

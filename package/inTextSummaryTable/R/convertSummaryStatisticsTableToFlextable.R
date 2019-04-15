@@ -68,8 +68,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 		
 	}
 	
+	sumTableAttr <- attributes(summaryTable)$summaryTable
+	
 	# create base flextable with header
-	headerDf <- attributes(summaryTable)$summaryTable$header
+	headerDf <- sumTableAttr$header
 	ftWithHeader <- createFlextableWithHeader(
 		data = summaryTable, 
 		headerDf = headerDf,
@@ -80,17 +82,23 @@ convertSummaryStatisticsTableToFlextable <- function(
 	getNewCol <- function(initCol)
 		na.omit(names(colsDataFt)[match(initCol, colsDataFt)])
 	
-	rowVar <- attributes(summaryTable)$summaryTable$rowVar
+	rowVar <- sumTableAttr$rowVar
 	if(is.null(rowVar))	rowVar <- colnames(summaryTable)[1]
 	
 	# is there some padding specified?
-	padParams <- attributes(summaryTable)$summaryTable$padParams
+	padParams <- sumTableAttr$padParams
 	hasPadding <- length(padParams) > 0
+	
+	# special formatting (e.g. bold)
+	for(el in sumTableAttr$formatParams){
+		if("bold" %in% el$type)
+			ft <- ft %>% bold(i = el$i, j = el$j, part = el$part)
+	}
 	
 	# merge rows
 	# important: merge rows before setting horizontal lines
 	# otherwise might encounter issues
-	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$rowVarInSepCol)
+	rowVarToMerge <- c(rowVar, sumTableAttr$rowVarInSepCol)
 	for(col in rowVarToMerge){
 		# vector with # duplicates
 		countDupl <- rle(x = summaryTable[, rowVarToMerge])$lengths
@@ -128,8 +136,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 		}
 	}
 	
-	if(!is.null(attributes(summaryTable)$summaryTable$mergeParams)){
-		for(params in attributes(summaryTable)$summaryTable$mergeParams)
+	if(!is.null(sumTableAttr$mergeParams)){
+		for(params in sumTableAttr$mergeParams)
 			ft <- merge_at(ft, j = params$j, params$i, part = params$part)
 	}
 	
@@ -155,7 +163,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 	## padding
 	if(hasPadding)
-		for(padParams in attributes(summaryTable)$summaryTable$padParams){
+		for(padParams in sumTableAttr$padParams){
 			padPars <- grep("^padding", names(padParams), value = TRUE)
 			padParams[padPars] <- sapply(padPars, function(par) padParams[[par]] * rowPadBase, simplify = FALSE)
 			# if title is specified, shift row coordinate of padding by 1
@@ -169,7 +177,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ft <- border_remove(ft)
 	# if no vertical lines, only horizontal line 
 	# between header/stub, top header and bottom stub
-	vline <- attributes(summaryTable)$summaryTable$vline
+	vline <- sumTableAttr$vline
 	if(!is.null(vline) && vline == "none"){
 		ft <- ft %>% 
 #			hline_top(border = bd, part = "header") %>%
@@ -180,17 +188,14 @@ convertSummaryStatisticsTableToFlextable <- function(
 		ft <- ft %>% hline(i = length(title), border = bd, part = "header")
 	
 	# horizontal lines
-	if(!is.null(attributes(summaryTable)$summaryTable$hlineParams))
-		for(hlineParams in attributes(summaryTable)$summaryTable$hlineParams){
-			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
-		}
+	for(hlineParams in sumTableAttr$hlineParams)
+		ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
 	
 	# vertical lines
-	if(!is.null(attributes(summaryTable)$summaryTable$vlineParams))
-		for(vlineParams in attributes(summaryTable)$summaryTable$vlineParams){
-			if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
-			ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
-		}
+	for(vlineParams in sumTableAttr$vlineParams){
+		if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
+		ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
+	}
 	
 	# important! in case cells are merged in a column, 
 	# correct the position of horizontal lines

@@ -17,6 +17,7 @@ getSummaryStatisticsTable <- function(
 	rowVarDataLevels = NULL, 
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
 	rowVarInSepCol = NULL, 
+	rowVarFormat = NULL,
 	# total
 	rowVarTotalInclude = NULL, 
 	rowVarTotalByVar = NULL,
@@ -101,6 +102,7 @@ getSummaryStatisticsTable <- function(
 	if(is.null(summaryTable))	return(invisible())
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
+		rowVarFormat = rowVarFormat,
 		# total
 		rowTotalLab = rowTotalLab,
 		rowVarTotalInSepRow = rowVarTotalInSepRow,
