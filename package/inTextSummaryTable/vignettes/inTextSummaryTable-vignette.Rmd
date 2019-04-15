@@ -401,7 +401,7 @@ fixed number of digits:
 	# and min/max with specified number of digits - 1
 	statsDMNum <- function(digitsMin)
 		list('Median (range)' = 
-			bquote(paste0(roundCustom(statMedian, .(digitsMin)+1), 
+			bquote(paste0(roundCustom(statMedian, .(digitsMin+1)), 
 				" (", roundCustom(statMin, .(digitsMin)), ",", roundCustom(statMax, .(digitsMin)),
 				")")	
 		)
