@@ -34,6 +34,10 @@
 #' @param rowVarTotalInSepRow Character vector with \code{rowVarTotalInclude}
 #' (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
 #' Otherwise (by default) the total is included in the header row of each category.
+#' @param rowVarFormat Named list with special formatting for the \code{rowVar}.
+#' Currently, only possibility is to set the variable elements in bold, with:
+#' list(var1 = "bold").
+#' (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)
 #' @param vline String mentioning how vertical lines should be included, either: 
 #' \itemize{
 #' \item{'none' (default): }{no vertical lines included}
@@ -55,6 +59,8 @@
 #' vertical and horizontal lines
 #' }
 #' \item{'vline': }{\code{vline} parameter}
+#' \item{'formatParams': }{list of list with special formatting for the table,
+#' currently only used if \code{rowVarFormat} if specified.}
 #' }
 #' If \code{summaryTable} is a list of summary tables,
 #' returns a list of corresponding summary tables in long format.
@@ -70,6 +76,7 @@ formatSummaryStatisticsTable <- function(
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = NULL,
+	rowVarFormat = NULL,
 	# total
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"), 
 	rowVarTotalInSepRow = NULL,
@@ -206,7 +213,7 @@ formatSummaryStatisticsTable <- function(
 	getTotalRow <- function(data)
 		which(rowSums(data[, rowVar, drop = FALSE] == "Total") == length(rowVar))
 	
-	hlineParams <- mergeParams <- NULL
+	hlineParams <- mergeParams <- formatParams <- NULL
 	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & length(statsVar) > 1)
 	if(mergeRows){
 		
@@ -373,6 +380,29 @@ formatSummaryStatisticsTable <- function(
 			dataLong[idxRowTotal, rowVarFinal] <- rowTotalLab
 		}
 		
+		# extract special formatting
+		# if rowVar to format has been merged, extract corresponding rows based on padding
+		rowVarFormat <- rowVarFormat[names(rowVarFormat) %in% rowVar]
+		for(var in names(rowVarFormat)){
+			# if variable has been merged, first column and extract row indices based on padding
+			if(var %in% rowVarInRow){
+				if(length(rowVarToModify) > 0){
+					pad <- match(var, rowVarInRow)-1
+					i <- which(dataLong$rowPadding == pad)
+				}else{
+					i <- seq_len(nrow(dataLong))
+				}
+				j <- 1
+			# otherwise, extract column idx and consider all rows
+			}else{
+				j <- match(var, colnames(dataLong))
+				i <- seq_len(nrow(dataLong))
+			}
+			formatParams <- c(formatParams, 
+				list(list(i = i, j = j, part = "body", type = unname(rowVarFormat[[var]])))
+			)
+		}	
+		
 		dataLong$rowPadding <- NULL
 		if(length(idxHLine) > 0)
 			hlineParams <- c(hlineParams, list(
@@ -444,6 +474,9 @@ formatSummaryStatisticsTable <- function(
 	
 	if(!is.null(mergeParams))
 		attributes(dataLong)$summaryTable$mergeParams <- mergeParams
+	
+	if(!is.null(formatParams))
+		attributes(dataLong)$summaryTable$formatParams <- formatParams
 	
 	# extract vertical lines (specified by the right border)
 	if(vline == "auto"){

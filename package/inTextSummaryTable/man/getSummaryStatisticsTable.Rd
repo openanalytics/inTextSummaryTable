@@ -11,21 +11,22 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
-  rowVarInSepCol = NULL, rowVarTotalInclude = NULL,
-  rowVarTotalByVar = NULL, rowVarTotalInSepRow = NULL,
-  rowTotalLab = NULL, rowInclude0 = FALSE, rowAutoMerge = TRUE,
-  emptyValue = NULL, rowVarTotalPerc = NULL, colVar = NULL,
-  colVarTotal = colVar, colVarTotalPerc = colVarTotal,
-  colInclude0 = FALSE, colVarDataLevels = NULL,
-  colTotalInclude = FALSE, colTotalLab = "Total", stats = NULL,
-  statsExtra = NULL, statsVarBy = NULL,
-  statsGeneralLab = "Statistic", statsValueLab = "StatisticValue",
-  subjectVar = "USUBJID", filterFct = NULL, dataTotal = NULL,
-  dataTotalPerc = dataTotal, dataTotalRow = NULL, type = "auto",
-  labelVars = NULL, landscape = (style == "presentation"),
-  margin = 1, rowPadBase = 14.4, title = NULL, footer = NULL,
-  file = NULL, outputType = c("flextable", "data.frame"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
+  rowVarInSepCol = NULL, rowVarFormat = NULL,
+  rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
+  rowVarTotalInSepRow = NULL, rowTotalLab = NULL,
+  rowInclude0 = FALSE, rowAutoMerge = TRUE, emptyValue = NULL,
+  rowVarTotalPerc = NULL, colVar = NULL, colVarTotal = colVar,
+  colVarTotalPerc = colVarTotal, colInclude0 = FALSE,
+  colVarDataLevels = NULL, colTotalInclude = FALSE,
+  colTotalLab = "Total", stats = NULL, statsExtra = NULL,
+  statsVarBy = NULL, statsGeneralLab = "Statistic",
+  statsValueLab = "StatisticValue", subjectVar = "USUBJID",
+  filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
+  dataTotalRow = NULL, type = "auto", labelVars = NULL,
+  landscape = (style == "presentation"), margin = 1,
+  rowPadBase = 14.4, title = NULL, footer = NULL, file = NULL,
+  outputType = c("flextable", "data.frame"), statsLayout = c("row",
+  "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), byVar = NULL,
   byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
   colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
@@ -90,6 +91,10 @@ included in separated column in the table, NULL by default.
 This is only available if \code{rowVar} if not specified.
 Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
 separately by this variable.}
+
+\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
+Currently, only possibility is to set the variable elements in bold, with:
+list(var1 = "bold").}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}

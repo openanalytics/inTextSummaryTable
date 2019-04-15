@@ -9,9 +9,10 @@ exportSummaryStatisticsTable(summaryTable,
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
   getLabelVar(rowVar, labelVars = labelVars)),
   rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
-  rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-  rowTotalLab = NULL, rowVarTotalInSepRow = NULL,
-  rowAutoMerge = TRUE, colVar = getAttribute(summaryTable, "colVar"),
+  rowVarFormat = NULL, rowVarTotalInclude = getAttribute(summaryTable,
+  "rowVarTotalInclude"), rowTotalLab = NULL,
+  rowVarTotalInSepRow = NULL, rowAutoMerge = TRUE,
+  colVar = getAttribute(summaryTable, "colVar"),
   colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
   emptyValue = NULL, labelVars = NULL, file = NULL,
   landscape = (style == "presentation"), margin = 1,
@@ -37,6 +38,10 @@ included in separated column in the table, NULL by default.
 This is only available if \code{rowVar} if not specified.
 Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
 separately by this variable.}
+
+\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
+Currently, only possibility is to set the variable elements in bold, with:
+list(var1 = "bold").}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}
