@@ -83,12 +83,44 @@ convertSummaryStatisticsTableToFlextable <- function(
 	rowVar <- attributes(summaryTable)$summaryTable$rowVar
 	if(is.null(rowVar))	rowVar <- colnames(summaryTable)[1]
 	
+	# is there some padding specified?
+	padParams <- attributes(summaryTable)$summaryTable$padParams
+	hasPadding <- length(padParams) > 0
+	
 	# merge rows
 	# important: merge rows before setting horizontal lines
 	# otherwise might encounter issues
-	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$summaryTable$rowVarInSepCol)
-	if(!is.null(rowVarToMerge))
-		ft <- merge_v(ft, j = getNewCol(rowVarToMerge))
+	rowVarToMerge <- c(rowVar, attributes(summaryTable)$summaryTable$rowVarInSepCol)
+	if(!is.null(rowVarToMerge)){
+		for(col in rowVarToMerge){
+			# check and remove lines which have padding for this column
+			# to avoid that lines with same element in row header and row body are merged
+			iNotToMerge <- if(hasPadding){
+				idxPadCol <- sapply(padParams, function(x)
+					x$part == "body" & 
+					x$j == match(col, colnames(summaryTable)) & 
+					!is.null(x$padding.left)
+				)
+				# Note: might have multiple different padding for the same column
+				unlist(sapply(padParams[idxPadCol], function(x) x$i))
+			}
+			# vector with # duplicates
+			countDupl <- rle(x = summaryTable[, rowVarToMerge])$lengths
+			countDuplIdx <- which(countDupl > 1) # only duplicated
+			for(idx in countDuplIdx){
+				# indices of duplicated rows
+				i <- seq.int(
+					from = ifelse(idx == 1, 1, cumsum(countDupl)[idx-1]+1), 
+					length = countDupl[idx]
+				)
+				# remove row with padding
+				i <- setdiff(i, iNotToMerge)
+				# merge rows
+				if(length(i) > 1)
+					ft <- merge_at(ft, j = getNewCol(col), i = i)
+			}
+		}
+	}
 	
 	if(!is.null(attributes(summaryTable)$summaryTable$mergeParams)){
 		for(params in attributes(summaryTable)$summaryTable$mergeParams)
@@ -116,7 +148,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ft <- align(ft, j = colsAlignCenter, align = "center", part = "all")
 	
 	## padding
-	if(length(attributes(summaryTable)$summaryTable$padParams) > 0)
+	if(hasPadding)
 		for(padParams in attributes(summaryTable)$summaryTable$padParams){
 			padPars <- grep("^padding", names(padParams), value = TRUE)
 			padParams[padPars] <- sapply(padPars, function(par) padParams[[par]] * rowPadBase, simplify = FALSE)
