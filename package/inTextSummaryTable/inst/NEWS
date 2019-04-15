@@ -2,6 +2,7 @@
     o computeSummaryStatisticsTable: dataTotalRow
     o get/computeSummaryStatisticTable: message and return NULL if no data
     o computeSummaryStatisticsTable: rowOrderCatLast
+    o convertSummaryStatisticsTableToFlextable: doesn't merge rows with different padding (e.g. row header and row content)
 1.2.1
     o getNDecimals: fix when NA value, new: getMaxNDecimals
     o convertSummaryStatisticsTableToFlextable: format superscript/subscript in title
