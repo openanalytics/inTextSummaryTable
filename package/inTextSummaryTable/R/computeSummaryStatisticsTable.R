@@ -559,7 +559,7 @@ computeSummaryStatisticsTableTotal <- function(
 				variable.name = "variableInit",
 				value.name = "value"
 			)	
-			data <- subset(data, !is.na(value))# remove records not in the variable
+			data <- data[!is.na(data$value), ]# remove records not in the variable
 			data$variable <- factor(
 				varLab[data$variableInit],
 				levels = varLab[var]

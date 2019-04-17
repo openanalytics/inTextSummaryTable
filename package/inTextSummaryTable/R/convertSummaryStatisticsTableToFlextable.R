@@ -107,7 +107,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 			# indices of duplicated rows
 			i <- seq.int(
 				from = ifelse(idx == 1, 1, cumsum(countDupl)[idx-1]+1), 
-				length = countDupl[idx]
+				length.out = countDupl[idx]
 			)
 			if(hasPadding){
 				# extract padding spec for this column:
