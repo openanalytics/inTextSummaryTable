@@ -470,6 +470,9 @@ getGLPGFlextable <- function(data,
 	if(is.null(ft))
 		ft <- createFlextableWithHeader(data = data, title = title)$ft
 	
+	# by default, bottom and top padding are set to 2
+	ft <- ft %>% padding(padding.top = 0, padding.bottom = 0)
+	
 	bd <- fp_border(color = colorTable["line"])
 	
 	# set fontsize

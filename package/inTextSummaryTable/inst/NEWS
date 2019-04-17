@@ -4,6 +4,7 @@
     o computeSummaryStatisticsTable: rowOrderCatLast
     o convertSummaryStatisticsTableToFlextable: doesn't merge rows with different padding (e.g. row header and row content)
     o formatSummaryStatisticsTable: rowVarFormat (to include row variable in bold)
+    o getGLPGFlextable: set top/bottom padding to 0
 1.2.1
     o getNDecimals: fix when NA value, new: getMaxNDecimals
     o convertSummaryStatisticsTableToFlextable: format superscript/subscript in title
