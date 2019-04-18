@@ -100,8 +100,9 @@ convertSummaryStatisticsTableToFlextable <- function(
 	# otherwise might encounter issues
 	rowVarToMerge <- c(rowVar, sumTableAttr$rowVarInSepCol)
 	for(col in rowVarToMerge){
+		j <- match(col, colnames(summaryTable))
 		# vector with # duplicates
-		countDupl <- rle(x = summaryTable[, rowVarToMerge])$lengths
+		countDupl <- rle(x = summaryTable[, j])$lengths
 		countDuplIdx <- which(countDupl > 1) # only duplicated
 		for(idx in countDuplIdx){
 			# indices of duplicated rows
@@ -113,7 +114,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 				# extract padding spec for this column:
 				idxPadCol <- sapply(padParams, function(x)
 					x$part == "body" & 
-					x$j == match(col, colnames(summaryTable))
+					x$j == j
 				)
 				padParamsCol <- padParams[idxPadCol]
 				if(length(padParamsCol) > 0){
