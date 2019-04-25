@@ -13,7 +13,8 @@ subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
   colorPalette = NULL, labelVars = NULL, useLinetype = TRUE,
   linetypePalette = NULL, useShape = TRUE, shapePalette = NULL,
   jitter = NULL, title = NULL, yLim = NULL, xLim = NULL,
-  xAxisLabs = NULL, sizePoint = GeomPoint$default_aes$size,
+  yLimExpand = NULL, xAxisLabs = NULL,
+  sizePoint = GeomPoint$default_aes$size,
   sizeLine = GeomLine$default_aes$size,
   sizeLabel = GeomText$default_aes$size,
   widthErrorBar = GeomErrorbar$default_aes$width, tableText = NULL,
@@ -75,6 +76,11 @@ with each corresponding element (collapsed with '.' if multiple).}
 \item{yLim}{Vector of the length 2 with limits for the y-axis.}
 
 \item{xLim}{Vector of the length 2 with limits for the x-axis.}
+
+\item{yLimExpand}{Expansion constants for the limits for the y-axis.
+See the documentation of the \code{expand} parameter of the 
+\code{\link[ggplot2]{scale_y_continuous}} function
+for the available values for this parameter.}
 
 \item{xAxisLabs}{(optional) Named character vector with labels for the x-axis.}
 
