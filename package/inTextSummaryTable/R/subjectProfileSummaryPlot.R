@@ -34,6 +34,10 @@
 #' @param sizeLabel Size for the label, only used if \code{label} is not NULL.
 #' @param xAxisLabs (optional) Named character vector with labels for the x-axis.
 #' @param yLim Vector of the length 2 with limits for the y-axis.
+#' @param yLimExpand Expansion constants for the limits for the y-axis.
+#' See the documentation of the \code{expand} parameter of the 
+#' \code{\link[ggplot2]{scale_y_continuous}} function
+#' for the available values for this parameter.
 #' @param tableText (optional) Character vector with colname of \code{data}
 #' or expression from colnames of \code{data} to be represented in
 #' the table below the plot.
@@ -89,6 +93,7 @@ subjectProfileSummaryPlot <- function(data,
 	jitter = NULL,
 	title = NULL,
 	yLim = NULL, xLim = NULL,
+	yLimExpand = NULL,
 	xAxisLabs = NULL,
 	sizePoint = GeomPoint$default_aes$size,
 	sizeLine = GeomLine$default_aes$size,
@@ -338,6 +343,9 @@ subjectProfileSummaryPlot <- function(data,
 			)
 	)
 	gg <- gg + themeFct() + do.call(theme, argsTheme)
+	
+	if(!is.null(yLimExpand))
+		gg <- gg + scale_y_continuous(expand = yLimExpand)
 	
 	# set limits for the axes
 	if((!is.null(xLim)) | (!is.null(yLim))){
