@@ -16,9 +16,9 @@ computeSummaryStatisticsTable(data, var = NULL,
   rowOrderCatLast = "Other", rowVarTotalInclude = NULL,
   rowVarTotalByVar = NULL, rowVarTotalPerc = NULL, type = "auto",
   subjectVar = "USUBJID", dataTotal = NULL,
-  dataTotalPerc = dataTotal, dataTotalRow = NULL, stats = NULL,
-  statsVarBy = NULL, statsExtra = NULL,
-  statsGeneralLab = "Statistic", filterFct = NULL,
+  dataTotalPerc = dataTotal, dataTotalRow = NULL,
+  dataTotalCol = NULL, stats = NULL, statsVarBy = NULL,
+  statsExtra = NULL, statsGeneralLab = "Statistic", filterFct = NULL,
   rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
   byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
   labelVars))
@@ -134,6 +134,11 @@ It should contain the variables specified by \code{colVarTotalPerc}.}
 \item{dataTotalRow}{Data.frame used to extract the total count per row
 variable, in case \code{rowVarTotalInclude} is specified,
 or list of such data.frame for each variable (named by variable).}
+
+\item{dataTotalCol}{Data.frame used to extract the total count per column
+variable, in case \code{colTotalInclude} is TRUE.
+or list of such data.frame for each \code{rowVar} variable
+(and 'total' for \code{rowVar}).}
 
 \item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
 The names are reported in the header.
