@@ -40,6 +40,10 @@
 #' @param dataTotalRow Data.frame used to extract the total count per row
 #' variable, in case \code{rowVarTotalInclude} is specified,
 #' or list of such data.frame for each variable (named by variable).
+#' @param dataTotalCol Data.frame used to extract the total count per column
+#' variable, in case \code{colTotalInclude} is TRUE.
+#' or list of such data.frame for each \code{rowVar} variable
+#' (and 'total' for \code{rowVar}).
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table 
 #' (after statistics computation).
@@ -150,6 +154,7 @@ computeSummaryStatisticsTable <- function(
 	subjectVar = "USUBJID",	
 	dataTotal = NULL, dataTotalPerc = dataTotal,
 	dataTotalRow = NULL,
+	dataTotalCol = NULL,
 	stats = NULL, 
 	statsVarBy = NULL,
 	statsExtra = NULL,
@@ -239,14 +244,25 @@ computeSummaryStatisticsTable <- function(
 	
 	if(colTotalInclude){
 		
+		dataForColTotal <- if(!is.null(dataTotalCol)){
+			# different datasets for the different row variables:
+			if(is.list(dataTotalCol) && !is.data.frame(dataTotalCol)){ 
+				if(!is.null(rowVar) && rowVar[length(rowVar)] %in% names(dataTotalCol)){
+					dataTotalCol[[rowVar[length(rowVar)]]]
+				}else	data
+			# one unique df:
+			}else	dataTotalCol
+		}else	data
+		
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
-			data = data, 
+			data = dataForColTotal, 
 			var = var, varLab = varLab, varIncludeTotal = varIncludeTotal, 
 			statsExtra = statsExtra,
 			type = type,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
 			subjectVar = subjectVar, labelVars = labelVars
 		)
+		
 		if(nrow(summaryTableColTotal) > 0)
 			summaryTableColTotal[, colVar] <- colTotalLab
 		
@@ -276,14 +292,18 @@ computeSummaryStatisticsTable <- function(
 			rowVarSubTotalOther <- rowVar[
 				setdiff(seq_along(rowVar), seq_len(match(rVST, rowVar)))
 			]
-			if(length(rowVarSubTotalOther) > 0){
-				idxMissingSubVar <- which(
-					rowSums(is.na(dataForSubTotal[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
-				)
-				if(length(idxMissingSubVar) > 0)
-					dataForSubTotal <- dataForSubTotal[-idxMissingSubVar, ]
+			filterRowNestedVar <- function(data){
+				if(length(rowVarSubTotalOther) > 0){
+					idxMissingSubVar <- which(
+						rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
+					)
+					if(length(idxMissingSubVar) > 0)
+						data <- data[-idxMissingSubVar, ]
+				}
+				data
 			}
-	
+			dataForSubTotal <- filterRowNestedVar(data = dataForSubTotal)
+			
 			# compute statistics by higher level rowVar
 			rowVarOther <- rowVar[seq_len(match(rVST, rowVar)-1)]
 			if(length(rowVarOther) == 0) rowVarOther <- NULL
@@ -312,10 +332,22 @@ computeSummaryStatisticsTable <- function(
 				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
 			)
 			
-			# include also the total per column (if required)
+			# include also the total across columns (if required)
 			if(colTotalInclude){
+				
+				rowVarOtherCol <- if(is.null(rowVarOther))	'total'	else	rowVarOther
+				dataForSubTotalForColTotal <- if(!is.null(dataTotalCol)){
+					# different datasets for the different row variables:
+					if(is.list(dataTotalCol) && !is.data.frame(dataTotalCol)){ 
+						if(!is.null(rowVar) && rowVarOtherCol %in% names(dataTotalCol)){
+							filterRowNestedVar(dataTotalCol[[rowVarOtherCol]])
+						}else	dataForSubTotal
+					# one unique df:
+					}else	dataTotalCol
+				}else	dataForSubTotal
+				
 				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
-					data = dataForSubTotal, 
+					data = dataForSubTotalForColTotal, 
 					var = var, varIncludeTotal = varIncludeTotal,
 					statsExtra = statsExtra,
 					type = type,

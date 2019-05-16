@@ -22,11 +22,11 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   statsVarBy = NULL, statsGeneralLab = "Statistic",
   statsValueLab = "StatisticValue", subjectVar = "USUBJID",
   filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
-  dataTotalRow = NULL, type = "auto", labelVars = NULL,
-  landscape = (style == "presentation"), margin = 1,
-  rowPadBase = 14.4, title = NULL, footer = NULL, file = NULL,
-  outputType = c("flextable", "data.frame"), statsLayout = c("row",
-  "col", "rowInSepCol"), style = "report",
+  dataTotalRow = NULL, dataTotalCol = NULL, type = "auto",
+  labelVars = NULL, landscape = (style == "presentation"),
+  margin = 1, rowPadBase = 14.4, title = NULL, footer = NULL,
+  file = NULL, outputType = c("flextable", "data.frame"),
+  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), byVar = NULL,
   byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
   colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
@@ -228,6 +228,11 @@ It should contain the variables specified by \code{colVarTotalPerc}.}
 \item{dataTotalRow}{Data.frame used to extract the total count per row
 variable, in case \code{rowVarTotalInclude} is specified,
 or list of such data.frame for each variable (named by variable).}
+
+\item{dataTotalCol}{Data.frame used to extract the total count per column
+variable, in case \code{colTotalInclude} is TRUE.
+or list of such data.frame for each \code{rowVar} variable
+(and 'total' for \code{rowVar}).}
 
 \item{type}{String with type of table: 
 \itemize{

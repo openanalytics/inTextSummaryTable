@@ -42,7 +42,8 @@ getSummaryStatisticsTable <- function(
 	## extra
 	subjectVar = "USUBJID",
 	filterFct = NULL,
-	dataTotal = NULL, dataTotalPerc = dataTotal, dataTotalRow = NULL,
+	dataTotal = NULL, dataTotalPerc = dataTotal, 
+	dataTotalRow = NULL, dataTotalCol = NULL,
 	type = "auto",
 	labelVars = NULL, 
 	landscape = (style == "presentation"), 	margin = 1, rowPadBase = 14.4, 
@@ -94,7 +95,8 @@ getSummaryStatisticsTable <- function(
 		statsVarBy = statsVarBy,
 		statsGeneralLab = statsGeneralLab,
 		filterFct = filterFct,
-		dataTotal = dataTotal, dataTotalPerc = dataTotalPerc, dataTotalRow = dataTotalRow,
+		dataTotal = dataTotal, dataTotalPerc = dataTotalPerc, 
+		dataTotalRow = dataTotalRow, dataTotalCol = dataTotalCol,
 		labelVars = labelVars,
 		byVar = byVar, byVarLab = byVarLab
 	)
