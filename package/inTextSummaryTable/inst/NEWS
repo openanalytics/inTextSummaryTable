@@ -1,3 +1,5 @@
+1.5.0
+    o convertSummaryStatisticsTableToFlextable: title for each element of byVar
 1.4.0
     o computeSummaryStatistics: dataTotalCol new param
 1.3.0

@@ -1,6 +1,7 @@
 #' Convert summary statistics table to flextable
 #' @param title Character vector with title(s) for the table.
 #' Set to NULL (by default) if no title should be included.
+#' If vector > 1, specified for each element of \code{byVar} (in order of the levels).
 #' @param footer Character vector with footer(s) for the table.
 #' Set to NULL (by default) of no footer should be included.
 #' @param file String with path of the file where the table should be exported.
@@ -52,7 +53,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 			inputParamsBy <- inputParams
 			inputParamsBy$summaryTable <- summaryTableI
 			inputParamsBy$file <- NULL # export all tables at once
-			inputParamsBy$title <- c(
+			inputParamsBy$title <- if(length(title) > 1)
+				inputParams$title[i]	else	c(
 				inputParams$title, 
 				strsplit(names(summaryTable)[i], split = "\n")[[1]]
 			)
