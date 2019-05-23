@@ -19,24 +19,24 @@ getStats <- function(type = c(
 	stats <- switch(
 		type,
 		summary = list(
-			n = expression(roundCustom(statN, 0)),
+			n = expression(roundCustomText(statN, 0)),
 			Mean = expression(formatC(statMean)),
 			SD = expression(formatC(statSD)),
 			SE = expression(formatC(statSE)),
 			Median = expression(formatC(statMedian)),
 			Min = expression(formatC(statMin)),
 			Max = expression(formatC(statMax)),
-			`%` = expression(roundCustom(statPercN, 1)),
-			m = expression(roundCustom(statm, 0))
+			`%` = expression(roundCustomText(statPercN, 1)),
+			m = expression(roundCustomText(statm, 0))
 		),
 		count = list(
-			n = expression(roundCustom(statN, 0)),
-			`%` = expression(roundCustom(statPercN, 1)),
-			m = expression(roundCustom(statm, 0))
+			n = expression(roundCustomText(statN, 0)),
+			`%` = expression(roundCustomText(statPercN, 1)),
+			m = expression(roundCustomText(statm, 0))
 		),
 		'n (%)' = list(
 			'n (%)' = 
-				expression(ifelse(statN == 0, 0, paste0(roundCustom(statN, 0), " (", roundCustom(statPercN, 1), ")")))
+				expression(ifelse(statN == 0, 0, paste0(roundCustomText(statN, 0), " (", roundCustomText(statPercN, 1), ")")))
 		),
 		'median (range)' = list('median (range)' =
 			expression(paste0(statMedian, " (", statMin, ",",  statMax, ")"))

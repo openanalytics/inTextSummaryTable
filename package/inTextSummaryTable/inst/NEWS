@@ -1,5 +1,6 @@
 1.6.0
-    o example datasets moved to the glpgUtilityFct package    
+    o example datasets moved to the glpgUtilityFct package   
+    o roundCustom -> roundCustomText 
 1.5.0
     o convertSummaryStatisticsTableToFlextable: title for each element of byVar
 1.4.0
