@@ -54,8 +54,8 @@ usually loaded from _SAS_ data file (`sas7bdat` format).
 The label of the variables stored in the `SAS` datasets is also used
 for the title/captions. 
 
-The example datasets from the _Pelican_ study included in the
-`inTextSummaryTable` package itself are used for demonstration in the
+Example datasets from the _Pelican_ study included in the
+`glpgpUtilityFct` package are used for demonstration in the
 vignette.  
 
 Note that the `loadDataADaMSDTM` function of the `glpgUtilityFct` package can
@@ -63,12 +63,14 @@ be used to your custom `SAS` dataset(s) of interest.
 
 ```{r loadData}	
 	
+	library(glpgUtilityFct)
+
 	# load example data
-	data(ADaMDataPelicanInText)
-	data(labelVarsADaMPelicanInText)
+	data(ADaMDataPelican)
+	data(labelVarsADaMPelican)
 	
-	dataAll <- ADaMDataPelicanInText
-	labelVars <- labelVarsADaMPelicanInText
+	dataAll <- ADaMDataPelican
+	labelVars <- labelVarsADaMPelican
 
 ```
 
