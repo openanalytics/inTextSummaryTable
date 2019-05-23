@@ -20,3 +20,4 @@ test.Rmd
 *.zip
 *.txt
 testCreationPowerPoint.R
+*.pydevproject

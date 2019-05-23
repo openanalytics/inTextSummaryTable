@@ -84,7 +84,8 @@ width of the table: [width page extracted from \code{dimPage} - 2* margin]}
 \item{rowPadBase}{Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)}
 
 \item{title}{Character vector with title(s) for the table.
-Set to NULL (by default) if no title should be included.}
+Set to NULL (by default) if no title should be included.
+If vector > 1, specified for each element of \code{byVar} (in order of the levels).}
 
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
