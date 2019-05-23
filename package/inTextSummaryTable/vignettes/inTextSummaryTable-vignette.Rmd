@@ -384,15 +384,15 @@ For example, the AGE is displayed with 1 digit and the height with two digits:
 		data = dataSL,
 		var = c("AGE", "HEIGHT"),
 		stats = list(
-			AGE = list(Median = expression(roundCustom(statMedian, 1))),
-			HEIGHT = list(Median = expression(roundCustom(statMedian, 2)))
+			AGE = list(Median = expression(roundCustomText(statMedian, 1))),
+			HEIGHT = list(Median = expression(roundCustomText(statMedian, 2)))
 		)
 	)
 
 ```
 
 Note: by default the `round` function in R rounds the number to the even number
-in case of 0.5. The `roundCustom` function rounds to the closest digits.
+in case of 0.5. The `roundCustomText` function rounds to the closest digits.
 
 Note: a custom function can be created to create custom statistics with
 fixed number of digits:
@@ -403,8 +403,8 @@ fixed number of digits:
 	# and min/max with specified number of digits - 1
 	statsDMNum <- function(digitsMin)
 		list('Median (range)' = 
-			bquote(paste0(roundCustom(statMedian, .(digitsMin+1)), 
-				" (", roundCustom(statMin, .(digitsMin)), ",", roundCustom(statMax, .(digitsMin)),
+			bquote(paste0(roundCustomText(statMedian, .(digitsMin+1)), 
+				" (", roundCustomText(statMin, .(digitsMin)), ",", roundCustomText(statMax, .(digitsMin)),
 				")")	
 		)
 	)
@@ -939,7 +939,7 @@ footnote or specify custom variable labels.
 			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
 			'PARCAT1' = "" 
 		),
-		stats = list(expression(paste0(roundCustom(statMean, 1), "\n(", roundCustom(statSE, 2),")"))),
+		stats = list(expression(paste0(roundCustomText(statMean, 1), "\n(", roundCustomText(statSE, 2),")"))),
 		# include the footnote
 		footer = "(1) Each compound is labelled according to its Galapagos compound ID."
 	)	
@@ -966,7 +966,7 @@ For example, pharmacokinetic tables are created for each compound:
 		),
 		byVar = "PARCAT1", 
 		labelVars = labelVars,
-		stats = list(expression(paste0(roundCustom(statMean, 1), "\n(", roundCustom(statSE, 2),")"))),
+		stats = list(expression(paste0(roundCustomText(statMean, 1), "\n(", roundCustomText(statSE, 2),")"))),
 		file = file.path("tables", "Table_byVar.docx")
 	)	
 	# print the list of tables in the rmarkdown document
@@ -1353,8 +1353,8 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 		list(
 			bquote(
 				ifelse(statMean == 0, 0, paste0(
-						roundCustom(statMean, .(nMaxDec + 1)), " (",
-						roundCustom(statCVPerc, .(nMaxDec)), ")"
+						roundCustomText(statMean, .(nMaxDec + 1)), " (",
+						roundCustomText(statCVPerc, .(nMaxDec)), ")"
 					)
 				)
 			)
