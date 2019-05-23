@@ -1,7 +1,7 @@
 #' Custom round function, rounding to the closest digits
 #' (instead of rounding to the even number in case of 0.5)
 #' @param ... Additional parameters for the 
-#' \code{\link[glpgUtilityFct]}{roundCustom}} function.
+#' \code{\link[glpgUtilityFct]{roundCustom}} function.
 #' @param format string with format for the number: 
 #' 'text' (with trailing zeros) (by default) or 'number'.
 #' @inherit glpgUtilityFct::roundCustom return
@@ -11,7 +11,7 @@ roundCustomText <- function(..., format = c("text", "number")) {
 	
 	format <- match.arg(format)
 	
-	res <- roundCustomText(..., format = format)
+	res <- roundCustom(..., format = format)
 	
 	return(res)
 	
