@@ -7,7 +7,8 @@
 getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
   data = data, labelVars = labelVars), varIgnore = NULL,
   varGeneralLab = "Variable", varSubgroupLab = NULL,
-  varIncludeTotal = FALSE, rowVar = NULL,
+  varIncludeTotal = FALSE, varTotalInclude = FALSE,
+  varTotalInSepRow = FALSE, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
@@ -52,9 +53,18 @@ In case of multiple variable in \code{var}, this will be included in the table h
 This will be included in the table header (see 'rowVarLab' attribute of the output).
 Empty by default.}
 
-\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
-all categories of \code{var} is included.
-Only considered if \code{type} is 'countTable'.}
+\item{varIncludeTotal}{This argument is deprecated, please use: 'varTotalInclude' instead.}
+
+\item{varTotalInclude}{Should the total across all categories of \code{var} 
+be included for the count table?
+Either:
+\itemize{
+\item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
+\item{a character vector containing \code{var} for which the total should be included}
+}}
+
+\item{varTotalInSepRow}{Logical, should the total per variable be included in
+a separated row (by default) or in the row containing the header of the variable?}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.

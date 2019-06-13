@@ -7,13 +7,14 @@
 computeSummaryStatisticsTable(data, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   varGeneralLab = "Variable", varSubgroupLab = NULL,
-  varIgnore = NULL, varIncludeTotal = FALSE, colVar = NULL,
-  colVarDataLevels = NULL, colVarTotal = colVar,
-  colVarTotalPerc = colVarTotal, colTotalInclude = FALSE,
-  colTotalLab = "Total", rowVar = NULL, rowVarDataLevels = NULL,
-  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
-  rowOrder = "auto", rowOrderTotalFilterFct = NULL,
-  rowOrderCatLast = "Other", rowVarTotalInclude = NULL,
+  varIgnore = NULL, varIncludeTotal = FALSE, varTotalInclude = FALSE,
+  varTotalInSepRow = FALSE, colVar = NULL, colVarDataLevels = NULL,
+  colVarTotal = colVar, colVarTotalPerc = colVarTotal,
+  colTotalInclude = FALSE, colTotalLab = "Total", rowVar = NULL,
+  rowVarDataLevels = NULL, rowVarLab = getLabelVar(rowVar, data = data,
+  labelVars = labelVars), rowOrder = "auto",
+  rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
+  rowVarTotalInclude = NULL, rowVarTotalInSepRow = NULL,
   rowVarTotalByVar = NULL, rowVarTotalPerc = NULL, type = "auto",
   subjectVar = "USUBJID", dataTotal = NULL,
   dataTotalPerc = dataTotal, dataTotalRow = NULL,
@@ -44,9 +45,18 @@ Empty by default.}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 
-\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
-all categories of \code{var} is included.
-Only considered if \code{type} is 'countTable'.}
+\item{varIncludeTotal}{This argument is deprecated, please use: 'varTotalInclude' instead.}
+
+\item{varTotalInclude}{Should the total across all categories of \code{var} 
+be included for the count table?
+Either:
+\itemize{
+\item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
+\item{a character vector containing \code{var} for which the total should be included}
+}}
+
+\item{varTotalInSepRow}{Logical, should the total per variable be included in
+a separated row (by default) or in the row containing the header of the variable?}
 
 \item{colVar}{Variable(s) of \code{data} used 
 for grouping in column in the final table. The total 
@@ -100,6 +110,10 @@ based on total counts (in case \code{rowOrder} is 'total').}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}
+
+\item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
+(not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
+Otherwise (by default) the total is included in the header row of each category.}
 
 \item{rowVarTotalByVar}{Character vector with extra \code{codeVar}
 for which to compute the row total by.

@@ -9,8 +9,8 @@ formatSummaryStatisticsTable(summaryTable,
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
   getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
   rowVarFormat = NULL, rowVarTotalInclude = getAttribute(summaryTable,
-  "rowVarTotalInclude"), rowVarTotalInSepRow = NULL,
-  rowTotalLab = NULL, rowAutoMerge = TRUE,
+  "rowVarTotalInclude"), rowVarTotalInSepRow = getAttribute(summaryTable,
+  "rowVarTotalInSepRow"), rowTotalLab = NULL, rowAutoMerge = TRUE,
   colVar = getAttribute(summaryTable, "colVar"),
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
   "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,

@@ -22,7 +22,7 @@ exportSummaryStatisticsTable <- function(
 	rowVarFormat = NULL,
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
 	rowTotalLab = NULL,
-	rowVarTotalInSepRow = NULL,
+	rowVarTotalInSepRow = getAttribute(summaryTable, "rowVarTotalInSepRow"),
 	rowAutoMerge = TRUE,
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colHeaderTotalInclude = TRUE,

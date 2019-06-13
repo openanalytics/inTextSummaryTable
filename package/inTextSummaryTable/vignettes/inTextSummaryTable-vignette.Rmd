@@ -64,6 +64,7 @@ be used to your custom `SAS` dataset(s) of interest.
 ```{r loadData}	
 	
 	library(glpgUtilityFct)
+	library(tools)# toTitleCase
 
 	# load example data
 	data(ADaMDataPelican)
@@ -162,7 +163,7 @@ statistics for empty categories**. These categories are specified via additional
 		data = dataAEWBCA,
 		type = "count",
 		rowVar = "AELLT",
-		rowInclude0 = FALSE, colInclude0 = TRUE,
+		rowInclude0 = TRUE, colInclude0 = TRUE,
 		colVar = "TRTP",
 		labelVars = labelVars,
 		title = "Table: Adverse Events: white blood cell analyses",
@@ -869,6 +870,9 @@ In general, labels (for variable, row and column) can be specified via the
 
 ## Title and footnote
 
+The convenient function `toTitleCase` from the `tools` package
+is used to set title case for the title of the summary statistics table.
+
 ```{r titleAndFooter}
 
 	getSummaryStatisticsTable(
@@ -878,7 +882,7 @@ In general, labels (for variable, row and column) can be specified via the
 		stats = getStats("n (%)"),
 		dataTotal = dataTotal,
 		labelVars = labelVars,
-		title = "MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)",
+		title = toTitleCase("MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)"),
 		footer = c(
 			"N=number of subjects with data; n=number of subjects with this observation",
 			"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population"
@@ -1290,6 +1294,112 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 ```
 
 ## Adverse events
+
+### Treatment-emergent summary table
+
+```{r example-summaryTable-AE}
+
+	# Only consider safety analysis set
+	dataAESAS <- subset(dataAll$ADAE, SAFFL == "Y")
+	
+	# total in safety analysis set
+	dataTotalSAS <- subset(dataAll$ADSL, SAFFL == "Y")
+	dataTotalSAS$TRTP <- dataTotalSAS$TRT01P
+	
+	# Sort treatments
+	dataAESAS$TRTP <- with(dataAESAS, reorder(TRTP, TRTPN))
+
+	## build flags of interest
+	# For each variable, the number of subjects and percentage of subjects flagged will be counted.
+	# Flag subjects with '', e.g present but shown as no label
+	# excepted for the worst-intensity for which the counts for each category are displayed
+	
+	# treatment emergent
+	dataAESAS$TEAE <- ifelse(dataAESAS$TRTEMFL == "Y", "", "N")
+	
+	# serious TEAE adverse event
+	dataAESAS$TEAESER <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AESER == "Y", "", "N"))
+	
+	# TEAE leading to death 
+	dataAESAS$TEAED <- with(dataAESAS, ifelse(TRTEMFL == "Y" & DTHFL == "Y", "", "N"))
+	
+	# TEAE with worst intensity
+
+	# build worst-case scenario
+	dataAESAS <- ddply(dataAESAS, c("USUBJID", "TRTP"), function(x){
+		res <- cbind.data.frame(x, 
+			AESEVWC = ifelse(x$AESEVN == max(x$AESEVN), as.character(x$AESEV), ""), 
+			stringsAsFactors = FALSE
+		)			
+	})
+	# order levels/add severe class
+	dataAESAS$TEAESEVWC <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AESEVWC != "", AESEVWC, ""))
+	dataAESAS$TEAESEVWC <- factor(dataAESAS$AESEVWC, levels = c("MILD", "MODERATE", "SEVERE")) 
+
+	# study-drug related TEAE (AERELN == 1 <==> AREL == "Related")
+	dataAESAS$TEAEREL <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AREL == "Related", "", "N"))
+	
+	# study-drug temporarily stopped
+	dataAESAS$TEAETS <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AEACN == "TEMPORARILY STOPPED", "", "N"))
+	
+	# study-drug permanently stopped
+	# (Note: in this dataset, specific variable: AEINTFL == Treatment stopped Flag)
+	dataAESAS$TEAEPS <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AEACN == "DRUG WITHDRAWN", "", "N"))
+	
+	## specify labels for each variable:
+	varAESummaryLabels <- c(
+		TEAE = "TEAE", TEAESER = "Serious TEAE", 
+		TEAED = "TEAE leading to death",
+		TEAESEVWC = "TEAE with worst severity",
+		TEAEREL = "Study drug-related TEAE",
+		TEAETS = "Study drug temporarily stopped",
+		TEAEPS = "Study drug permanently stopped"
+	)
+	varAESummary <- names(varAESummaryLabels)
+	
+	## convert all variables as factor 
+	# this also enables  to include rows with empty variable
+	dataAESAS[, setdiff(varAESummary, "TEAESEVWC")] <- colwise(factor, levels = c("N", ""))(dataAESAS[, setdiff(varAESummary, "TEAESEVWC")])
+
+	# Data for the total column
+	# General approach (applicable for cross-over and parallel design):
+	# derive worst-case scenario across treatments
+	# (because patient can have different WC per treatment but should be considered once in the total column)
+	dataAESASAcrossTreatments <- ddply(dataAESAS, "USUBJID", function(x){
+		x$AESEVWC <- ifelse(x$AESEVN == max(x$AESEVN), as.character(x$AESEV), "")
+		x
+	})
+	
+	# create the table
+	getSummaryStatisticsTable(
+		data = dataAESAS,
+		colVar = "TRTP",
+		# define variables to compute statistics on
+		var = varAESummary,
+		varLab = varAESummaryLabels,
+		varGeneralLab = "Number of subjects with:",
+		# statistics:
+		stats = unname(getStats('n (%)')),
+		# only consider the subjects flagged by the variable:
+		filterFct =  function(x){
+			subset(x, isTotal | variableGroup != "N")
+		},
+		# include the total for the worst-case scenario
+		varTotalInclude = "TEAESEVWC",
+		labelVars = labelVars,
+		# include a 'total' column
+		colTotalInclude = TRUE,
+		dataTotalCol = dataAESASAcrossTreatments, # data used for the total column
+		# dataset used for the total in the header column (and for percentage as default)
+		dataTotal = dataTotalSAS,
+		# title/export
+		title = toTitleCase("Table: Summary table of TEAEs (safety analysis set)"),
+		file = file.path("tables_CSR", "Table_TEAE_summary.docx")
+	)
+	
+```
+
+### Count table
 
 ```{r example-countTable-AE}
 

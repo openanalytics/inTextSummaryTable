@@ -31,9 +31,6 @@
 #' in case no \code{colVar} is specified: 'StatisticValue' by default.
 #' @param emptyValue Value used to fill the table for missing values.
 #' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
-#' @param rowVarTotalInSepRow Character vector with \code{rowVarTotalInclude}
-#' (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
-#' Otherwise (by default) the total is included in the header row of each category.
 #' @param rowVarFormat Named list with special formatting for the \code{rowVar}.
 #' Currently, only possibility is to set the variable elements in bold, with:
 #' list(var1 = "bold").
@@ -79,7 +76,7 @@ formatSummaryStatisticsTable <- function(
 	rowVarFormat = NULL,
 	# total
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"), 
-	rowVarTotalInSepRow = NULL,
+	rowVarTotalInSepRow = getAttribute(summaryTable, "rowVarTotalInSepRow"),
 	rowTotalLab = NULL,
 	rowAutoMerge = TRUE,
 	# column
@@ -265,8 +262,14 @@ formatSummaryStatisticsTable <- function(
 					
 					# include the variable in the final column
 					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
-					if(any(dataLong[idxRowToRepl, rowVarFinal] != "Total"))
-						stop("Missing total sub-category")
+					check <- ifelse(
+						var == "variable" & varNested == "variableGroup",
+						# if variable total is included only for certain variables
+						any(!dataLong[idxRowToRepl, rowVarFinal] %in% c("Total", "")),
+						# otherwise, should be 'Total'
+						any(dataLong[idxRowToRepl, rowVarFinal] != "Total")
+					)
+					if(check)	stop("Missing total sub-category")
 					dataLong[idxRowToRepl, rowVarFinal] <- dataLong[idxRowToRepl, var]
 					
 				}else{
