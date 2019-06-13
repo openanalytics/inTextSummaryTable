@@ -130,6 +130,24 @@ sub-category/class** of the specified variable are extracted.
 
 ```
 
+To include categories which are not present in the data, `var` should be a
+factor and these categories should be specified within its levels.
+
+```{r count-categories}
+
+	dataSLExample <- dataSL
+	
+	# 'SEX' formatted as character with only male
+	dataSLExample$SEX <- "M" # only male
+	getSummaryStatisticsTable(data = dataSLExample, var = "SEX")
+	
+	# 'SEX' formatted as factor, to include also female in the table
+	# (even if not available in the data)
+	dataSLExample$SEX <- factor("M", levels = c("F", "M"))
+	getSummaryStatisticsTable(data = dataSLExample, var = "SEX")
+
+```
+
 #### Empty rows/columns
 
 ```{r data-AE}
@@ -140,8 +158,8 @@ sub-category/class** of the specified variable are extracted.
 ```
 
 The parameters **`rowInclude0` and `colInclude0`** are set to TRUE to **include
-statistics for empty categories**. These categories are specified via additional
-**levels in a factor variable**.
+statistics for empty categories** within the row/column. These categories are
+specified via additional **levels in a factor variable**.
 
 ```{r countTable-LBWhiteBlood-emptyVars}
 
