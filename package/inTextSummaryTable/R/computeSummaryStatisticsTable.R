@@ -562,7 +562,7 @@ computeSummaryStatisticsTable <- function(
 				rowVarTotalInclude,
 				# add 'variableGroup' if the total should be computed by variable group
 				if(!is.null(var) && (
-					(is.logical(varTotalInclude) && rowVarTotalInclude) ||
+					(is.logical(varTotalInclude) && varTotalInclude) ||
 					any(var %in% varTotalInclude)
 				))	"variableGroup"
 			)
