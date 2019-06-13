@@ -282,11 +282,26 @@ available in the `getStats` function: summary statistics, count table, ...
 		stats = getStats("count")
 	)
 
-	# N(%)
+	# n (%)
 	getSummaryStatisticsTable(
 		data = dataSL,
 		var = "SEX",
 		stats = getStats("n (%)")
+	)
+	
+	## continuous variable
+	
+	# median (range)
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = "AGE",
+		stats = getStats("median (range)")
+	)
+	# median and (range) in a different line:
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = "AGE",
+		stats = getStats("median\n(range)")
 	)
 	
 	# all summary stats
@@ -297,6 +312,8 @@ available in the `getStats` function: summary statistics, count table, ...
 	)
 
 ```
+
+The name of the statistic are include or not 
 
 #### By statistical variable or group
 
@@ -1215,44 +1232,61 @@ or related to the treatment and with high severity.
 
 ```
 
-<!-- # TODO -->
-
 # Use cases
+
+Typical in-text table for the CSR are included in the following sections.
+Please note that the content of the table might depends of the study (see SAP).
 
 ## Demographics table
 
 ```{r useCase-demoTable}
 
 	# data of interest
-	dataDM <- subset(dataAll$ADSL, SAFFL == "Y")
-	
+	dataDMSAS <- subset(dataAll$ADSL, SAFFL == "Y")
 	# variables of interest
-	varsDMNum <- c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL")
-	varsDMCat <- c("RACE", "SEX")
-	varsDM <- c(varsDMNum, varsDMCat)
+	varsDM <- c("AGE", "BMIBL", "BMIBLGR1", "RACE", "SEXC")
 	
-	# order categorical variables according to their numeric variable
-	dataDM <- convertVarToFactor(
-		data = dataDM,
-		var = c("SEX", "RACE"),
-		varNum = c("SEXN", "RACEN")
+	# sort BMI groups from lowest to highest categories
+	dataDMSAS$BMIBLGR1 <- with(dataDMSAS, reorder(BMIBLGR1, BMIBLG1N))
+	
+	# order SEX, RACE and treatment categories according to their numeric variable
+	dataDMSAS <- convertVarToFactor(
+		data = dataDMSAS,
+		var = c("SEXC", "RACE", "TRT01A"),
+		varNum = c("SEXN", "RACEN", "TRT01AN")
 	)
-	dataDM$ACTARMCD <- with(dataDM, reorder(ACTARM, ACTARMCD, unique))
+	
+	# for sex: use 'Gender' and not 'Sex' label
+	labelVars["SEXC"] <- "Gender"
+	
+	# statistics of interest
+	statsNum <- getStats("median (range)")
+	statsCat <- getStats("n (%)", includeName = FALSE)
+	varsDMIsNum <- colwise(is.numeric, varsDM)(dataDMSAS)
+	statsDM <- sapply(varsDMIsNum, function(isNum) 
+		if(isNum)	statsNum	else	statsCat,
+		simplify = FALSE)
 	
 	# create the table
 	getSummaryStatisticsTable(
-		data = dataDM, 
+		data = dataDMSAS, 
+		# variables to summarize
 		var = varsDM,
 		varGeneralLab = "Parameter",
+		# column
+		colVar = "TRT01A", colTotalInclude = TRUE,
+		# statistics
+		stats = statsDM,
 		statsGeneralLab = "",
-		colVar = "ACTARM", colTotalInclude = TRUE,
-		rowVarTotalPerc = "variable",
-		statsLayout = "row",
 		labelVars = labelVars,
-		rowAutoMerge = TRUE,
-		title = "Table: demographic data and baseline characteristics",
-		footer = "N=number of subjects with data; n=number of subjects with this observation",
-		file = file.path("tables", "Table_DemographicData.docx")
+		# if only one category, should be included in separated row (e.g. RACE: White)
+		rowAutoMerge = FALSE,
+		title = toTitleCase(
+			paste("Table: Descriptive Statistics of Demographic Data",
+				"and Baseline Characteristics (Safety Analysis Set)"
+			)
+		),
+		file = file.path("tables_CSR", "Table_DemographicData.docx")
 	)
 	
 ```

@@ -4,15 +4,22 @@
 #' \itemize{
 #' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 #' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
-#' \item{'n (\%)':}{number of subjects with 0 digit (percentage with 1 digits)}
-#' \item{'median (range)'}{median (minimum, maximum)}
+#' \item{'n (\%)': }{number of subjects with 0 digit (percentage with 1 digits)}
+#' \item{'median (range)': }{median (minimum, maximum)}
+#' \item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
 #' }
+#' @param includeName Logical, should the statistics name be included (TRUE by default)?
+#' This is only available if an unique statistic is specified.
 #' @return (Optionally named) list of expression or call object of summary statistics of interest
 #' @author Laure Cougnaud
 #' @export
-getStats <- function(type = c(
-	"summary", "count", "n (%)", 
-	"median (range)")){
+getStats <- function(
+	type = c(
+		"summary", "count", "n (%)", 
+		"median (range)", "median\n(range)"
+	),
+	includeName = TRUE
+){
 	
 	type <- match.arg(type)
 	
@@ -40,8 +47,18 @@ getStats <- function(type = c(
 		),
 		'median (range)' = list('median (range)' =
 			expression(paste0(statMedian, " (", statMin, ",",  statMax, ")"))
+		),
+		'median\n(range)' = list('median\n(range)' =
+			expression(paste0(statMedian, "\n(", statMin, ",",  statMax, ")"))
 		)
 	)
+	
+	if(!includeName){
+		if(length(stats) > 1){
+			warning("The name of the statistics is included, ",
+				"because multiple statistics are present.")
+		}else	stats <- unname(stats)
+	}
 	
 	return(stats)
 	

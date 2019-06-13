@@ -5,16 +5,21 @@
 \title{Create custom statistic sets to be passed to the \code{stats} parameter
 of the \code{\link{computeSummaryStatisticsTable}} function.}
 \usage{
-getStats(type = c("summary", "count", "n (\%)", "median (range)"))
+getStats(type = c("summary", "count", "n (\%)", "median (range)",
+  "median\\n(range)"), includeName = TRUE)
 }
 \arguments{
 \item{type}{String with type of statistics:
 \itemize{
 \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
-\item{'n (\%)':}{number of subjects with 0 digit (percentage with 1 digits)}
-\item{'median (range)'}{median (minimum, maximum)}
+\item{'n (\%)': }{number of subjects with 0 digit (percentage with 1 digits)}
+\item{'median (range)': }{median (minimum, maximum)}
+\item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
 }}
+
+\item{includeName}{Logical, should the statistics name be included (TRUE by default)?
+This is only available if an unique statistic is specified.}
 }
 \value{
 (Optionally named) list of expression or call object of summary statistics of interest
