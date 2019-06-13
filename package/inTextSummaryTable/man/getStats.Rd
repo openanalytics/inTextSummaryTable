@@ -15,7 +15,7 @@ getStats(type = c("summary", "count", "n (\%)", "median (range)",
 \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
 \item{'n (\%)': }{number of subjects with 0 digit (percentage with 1 digits)}
 \item{'median (range)': }{median (minimum, maximum)}
-\item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
+\item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 }}
 
 \item{includeName}{Logical, should the statistics name be included (TRUE by default)?

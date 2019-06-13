@@ -3,6 +3,7 @@
     o computeSummaryStatisticsTable: varTotalInSepRow new parameter
     o include total per variable at the first row
     o getStats: median\n(range) and includeName
+    o vignette: update demographic table + add example summary adverse events table
 1.6.0
     o example datasets moved to the glpgUtilityFct package   
     o roundCustom -> roundCustomText 

@@ -133,7 +133,7 @@ sub-category/class** of the specified variable are extracted.
 To include categories which are not present in the data, `var` should be a
 factor and these categories should be specified within its levels.
 
-```{r count-categories}
+```{r count-categories-empty}
 
 	dataSLExample <- dataSL
 	
