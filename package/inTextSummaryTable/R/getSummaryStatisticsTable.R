@@ -11,7 +11,8 @@ getSummaryStatisticsTable <- function(
 	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
 	varIgnore = NULL,
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
-	varIncludeTotal = FALSE,
+	varIncludeTotal = FALSE, varTotalInclude = FALSE,
+	varTotalInSepRow = FALSE,
 	## row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarDataLevels = NULL, 
@@ -70,6 +71,8 @@ getSummaryStatisticsTable <- function(
 		varIgnore = varIgnore,
 		varGeneralLab = varGeneralLab, varSubgroupLab = varSubgroupLab, 
 		varIncludeTotal = varIncludeTotal,
+		varTotalInclude = varTotalInclude,
+		varTotalInSepRow = varTotalInSepRow,
 		## columns
 		colVar = colVar, 
 		colVarTotal = colVarTotal, colVarTotalPerc = colVarTotalPerc, 
@@ -88,6 +91,7 @@ getSummaryStatisticsTable <- function(
 		rowVarTotalInclude = rowVarTotalInclude,
 		rowVarTotalByVar = rowVarTotalByVar,
 		rowVarTotalPerc = rowVarTotalPerc,
+		rowVarTotalInSepRow = rowVarTotalInSepRow,
 		## extra
 		type = type,
 		subjectVar = subjectVar,
@@ -107,7 +111,6 @@ getSummaryStatisticsTable <- function(
 		rowVarFormat = rowVarFormat,
 		# total
 		rowTotalLab = rowTotalLab,
-		rowVarTotalInSepRow = rowVarTotalInSepRow,
 		rowVarInSepCol = rowVarInSepCol,
 		rowAutoMerge = rowAutoMerge,
 		colHeaderTotalInclude = colHeaderTotalInclude,

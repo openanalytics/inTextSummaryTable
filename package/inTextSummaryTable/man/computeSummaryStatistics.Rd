@@ -2,9 +2,9 @@
 % Please edit documentation in R/computeSummaryStatisticsTable.R
 \name{computeSummaryStatistics}
 \alias{computeSummaryStatistics}
-\title{Get summary statistics of interest of an unique variable of interest.}
+\title{Compute summary statistics of interest of an unique variable of interest.}
 \usage{
-computeSummaryStatistics(data, var = NULL, varIncludeTotal = FALSE,
+computeSummaryStatistics(data, var = NULL, varTotalInclude = FALSE,
   statsExtra = NULL, subjectVar = "USUBJID", filterEmptyVar = ((type
   == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
   type = "auto")
@@ -15,9 +15,9 @@ computeSummaryStatistics(data, var = NULL, varIncludeTotal = FALSE,
 \item{var}{String, variable of \code{data} with variable to compute statistics on.
 Missing values, if present, are filtered.}
 
-\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
-all categories of \code{var} is included.
-Only considered if \code{type} is 'countTable'.}
+\item{varTotalInclude}{Logical (FALSE by default)
+Should the total across all categories of \code{var} 
+be included for the count table?}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
@@ -66,7 +66,7 @@ depending if \code{type} is:
 }
 }
 \description{
-Get summary statistics of interest of an unique variable of interest.
+Compute summary statistics of interest of an unique variable of interest.
 }
 \author{
 Laure Cougnaud

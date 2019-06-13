@@ -71,6 +71,12 @@
 #' of the output list of table(s).
 #' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
 #' Only included if no \code{statsVar} if longer than 1.
+#' @param varIncludeTotal This argument is deprecated, please use: 'varTotalInclude' instead.
+#' @param varTotalInSepRow Logical, should the total per variable be included in
+#' a separated row (by default) or in the row containing the header of the variable?
+#' @param rowVarTotalInSepRow Character vector with \code{rowVarTotalInclude}
+#' (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
+#' Otherwise (by default) the total is included in the header row of each category.
 #' @inheritParams computeSummaryStatisticsTableTotal
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @inheritParams getStatisticsSummaryStatisticsTable
@@ -140,6 +146,8 @@ computeSummaryStatisticsTable <- function(
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIgnore = NULL,
 	varIncludeTotal = FALSE,
+	varTotalInclude = FALSE,
+	varTotalInSepRow = FALSE,
 	colVar = NULL, colVarDataLevels = NULL, 
 	colVarTotal = colVar, 
 	colVarTotalPerc = colVarTotal,
@@ -148,6 +156,7 @@ computeSummaryStatisticsTable <- function(
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
 	rowVarTotalInclude = NULL,
+	rowVarTotalInSepRow = NULL,
 	rowVarTotalByVar = NULL,
 	rowVarTotalPerc = NULL,
 	type = "auto",
@@ -164,6 +173,12 @@ computeSummaryStatisticsTable <- function(
 	labelVars = NULL,
 	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars)
 ){
+	
+	# check if 'varIncludeTotal' is not default
+	if(!(is.logical(varIncludeTotal) && length(varIncludeTotal) == 1 && !varIncludeTotal)){
+		warning("Argument: 'varIncludeTotal' is deprecated, please use 'varTotalInclude' instead.")
+		varTotalInclude <- varIncludeTotal
+	}
 	
 	inputParams <- as.list(environment())
 	
@@ -208,7 +223,9 @@ computeSummaryStatisticsTable <- function(
 	
 	# ignore certain elements
 	if(!is.null(var) && !is.null(varIgnore))
-		data <- data[!data[, var] %in% varIgnore, ]
+		for(varI in var){
+			data <- data[!data[, varI] %in% varIgnore, ]
+		}
 	
 	# convert row and column variable to factor in the data
 	# (if character, variables pre-defined as factor in one summary tables will be lost during rbind.fill)
@@ -224,7 +241,7 @@ computeSummaryStatisticsTable <- function(
 	# get general statistics (by group if specified)
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
-		var = var, varLab = varLab, varIncludeTotal = varIncludeTotal,
+		var = var, varLab = varLab, varTotalInclude = varTotalInclude,
 		statsExtra = statsExtra,
 		type = type,
 		rowVar = rowVar, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -256,7 +273,7 @@ computeSummaryStatisticsTable <- function(
 		
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
 			data = dataForColTotal, 
-			var = var, varLab = varLab, varIncludeTotal = varIncludeTotal, 
+			var = var, varLab = varLab, varTotalInclude = varTotalInclude, 
 			statsExtra = statsExtra,
 			type = type,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
@@ -324,7 +341,7 @@ computeSummaryStatisticsTable <- function(
 			# compute statistics
 			summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 				data = dataForSubTotal, 
-				var = var, varIncludeTotal = varIncludeTotal,
+				var = var, varTotalInclude = varTotalInclude,
 				statsExtra = statsExtra,
 				type = type,
 				rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -348,7 +365,7 @@ computeSummaryStatisticsTable <- function(
 				
 				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotalForColTotal, 
-					var = var, varIncludeTotal = varIncludeTotal,
+					var = var, varTotalInclude = varTotalInclude,
 					statsExtra = statsExtra,
 					type = type,
 					rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -540,7 +557,17 @@ computeSummaryStatisticsTable <- function(
 
 		# attributes extracted from the input parameters,
 		# to set similar defaults for the exportSummaryStatisticsTable
-		rowVarTotalInclude = rowVarTotalInclude,
+		rowVarTotalInclude = {
+			c(
+				rowVarTotalInclude,
+				# add 'variableGroup' if the total should be computed by variable group
+				if(!is.null(var) && (
+					(is.logical(varTotalInclude) && rowVarTotalInclude) ||
+					any(var %in% varTotalInclude)
+				))	"variableGroup"
+			)
+		},
+		rowVarTotalInSepRow = c(rowVarTotalInSepRow, if(varTotalInSepRow)	"variableGroup"),
 		colVar = colVar,
 		colTotalLab = colTotalLab
 
@@ -657,6 +684,13 @@ computeSummaryStatisticsTableTotal <- function(
 #' (in case of non nested row variable(s)).
 #' @param colVarDataLevels Data.frame with levels to consider for the \code{colVar} variable(s)
 #' (in case of non nested column variable(s)).
+#' @param varTotalInclude Should the total across all categories of \code{var} 
+#' be included for the count table?
+#' Either:
+#' \itemize{
+#' \item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
+#' \item{a character vector containing \code{var} for which the total should be included}
+#' }
 #' @inheritParams computeSummaryStatistics
 #' @inheritParams glpgUtilityFct::getLabelVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
@@ -687,7 +721,7 @@ computeSummaryStatisticsTableTotal <- function(
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
 	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
-	varIncludeTotal = FALSE,
+	varTotalInclude = FALSE,
 	type = "auto",
 	rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
 	colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
@@ -695,10 +729,12 @@ computeSummaryStatisticsByRowColVar <- function(
 	labelVars = NULL,
 	statsExtra = NULL){
 
+	if(is.logical(varTotalInclude) && length(varTotalInclude) > 1)
+		stop("If 'varTotalInclude' if a logical, it should be of length 1.")
+
 	computeSummaryStatisticsCustom <- function(...)
 		computeSummaryStatistics(..., 
 			subjectVar = subjectVar, 
-			varIncludeTotal = varIncludeTotal,
 			statsExtra = statsExtra
 		)
 		
@@ -736,20 +772,28 @@ computeSummaryStatisticsByRowColVar <- function(
 			sumTable <- computeSummaryStatisticsCustom(
 				data = x, 
 				var = var, 
-				type = type
+				type = type,
+				varTotalInclude = varTotalInclude
 			)
 		}else{
 			summaryTableVarList <- lapply(var, function(varI){
+						
+				varITotalInclude <- 
+					(is.logical(varTotalInclude) && varTotalInclude) || 
+					varI %in% varTotalInclude
 				sumTable <- computeSummaryStatisticsCustom(
 					data = x, 
 					var = varI, 
-					type = type
+					type = type,
+					varTotalInclude = varITotalInclude
 				)
 				# only store the variable if more than one specified variable
 				if(!is.null(sumTable) && length(var) > 1){
 					cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
 				}else sumTable
+				
 			})
+	
 			summaryTable <- do.call(rbind.fill, summaryTableVarList)
 			# if multiple variable(s), sort 'variable' in order specified in input
 			if(!is.null(summaryTable) && length(var) > 1){
@@ -775,16 +819,20 @@ computeSummaryStatisticsByRowColVar <- function(
 		summaryTable$colVariables <- NULL
 	}
 	
-	if("variableGroup" %in% colnames(summaryTable) && varIncludeTotal)
+	# include the total as the last level
+	varTotalIsIncluded <- 
+		(is.logical(varTotalInclude) && varTotalInclude) ||
+		any(var %in% varTotalInclude)
+	if("variableGroup" %in% colnames(summaryTable) && varTotalIsIncluded)
 		summaryTable[, "variableGroup"] <- factor(summaryTable[, "variableGroup"], 
-			levels = c(setdiff(levels(summaryTable[, "variableGroup"]), "Total"), "Total")
+			levels = c("Total", setdiff(levels(summaryTable[, "variableGroup"]), "Total"))
 		)
 		
 	return(summaryTable)
 	
 }
 
-#' Get summary statistics of interest of an unique variable of interest.
+#' Compute summary statistics of interest of an unique variable of interest.
 #' @param data Data.frame with data.
 #' @param var String, variable of \code{data} with variable to compute statistics on.
 #' Missing values, if present, are filtered.
@@ -801,9 +849,9 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @param filterEmptyVar Logical, if TRUE doesn't return any results
 #' if the variable is empty, otherwise return 0 for the counts and NA for summary 
 #' statistics (by default, only TRUE if the final table is 'summaryTable')
-#' @param varIncludeTotal Logical, if TRUE (FALSE by default) the total across 
-#' all categories of \code{var} is included.
-#' Only considered if \code{type} is 'countTable'.
+#' @param varTotalInclude Logical (FALSE by default)
+#' Should the total across all categories of \code{var} 
+#' be included for the count table?
 #' @param statsExtra (optional) Named list with functions for additional custom
 #' statistics to be computed, only available for 'summaryTable',
 #' e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
@@ -836,7 +884,7 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @importFrom methods formalArgs
 #' @export
 computeSummaryStatistics <- function(data, 
-	var = NULL, varIncludeTotal = FALSE,
+	var = NULL, varTotalInclude = FALSE,
 	statsExtra = NULL,
 	subjectVar = "USUBJID",
 	filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
@@ -928,7 +976,7 @@ computeSummaryStatistics <- function(data,
 						)
 					}
 				}, .drop = FALSE)
-				if(varIncludeTotal & (!(filterEmptyVar & nrow(data) == 0))){
+				if(varTotalInclude & (!(filterEmptyVar & nrow(data) == 0))){
 					resTotal <- data.frame(
 						statN = getNSubjects(data),
 						statm = getNRecords(data)

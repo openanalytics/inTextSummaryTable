@@ -6,7 +6,7 @@
 \usage{
 computeSummaryStatisticsByRowColVar(data, var = NULL,
   varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
-  varIncludeTotal = FALSE, type = "auto", rowVar = NULL,
+  varTotalInclude = FALSE, type = "auto", rowVar = NULL,
   rowInclude0 = FALSE, rowVarDataLevels = NULL, colVar = NULL,
   colInclude0 = FALSE, colVarDataLevels = NULL,
   subjectVar = "USUBJID", labelVars = NULL, statsExtra = NULL)
@@ -21,9 +21,13 @@ Missing values, if present, are filtered.}
 specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
 
-\item{varIncludeTotal}{Logical, if TRUE (FALSE by default) the total across 
-all categories of \code{var} is included.
-Only considered if \code{type} is 'countTable'.}
+\item{varTotalInclude}{Should the total across all categories of \code{var} 
+be included for the count table?
+Either:
+\itemize{
+\item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
+\item{a character vector containing \code{var} for which the total should be included}
+}}
 
 \item{type}{String with type of table: 
 \itemize{
