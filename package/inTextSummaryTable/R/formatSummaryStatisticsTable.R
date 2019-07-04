@@ -67,6 +67,7 @@
 #' @importFrom plyr colwise
 #' @importFrom dplyr n_distinct
 #' @importFrom stats as.formula
+#' @importFrom glpgStyle convertVectToBinary
 formatSummaryStatisticsTable <- function(
 	summaryTable,
 	# row

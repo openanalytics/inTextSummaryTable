@@ -896,11 +896,12 @@ This is not displayed if `colHeaderTotalInclude` is set to FALSE.
 
 ## Labels
 
-If the data is loaded into R with the `loadDataADAM` function, each column ofthe
+If the data is loaded into R with the `loadDataADAM` function, each column of the
 dataframe contains a specific label in its 'label' attribute.
-However, this label is lost if the object is subsetted.
-In general, labels (for variable, row and column) can be specified via the
-`labelVars` parameter, or specific '[parameter]Lab' parameter (e.g.
+
+However, if this label is lost (e.g. if the object is subsetted), 
+labels (for variable, row and column) can be specified via the
+`labelVars` parameter, or a specific '[parameter]Lab' parameter (e.g.
 `rowVarLab`, `colVarLab`, `varLab`, ...).
 
 ## Title and footnote

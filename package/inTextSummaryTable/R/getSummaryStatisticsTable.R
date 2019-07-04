@@ -4,6 +4,7 @@
 #' @inheritParams exportSummaryStatisticsTable
 #' @inherit exportSummaryStatisticsTable return
 #' @author Laure Cougnaud
+#' @importFrom glpgStyle getColorTable
 #' @export
 getSummaryStatisticsTable <- function(
 	data, 
