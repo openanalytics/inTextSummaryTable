@@ -291,7 +291,7 @@ This parameter affects the fontsize, font family, color of the text and backgrou
 and table dimensions of the table.}
 
 \item{colorTable}{Named character vector with color for the table background/body/text/line,
-e.g. created with the \code{\link{getColorTable}} function.}
+e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}

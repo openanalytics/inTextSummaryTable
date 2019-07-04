@@ -1,3 +1,5 @@
+1.8.0
+    o GLPG flextable functions moved to the glpgStyle package
 1.7.0
     o computeSummaryStatisticsTable: varIncludeTotal -> varTotalInclude, possibility to include total only for a variable
     o computeSummaryStatisticsTable: varTotalInSepRow new parameter

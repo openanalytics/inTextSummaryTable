@@ -13,6 +13,7 @@
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
+#' @importFrom glpgStyle getColorTable
 #' @export
 exportSummaryStatisticsTable <- function(
 	summaryTable, 

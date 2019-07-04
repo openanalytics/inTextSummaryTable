@@ -18,8 +18,8 @@
 #' @param margin Margin in the document in inches, currently only used to specify the
 #' width of the table: [width page extracted from \code{dimPage} - 2* margin]
 #' @param colorTable Named character vector with color for the table background/body/text/line,
-#' e.g. created with the \code{\link{getColorTable}} function.
-#' @inheritParams getDimPage
+#' e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.
+#' @inheritParams glpgStyle::getDimPage
 #' @inheritParams formatSuperSubscriptToFlextable
 #' @inheritParams formatSummaryStatisticsTable
 #' @return \code{\link[flextable]{flextable}} object with summary table
@@ -28,6 +28,7 @@
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
+#' @importFrom glpgStyle getColorTable getGLPGFlextable createFlextableWithHeader getDimPage
 #' @author Laure Cougnaud
 #' @export
 convertSummaryStatisticsTableToFlextable <- function(
@@ -77,7 +78,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ftWithHeader <- createFlextableWithHeader(
 		data = summaryTable, 
 		headerDf = headerDf,
-		title = title
+		title = title,
+		includeRownames = FALSE
 	)
 	ft <- ftWithHeader$ft
 	colsDataFt <- ftWithHeader$colsData
@@ -265,44 +267,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 }
 
-#' Return page dimension of interest
-#' @param type String dimension of interest, 'width' or 'height'.
-#' @param landscape Logical, if TRUE (by defaut) the table is presented in landscape
-#' format.
-#' @param margin Margin in the document in inches.
-#' @param style string with table style, either 'report' or 'presentation'
-#' @param pageDim Numeric vector of length 2 with page width and height in inches
-#' in portrait format.
-#' @return integer with dimension of interest
-#' @author Laure Cougnaud
-#' @export
-getDimPage <- function(
-	type = c("width", "height"), 
-	landscape = (style == "presentation"), 
-	margin = 1,
-	pageDim = NULL,
-	style = "report"){
-
-	# landscape: 29.7 * 21 cm ~ 11 * 8 inches ~ 2138.4 * 1512 ptx
-	type <- match.arg(type)
-	
-	style <- match.arg(style, choices = c("report", "presentation"))
-	
-	pageDimPortrait <- 	if(is.null(pageDim))
-		switch(style,
-			'report' = c(21, 29.7)/2.54,
-			'presentation' = c(7.5, 10.83)
-		)	else	pageDim
-	
-	typeDim <- switch(type,
-		'width' = ifelse(landscape, pageDimPortrait[2], pageDimPortrait[1]),
-		'height' = ifelse(landscape, pageDimPortrait[1], pageDimPortrait[2])
-	)
-	dimPage <- typeDim - 2 * margin
-	
-	return(dimPage)
-}
-
 #' Format superscript/subscripts in a flextable.
 #' Superscript should be indicated as 'a^{b}' and subscript as 'a_{b}' the input summary table.
 #' @param dataTable data.frame with data used in table,
@@ -387,213 +351,6 @@ formatSuperSubscriptToFlextable <- function(
 	
 	return(ft)
 
-}
-
-#' Create a flextable, setting the column names to syntactic names
-#' if it is not the case.
-#' @param data Data.frame with data.
-#' @param headerDf (optional) Data.frame with header.
-#' @param title Character vector with title(s) for the table.
-#' Set to NULL (by default) if no title should be included.
-#' @return list with:
-#' \itemize{
-#' \item{'ft': }{\code{\link[flextable]{flextable}}}
-#' \item{'colsData': }{Named vector with original column names,
-#' with names set to new syntactic names.}
-#' }
-#' @author Laure Cougnaud
-#' @import flextable
-createFlextableWithHeader <- function(data, 
-	headerDf = NULL, title = NULL){
-	
-	# re-label the columns to avoid the error: 'invalid col_keys, flextable support only syntactic names'
-	colsDataFt <- setNames(colnames(data), paste0("col", seq_len(ncol(data))))
-	colnames(data) <- names(colsDataFt)
-	
-	if(!is.null(headerDf)){
-		colnames(headerDf) <- names(colsDataFt)
-	}else{
-		headerDf <- as.data.frame(t(colsDataFt))
-	}
-	
-	# add title
-	if(!is.null(title)){
-		titleDf <- replicate(length(colsDataFt), title)
-		if(is.matrix(titleDf))	colnames(titleDf) <- names(colsDataFt)
-		headerDf <- rbind.data.frame(titleDf, headerDf, stringsAsFactors = FALSE)
-	}
-
-	mapping <- as.data.frame(t(headerDf), stringsAsFactors = FALSE)
-	mapping$`col_keys` <- rownames(mapping)
-	
-	# base flextable
-	ft <- flextable(data)
-	
-	ft <- set_header_df(x = ft, mapping = mapping) %>%
-		merge_h(part = "header") %>%
-		merge_v(part = "header")
-	
-	res <- list(ft = ft, colsData = colsDataFt)
-	return(res)
-	
-}
-
-#' Format a flextable to fulfill GLPG style.
-#' @param data data.frame with data used in table.
-#' @param ft Corresponding \code{\link[flextable]{flextable}}.
-#' @param border Logical, if TRUE add a border.
-#' @param adjustWidth Logical, if TRUE adjust column widths.
-#' @param title Character vector with title(s) for the table.
-#' Set to NULL (by default) if no title should be included.
-#' Only available if \code{ft} is not specified.
-#' @param align Logical, if TRUE (by default), default alignment is set.
-#' @param colorTable Named character vector with color for the table,
-#' see output of \code{\link{getColorTable}} for required elements.
-#' @inheritParams getDimPage
-#' @inheritParams formatSuperSubscriptToFlextable
-#' @return \code{\link[flextable]{flextable}} with GLPG style.
-#' @author Laure Cougnaud
-#' @import flextable
-#' @importFrom officer fp_border
-#' @export
-getGLPGFlextable <- function(data, 
-	ft = NULL, 
-	border = TRUE,
-	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
-	landscape = (style == "presentation"),
-	style = "report",
-	margin = 1,
-	adjustWidth = TRUE,
-	colorTable = getColorTable(style = style),
-	align = TRUE,
-	title = NULL,
-	pageDim = NULL){
-	
-	if(is.null(ft))
-		ft <- createFlextableWithHeader(data = data, title = title)$ft
-	
-	# by default, bottom and top padding are set to 2
-	ft <- ft %>% padding(padding.top = 0, padding.bottom = 0)
-	
-	bd <- fp_border(color = colorTable["line"])
-	
-	# set fontsize
-	ft <- fontsize(ft, size = fontsize, part = "all")
-	
-	# set header in bold
-	ft <- bold(ft, part = "header")
-	
-	# set font
-	ft <- ft %>% font(fontname = fontname, part = "all")
-	
-	# set border
-	if(border){
-		ft <- border_remove(ft) %>%
-			border_outer(border = bd, part = "all")%>% 
-			vline(border = bd, part = "body") %>%
-			vline(border = bd, part = "header")
-		if(style == "presentation")
-			ft <- ft %>% hline(border = bd, part = "body")
-		if(!is.null(title))
-			ft <- ft %>% hline(j = length(title), border = bd, part = "header") 
-	}
-	
-	# change color text + background
-	ft <- ft %>% 
-		# header
-		color(color = colorTable["header"], part = "header") %>%
-		bg(bg = colorTable["headerBackground"], part = "header") %>%
-		# footer
-		color(color = colorTable["footer"], part = "footer") %>%
-		bg(bg = colorTable["footerBackground"], part = "footer") %>%
-		# text color
-		color(color = colorTable["body"], part = "body")
-	
-	if(all(c("bodyBackground1", "bodyBackground2") %in% names(colorTable))){
-		# alternate background between elements of first column
-		xBg <- convertVectToBinary(x = data[, 1])
-		ft <- ft %>%
-			bg(bg = colorTable["bodyBackground1"], i = which(xBg %% 2 == 0), part = "body") %>%
-			bg(bg = colorTable["bodyBackground2"], i = which(xBg %% 2 == 1), part = "body")
-	}else	ft <- ft %>% bg(bg = colorTable["bodyBackground"], part = "body")
-	
-	if(adjustWidth){
-		widthPage <- getDimPage(
-			type = "width", landscape = landscape, margin = margin,
-			style = style,
-			pageDim = NULL
-		)
-		width <- widthPage/ncol(data)
-		ft <- width(ft, j = seq_len(ncol(data)), width = width)
-	}
-	
-	if(align)
-		ft <- align(ft, j = seq_len(ncol(data)), align = "center", part = "all")
-	
-	# by default, height of each header/footer (excepted the first one) line is quite big
-	ft <- height(ft, height = dim_pretty(ft, part = "header")$heights, part = "header")
-	ft <- height(ft, height = dim_pretty(ft, part = "footer")$heights, part = "footer")
-	
-	return(ft)
-	
-}
-
-#' Get table color
-#' @inheritParams getDimPage
-#' @return Named character vector with color for the different parts of the table,
-#' should at least contain font/background color for:
-#' \itemize{
-#' \item{header: }{'header'/'headerBackground'}
-#' \item{body: }{'body' for body text and either 'bodyBackground' or 
-#' 'bodyBackground1'/'bodyBackground2': for body common background or background 
-#' for alternate rows}
-#' \item{footer: }{'footer'/'footerBackground'}
-#' \item{line: }{'line'}
-#' }
-#' @author Laure Cougnaud
-#' @importFrom glpgStyle glpgColor
-#' @importFrom grDevices rgb
-#' @export
-getColorTable <- function(style = c("report", "presentation")){
-	
-	# colors are specified based on the scale from 0 to 255
-	rgbCustom <- function(...) rgb(..., maxColorValue = 255)
-	
-	colorTable <- switch(style,
-		'report' = {
-			# black font on white background
-			c(
-				'header' = rgbCustom(0, 0, 0),
-				'headerBackground' = rgbCustom(255, 255, 255),
-				'body' = rgbCustom(0, 0, 0), 
-				'bodyBackground' = rgbCustom(255, 255, 255),
-				'footer' = rgbCustom(0, 0, 0),
-				'footerBackground' = rgbCustom(255, 255, 255),
-				'line' = rgbCustom(0, 0, 0)
-			)
-			
-		},
-		'presentation' = glpgColor(type = "table")
-	)
-	
-}
-
-#' Convert vector to a bincode of 0/1
-#' based on consecutive values in the vector.
-#' @param x Vector.
-#' @return Integer vector of same length than \code{x}.
-#' @author Laure Cougnaud
-convertVectToBinary <- function(x){
-
-	xBin <- rep(NA, length(x))
-	idxChg <- c(1, which(diff(as.numeric(factor(x, exclude = FALSE))) != 0) + 1)
-	xBin[idxChg] <- rep(c(0, 1), length.out = length(idxChg))
-	for(i in seq_along(xBin)){
-		if(is.na(xBin[i]))	xBin[i] <- xBin[i-1]
-	}
-	return(xBin)
-	
 }
 
 #' Export flextable to docx filr
