@@ -1,22 +1,11 @@
-#' Get maximum number of decimals in a variable,
-#' based on pre-defined rule and/or data (see the function:
-#'  \code{\link{getNDecimals}})
-#' @param ... Any parameters for the \code{\link{getNDecimals}} function.
-#' @inheritParams getNDecimals
-#' @return Integer with maximum number of decimals in a character vector.
-#' @author Laure Cougnaud
-#' @export
-getMaxNDecimalsData <- function(x, ...)
-	max(getNDecimals(x, ...), na.rm = TRUE)
-
 #' Get number of decimals for a specific vector,
 #' either from specific implemented rule (see \code{\link{getNDecimalsRule}}),
 #' or from the dataset itself (see \code{\link{getNDecimalsData}}),
 #' or both: in this case the minimum of both criterias is used.
 #' @param useRule Logical (TRUE by default), should the \code{rule} be applied?
 #' @param useData Logical (TRUE by default), should the number of decimals
-#' be extracted based on \code{\link{getNDecimalsData}}?
-#' @inherit getNDecimalsRule param return
+#' be extracted based on the input data \code{x}?
+#' @inherit getNDecimalsRule params return
 #' @author Laure Cougnaud
 #' @export
 getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
@@ -38,6 +27,17 @@ getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 	
 }
 
+#' Get maximum number of decimals in a variable,
+#' based on pre-defined rule and/or data (see the function:
+#'  \code{\link{getNDecimals}})
+#' @param ... Any parameters for the \code{\link{getNDecimals}} function.
+#' @inheritParams getNDecimals
+#' @return Integer with maximum number of decimals in a character vector.
+#' @author Laure Cougnaud
+#' @export
+getMaxNDecimals <- function(x, ...)
+	max(getNDecimals(x, ...), na.rm = TRUE)
+
 #' Get number of decimals based pre-defined rule.
 #' Note: NA is returned if the element is missing (NA).
 #' @param rule Character vector with rule to use to derive 
@@ -47,12 +47,12 @@ getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 #' \itemize{
 #' \item{value < 1: }{3}
 #' \item{value < 10: }{2}
-#' \item{10 ≤ value < 1000: }{1}
+#' \item{value in [1, 1000[: }{1}
 #' \item{value >= 1000: }{0}
 #' }
 #' }
 #' }
-#' @inherit getNDecimalsData param return
+#' @inherit getNDecimalsData params return
 #' @author Laure Cougnaud
 #' @export
 getNDecimalsRule <- function(x, rule = c("1")){
@@ -88,10 +88,12 @@ getNDecimalsData <- function(x){
 getMaxNDecimalsData <- function(x)
 	max(getNDecimalsData(x), na.rm = TRUE)
 
-#' Format a percentage, based on the following rules:
+#' Format a percentage.
+#' 
+#' The following rules are used:
 #' \itemize{
 #' \item{percentage = 0\%: }{'0'}
-#' \item{ 0\% < percentage < 0.1%: }{'<0.1\%'}
+#' \item{ 0\% < percentage < 0.1\%: }{'<0.1\%'}
 #' \item{99.9\% < percentage < 100\%: }{'>99.9\%'}
 #' \item{percentage = 100\%: }{'100\%'}
 #' \item{missing value (NA) (class without valid data): }{'-'}
