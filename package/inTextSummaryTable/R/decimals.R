@@ -1,0 +1,122 @@
+#' Get maximum number of decimals in a variable,
+#' based on pre-defined rule and/or data (see the function:
+#'  \code{\link{getNDecimals}})
+#' @param ... Any parameters for the \code{\link{getNDecimals}} function.
+#' @inheritParams getNDecimals
+#' @return Integer with maximum number of decimals in a character vector.
+#' @author Laure Cougnaud
+#' @export
+getMaxNDecimalsData <- function(x, ...)
+	max(getNDecimals(x, ...), na.rm = TRUE)
+
+#' Get number of decimals for a specific vector,
+#' either from specific implemented rule (see \code{\link{getNDecimalsRule}}),
+#' or from the dataset itself (see \code{\link{getNDecimalsData}}),
+#' or both: in this case the minimum of both criterias is used.
+#' @param useRule Logical (TRUE by default), should the \code{rule} be applied?
+#' @param useData Logical (TRUE by default), should the number of decimals
+#' be extracted based on \code{\link{getNDecimalsData}}?
+#' @inherit getNDecimalsRule param return
+#' @author Laure Cougnaud
+#' @export
+getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
+	
+	if(!useRule & !useData)
+		stop("The number of decimals should be extracted based on the rule and/or the data",
+			"set 'useRule' and/or 'useData' to TRUE.")
+	
+	if(useRule)	nDecRule <- getNDecimalsRule(x, rule = rule)
+	if(useData)	nDecData <- getNDecimalsData(x)
+	
+	nDec <- if(useRule & useData){
+		mapply(nDecRule, nDecData, min)
+	}else	if(!useData){
+		nDecRule
+	}else if(!useRule)	nDecData
+	
+	return(nDec)
+	
+}
+
+#' Get number of decimals based pre-defined rule.
+#' Note: NA is returned if the element is missing (NA).
+#' @param rule Character vector with rule to use to derive 
+#' the number of parameters:
+#' \itemize{
+#' \item{'1': }{
+#' \itemize{
+#' \item{value < 1: }{3}
+#' \item{value < 10: }{2}
+#' \item{10 ≤ value < 1000: }{1}
+#' \item{value >= 1000: }{0}
+#' }
+#' }
+#' }
+#' @inherit getNDecimalsData param return
+#' @author Laure Cougnaud
+#' @export
+getNDecimalsRule <- function(x, rule = c("1")){
+	nDecRule <- switch('1' = 
+		ifelse(x < 1, 3, ifelse(x < 10, 2, ifelse(x < 1000, 1, 0)))
+	)
+	return(nDecRule)
+}
+
+#' Get number of decimals based on the data in a numeric vector.
+#' Note: NA is returned if the element is missing (NA).
+#' @param x Numeric vector.
+#' @return Numeric vector of same length than \code{x}
+#' with the number of decimals
+#' @author Laure Cougnaud
+#' @export
+getNDecimalsData <- function(x){
+	
+	xNumber <- ifelse(is.na(x), NA_character_,
+		sub("-*[[:digit:]]+\\.*([[:digit:]]+)*", 
+			"\\1", as.character(sapply(x, format, scientific = FALSE)))
+	)
+	nDec <- nchar(xNumber)
+	return(nDec)
+}
+
+#' Get maximum number of decimals in a variable based on the data
+#' (\code{\link{getNDecimalsData}})
+#' @inheritParams getNDecimalsData
+#' @return Integer with maximum number of decimals in a character vector.
+#' @author Laure Cougnaud
+#' @export
+getMaxNDecimalsData <- function(x)
+	max(getNDecimalsData(x), na.rm = TRUE)
+
+#' Format a percentage, based on the following rules:
+#' \itemize{
+#' \item{percentage = 0\%: }{'0'}
+#' \item{ 0\% < percentage < 0.1%: }{'<0.1\%'}
+#' \item{99.9\% < percentage < 100\%: }{'>99.9\%'}
+#' \item{percentage = 100\%: }{'100\%'}
+#' \item{missing value (NA) (class without valid data): }{'-'}
+#' \item{other: }{'x.x\%' (1 decimal)}
+#' }
+#' @param x Numeric with percentage
+#' @return String with formatted percentage
+#' @author Laure Cougnaud
+#' @examples
+#' xPerc <- c(NA, 0, 100, 99.95, 0.012, 34.768)
+#' formatPercentage(x = xPerc)
+#' @export
+formatPercentage <- function(x, nDec = 1){
+	
+	xRF <- ifelse(is.na(x), "-",
+		ifelse(x == 0, "0", 
+			ifelse(x == 100, "100%",
+				ifelse(x < 0.1, "<0.1%",
+					ifelse(x > 99.9, ">99.9%",
+						paste0(roundCustom(x, nDec), "%")
+					)
+				)
+			)
+		)
+	)
+	return(xRF)
+	
+}

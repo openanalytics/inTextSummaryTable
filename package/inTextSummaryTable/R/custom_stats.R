@@ -6,51 +6,85 @@
 #' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
 #' \item{'n (\%)': }{number of subjects with 0 digit (percentage with 1 digits)}
 #' \item{'median (range)': }{median (minimum, maximum)}
-#' \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
+#' \item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
 #' }
 #' @param includeName Logical, should the statistics name be included (TRUE by default)?
 #' This is only available if an unique statistic is specified.
+#' @param x (optional, recommended) Vector for which the statistics should be computed on.
+#' If specified, this is used to derive the number of decimals to include.
+#' If not specified, the values are rounded with \code{\link{formatC}}.
+#' @param nDecCont Integer with base number of decimals 
+#' for continuous variable, or function returning this number based on \code{x} 
+#' (\code{\link{getNDecimals}} by default).
+#' @param nDecN,nDecm Integer with number of decimals for number of subjects/records (0 by default).
+#' @param formatPercentage Function used to format the percentage of the number of subjects
+#' (see \code{\link{formatPercentage}} for default behaviour).
 #' @return (Optionally named) list of expression or call object of summary statistics of interest
 #' @author Laure Cougnaud
 #' @export
 getStats <- function(
 	type = c(
 		"summary", "count", "n (%)", 
-		"median (range)", "median\n(range)"
+		"median (range)", "median\n(range)",
+		
 	),
-	includeName = TRUE
+	includeName = TRUE,
+	x = NULL, 
+	nDecCont = getNDecimals,
+	nDecN = 0, nDecm = nDecN,
+	formatPercentage = formatPercentage
 ){
 	
 	type <- match.arg(type)
 	
+	# number of decimals for continuous variable
+	nDecContBase <- if(is.function(nDecCont) & !is.null(x)){
+		nDecCont(x)
+	}else	if(is.numeric(nDecCont))	nDecCont	
+	
+	statsBase <- c(
+		# statistics for categorical variable
+		list(
+			# counts
+			n = bquote(roundCustomText(statN, .(nDecN))),
+			m = bquote(roundCustomText(statm, .(nDecm))),
+			# percentage
+			`%` = bquote(formatPercentage(statPercN))
+		),
+		# statistics for continuous variable
+		if(!is.null(nDecContBase)){
+			list(
+				Mean = bquote(roundCustomText(statMean, .(nDecContBase + 1))),
+				Median = bquote(roundCustomText(statMedian, .(nDecContBase + 1))),
+				SD = bquote(roundCustomText(statSD, .(nDecContBase + 1))),
+				SE = bquote(roundCustomText(statSE, .(nDecContBase + 2))),
+				Min = bquote(roundCustomText(statMin, .(nDecContBase))),
+				Max = bquote(roundCustomText(statMax, .(nDecContBase)))		
+			)
+		}else{
+			list(
+				Mean = expression(formatC(statMean)),
+				Median = expression(formatC(statMedian)),
+				SD = expression(formatC(statSD)),
+				SE = expression(formatC(statSE)),
+				Min = expression(formatC(statMin)),
+				Max = expression(formatC(statMax))
+			)
+		}
+	)
+	
 	stats <- switch(
 		type,
-		summary = list(
-			n = expression(roundCustomText(statN, 0)),
-			Mean = expression(formatC(statMean)),
-			SD = expression(formatC(statSD)),
-			SE = expression(formatC(statSE)),
-			Median = expression(formatC(statMedian)),
-			Min = expression(formatC(statMin)),
-			Max = expression(formatC(statMax)),
-			`%` = expression(roundCustomText(statPercN, 1)),
-			m = expression(roundCustomText(statm, 0))
+		summary = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
+		count = statsBase[c("n", "%", "m")],
+		'n (%)' = list('n (%)' = paste0(statsBase$n, " (", statsBase$`%`, ")")),
+		'median (range)' = list('Median (range)' =
+			expression(paste0(statsBase$Median, " (", statsBase$Min, ",",  statsBase$Max, ")"))
 		),
-		count = list(
-			n = expression(roundCustomText(statN, 0)),
-			`%` = expression(roundCustomText(statPercN, 1)),
-			m = expression(roundCustomText(statm, 0))
+		'median\n(range)' = list('Median\n(range)' =
+			expression(paste0(statsBase$Median, "\n(", statsBase$Min, ",",  statsBase$Max, ")"))
 		),
-		'n (%)' = list(
-			'n (%)' = 
-				expression(ifelse(statN == 0, 0, paste0(roundCustomText(statN, 0), " (", roundCustomText(statPercN, 1), ")")))
-		),
-		'median (range)' = list('median (range)' =
-			expression(paste0(statMedian, " (", statMin, ",",  statMax, ")"))
-		),
-		'median\n(range)' = list('median\n(range)' =
-			expression(paste0(statMedian, "\n(", statMin, ",",  statMax, ")"))
-		)
+		'mean (se)' = list('Mean (SE)' = expression(paste0(statsBase$Mean, "\n(", statsBase$SE, ")")))
 	)
 	
 	if(!includeName){
