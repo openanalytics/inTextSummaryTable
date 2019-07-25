@@ -71,7 +71,7 @@ of the table might depends of the study and dataset
 
 ### Demographics and Baseline Disease Characteristics
 
-```{r demographicTable}
+```{r table-demography}
 
 	# data of interest
 	dataDM <- subset(dataAll$ADSL, FASFL == "Y")
@@ -149,6 +149,47 @@ of the table might depends of the study and dataset
 	)
 	
 ```
+
+### Baseline Disease Characteristics
+
+```{r table-diseaseCharacteristics}
+
+	## data of interest
+	dataBDC <- subset(dataAll$ADSL, FASFL == "Y")
+
+	## variables of interest
+	varsBDC <- c("SWBLGR1", "PFEVGR1")
+	
+	# TO ASK: should 
+	dataBDC <- convertVarToFactor(
+		data = dataBDC, 
+		var = c("SWBLGR1", "PFEVGR1"), 
+		varNum = c("SWBLGR1N", "PFEVGR1N")
+	)
+	
+	## labels
+	labelVars[varsBDC] <- sub("%fev1", "pFEV_{1} (%)", toTitleCase(labelVars[varsBDC]))
+
+	getSummaryStatisticsTable(
+		data = dataBDC,
+		var = varsBDC, varGeneralLab = "Parameter", statsGeneralLab = "",
+		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		title = toTitleCase("Table: Baseline disease characteristics (full analysis set)"),
+		file = file.path("tables_CSR", "Table_BaselineDiseaseCharacteristics.docx")
+	)
+
+```
+
+### Medical History and Concomitant Disease
+
+```{r table-concomitantMedications}
+
+
+```
+
+<!-- TO CHECK: -->
 
 ## Laboratory abnormalities
 
