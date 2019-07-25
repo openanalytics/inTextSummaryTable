@@ -10,10 +10,29 @@ or both: in this case the minimum of both criterias is used.}
 getNDecimals(x, useRule = TRUE, rule = "1", useData = TRUE)
 }
 \arguments{
+\item{x}{Numeric vector.}
+
 \item{useRule}{Logical (TRUE by default), should the \code{rule} be applied?}
 
+\item{rule}{Character vector with rule to use to derive 
+the number of parameters:
+\itemize{
+\item{'1': }{
+\itemize{
+\item{value < 1: }{3}
+\item{value < 10: }{2}
+\item{value in [1, 1000[: }{1}
+\item{value >= 1000: }{0}
+}
+}
+}}
+
 \item{useData}{Logical (TRUE by default), should the number of decimals
-be extracted based on \code{\link{getNDecimalsData}}?}
+be extracted based on the input data \code{x}?}
+}
+\value{
+Numeric vector of same length than \code{x}
+with the number of decimals
 }
 \description{
 Get number of decimals for a specific vector,

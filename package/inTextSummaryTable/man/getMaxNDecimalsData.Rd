@@ -2,32 +2,21 @@
 % Please edit documentation in R/decimals.R
 \name{getMaxNDecimalsData}
 \alias{getMaxNDecimalsData}
-\title{Get maximum number of decimals in a variable,
-based on pre-defined rule and/or data (see the function:
- \code{\link{getNDecimals}})}
+\title{Get maximum number of decimals in a variable based on the data
+(\code{\link{getNDecimalsData}})}
 \usage{
-getMaxNDecimalsData(x, ...)
-
-getMaxNDecimalsData(x, ...)
+getMaxNDecimalsData(x)
 }
 \arguments{
-\item{...}{Any parameters for the \code{\link{getNDecimals}} function.}
+\item{x}{Numeric vector.}
 }
 \value{
 Integer with maximum number of decimals in a character vector.
-
-Integer with maximum number of decimals in a character vector.
 }
 \description{
-Get maximum number of decimals in a variable,
-based on pre-defined rule and/or data (see the function:
- \code{\link{getNDecimals}})
-
 Get maximum number of decimals in a variable based on the data
 (\code{\link{getNDecimalsData}})
 }
 \author{
-Laure Cougnaud
-
 Laure Cougnaud
 }
