@@ -87,34 +87,33 @@ of the table might depends of the study and dataset
 	)
 	
 	# Add missing variables:
-	dataDM$AGEC <- cut(dataDM$AGE, 
+	# Note: add droplevels to filter categories not occuring in the data
+	dataDM$AGEC <- droplevels(cut(dataDM$AGE, 
 		breaks = c(-Inf, 18, 65, 85, Inf), 
 		labels = c("<18", "[18,65[", "[65,85[", ">=85"),
 		right = FALSE
-	)
-	
-	dataDM$DIAGDURYC <- cut(
+	))
+	dataDM$DIAGDURYC <- droplevels(cut(
 		dataDM$DIAGDURY, 
 		breaks = c(-Inf, 1, 2, 5, 10, 20, Inf), 
 		labels = c("<1", "[1, 2[", "[2,5[", "[5,10[", "[10,20[", ">=20"),
 		right = FALSE
-	)
+	))
 	# Ethnicity should be available in the ADaM
 
-	# sort variables according to corresponding numeric variable
+	# Sort variables according to corresponding numeric variable
 	dataDM <- convertVarToFactor(
 		data = dataDM,
 		var = c("BMIBLGR1", "RACE", "SEXC", "TRT01P"),
 		varNum = c("BMIBLG1N", "RACEN", "SEXN", "TRT01PN")
 	)
 	
-	## reformat labels:
-	
+	## Reformat labels:
 	labelVars["SEXC"] <- "Gender" # use 'Gender' and not 'Sex' label
 	labelVars["AGEC"] <- "Age, categorized (years)"
 	labelVars["DIAGDURYC"] <- sub(" (years)", ", categorized (years)", labelVars["DIAGDURY"], fixed = TRUE)
 	
-	# statistics of interest:
+	## Define set of statistics of interest:
 	# 'Median (range)' for continuous variable
 	# number of subjects and percentage for categorical variable
 	statsDM <- sapply(varsDM, function(var)
@@ -125,7 +124,8 @@ of the table might depends of the study and dataset
 		}
 	, simplify = FALSE)
 
-	# create the table
+	## create the table:
+	
 	getSummaryStatisticsTable(
 		data = dataDM, 
 		# variables to summarize
