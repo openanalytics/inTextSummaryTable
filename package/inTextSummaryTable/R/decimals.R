@@ -18,7 +18,7 @@ getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 	if(useData)	nDecData <- getNDecimalsData(x)
 	
 	nDec <- if(useRule & useData){
-		mapply(nDecRule, nDecData, min)
+		mapply(min, nDecRule, nDecData)
 	}else	if(!useData){
 		nDecRule
 	}else if(!useRule)	nDecData
@@ -56,8 +56,8 @@ getMaxNDecimals <- function(x, ...)
 #' @author Laure Cougnaud
 #' @export
 getNDecimalsRule <- function(x, rule = c("1")){
-	nDecRule <- switch('1' = 
-		ifelse(x < 1, 3, ifelse(x < 10, 2, ifelse(x < 1000, 1, 0)))
+	nDecRule <- switch(rule,
+		'1' = ifelse(x < 1, 3, ifelse(x < 10, 2, ifelse(x < 1000, 1, 0)))
 	)
 	return(nDecRule)
 }

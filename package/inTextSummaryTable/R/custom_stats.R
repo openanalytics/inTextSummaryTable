@@ -1,16 +1,20 @@
 #'Create custom statistic sets to be passed to the \code{stats} parameter
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
-#' @param type String with type of statistics:
+#' @param type Character vector with type of statistics (multiple are possible):
 #' \itemize{
 #' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 #' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
-#' \item{'n (\%)': }{number of subjects with 0 digit (percentage with 1 digits)}
+#' \item{'n (\%)': }{number of subjects (percentage)}
 #' \item{'median (range)': }{median (minimum, maximum)}
 #' \item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
+#' \item{'mean (se)': }{mean and standard deviation}
 #' }
 #' @param includeName Logical, should the statistics name be included (TRUE by default)?
-#' This is only available if an unique statistic is specified.
-#' @param x (optional, recommended) Vector for which the statistics should be computed on.
+#' This is applied for the statistic names used in each for the set defined in \code{type};
+#' and for the label of the list if \code{type} is of length 2.
+#' If there are multiple \code{type} or statistics within a set, the names are retained (to avoid confusion).
+#' @param x (optional, recommended) Vector for which the statistics 
+#' should be computed on (has an effect only for continuous variable).
 #' If specified, this is used to derive the number of decimals to include.
 #' If not specified, the values are rounded with \code{\link{formatC}}.
 #' @param nDecCont Integer with base number of decimals 
@@ -19,23 +23,51 @@
 #' @param nDecN,nDecm Integer with number of decimals for number of subjects/records (0 by default).
 #' @param formatPercentage Function used to format the percentage of the number of subjects
 #' (see \code{\link{formatPercentage}} for default behaviour).
-#' @return (Optionally named) list of expression or call object of summary statistics of interest
+#' @return (Optionally named) list of expression or call object containing
+#' function to extract summary statistics.
+#' If multiple \code{type} are specified, they are combined to a list.
+#' @examples
+#' ## default set of statistics are available for:
+#' 
+#' # for count table:
+#' getStats("count")
+#' getStats("n (%)")
+#' # for continuous variable:
+#' getStats("summary")
+#' getStats("mean (se)")
+#' getStats("median (range)")
+#' getStats("median\n(range)")
+#' 
+#' ## to not include statistic name in the table
+#' getStats("median\n(range)", includeName = FALSE)
+#' getStats(c("summary", "median\n(range)"), includeName = FALSE)
+#' 
+#' ## to extract the number of decimals based on a continuous variable (see ?getMaxNDecimals) 
+#' library(glpgUtilityFct)
+#' data(ADaMDataPelican)
+#' getStats(type = c('median (range)', 'mean (se)'), x = ADaMDataPelican$ADSL$WEIGHTBL)
+#' # compare with when 'x' is not specified:
+#' getStats(type = c('median (range)', 'mean (se)'))
 #' @author Laure Cougnaud
 #' @export
 getStats <- function(
-	type = c(
-		"summary", "count", "n (%)", 
-		"median (range)", "median\n(range)",
-		
-	),
+	type = "summary",
 	includeName = TRUE,
 	x = NULL, 
-	nDecCont = getNDecimals,
+	nDecCont = getMaxNDecimals,
 	nDecN = 0, nDecm = nDecN,
 	formatPercentage = formatPercentage
 ){
 	
-	type <- match.arg(type)
+	type <- match.arg(
+		type,
+		choices = c(
+			"summary", "count", "n (%)", 
+			"median (range)", "median\n(range)",
+			"mean (se)"
+		),
+		several.ok = TRUE
+	)
 	
 	# number of decimals for continuous variable
 	nDecContBase <- if(is.function(nDecCont) & !is.null(x)){
@@ -73,25 +105,36 @@ getStats <- function(
 		}
 	)
 	
-	stats <- switch(
-		type,
-		summary = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
-		count = statsBase[c("n", "%", "m")],
-		'n (%)' = list('n (%)' = paste0(statsBase$n, " (", statsBase$`%`, ")")),
-		'median (range)' = list('Median (range)' =
-			expression(paste0(statsBase$Median, " (", statsBase$Min, ",",  statsBase$Max, ")"))
-		),
-		'median\n(range)' = list('Median\n(range)' =
-			expression(paste0(statsBase$Median, "\n(", statsBase$Min, ",",  statsBase$Max, ")"))
-		),
-		'mean (se)' = list('Mean (SE)' = expression(paste0(statsBase$Mean, "\n(", statsBase$SE, ")")))
+	stats <- c(
+		if("summary" %in% type)	
+			list(summary = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")]),
+		if("count" %in% type)	list(count = statsBase[c("n", "%", "m")]),
+		if('n (%)' %in% type)
+			list('n (%)' = 
+				bquote(paste0(.(statsBase$n), " (", .(statsBase$`%`), ")"))
+			),
+		if('median (range)' %in% type)	
+			list('Median (range)' =
+				bquote(paste0(.(statsBase$Median), " (", .(statsBase$Min), ",",  .(statsBase$Max), ")"))
+			),
+		if('median\n(range)' %in% type)
+			list('Median\n(range)' =
+				bquote(paste0(.(statsBase$Median), "\n(", .(statsBase$Min), ",",  .(statsBase$Max), ")"))
+			),
+		if('mean (se)' %in% type)
+			list('Mean (SE)' = 
+				bquote(paste0(.(statsBase$Mean), "\n(", .(statsBase$SE), ")"))
+			)
 	)
 	
 	if(!includeName){
-		if(length(stats) > 1){
-			warning("The name of the statistics is included, ",
-				"because multiple statistics are present.")
-		}else	stats <- unname(stats)
+		if(length(stats) == 1){
+			stats <- unname(stats)
+		}else	warning("The labels for the different types:", toString(sQuote(type)), "are retained, to avoid confusion.")
+		idxUniqueStats <- which(sapply(stats, is.list) && sapply(stats, length) == 1)
+		if(length(idxUniqueStats) > 0){
+			stats[idxUniqueStats] <- sapply(stats[idxUniqueStats], unname)
+		}
 	}
 	
 	return(stats)

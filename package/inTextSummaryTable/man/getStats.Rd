@@ -5,25 +5,28 @@
 \title{Create custom statistic sets to be passed to the \code{stats} parameter
 of the \code{\link{computeSummaryStatisticsTable}} function.}
 \usage{
-getStats(type = c("summary", "count", "n (\%)", "median (range)",
-  "median\\n(range)", ), includeName = TRUE, x = NULL,
-  nDecCont = getNDecimals, nDecN = 0, nDecm = nDecN,
+getStats(type = "summary", includeName = TRUE, x = NULL,
+  nDecCont = getMaxNDecimals, nDecN = 0, nDecm = nDecN,
   formatPercentage = formatPercentage)
 }
 \arguments{
-\item{type}{String with type of statistics:
+\item{type}{Character vector with type of statistics (multiple are possible):
 \itemize{
 \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
-\item{'n (\%)': }{number of subjects with 0 digit (percentage with 1 digits)}
+\item{'n (\%)': }{number of subjects (percentage)}
 \item{'median (range)': }{median (minimum, maximum)}
 \item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
+\item{'mean (se)': }{mean and standard deviation}
 }}
 
 \item{includeName}{Logical, should the statistics name be included (TRUE by default)?
-This is only available if an unique statistic is specified.}
+This is applied for the statistic names used in each for the set defined in \code{type};
+and for the label of the list if \code{type} is of length 2.
+If there are multiple \code{type} or statistics within a set, the names are retained (to avoid confusion).}
 
-\item{x}{(optional, recommended) Vector for which the statistics should be computed on.
+\item{x}{(optional, recommended) Vector for which the statistics 
+should be computed on (has an effect only for continuous variable).
 If specified, this is used to derive the number of decimals to include.
 If not specified, the values are rounded with \code{\link{formatC}}.}
 
@@ -37,11 +40,36 @@ for continuous variable, or function returning this number based on \code{x}
 (see \code{\link{formatPercentage}} for default behaviour).}
 }
 \value{
-(Optionally named) list of expression or call object of summary statistics of interest
+(Optionally named) list of expression or call object containing
+function to extract summary statistics.
+If multiple \code{type} are specified, they are combined to a list.
 }
 \description{
 Create custom statistic sets to be passed to the \code{stats} parameter
 of the \code{\link{computeSummaryStatisticsTable}} function.
+}
+\examples{
+## default set of statistics are available for:
+
+# for count table:
+getStats("count")
+getStats("n (\%)")
+# for continuous variable:
+getStats("summary")
+getStats("mean (se)")
+getStats("median (range)")
+getStats("median\\n(range)")
+
+## to not include statistic name in the table
+getStats("median\\n(range)", includeName = FALSE)
+getStats(c("summary", "median\\n(range)"), includeName = FALSE)
+
+## to extract the number of decimals based on a continuous variable (see ?getMaxNDecimals) 
+library(glpgUtilityFct)
+data(ADaMDataPelican)
+getStats(type = c('median (range)', 'mean (se)'), x = ADaMDataPelican$ADSL$WEIGHTBL)
+# compare with when 'x' is not specified:
+getStats(type = c('median (range)', 'mean (se)'))
 }
 \author{
 Laure Cougnaud
