@@ -74,7 +74,7 @@ of the table might depends of the study and dataset
 ```{r demographicTable}
 
 	# data of interest
-	dataDM <- subset(dataAll$ADSL, SAFFL == "Y")
+	dataDM <- subset(dataAll$ADSL, FASFL == "Y")
 	
 	# variables of interest
 	# Note: if available: ethnicity is included
@@ -114,19 +114,19 @@ of the table might depends of the study and dataset
 	labelVars["AGEC"] <- "Age, categorized (years)"
 	labelVars["DIAGDURYC"] <- sub(" (years)", ", categorized (years)", labelVars["DIAGDURY"], fixed = TRUE)
 	
-	stop("test")
-	
-	# statistics of interest
-	statsNum <- getStats("median (range)")
-	statsCat <- getStats("n (%)", includeName = FALSE)
-	library(plyr)
-	varsDMIsNum <- colwise(is.numeric, varsDM)(dataDM)
-	statsDM <- sapply(varsDMIsNum, function(isNum) 
-		if(isNum)	statsNum	else	statsCat,
-		simplify = FALSE)
-	
+	# statistics of interest:
+	# 'Median (range)' for continuous variable
+	# number of subjects and percentage for categorical variable
+	statsDM <- sapply(varsDM, function(var)
+		if(is.numeric(dataDM[[var]])){
+			getStats(type = "median (range)", x = dataDM[[var]])
+		}else{
+			getStats(type = "n (%)", includeName = FALSE)
+		}
+	, simplify = FALSE)
+
 	# create the table
-	test <- computeSummaryStatisticsTable(
+	getSummaryStatisticsTable(
 		data = dataDM, 
 		# variables to summarize
 		var = varsDM,
@@ -142,7 +142,7 @@ of the table might depends of the study and dataset
 		rowInclude0 = FALSE,
 		title = toTitleCase(
 			paste("Table: Descriptive Statistics of Demographic Data",
-				"and Baseline Characteristics (Safety Analysis Set)"
+				"and Baseline Characteristics (Full Analysis Set)"
 			)
 		),
 		file = file.path("tables_CSR", "Table_demographicDataAndBaselineCharacteristics.docx")
