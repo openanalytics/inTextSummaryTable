@@ -6,7 +6,9 @@
 of the \code{\link{computeSummaryStatisticsTable}} function.}
 \usage{
 getStats(type = c("summary", "count", "n (\%)", "median (range)",
-  "median\\n(range)"), includeName = TRUE)
+  "median\\n(range)", ), includeName = TRUE, x = NULL,
+  nDecCont = getNDecimals, nDecN = 0, nDecm = nDecN,
+  formatPercentage = formatPercentage)
 }
 \arguments{
 \item{type}{String with type of statistics:
@@ -15,11 +17,24 @@ getStats(type = c("summary", "count", "n (\%)", "median (range)",
 \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
 \item{'n (\%)': }{number of subjects with 0 digit (percentage with 1 digits)}
 \item{'median (range)': }{median (minimum, maximum)}
-\item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
+\item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
 }}
 
 \item{includeName}{Logical, should the statistics name be included (TRUE by default)?
 This is only available if an unique statistic is specified.}
+
+\item{x}{(optional, recommended) Vector for which the statistics should be computed on.
+If specified, this is used to derive the number of decimals to include.
+If not specified, the values are rounded with \code{\link{formatC}}.}
+
+\item{nDecCont}{Integer with base number of decimals 
+for continuous variable, or function returning this number based on \code{x} 
+(\code{\link{getNDecimals}} by default).}
+
+\item{nDecN, nDecm}{Integer with number of decimals for number of subjects/records (0 by default).}
+
+\item{formatPercentage}{Function used to format the percentage of the number of subjects
+(see \code{\link{formatPercentage}} for default behaviour).}
 }
 \value{
 (Optionally named) list of expression or call object of summary statistics of interest
