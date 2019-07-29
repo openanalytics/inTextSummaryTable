@@ -309,11 +309,10 @@ of the table might depends of the study and dataset
 		rowVarTotalByVar = "WORSTINT", # per worst-case scenario
 		rowTotalLab = "Any TEAE",
 		# sort per total in the total column
-#		rowOrder = "total", 
-#		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
+		rowOrder = "total", 
+		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		## column variables
-		colVar = "TRTA",
-		colTotalInclude = TRUE,
+		colVar = "TRTA", #colTotalInclude = TRUE,
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		dataTotal = dataTotalAE,
