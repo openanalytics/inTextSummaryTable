@@ -523,7 +523,7 @@ computeSummaryStatisticsTable <- function(
 
 	# filter records if any 'filterFct' is specified
 	if(!is.null(filterFct)){
-		if(!is.list(filterFct))	filterFct <- as.list(filterFct)
+		if(!is.list(filterFct))	filterFct <- list(filterFct)
 		for(fct in filterFct)
 			summaryTable <- fct(summaryTable)
 	}
@@ -581,10 +581,8 @@ computeSummaryStatisticsTable <- function(
 		rowVarLab = c(
 			rowVarLab, 
 			if(length(var) > 1)	
-				c(
-					"variable" = varGeneralLab, 
-					if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varSubgroupLab)
-				),
+				c("variable" = varGeneralLab),
+			if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varSubgroupLab),
 			if(length(statsVar) > 1)	c("Statistic" = statsGeneralLab)
 		),
 
@@ -699,7 +697,8 @@ computeSummaryStatisticsTableTotal <- function(
 #' grouping in row in the final table.
 #' @param rowInclude0 Logical, if TRUE (FALSE by default),
 #' include rows with no records, based on all combinations 
-#' of the \code{rowVar} (assuming nested variable(s)).
+#' of the \code{rowVar} (assuming nested variable(s)) and
+#' rows with no counts for count \code{var}.
 #' @param colVar Variable(s) of \code{data} used 
 #' for grouping in column in the final table. The total 
 #' for each subgroup across \code{rowVar} is computed.
@@ -818,7 +817,8 @@ computeSummaryStatisticsByRowColVar <- function(
 					data = x, 
 					var = varI, 
 					type = type,
-					varTotalInclude = varITotalInclude
+					varTotalInclude = varITotalInclude,
+					filterEmptyVar = !rowInclude0
 				)
 				# only store the variable if more than one specified variable
 				if(!is.null(sumTable) && length(var) > 1){

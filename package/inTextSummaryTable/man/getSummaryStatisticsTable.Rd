@@ -15,7 +15,7 @@ getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
   rowVarInSepCol = NULL, rowVarFormat = NULL,
   rowVarTotalInclude = NULL, rowVarTotalByVar = NULL,
   rowVarTotalInSepRow = NULL, rowTotalLab = NULL,
-  rowInclude0 = FALSE, rowAutoMerge = TRUE, emptyValue = NULL,
+  rowInclude0 = FALSE, rowAutoMerge = TRUE, emptyValue = "-",
   rowVarTotalPerc = NULL, colVar = NULL, colVarTotal = colVar,
   colVarTotalPerc = colVarTotal, colInclude0 = FALSE,
   colVarDataLevels = NULL, colTotalInclude = FALSE,
@@ -101,6 +101,7 @@ based on total counts (in case \code{rowOrder} is 'total').}
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table, NULL by default. 
+To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
 This is only available if \code{rowVar} if not specified.
 Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
 separately by this variable.}
@@ -125,13 +126,14 @@ Otherwise (by default) the total is included in the header row of each category.
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
-of the \code{rowVar} (assuming nested variable(s)).}
+of the \code{rowVar} (assuming nested variable(s)) and
+rows with no counts for count \code{var}.}
 
 \item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
 e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
 or only one statistic per category}
 
-\item{emptyValue}{Value used to fill the table for missing values.
+\item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 
 \item{rowVarTotalPerc}{Character vector with row(s) considered to compute the total,

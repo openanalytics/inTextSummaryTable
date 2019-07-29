@@ -218,7 +218,8 @@ in a row with this variable set to 'Total'.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
-of the \code{rowVar} (assuming nested variable(s)).}
+of the \code{rowVar} (assuming nested variable(s)) and
+rows with no counts for count \code{var}.}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with no records, based on all combinations 
