@@ -9,7 +9,7 @@
 getSummaryStatisticsTable <- function(
 	data, 
 	## parameters for summary statistics
-	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
+	var = NULL, varFlag = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
 	varIgnore = NULL,
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIncludeTotal = FALSE, varTotalInclude = FALSE,
@@ -68,7 +68,7 @@ getSummaryStatisticsTable <- function(
 	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
 		## variables
-		var = var, varLab = varLab,
+		var = var, varFlag = varFlag, varLab = varLab,
 		varIgnore = varIgnore,
 		varGeneralLab = varGeneralLab, varSubgroupLab = varSubgroupLab, 
 		varIncludeTotal = varIncludeTotal,
