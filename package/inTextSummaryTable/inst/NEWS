@@ -1,5 +1,6 @@
 1.9.0
-    o 
+    o include vignette with template tables
+    o formatSummaryStatisticsTable: fix when multiple records for total (rowVarTotalByVar)
 1.8.0
     o GLPG flextable functions moved to the glpgStyle package
 1.7.0

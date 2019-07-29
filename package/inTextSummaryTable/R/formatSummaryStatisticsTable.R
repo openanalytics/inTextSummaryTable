@@ -135,7 +135,7 @@ formatSummaryStatisticsTable <- function(
 		
 			# ensure that order of columns with Total is as specified in levels of the factor originally
 			for(col in colVar){
-				colVarWithCountEl <- unique(dataWithTotal[, col])	
+				colVarWithCountEl <- unique(dataWithTotal[, col])
 				colVarInit <-  summaryTable[, col]
 				colVarEl <- if(is.factor(colVarInit))	levels(colVarInit)	else	unique(colVarInit)	
 				colVarWithCountElOrdered <- colVarWithCountEl[
@@ -260,6 +260,11 @@ formatSummaryStatisticsTable <- function(
 				# if the sub-total for this variable is computed and not included in separated row
 				varNested <- rowVarInRow[match(var, rowVarInRow)+1]
 				if(varNested %in% rowVarTotalInclude & !varNested %in% rowVarTotalInSepRow){
+					
+					# in case multiple records for total, add extra rows
+					idxTotalNested <- which(dataLong[, varNested] == "Total")
+					idxTotalNested <- idxTotalNested[which(diff(idxTotalNested) == 1) + 1]
+					idxRowToRepl <- unique(c(idxRowToRepl, idxTotalNested))
 					
 					# include the variable in the final column
 					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
