@@ -282,6 +282,7 @@ of the table might depends of the study and dataset
 	
 	# include columns with worst-case scenario (only one record if multiple with same severity)
 	dataAEWC <- ddply(dataAE, c("AEDECOD", "USUBJID", "TRTA"), function(x){
+#		if(nrow(x) > 1)	print(x[, c("AEDECOD", "USUBJID", "TRTA", "AESEV")])
 		x[seq_len(nrow(x)) == which.max(x$AESEV), ]
 	})
 	dataAEWC$WORSTINT <- dataAEWC$AESEV
@@ -312,6 +313,7 @@ of the table might depends of the study and dataset
 #		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		## column variables
 		colVar = "TRTA",
+		colTotalInclude = TRUE,
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		dataTotal = dataTotalAE,

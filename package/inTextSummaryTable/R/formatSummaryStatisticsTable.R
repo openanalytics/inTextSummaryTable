@@ -374,10 +374,15 @@ formatSummaryStatisticsTable <- function(
 		## extract extra parameters for flextable (including header)
 		
 		## extract horizontal lines
+		
 		# rows with indent set to 0 (and no lines if all rows have no indent)
-		idxHLine <- if(length(rowVarToModify) > 0 & !all(dataLong$rowPadding == 0))
-			which(dataLong$rowPadding == 0)-1
+		idxHLine <- if(length(rowVarToModify) > 0 & !all(dataLong$rowPadding == 0))	which(dataLong$rowPadding == 0)-1
 		idxHLine <- unique(idxHLine[idxHLine > 0])
+		
+		# remove lines between rows with same indent (e.g. multiple total rows)
+		if(length(rowVarInSepCol) > 0)
+			idxHLine <- idxHLine[idxHLine %in% cumsum(rle(dataLong[, rowVarFinal])$lengths)]
+		
 		if(!is.null(rowVarTotalInclude)){
 			idxRowTotal <- which(dataLong[, rowVarFinal] == "Total" & dataLong$rowPadding == 0)
 			idxHLine <- c(idxHLine, idxRowTotal[length(idxRowTotal)]) # + include horizontal line after row total
