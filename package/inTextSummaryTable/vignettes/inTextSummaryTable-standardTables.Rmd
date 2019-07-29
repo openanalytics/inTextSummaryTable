@@ -182,11 +182,208 @@ of the table might depends of the study and dataset
 
 ```
 
-### Medical History and Concomitant Disease
+# Safety Analysis
+
+## Adverse Events
+
+### Incidence of Treatment-Emergent Adverse Events
+
+#### Events occuring in at least one subject
+
+```{r table-TEAE}
+
+	dataAE <- subset(dataAll$ADAE, SAFFL == "Y")
+	
+	dataAE <- convertVarToFactor(
+		data = dataAE,
+		var = c("TRTA"),
+		varNum = c("TRTAN")
+	)
+
+	dataTotalAE <- subset(dataAll$ADSL, SAFFL == "Y")
+	dataTotalAE <- convertVarToFactor(dataTotalAE, var = "TRT01A", varNum = "TRT01AN")
+	colnames(dataTotalAE)[colnames(dataTotalAE) == "TRT01A"] <- "TRTA"
+	
+	getSummaryStatisticsTable(
+		data = dataAE,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		## total
+		# column total
+		dataTotal = dataTotalAE, colTotalInclude = TRUE,
+		# row total
+		rowVarTotalInclude = c("AESOC", "AEDECOD"), rowTotalLab = "Any TEAE",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term,\nn (%)"),
+		# sort rows based on the total column:
+		rowOrder = "total", 
+		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
+		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
+			"and Preferred Term reported in at least 1 subject in any treatment group (Safety Analysis Set)"
+		),
+		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx"),
+		# include only events occuring in at least 25% for at least one preferred term:
+		filterFct = function(x)
+			ddply(x, "AESOC", function(x){ # per AESOC to include the total
+				ddply(x, "AEDECOD", function(y)
+					if(any(y$statPercN >= 25))	y
+				)
+			})
+	)
+
+```
+
+#### Events occuring in at least 25% of the subjects
+
+```{r table-TEAE-inAtLease25Percent}
+
+	getSummaryStatisticsTable(
+		data = dataAE,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		## total
+		# column total
+		dataTotal = dataTotalAE, colTotalInclude = TRUE,
+		# row total
+		rowVarTotalInclude = c("AESOC", "AEDECOD"), rowTotalLab = "Any TEAE",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		rowVarLab = c('AESOC' = "SOC and Preferred Term,\nn (%)"),
+		# sort rows based on the total column:
+		rowOrder = "total", 
+		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
+		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
+				"and Preferred Term reported in at least 1 subject in any treatment group (Safety Analysis Set)"
+		),
+		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx"),
+		# include only events occuring in at least 25% for at least one preferred term:
+		filterFct = function(x)
+			ddply(x, "AESOC", function(x){ # per AESOC to include the total
+				ddply(x, "AEDECOD", function(y)
+					if(any(y$statPercN >= 25))	y
+				)
+			})
+	)
+
+```
+
+### Severity
+
+```{r tableTEAE-worstCase}
+
+#	dataAEMulEvents <- subset(dataAE %>% group_by(SUBJID, AEDECOD) %>% dplyr::summarise(n = n(), nWI = toString(WORSTINT)), n > 1)
+#	join(dataAE, dataAEMulEvents)	
+	# use AETOXGR and not WORSTINT for ordering (no WORSTINTN) available
+	dataAE <- convertVarToFactor(
+		data = dataAE,
+		var = c("TRTA", "AESEV"), varNum = c("TRTAN", "AESEVN")
+	)
+	
+	# include columns with worst-case scenario (only one record if multiple with same severity)
+	dataAEWC <- ddply(dataAE, c("AEDECOD", "USUBJID", "TRTA"), function(x){
+		x[seq_len(nrow(x)) == which.max(x$AESEV), ]
+	})
+	dataAEWC$WORSTINT <- dataAEWC$AESEV
+	labelVars["WORSTINT"] <- "Worst-case scenario"
+
+	## datasets used for the total:
+	dataTotalRow <- list(
+		# within SOC (across AEDECOD)
+		'AEDECOD' = ddply(dataAEWC, c("AESOC", "USUBJID", "TRTA"), function(x){	
+			x[seq_len(nrow(x)) == which.max(x$WORSTINT), ]
+		}),
+		# across SOC
+		'AESOC' = ddply(dataAEWC, c("USUBJID", "TRTA"), function(x){	
+			x[seq_len(nrow(x)) == which.max(x$WORSTINT), ]
+		})
+	)
+	
+	getSummaryStatisticsTable(
+		data = dataAEWC,
+		## row variables:
+		rowVar = c("AESOC", "AEDECOD", "WORSTINT"), rowVarInSepCol = "WORSTINT",
+		# include total across SOC and across AEDECOD
+		rowVarTotalInclude = c("AESOC", "AEDECOD"), dataTotalRow = dataTotalRow, 
+		rowVarTotalByVar = "WORSTINT", # per worst-case scenario
+		rowTotalLab = "Any TEAE",
+		# sort per total in the total column
+#		rowOrder = "total", 
+#		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
+		## column variables
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		dataTotal = dataTotalAE,
+		title = paste("Table: Severity of Treatment-emergent Adverse Events by Preferred Term",
+			"(Safety Analysis Set)"
+		),
+		file = file.path("tables_CSR", "Table_TEAE_Severity.docx")
+	)
+	
+```
+
+
+
+
+### Incidence
+
+```{r dataTotalSC}
+
+	dataTotalSC <- subset(dataAll$ADSL, SAFFL == "Y" & grepl("Part 1", ARM))
+	dataTotalSC <- addTotalScCategory(dataTotalSC)# build category with all s.c. doses
+	# TRTA in general, TRTP for PK
+	dataTotalSC$TRTA <- dataTotalSC$TRTP <- dataTotalSC$TRT01A <- formatTreatment(x = dataTotalSC$TRT01A, separatedRow = TRUE)
+
+```
+
+```{r tableAE-incidence-dataPreparation}
+
+	dataAE <- subset(dataAll$ADAE, SAFFL == "Y" & grepl("Part 1", ARM) & TRTEMFL == "Y")
+	
+	# build category with all s.c. doses
+	dataAE <- addTotalScCategory(dataAE, treatVar = "TRTA")
+	
+	dataAE$TRTA <- formatTreatment(x = dataAE$TRTA, separatedRow = TRUE)
+
+	getAdverseEventsTable <- function(...)
+		getSummaryStatisticsTable(
+			data = dataAE,
+			rowVar = c("AEBODSYS", "AEDECOD"),
+			colVar = "TRTA",
+			dataTotal = dataTotalSC,
+			colTotalInclude = TRUE,
+			stats = list(expression(paste0(roundCustomText(statN, 0), " (", roundCustomText(statPercN, 1), ")"))),
+			labelVars = labelVars,
+			rowVarTotalInclude = c("AEBODSYS", "AEDECOD"), rowTotalLab = "Any TEAE",
+			rowVarLab = c('AEBODSYS' = "TEAE by SOC and Preferred Term,\nn (%)"),
+			footer = c(
+				"N=number of subjects with data; n=number of subjects with this observation",
+				"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population, within the analysis period."
+			),
+			rowOrder = "total", 
+			rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
+			...
+		)
+	
+```
+
+### Medical History and Concomitant Diseases
+
+### Prior and Concomitant Therapies
 
 ```{r table-concomitantMedications}
 
-
+	dataCM <- subset(dataAll$ADCM, FASFL == "Y")
+	
+	varsCM <- c("ATC1NME", "ATC2NME", "ATC4NME")
+	
+	# TODO
+	dataCM <- convertVarToFactor(data = dataCM,
+		var = c("ATC1NME", "ATC2NME", "ATC4NME"),
+		varNum = c("ATC1CDE", "ATC2CDE", "ATC4CDE")
+	)
+	
 ```
 
 <!-- TO CHECK: -->
