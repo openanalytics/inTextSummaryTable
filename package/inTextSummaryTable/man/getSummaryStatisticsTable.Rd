@@ -4,11 +4,11 @@
 \alias{getSummaryStatisticsTable}
 \title{Get summary statistics table}
 \usage{
-getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
-  data = data, labelVars = labelVars), varIgnore = NULL,
-  varGeneralLab = "Variable", varSubgroupLab = NULL,
-  varIncludeTotal = FALSE, varTotalInclude = FALSE,
-  varTotalInSepRow = FALSE, rowVar = NULL,
+getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
+  varLab = getLabelVar(var, data = data, labelVars = labelVars),
+  varIgnore = NULL, varGeneralLab = "Variable",
+  varSubgroupLab = NULL, varIncludeTotal = FALSE,
+  varTotalInclude = FALSE, varTotalInSepRow = FALSE, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
@@ -37,8 +37,11 @@ getSummaryStatisticsTable(data, var = NULL, varLab = getLabelVar(var,
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{Character vector with variable, used if 'variable' is specified
-within \code{rowVarTotal}.}
+\item{var}{Character vector, variable(s) of \code{data} to compute statistics on.
+Missing values, if present, are filtered.}
+
+\item{varFlag}{Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
+Only the counts for records flagged (with 'Y') are retained.}
 
 \item{varLab}{Label for the \code{var} variable.}
 

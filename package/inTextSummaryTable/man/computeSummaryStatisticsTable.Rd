@@ -4,7 +4,7 @@
 \alias{computeSummaryStatisticsTable}
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
-computeSummaryStatisticsTable(data, var = NULL,
+computeSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   varGeneralLab = "Variable", varSubgroupLab = NULL,
   varIgnore = NULL, varIncludeTotal = FALSE, varTotalInclude = FALSE,
@@ -27,8 +27,11 @@ computeSummaryStatisticsTable(data, var = NULL,
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{Character vector with variable, used if 'variable' is specified
-within \code{rowVarTotal}.}
+\item{var}{Character vector, variable(s) of \code{data} to compute statistics on.
+Missing values, if present, are filtered.}
+
+\item{varFlag}{Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
+Only the counts for records flagged (with 'Y') are retained.}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.

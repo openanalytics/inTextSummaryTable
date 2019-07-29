@@ -1,4 +1,8 @@
 #' Compute summary statistics for a specific dataset and variables of interest
+#' @param var Character vector, variable(s) of \code{data} to compute statistics on.
+#' Missing values, if present, are filtered.
+#' @param varFlag Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
+#' Only the counts for records flagged (with 'Y') are retained.
 #' @param rowOrder Vector of length 1 or list with either a:
 #' \itemize{
 #' \item{String among:}{
@@ -141,7 +145,7 @@
 #' @export
 computeSummaryStatisticsTable <- function(
 	data,  
-	var = NULL, 
+	var = NULL, varFlag = NULL,
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIgnore = NULL,
@@ -235,6 +239,18 @@ computeSummaryStatisticsTable <- function(
 		for(varI in var){
 			data <- data[!data[, varI] %in% varIgnore, ]
 		}
+	
+	# for flag variable:
+	if(!is.null(varFlag)){
+		if(!all(varFlag %in% var))
+			stop("All flag variables in 'varFlag' should be specified in the 'var' parameter.")
+		# convert them to a format to only retain flagged records
+		data[, varFlag] <- colwise(convertVarFlag)(data[, varFlag, drop = FALSE])
+		# filter the'non' flagged counts
+		filterFct <- c(filterFct, 
+			list(function(x)	x[which(x$isTotal | !(x$variableInit %in% varFlag & x$variableGroup == "N")), ])
+		)
+	}
 	
 	# convert row and column variable to factor in the data
 	# (if character, variables pre-defined as factor in one summary tables will be lost during rbind.fill)
@@ -506,8 +522,11 @@ computeSummaryStatisticsTable <- function(
 	summaryTable$isTotalPerc <- NULL
 
 	# filter records if any 'filterFct' is specified
-	if(!is.null(filterFct))
-		summaryTable <- filterFct(summaryTable)
+	if(!is.null(filterFct)){
+		if(!is.list(filterFct))	filterFct <- as.list(filterFct)
+		for(fct in filterFct)
+			summaryTable <- fct(summaryTable)
+	}
 	
 	# order the row variables as specified
 	if(!is.null(rowVar) && !is.null(rowOrder)){

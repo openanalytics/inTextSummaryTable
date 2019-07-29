@@ -186,16 +186,102 @@ of the table might depends of the study and dataset
 
 ## Adverse Events
 
-### Incidence of Treatment-Emergent Adverse Events
+### Summary table
+
+### Treatment-emergent summary table
+
+```{r table-summaryTable}
+
+	# consider only safety analysis set AND TREATMENT-EMERGENT!
+	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
+	
+	# order treatment and severity categories
+	dataTEAE <- convertVarToFactor(
+		data = dataTEAE,
+		var = c("TRTA", "AESEV"),
+		varNum = c("TRTAN", "AESEVN")
+	)
+	
+	# data considered for the total
+	dataTotalAE <- subset(dataAll$ADSL, SAFFL == "Y")
+	dataTotalAE <- convertVarToFactor(dataTotalAE, var = "TRT01A", varNum = "TRT01AN")
+	colnames(dataTotalAE)[colnames(dataTotalAE) == "TRT01A"] <- "TRTA"
+
+	## build flags of interest (if not already available)
+
+	# treatment emergent: 'TRTEMFL'
+	
+	# serious TEAE adverse event
+	dataTEAE$TEAESER <- with(dataTEAE, ifelse(AESER == "Y", "Y", "N"))
+	
+	# TEAE leading to death 
+	dataTEAE$TEAED <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AESDTH == "Y", "Y", "N"))
+	
+	# TEAE with worst intensity
+
+	# build worst-case scenario
+	dataTEAE <- ddply(dataTEAE, c("USUBJID", "TRTA"), function(x){
+		maxAESEVN <- max(subset(dataTEAE, TRTEMFL == "Y")$AESEVN)
+		cbind.data.frame(x, 
+			WORSTINT = with(x, 
+				ifelse(TRTEMFL == "Y" & AESEVN == maxAESEVN, as.character(AESEV), NA_character_))
+		)
+	})
+
+	# study-drug related TEAE
+	dataTEAE$TEAEREL <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AREL == "Related", "Y", "N"))
+	
+	# study-drug temporarily stopped
+	dataTEAE$TEAETS <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AEACN == "TEMPORARILY STOPPED", "Y", "N"))
+	
+	# study-drug permanently stopped
+	# (Note: in this dataset, specific variable: AEINTFL == Treatment stopped Flag)
+	dataTEAE$TEAEPS <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AEACN == "DRUG WITHDRAWN", "Y", "N"))
+	
+	## specify labels for each variable:
+	varAESummaryLabels <- c(
+		TRTEMFL = "TEAE", AESER = "Serious TEAE", 
+		TEAED = "TEAE leading to death",
+		WORSTINT = "TEAE with worst severity:",
+		TEAEREL = "Study drug-related TEAE",
+		TEAETS = "Study drug temporarily stopped",
+		TEAEPS = "Study drug permanently stopped"
+	)
+	varAESummary <- names(varAESummaryLabels)
+	varAESummaryFlag <- setdiff(varAESummary, "WORSTINT")
+	
+	# create the table
+	getSummaryStatisticsTable(
+		data = dataTEAE,
+		colVar = "TRTA",
+		# define variables to compute statistics on
+		varFlag = varAESummaryFlag,
+		var = varAESummary,
+		varLab = varAESummaryLabels,
+		varGeneralLab = "Subjects with, n(%):",
+		# include the total for the worst-case scenario
+		varTotalInclude = "WORSTINT",
+		# statistics:
+		stats = getStats('n (%)'),
+		labelVars = labelVars,
+		# dataset used for the total in the header column (and for percentage as default)
+		dataTotal = dataTotalAE,
+		# title/export
+		title = toTitleCase("Table: Summary table of TEAEs (safety analysis set)"),
+		file = file.path("tables_CSR", "Table_TEAE_summary.docx")
+	)
+	
+```
+
 
 #### Events occuring in at least one subject
 
 ```{r table-TEAE}
 
-	dataAE <- subset(dataAll$ADAE, SAFFL == "Y")
+	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
 	
-	dataAE <- convertVarToFactor(
-		data = dataAE,
+	dataTEAE <- convertVarToFactor(
+		data = dataTEAE,
 		var = c("TRTA"),
 		varNum = c("TRTAN")
 	)
@@ -205,7 +291,7 @@ of the table might depends of the study and dataset
 	colnames(dataTotalAE)[colnames(dataTotalAE) == "TRT01A"] <- "TRTA"
 	
 	getSummaryStatisticsTable(
-		data = dataAE,
+		data = dataTEAE,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTA",
 		## total
@@ -239,7 +325,7 @@ of the table might depends of the study and dataset
 ```{r table-TEAE-inAtLease25Percent}
 
 	getSummaryStatisticsTable(
-		data = dataAE,
+		data = dataTEAE,
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTA",
 		## total
@@ -254,7 +340,7 @@ of the table might depends of the study and dataset
 		rowOrder = "total", 
 		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
-				"and Preferred Term reported in at least 1 subject in any treatment group (Safety Analysis Set)"
+				"and Preferred Term reported in at least 25% of the subjects in any treatment group (Safety Analysis Set)"
 		),
 		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx"),
 		# include only events occuring in at least 25% for at least one preferred term:
@@ -272,17 +358,16 @@ of the table might depends of the study and dataset
 
 ```{r tableTEAE-worstCase}
 
-#	dataAEMulEvents <- subset(dataAE %>% group_by(SUBJID, AEDECOD) %>% dplyr::summarise(n = n(), nWI = toString(WORSTINT)), n > 1)
-#	join(dataAE, dataAEMulEvents)	
-	# use AETOXGR and not WORSTINT for ordering (no WORSTINTN) available
-	dataAE <- convertVarToFactor(
-		data = dataAE,
+	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
+
+	# order treatment and severity based on corresponding numeric variables
+	dataTEAE <- convertVarToFactor(
+		data = dataTEAE,
 		var = c("TRTA", "AESEV"), varNum = c("TRTAN", "AESEVN")
 	)
 	
-	# include columns with worst-case scenario (only one record if multiple with same severity)
-	dataAEWC <- ddply(dataAE, c("AEDECOD", "USUBJID", "TRTA"), function(x){
-#		if(nrow(x) > 1)	print(x[, c("AEDECOD", "USUBJID", "TRTA", "AESEV")])
+	# extract worst-case scenario data (only one record if multiple with same severity)
+	dataAEWC <- ddply(dataTEAE, c("AEDECOD", "USUBJID", "TRTA"), function(x){
 		x[seq_len(nrow(x)) == which.max(x$AESEV), ]
 	})
 	dataAEWC$WORSTINT <- dataAEWC$AESEV
@@ -312,60 +397,15 @@ of the table might depends of the study and dataset
 		rowOrder = "total", 
 		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		## column variables
-		colVar = "TRTA", #colTotalInclude = TRUE,
+		colVar = "TRTA", 
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		dataTotal = dataTotalAE,
-		title = paste("Table: Severity of Treatment-emergent Adverse Events by Preferred Term",
-			"(Safety Analysis Set)"
-		),
+		title = toTitleCase(paste("Table: Treatment-emergent Adverse Events by system organ",
+			"and preferred term by worst-case (Safety Analysis Set)"
+		)),
 		file = file.path("tables_CSR", "Table_TEAE_Severity.docx")
 	)
-	
-```
-
-
-
-
-### Incidence
-
-```{r dataTotalSC}
-
-	dataTotalSC <- subset(dataAll$ADSL, SAFFL == "Y" & grepl("Part 1", ARM))
-	dataTotalSC <- addTotalScCategory(dataTotalSC)# build category with all s.c. doses
-	# TRTA in general, TRTP for PK
-	dataTotalSC$TRTA <- dataTotalSC$TRTP <- dataTotalSC$TRT01A <- formatTreatment(x = dataTotalSC$TRT01A, separatedRow = TRUE)
-
-```
-
-```{r tableAE-incidence-dataPreparation}
-
-	dataAE <- subset(dataAll$ADAE, SAFFL == "Y" & grepl("Part 1", ARM) & TRTEMFL == "Y")
-	
-	# build category with all s.c. doses
-	dataAE <- addTotalScCategory(dataAE, treatVar = "TRTA")
-	
-	dataAE$TRTA <- formatTreatment(x = dataAE$TRTA, separatedRow = TRUE)
-
-	getAdverseEventsTable <- function(...)
-		getSummaryStatisticsTable(
-			data = dataAE,
-			rowVar = c("AEBODSYS", "AEDECOD"),
-			colVar = "TRTA",
-			dataTotal = dataTotalSC,
-			colTotalInclude = TRUE,
-			stats = list(expression(paste0(roundCustomText(statN, 0), " (", roundCustomText(statPercN, 1), ")"))),
-			labelVars = labelVars,
-			rowVarTotalInclude = c("AEBODSYS", "AEDECOD"), rowTotalLab = "Any TEAE",
-			rowVarLab = c('AEBODSYS' = "TEAE by SOC and Preferred Term,\nn (%)"),
-			footer = c(
-				"N=number of subjects with data; n=number of subjects with this observation",
-				"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population, within the analysis period."
-			),
-			rowOrder = "total", 
-			rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
-			...
-		)
 	
 ```
 
@@ -443,146 +483,7 @@ By default, the number ('N') and percentage ('Perc') are reported for each
 
 ```
 
-## Adverse events
 
-### Treatment-emergent summary table
-
-```{r example-summaryTable-AE}
-
-	# Only consider safety analysis set
-	dataAESAS <- subset(dataAll$ADAE, SAFFL == "Y")
-	
-	# total in safety analysis set
-	dataTotalSAS <- subset(dataAll$ADSL, SAFFL == "Y")
-	dataTotalSAS$TRTP <- dataTotalSAS$TRT01P
-	
-	# Sort treatments
-	dataAESAS$TRTP <- with(dataAESAS, reorder(TRTP, TRTPN))
-
-	## build flags of interest
-	# For each variable, the number of subjects and percentage of subjects flagged will be counted.
-	# Flag subjects with '', e.g present but shown as no label
-	# excepted for the worst-intensity for which the counts for each category are displayed
-	
-	# treatment emergent
-	dataAESAS$TEAE <- ifelse(dataAESAS$TRTEMFL == "Y", "", "N")
-	
-	# serious TEAE adverse event
-	dataAESAS$TEAESER <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AESER == "Y", "", "N"))
-	
-	# TEAE leading to death 
-	dataAESAS$TEAED <- with(dataAESAS, ifelse(TRTEMFL == "Y" & DTHFL == "Y", "", "N"))
-	
-	# TEAE with worst intensity
-
-	# build worst-case scenario
-	dataAESAS <- ddply(dataAESAS, c("USUBJID", "TRTP"), function(x){
-		res <- cbind.data.frame(x, 
-			AESEVWC = ifelse(x$AESEVN == max(x$AESEVN), as.character(x$AESEV), ""), 
-			stringsAsFactors = FALSE
-		)			
-	})
-	# order levels/add severe class
-	dataAESAS$TEAESEVWC <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AESEVWC != "", AESEVWC, ""))
-	dataAESAS$TEAESEVWC <- factor(dataAESAS$AESEVWC, levels = c("MILD", "MODERATE", "SEVERE")) 
-
-	# study-drug related TEAE (AERELN == 1 <==> AREL == "Related")
-	dataAESAS$TEAEREL <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AREL == "Related", "", "N"))
-	
-	# study-drug temporarily stopped
-	dataAESAS$TEAETS <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AEACN == "TEMPORARILY STOPPED", "", "N"))
-	
-	# study-drug permanently stopped
-	# (Note: in this dataset, specific variable: AEINTFL == Treatment stopped Flag)
-	dataAESAS$TEAEPS <- with(dataAESAS, ifelse(TRTEMFL == "Y" & AEACN == "DRUG WITHDRAWN", "", "N"))
-	
-	## specify labels for each variable:
-	varAESummaryLabels <- c(
-		TEAE = "TEAE", TEAESER = "Serious TEAE", 
-		TEAED = "TEAE leading to death",
-		TEAESEVWC = "TEAE with worst severity",
-		TEAEREL = "Study drug-related TEAE",
-		TEAETS = "Study drug temporarily stopped",
-		TEAEPS = "Study drug permanently stopped"
-	)
-	varAESummary <- names(varAESummaryLabels)
-	
-	## convert all variables as factor 
-	# this also enables  to include rows with empty variable
-	dataAESAS[, setdiff(varAESummary, "TEAESEVWC")] <- colwise(factor, levels = c("N", ""))(dataAESAS[, setdiff(varAESummary, "TEAESEVWC")])
-
-	# Data for the total column
-	# General approach (applicable for cross-over and parallel design):
-	# derive worst-case scenario across treatments
-	# (because patient can have different WC per treatment but should be considered once in the total column)
-	dataAESASAcrossTreatments <- ddply(dataAESAS, "USUBJID", function(x){
-		x$AESEVWC <- ifelse(x$AESEVN == max(x$AESEVN), as.character(x$AESEV), "")
-		x
-	})
-	
-	# create the table
-	getSummaryStatisticsTable(
-		data = dataAESAS,
-		colVar = "TRTP",
-		# define variables to compute statistics on
-		var = varAESummary,
-		varLab = varAESummaryLabels,
-		varGeneralLab = "Number of subjects with:",
-		# statistics:
-		stats = unname(getStats('n (%)')),
-		# only consider the subjects flagged by the variable:
-		filterFct =  function(x){
-			subset(x, isTotal | variableGroup != "N")
-		},
-		# include the total for the worst-case scenario
-		varTotalInclude = "TEAESEVWC",
-		labelVars = labelVars,
-		# include a 'total' column
-		colTotalInclude = TRUE,
-		dataTotalCol = dataAESASAcrossTreatments, # data used for the total column
-		# dataset used for the total in the header column (and for percentage as default)
-		dataTotal = dataTotalSAS,
-		# title/export
-		title = toTitleCase("Table: Summary table of TEAEs (safety analysis set)"),
-		file = file.path("tables_CSR", "Table_TEAE_summary.docx")
-	)
-	
-```
-
-### Count table
-
-```{r example-countTable-AE}
-
-	dataAEInterest <-  subset(dataAll$ADAE, FASFL == "Y")
-	
-	# ensure that order of elements is the one specified in the corresponding numeric variable
-	library(glpgUtilityFct)
-	dataAEInterest <- convertVarToFactor(
-		data = dataAEInterest, 
-		var = "TRTP", 
-		varNum = "TRTPN"
-	)
-
-	# dataset used to extract the 'Total'
-	dataTotal <- dataAll$ADSL
-	# should contain columns specified in 'colVar'
-	dataTotal$TRTP <- dataTotal$TRT01P 
-	
-	getSummaryStatisticsTable(
-		data = dataAEInterest,
-		type = "count",
-		rowVar = c("AEHLGT", "AEHLT", "AELLT"),
-		colVar = "TRTP",
-		labelVars = labelVars,
-		title = "Table: Adverse Events",
-		dataTotal = dataTotal,
-		rowVarTotalInclude = "AEHLGT",
-		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
-		footer = "Statistics: n (%)",
-		file = "summaryStatisticsTable_AE_count.docx",
-	)
-
-```
 
 ## Pharmacokinetic parameters
 

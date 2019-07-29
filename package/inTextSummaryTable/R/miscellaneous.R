@@ -83,3 +83,26 @@ interactionCustom <- function(data, var,
 	return(res)
 	
 }
+
+#' Convert flag variable to a format such as only the flagged records are counted
+#' in the summary table.
+#' @param x Character or factor variable with flag variable,
+#' should contain elements: 'Y' and 'N'.
+#' @return Formatted factor variable:
+#' \itemize{
+#' \item{empty string converted to NA}
+#' \item{'Y' converted to empty string}
+#' \item{'N' retained as originally}
+#' }
+#' @author Laure Cougnaud
+#' @export
+convertVarFlag <- function(x){
+	
+	if(any(!x %in% c("", "Y", "N")))
+		stop("Flag variables should only contain: '', 'Y' or 'N'.")
+	x <- as.character(x)
+	xRF <- factor(ifelse(x == "", NA_character, ifelse(x == "Y", "", "N")), levels = c("", "N"))
+
+	return(xRF)
+
+}
