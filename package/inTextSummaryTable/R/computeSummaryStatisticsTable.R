@@ -1,5 +1,5 @@
 #' Compute summary statistics for a specific dataset and variables of interest
-#' @param rowOrder String or function of named list with method used to order the rows.
+#' @param rowOrder Vector of length 1 or list with either a:
 #' \itemize{
 #' \item{String among:}{
 #' \itemize{
@@ -10,7 +10,7 @@
 #' }}
 #' \item{Function to be applied on each subset to get the order elements of the variable}
 #' }
-#' If a string, the same method is used for all \code{rowVar},
+#' If a vector of length 1, the same method is used for all \code{rowVar},
 #' otherwise the list is named with the \code{rowVar} variable, to
 #' specify a different ordering method for each variable.
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
@@ -219,6 +219,15 @@ computeSummaryStatisticsTable <- function(
 	if(colTotalInclude & is.null(colVar)){
 		warning("Column 'total' is not included because no column variable is specified.")
 		colTotalInclude <- FALSE
+	}
+	
+	# include the column total in case the rows should be ordered by total
+	colTotalIncludeInit <- colTotalInclude
+	if(!colTotalInclude & (
+		(is.list(rowOrder) && any(rowOrder, `==`, "total")) |
+		(!is.function(rowOrder) & rowOrder == "total")
+	)){
+		colTotalInclude <- TRUE
 	}
 	
 	# ignore certain elements
@@ -534,6 +543,11 @@ computeSummaryStatisticsTable <- function(
 	colsToRemove <- which(colnames(summaryTable) %in% c(".id", "variableInit"))
 	if(length(colsToRemove) > 0)
 		summaryTable <- summaryTable[, -colsToRemove]
+	
+	# remove the rows with total if should be ordered by total but the total not included
+	if(!colTotalIncludeInit & colTotalInclude){
+		summaryTable <- summaryTable[which(!summaryTable[, colVar] %in% colTotalLab), ]
+	}
 	
 	# table attributes
 	attrTable <- list(

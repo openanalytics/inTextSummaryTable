@@ -75,7 +75,7 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 \item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
 (in case of non nested row variable(s)).}
 
-\item{rowOrder}{String or function of named list with method used to order the rows.
+\item{rowOrder}{Vector of length 1 or list with either a:
 \itemize{
 \item{String among:}{
 \itemize{
@@ -86,7 +86,7 @@ across all columns, in decreasing order.}
 }}
 \item{Function to be applied on each subset to get the order elements of the variable}
 }
-If a string, the same method is used for all \code{rowVar},
+If a vector of length 1, the same method is used for all \code{rowVar},
 otherwise the list is named with the \code{rowVar} variable, to
 specify a different ordering method for each variable.}
 
