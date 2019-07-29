@@ -8,6 +8,7 @@
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
 #' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
 #' included in separated column in the table, NULL by default. 
+#' To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
 #' This is only available if \code{rowVar} if not specified.
 #' Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
 #' separately by this variable.
@@ -29,7 +30,7 @@
 #' (\code{'statN'}) in the header.
 #' @param statsValueLab String with label for the statistic value, 
 #' in case no \code{colVar} is specified: 'StatisticValue' by default.
-#' @param emptyValue Value used to fill the table for missing values.
+#' @param emptyValue Value used to fill the table for missing values, '-' by default.
 #' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
 #' @param rowVarFormat Named list with special formatting for the \code{rowVar}.
 #' Currently, only possibility is to set the variable elements in bold, with:
@@ -89,7 +90,7 @@ formatSummaryStatisticsTable <- function(
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
-	emptyValue = NULL,
+	emptyValue = "-",
 	vline = c("none", "auto")
 	){
 		

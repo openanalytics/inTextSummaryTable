@@ -43,7 +43,8 @@ grouping in row in the final table.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
-of the \code{rowVar} (assuming nested variable(s)).}
+of the \code{rowVar} (assuming nested variable(s)) and
+rows with no counts for count \code{var}.}
 
 \item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
 (in case of non nested row variable(s)).}

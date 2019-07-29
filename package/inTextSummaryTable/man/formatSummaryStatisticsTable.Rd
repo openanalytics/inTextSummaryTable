@@ -16,7 +16,7 @@ formatSummaryStatisticsTable(summaryTable,
   "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"),
-  statsValueLab = "StatisticValue", emptyValue = NULL,
+  statsValueLab = "StatisticValue", emptyValue = "-",
   vline = c("none", "auto"))
 }
 \arguments{
@@ -30,6 +30,7 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 
 \item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
 included in separated column in the table, NULL by default. 
+To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
 This is only available if \code{rowVar} if not specified.
 Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
 separately by this variable.}
@@ -80,7 +81,7 @@ the \code{rowVar} variable(s)}
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
-\item{emptyValue}{Value used to fill the table for missing values.
+\item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 
 \item{vline}{String mentioning how vertical lines should be included, either: 

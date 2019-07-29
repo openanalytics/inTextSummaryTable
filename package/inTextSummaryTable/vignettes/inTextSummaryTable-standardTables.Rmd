@@ -150,37 +150,9 @@ of the table might depends of the study and dataset
 	
 ```
 
-### Baseline Disease Characteristics
+# Efficacy analysis
 
-```{r table-diseaseCharacteristics}
-
-	## data of interest
-	dataBDC <- subset(dataAll$ADSL, FASFL == "Y")
-
-	## variables of interest
-	varsBDC <- c("SWBLGR1", "PFEVGR1")
-	
-	# TO ASK: should 
-	dataBDC <- convertVarToFactor(
-		data = dataBDC, 
-		var = c("SWBLGR1", "PFEVGR1"), 
-		varNum = c("SWBLGR1N", "PFEVGR1N")
-	)
-	
-	## labels
-	labelVars[varsBDC] <- sub("%fev1", "pFEV_{1} (%)", toTitleCase(labelVars[varsBDC]))
-
-	getSummaryStatisticsTable(
-		data = dataBDC,
-		var = varsBDC, varGeneralLab = "Parameter", statsGeneralLab = "",
-		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
-		stats = getStats("n (%)"),
-		labelVars = labelVars,
-		title = toTitleCase("Table: Baseline disease characteristics (full analysis set)"),
-		file = file.path("tables_CSR", "Table_BaselineDiseaseCharacteristics.docx")
-	)
-
-```
+Efficacy analyses will be performed on the Full Analysis Set.
 
 # Safety Analysis
 
@@ -340,7 +312,7 @@ of the table might depends of the study and dataset
 		rowOrder = "total", 
 		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
-				"and Preferred Term reported in at least 25% of the subjects in any treatment group (Safety Analysis Set)"
+			"and Preferred Term reported in at least 25% of the subjects in any treatment group (Safety Analysis Set)"
 		),
 		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx"),
 		# include only events occuring in at least 25% for at least one preferred term:
@@ -409,159 +381,49 @@ of the table might depends of the study and dataset
 	
 ```
 
-### Medical History and Concomitant Diseases
+## Vital signs
 
-### Prior and Concomitant Therapies
+### Treatment-emergent vital signs abnormalities
 
-```{r table-concomitantMedications}
+```{r tableVitalSigns}
 
-	dataCM <- subset(dataAll$ADCM, FASFL == "Y")
+	# analyis set and parameters of interest
+	paramVS <- c("HR", "DIABP", "SYSBP", "TEMP")
+	dataVS <- subset(dataAll$ADVS, SAFFL == "Y" & PARAMCD %in% paramVS)
 	
-	varsCM <- c("ATC1NME", "ATC2NME", "ATC4NME")
-	
-	# TODO
-	dataCM <- convertVarToFactor(data = dataCM,
-		var = c("ATC1NME", "ATC2NME", "ATC4NME"),
-		varNum = c("ATC1CDE", "ATC2CDE", "ATC4CDE")
+	dataVS <- convertVarToFactor(
+		data = dataVS,
+		var = c("PARAM", "ANRIND", "TRTA"),
+		varNum = c("PARAMN", "ANRINDN", "TRTAN")
 	)
 	
-```
-
-<!-- TO CHECK: -->
-
-## Laboratory abnormalities
-
-The laboratory parameters are grouped by category, and the visit is indicated in
-the rows: `PARCAT1`, `PARCAT2` and `AVISIT` are specified in `rowVar`. The
-treatment is reported in the column: `TRTP` specified in `colVar`.
-
-Because the laboratory measurement reported as normal or empty ('') in the ADaM
-are not of interest, these classes are filtered via the `varIgnore` parameter.
-
-By default, the number ('N') and percentage ('Perc') are reported for each
-`rowVar`/`colVar`.
-
-```{r example-countTable-LB}
-
-	dataLB <- subset(dataAll$ADLB, AN01FL == "Y")
+	dataVSPostBaseline <- subset(dataVS, AVISITN > 0)
 	
-	# ensure that order of elements is the one specified in the corresponding numeric variable
-	library(glpgUtilityFct)
-	dataLB[dataLB[, "PARCAT2"] == "", "PARCAT2"] <- "OTHER"
-	dataLB <- convertVarToFactor(
-		data = dataLB, 
-		var = c("PARCAT1", "PARCAT2", "AVISIT", "TRTP", "ANRIND"), 
-		varNum = c("PARCAT1N", "PARCAT2N", "AVISITN", "TRTPN", "ANRINDN")
+	# treatment-emergent if differs from baseline or L/H and baseline results are missing
+	dataVSPostBaseline$TRTEMFL <- ifelse(
+		with(dataVSPostBaseline, (ANRIND != BNRIND) | (ANRIND %in% c("L", "H") & BNRIND == "")),
+		"Y", "N"
 	)
 	
-	# only consider abnormalities
-	dataLB <- subset(dataLB, !ANRIND %in% c("", "L"))
+	dataVSPostBaselineTE <- subset(dataVSPostBaseline, TRTEMFL == "Y")
 	
-	# specific analysis visits
-	dataLB <- subset(dataLB, AVISIT %in% c("Baseline", "Day 14", "Day 28", "Follow-up"))
-	
-	dataLB$ANRIND <- factor(dataLB$ANRIND, 
-		levels = c('L', 'N', 'H', 'H+L'),
-		labels = c("Low", "Normal", "High", "High+Low")
-	)
-	
-	# create summary table
 	getSummaryStatisticsTable(
-		data = dataLB,
-		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "ANRIND"),
-		rowVarInSepCol = "ANRIND",
-		rowVarLab = c(PARAM = "Laboratory Parameter\nn (%)", labelVars["ANRIND"]),
-		colVar = c("TRTP", "AVISIT"),  
-		type = "count",
-		labelVars = labelVars,
+		data = dataVSPostBaselineTE,
+		rowVar = "PARAM", rowVarLab = c(PARAM = "Vital Signs Parameter, n(%)"),
+		colVar = "TRTA", 
+		var = "ANRIND", rowVarInSepCol = "variableGroup", varSubgroupLab = "Worst Case Post-Baseline",
+		# categories should be included in different rows
+		rowAutoMerge = FALSE,
 		stats = getStats("n (%)"),
-		title = "Table: Laboratory abnormalities",
-		footer = "Statistics: n (%)",
-		landscape = TRUE,
-		file = file.path("tables", "Table_LB.docx")
-	)
-
-```
-
-
-
-## Pharmacokinetic parameters
-
-```{r example-PP}
-
-	# format labels with subscript
-	paramLabelPK <- c(
-		CTROUGH = "C_{trough} (ng/mL)", 
-		TLAG = "t_{lag} (h)",
-		TMAX = 't_{max} (h)', 
-		CMAX = "C_{max} (ng/mL)",
-		AUCTAU = "AUC_{0-t} (ng.h/mL)",
-		AUC08H = "AUC_{0-8h} (ng.h/mL)"
-	)
-	dataPP$PARAMRF <- paramLabelPK[dataPP$PARAMCD]
-	
-	# for each PK parameter: number of decimals if max number dicmals of AVAL based on:
-	# 2 decimals for values < 10
-	# 1 decimal for values > 10 and < 1000
-	# No decimals for value > 1000.
-	customNDec <- function(x)	ifelse(x > 1000, 0, ifelse(x > 10, 1, 2))
-	nMaxDec <- daply(dataPP, "PARAMRF", function(x) max(customNDec(x$AVAL), na.rm = TRUE))
-	
-	# Values are arithmetic mean (CV%) except median (min-max) for tmax
-	# [mean, median]: + 1 digit
-	nMaxDecTMax <- unname(nMaxDec[paramLabelPK["TMAX"]])
-	statsPP <- sapply(nMaxDec, function(nMaxDec){
-		list(
-			bquote(
-				ifelse(statMean == 0, 0, paste0(
-						roundCustomText(statMean, .(nMaxDec + 1)), " (",
-						roundCustomText(statCVPerc, .(nMaxDec)), ")"
-					)
-				)
-			)
-		)
-	}, simplify = FALSE)
-	
-	getSummaryStatisticsTable(
-		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
-		var = "AVAL",
-		colVar = "TRTP",
-		rowVar = c("PARCAT1", "PARAMRF"),
-		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
-			'PARCAT1' = "" 
-		),
-		statsExtra = list(statCVPerc = cv),
-		stats = statsPP, statsVarBy = "PARAMRF",
-		# include the footnote
-		footer = c(
-			"Mean (CV%) indicated for each parameter.",
-			"(1) Each compound is labelled according to its Galapagos compound ID."
-		),
-		file = file.path("tables", "Table_superscriptSubscriptTitleFootnote.docx"),
-		title = "Table: PK Parameters (Safety Analysis Set)"
-	)	
-
-```
-
-## Mock-up tables
-
-```{r mockUpTables}
-
-	# create summary table
-	getSummaryStatisticsTable(
-		data = subset(dataLB, PARCAT2 %in% c("ENZYMES", "LIPIDS")),
-		rowVar = c("PARCAT1", "PARCAT2", "PARAM", "ANRIND"),
-		rowVarInSepCol = "ANRIND",
-		colVar = c("TRTP", "AVISIT"),  
-		type = "count",
+		dataTotal = dataTotalAE,
+		# VS at normal not included in the table
+		filterFct = function(x)
+			subset(x, isTotal | variableGroup != "N"), 
 		labelVars = labelVars,
-		rowVarLab = c(PARAM = "Parameter", labelVars["ANRIND"]),
-		stats = list(expression(paste0("[X.XX]"))),
-		title = "Table: Treatment-emergent laboratory abnormalities (mock-up)",
-		footer = "Statistics: n (%)",
-		landscape = TRUE,
-		file = file.path("tables", "Table_mockUp.docx")
+		title = toTitleCase(paste("Table: Treatment-emergent Worst-case",
+			"Vital Sign Abnormalities (Safety Analysis Set)"
+		)),
+		file = file.path("tables_CSR", "Table_VitalSigns_Severity.docx")
 	)
 
 ```

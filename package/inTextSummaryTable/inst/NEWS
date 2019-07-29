@@ -3,6 +3,8 @@
     o formatSummaryStatisticsTable: fixes when multiple records for total (rowVarTotalByVar)
     o computeSummaryStatisticsTable: possibility to sort rows per total but not include total column
     o convertVarFlag, varFlag
+    o rowInclude0: apply also to summary variable
+    o computeSummaryStatisticsTable: possibility to specify varSubgroupLab even for one variable
 1.8.0
     o GLPG flextable functions moved to the glpgStyle package
 1.7.0
