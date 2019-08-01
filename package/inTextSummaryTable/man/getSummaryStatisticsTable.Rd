@@ -6,7 +6,7 @@
 \usage{
 getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
-  varIgnore = NULL, varGeneralLab = "Variable",
+  varInclude0 = FALSE, varIgnore = NULL, varGeneralLab = "Variable",
   varSubgroupLab = NULL, varIncludeTotal = FALSE,
   varTotalInclude = FALSE, varTotalInSepRow = FALSE, rowVar = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
@@ -45,6 +45,9 @@ Only the counts for records flagged (with 'Y') are retained.}
 
 \item{varLab}{Label for the \code{var} variable.}
 
+\item{varInclude0}{Logical, if TRUE (FALSE by default)
+include rows with no counts for the count \code{var} or \code{varFL} variable(s).}
+
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 
 \item{varGeneralLab}{String with general label for variable specified in \code{var}.
@@ -78,23 +81,25 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 \item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
 (in case of non nested row variable(s)).}
 
-\item{rowOrder}{Vector of length 1 or list with either a:
+\item{rowOrder}{Specify how the rows should be ordered in the table, either a:
 \itemize{
 \item{String among:}{
 \itemize{
-\item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
-\item{'alphabetical': }{\code{var} is order in alphabetical order}
-\item{'total': }{\code{var} is ordered based on the total sum of number of subjects, 
-across all columns, in decreasing order.}
+\item{'auto' (by default): }{if the variable is a factor, keep its order, otherwise order alphabetically}
+\item{'alphabetical': }{order alphabetically}
+\item{'total': }{order rows in decreasing order of the total number of subjects
+across all columns for this specific category.}
 }}
-\item{Function to be applied on each subset to get the order elements of the variable}
+\item{Function with input the summary table and output the ordered elements of the \code{rowVar}}
 }
-If a vector of length 1, the same method is used for all \code{rowVar},
-otherwise the list is named with the \code{rowVar} variable, to
-specify a different ordering method for each variable.}
+To specify different ordering methods for different \code{rowVar}, specify a list
+of such elements, named with the \code{rowVar} variable.}
 
 \item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
-based on total counts (in case \code{rowOrder} is 'total').}
+based on total counts (in case \code{rowOrder} is 'total'),
+To order rows based on one specific column category,
+e.g. to order based on the counts in the treatment column:
+function(x) subset(x, TRTP == "treatmentX")}
 
 \item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
 (if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
@@ -126,8 +131,7 @@ Otherwise (by default) the total is included in the header row of each category.
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
-of the \code{rowVar} (assuming nested variable(s)) and
-rows with no counts for count \code{var}.}
+of the \code{rowVar} (assuming nested variable(s)).}
 
 \item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
 e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
@@ -164,9 +168,6 @@ can be specified via \code{colVarDataLevels}.}
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
 
-\item{colTotalLab}{String, label for the total column included 
-if \code{colTotalInclude} is TRUE, 'Total' by default.}
-
 \item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
 The names are reported in the header.
 The following variables are recognized, if the table is a: 
@@ -199,12 +200,6 @@ by naming each element of the list:
 list(varName1 = list(...), varName2 = list()) and/or for each element in:
 \code{statsVarBy}, by naming each sublist.}
 
-\item{statsExtra}{(optional) Named list with functions for additional custom
-statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
-Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
-and return the corresponding summary statistic.}
-
 \item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
 which the statistics should be computed by.
 In this case, \code{stats} (nested list or not) should be additionally nested
@@ -215,9 +210,6 @@ Only included if no \code{statsVar} if longer than 1.}
 
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
-
-\item{subjectVar}{String, variable of \code{data} with subject ID,
-'USUBJID' by default.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table 
@@ -248,15 +240,6 @@ or list of such data.frame for each variable (named by variable).}
 variable, in case \code{colTotalInclude} is TRUE.
 or list of such data.frame for each \code{rowVar} variable
 (and 'total' for \code{rowVar}).}
-
-\item{type}{String with type of table: 
-\itemize{
-\item{'summaryTable': }{summary table with custom statistics}
-\item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
-'countTable' otherwise
-}
-}}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 

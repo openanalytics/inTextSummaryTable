@@ -107,34 +107,66 @@ getStats <- function(
 	
 	stats <- c(
 		if("summary" %in% type)	
-			list(summary = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")]),
-		if("count" %in% type)	list(count = statsBase[c("n", "%", "m")]),
+			statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
+		if("count" %in% type)	statsBase[c("n", "%", "m")],
 		if('n (%)' %in% type)
 			list('n (%)' = 
 				bquote(paste0(.(statsBase$n), " (", .(statsBase$`%`), ")"))
 			),
 		if('median (range)' %in% type)	
-			list('Median (range)' =
-				bquote(paste0(.(statsBase$Median), " (", .(statsBase$Min), ",",  .(statsBase$Max), ")"))
+			list('Median (range)' = 
+				if(!is.null(nDecContBase)){
+					bquote(
+						paste0(
+							roundCustomText(statMedian, .(nDecContBase + 1)), " (", 
+							roundCustomText(statMin, .(nDecContBase)), ",", 
+							roundCustomText(statMax, .(nDecContBase))
+							, ")"
+						)
+					)
+				}else{
+					expression(paste0(formatC(statMedian), " (", formatC(statMin), ",", formatC(statMax), ")"))
+				}
 			),
 		if('median\n(range)' %in% type)
-			list('Median\n(range)' =
-				bquote(paste0(.(statsBase$Median), "\n(", .(statsBase$Min), ",",  .(statsBase$Max), ")"))
+			list('Median\n(range)' = 
+				if(!is.null(nDecContBase)){
+					bquote(
+						paste0(
+							roundCustomText(statMedian, .(nDecContBase + 1)), "\n(", 
+							roundCustomText(statMin, .(nDecContBase)), ",",  
+							roundCustomText(statMax, .(nDecContBase)), 
+							")"
+						)
+					)
+				}else{
+					expression(paste0(formatC(statMedian), "\n(", formatC(statMin), ",", formatC(statMax), ")"))
+				}
 			),
 		if('mean (se)' %in% type)
 			list('Mean (SE)' = 
-				bquote(paste0(.(statsBase$Mean), "\n(", .(statsBase$SE), ")"))
+				if(!is.null(nDecContBase)){
+					bquote(
+						paste0(
+							roundCustomText(statMean, .(nDecContBase + 1)), " (",  
+							roundCustomText(statSE, .(nDecContBase + 2)), 
+							")"
+						)
+					)
+				}else{
+					expression(paste0(formatC(statMean), " (", formatC(statSE), ")"))
+				}
 			)
 	)
+	
+	if(any(duplicated(names(type))))
+		warning("Returned statistics have duplicated names (you probably included multiple 'type' statistics).",
+			"Be sure to provide only one statistic with the same name to the in-text table functions.")
 	
 	if(!includeName){
 		if(length(stats) == 1){
 			stats <- unname(stats)
 		}else	warning("The labels for the different types:", toString(sQuote(type)), "are retained, to avoid confusion.")
-		idxUniqueStats <- which(sapply(stats, is.list) && sapply(stats, length) == 1)
-		if(length(idxUniqueStats) > 0){
-			stats[idxUniqueStats] <- sapply(stats[idxUniqueStats], unname)
-		}
 	}
 	
 	return(stats)

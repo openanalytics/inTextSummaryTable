@@ -1,8 +1,5 @@
 #' Format summary statistics table for export
 #' @param summaryTable Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.
-#' @param colVar Character vector with variable(s) used for the columns.
-#' If multiple variables are specified, the variables should be sorted in hierarchical order,
-#' and are included in multi-columns layout.
 #' @param rowVar Character vector with variable(s) used for the rows.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order.
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 

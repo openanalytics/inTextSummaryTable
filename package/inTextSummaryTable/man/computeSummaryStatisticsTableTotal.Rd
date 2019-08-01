@@ -14,11 +14,9 @@ computeSummaryStatisticsTableTotal(data, colVar = NULL,
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{colVar}{Variable(s) of \code{data} used 
-for grouping in column in the final table. The total 
-for each subgroup across \code{rowVar} is computed.
-If variable(s) are not nested, possible combinations
-can be specified via \code{rowVarDataLevels}.}
+\item{colVar}{Character vector with variable(s) used for the columns.
+If multiple variables are specified, the variables should be sorted in hierarchical order,
+and are included in multi-columns layout.}
 
 \item{colVarTotal}{Character vector with column(s) considered to compute the total.}
 
@@ -30,9 +28,6 @@ within \code{rowVarTotal}.}
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
-
-\item{colTotalLab}{String, label for the total column included 
-if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with no records, based on all combinations 
@@ -47,9 +42,6 @@ statistics across columns in a separated column.}
 (in case of non nested column variable(s)).}
 
 \item{colVarLevels}{list with levels of each \code{colVar}}
-
-\item{subjectVar}{String, variable of \code{data} with subject ID,
-'USUBJID' by default.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 }

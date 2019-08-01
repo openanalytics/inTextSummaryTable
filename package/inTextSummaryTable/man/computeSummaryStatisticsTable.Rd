@@ -5,8 +5,8 @@
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
 computeSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
-  varLab = getLabelVar(var, data = data, labelVars = labelVars),
-  varGeneralLab = "Variable", varSubgroupLab = NULL,
+  varInclude0 = FALSE, varLab = getLabelVar(var, data = data, labelVars
+  = labelVars), varGeneralLab = "Variable", varSubgroupLab = NULL,
   varIgnore = NULL, varIncludeTotal = FALSE, varTotalInclude = FALSE,
   varTotalInSepRow = FALSE, colVar = NULL, colVarDataLevels = NULL,
   colVarTotal = colVar, colVarTotalPerc = colVarTotal,
@@ -32,6 +32,9 @@ Missing values, if present, are filtered.}
 
 \item{varFlag}{Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
 Only the counts for records flagged (with 'Y') are retained.}
+
+\item{varInclude0}{Logical, if TRUE (FALSE by default)
+include rows with no counts for the count \code{var} or \code{varFL} variable(s).}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
@@ -61,11 +64,9 @@ Either:
 \item{varTotalInSepRow}{Logical, should the total per variable be included in
 a separated row (by default) or in the row containing the header of the variable?}
 
-\item{colVar}{Variable(s) of \code{data} used 
-for grouping in column in the final table. The total 
-for each subgroup across \code{rowVar} is computed.
-If variable(s) are not nested, possible combinations
-can be specified via \code{rowVarDataLevels}.}
+\item{colVar}{Character vector with variable(s) used for the columns.
+If multiple variables are specified, the variables should be sorted in hierarchical order,
+and are included in multi-columns layout.}
 
 \item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
 (in case of non nested column variable(s)).}
@@ -79,9 +80,6 @@ used as denominator for the percentage computation, by default same as \code{col
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
 
-\item{colTotalLab}{String, label for the total column included 
-if \code{colTotalInclude} is TRUE, 'Total' by default.}
-
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
@@ -90,23 +88,25 @@ grouping in row in the final table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
-\item{rowOrder}{Vector of length 1 or list with either a:
+\item{rowOrder}{Specify how the rows should be ordered in the table, either a:
 \itemize{
 \item{String among:}{
 \itemize{
-\item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
-\item{'alphabetical': }{\code{var} is order in alphabetical order}
-\item{'total': }{\code{var} is ordered based on the total sum of number of subjects, 
-across all columns, in decreasing order.}
+\item{'auto' (by default): }{if the variable is a factor, keep its order, otherwise order alphabetically}
+\item{'alphabetical': }{order alphabetically}
+\item{'total': }{order rows in decreasing order of the total number of subjects
+across all columns for this specific category.}
 }}
-\item{Function to be applied on each subset to get the order elements of the variable}
+\item{Function with input the summary table and output the ordered elements of the \code{rowVar}}
 }
-If a vector of length 1, the same method is used for all \code{rowVar},
-otherwise the list is named with the \code{rowVar} variable, to
-specify a different ordering method for each variable.}
+To specify different ordering methods for different \code{rowVar}, specify a list
+of such elements, named with the \code{rowVar} variable.}
 
 \item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
-based on total counts (in case \code{rowOrder} is 'total').}
+based on total counts (in case \code{rowOrder} is 'total'),
+To order rows based on one specific column category,
+e.g. to order based on the counts in the treatment column:
+function(x) subset(x, TRTP == "treatmentX")}
 
 \item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
 (if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
@@ -127,18 +127,6 @@ used as denominator for the percentage computation.
 By default the total is only computed by column (NULL by default).
 If the total should be based on the total number of records per variable,
 \code{rowVarTotalPerc} should be set to 'variable'.}
-
-\item{type}{String with type of table: 
-\itemize{
-\item{'summaryTable': }{summary table with custom statistics}
-\item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
-'countTable' otherwise
-}
-}}
-
-\item{subjectVar}{String, variable of \code{data} with subject ID,
-'USUBJID' by default.}
 
 \item{dataTotal}{Data.frame used to extract the Total count per column, indicated
 in 'N' in column header.
@@ -194,12 +182,6 @@ which the statistics should be computed by.
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}
 
-\item{statsExtra}{(optional) Named list with functions for additional custom
-statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
-Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
-and return the corresponding summary statistic.}
-
 \item{statsGeneralLab}{String with general label for statistics, 'Statistic' by default.
 Only included if no \code{statsVar} if longer than 1.}
 
@@ -218,8 +200,7 @@ in a row with this variable set to 'Total'.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
-of the \code{rowVar} (assuming nested variable(s)) and
-rows with no counts for count \code{var}.}
+of the \code{rowVar} (assuming nested variable(s)).}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with no records, based on all combinations 

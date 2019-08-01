@@ -3,23 +3,25 @@
 #' Missing values, if present, are filtered.
 #' @param varFlag Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
 #' Only the counts for records flagged (with 'Y') are retained.
-#' @param rowOrder Vector of length 1 or list with either a:
+#' @param rowOrder Specify how the rows should be ordered in the table, either a:
 #' \itemize{
 #' \item{String among:}{
 #' \itemize{
-#' \item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
-#' \item{'alphabetical': }{\code{var} is order in alphabetical order}
-#' \item{'total': }{\code{var} is ordered based on the total sum of number of subjects, 
-#' across all columns, in decreasing order.}
+#' \item{'auto' (by default): }{if the variable is a factor, keep its order, otherwise order alphabetically}
+#' \item{'alphabetical': }{order alphabetically}
+#' \item{'total': }{order rows in decreasing order of the total number of subjects
+#' across all columns for this specific category.}
 #' }}
-#' \item{Function to be applied on each subset to get the order elements of the variable}
+#' \item{Function with input the summary table and output the ordered elements of the \code{rowVar}}
 #' }
-#' If a vector of length 1, the same method is used for all \code{rowVar},
-#' otherwise the list is named with the \code{rowVar} variable, to
-#' specify a different ordering method for each variable.
+#' To specify different ordering methods for different \code{rowVar}, specify a list
+#' of such elements, named with the \code{rowVar} variable.
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
-#' based on total counts (in case \code{rowOrder} is 'total').
+#' based on total counts (in case \code{rowOrder} is 'total'),
+#' To order rows based on one specific column category,
+#' e.g. to order based on the counts in the treatment column:
+#' function(x) subset(x, TRTP == "treatmentX")
 #' @param rowOrderCatLast String with category to be printed last of each \code{rowVar}
 #' (if any, set to NULL if none). By default, category labelled 'Other' is printed last.
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
@@ -145,7 +147,7 @@
 #' @export
 computeSummaryStatisticsTable <- function(
 	data,  
-	var = NULL, varFlag = NULL,
+	var = NULL, varFlag = NULL, varInclude0 = FALSE,
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIgnore = NULL,
@@ -227,12 +229,13 @@ computeSummaryStatisticsTable <- function(
 	
 	# include the column total in case the rows should be ordered by total
 	colTotalIncludeInit <- colTotalInclude
-	if(!colTotalInclude & (
-		(is.list(rowOrder) && any(rowOrder, `==`, "total")) |
-		(!is.function(rowOrder) & rowOrder == "total")
-	)){
-		colTotalInclude <- TRUE
-	}
+	# always compute the total, because the rows could be asked to be ordered 
+	# based on the total categories or total can be extracted within a function specified in rowOrder
+	if(!is.null(colVar))
+		colTotalInclude <- TRUE 
+#	checkIfTotal <- function(x)	!is.function(x) && any(x == "total")
+#	if(!colTotalInclude && any(sapply(rowOrder, checkIfTotal)))
+#		colTotalInclude <- TRUE
 	
 	# ignore certain elements
 	if(!is.null(var) && !is.null(varIgnore))
@@ -266,7 +269,7 @@ computeSummaryStatisticsTable <- function(
 	# get general statistics (by group if specified)
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
-		var = var, varLab = varLab, varTotalInclude = varTotalInclude,
+		var = var, varLab = varLab, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
 		statsExtra = statsExtra,
 		type = type,
 		rowVar = rowVar, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -298,7 +301,7 @@ computeSummaryStatisticsTable <- function(
 		
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
 			data = dataForColTotal, 
-			var = var, varLab = varLab, varTotalInclude = varTotalInclude, 
+			var = var, varLab = varLab, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
 			statsExtra = statsExtra,
 			type = type,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
@@ -366,7 +369,7 @@ computeSummaryStatisticsTable <- function(
 			# compute statistics
 			summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 				data = dataForSubTotal, 
-				var = var, varTotalInclude = varTotalInclude,
+				var = var, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
 				statsExtra = statsExtra,
 				type = type,
 				rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -390,7 +393,7 @@ computeSummaryStatisticsTable <- function(
 				
 				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotalForColTotal, 
-					var = var, varTotalInclude = varTotalInclude,
+					var = var, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
 					statsExtra = statsExtra,
 					type = type,
 					rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -531,6 +534,7 @@ computeSummaryStatisticsTable <- function(
 	# order the row variables as specified
 	if(!is.null(rowVar) && !is.null(rowOrder)){
 		summaryTable[, rowVar] <- lapply(rowVar, function(var){
+			# (double bracket works for list and character vector)
 			methodVar <- if(var %in% names(rowOrder))	rowOrder[[var]]	else rowOrder
 			convertVarToFactorWithOrder(
 				data = summaryTable, var = var, 
@@ -538,6 +542,7 @@ computeSummaryStatisticsTable <- function(
 				catLast = rowOrderCatLast,
 				totalFilterFct = rowOrderTotalFilterFct,
 				otherVars = setdiff(rowVar, var),
+				colVar = colVar, colTotalLab = colTotalLab
 			)
 		})
 	}
@@ -612,8 +617,6 @@ computeSummaryStatisticsTable <- function(
 
 #' Compute summary statistics total table.
 #' @param colVarTotal Character vector with column(s) considered to compute the total.
-#' @param colTotalLab String, label for the total column included 
-#' if \code{colTotalInclude} is TRUE, 'Total' by default.
 #' @param rowVarTotal Character vector with row(s) considered to compute the total.
 #' @param var Character vector with variable, used if 'variable' is specified
 #' within \code{rowVarTotal}.
@@ -697,13 +700,9 @@ computeSummaryStatisticsTableTotal <- function(
 #' grouping in row in the final table.
 #' @param rowInclude0 Logical, if TRUE (FALSE by default),
 #' include rows with no records, based on all combinations 
-#' of the \code{rowVar} (assuming nested variable(s)) and
-#' rows with no counts for count \code{var}.
-#' @param colVar Variable(s) of \code{data} used 
-#' for grouping in column in the final table. The total 
-#' for each subgroup across \code{rowVar} is computed.
-#' If variable(s) are not nested, possible combinations
-#' can be specified via \code{rowVarDataLevels}.
+#' of the \code{rowVar} (assuming nested variable(s)).
+#' @param varInclude0 Logical, if TRUE (FALSE by default)
+#' include rows with no counts for the count \code{var} or \code{varFL} variable(s).
 #' @param colInclude0 Logical, if TRUE (FALSE by default),
 #' include columns with no records, based on all combinations 
 #' of the \code{columnVar} (assuming nested variable(s)).
@@ -723,7 +722,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' \item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
 #' \item{a character vector containing \code{var} for which the total should be included}
 #' }
-#' @inheritParams computeSummaryStatistics
+#' @inheritParams convertVarToFactorWithOrder
 #' @inheritParams glpgUtilityFct::getLabelVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
@@ -752,7 +751,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' @importFrom glpgUtilityFct getLabelVar
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
-	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
+	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars), varInclude0 = FALSE,
 	varTotalInclude = FALSE,
 	type = "auto",
 	rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
@@ -818,7 +817,7 @@ computeSummaryStatisticsByRowColVar <- function(
 					var = varI, 
 					type = type,
 					varTotalInclude = varITotalInclude,
-					filterEmptyVar = !rowInclude0
+					filterEmptyVar = !varInclude0
 				)
 				# only store the variable if more than one specified variable
 				if(!is.null(sumTable) && length(var) > 1){
@@ -1065,11 +1064,17 @@ computeSummaryStatistics <- function(data,
 #' @param catLast String with last category (if any).
 #' By default, category labelled 'Other' is last.
 #' Set to NULL if no specific category should be included as last element.
+#' @param colVar Character vector with variable(s) used for the columns.
+#' If multiple variables are specified, the variables should be sorted in hierarchical order,
+#' and are included in multi-columns layout.
+#' @param colTotalLab String, label for the total column included 
+#' if \code{colTotalInclude} is TRUE, 'Total' by default.
 #' @return Factor \code{var} variable of \code{data} with specified order.
 #' @importFrom plyr daply
 #' @author Laure Cougnaud
 convertVarToFactorWithOrder <- function(
 	data, var, otherVars = NULL, 
+	colVar = NULL, colTotalLab = "Total",
 	method = c("auto", "alphabetical", "total"),
 	totalFilterFct = NULL,
 	totalVar = "statN",
@@ -1100,8 +1105,18 @@ convertVarToFactorWithOrder <- function(
 					dataForTotal <- data[which(data[, var] != "Total"), ]
 					
 					# filter records if any 'filterFct' is specified
-					if(!is.null(totalFilterFct))
+					if(!is.null(totalFilterFct)){
 						dataForTotal <- totalFilterFct(dataForTotal)
+					}else{
+						if(!is.null(colVar)){
+							idxTotal <- which(rowSums(dataForTotal[, colVar, drop = FALSE] == colTotalLab) == length(colVar))
+							if(length(idxTotal) == 0){
+								warning("Total across columns not available to order the rows in the summary table.")
+							}else{
+								dataForTotal <- dataForTotal[idxTotal, ]
+							}
+						}
+					}
 					
 					if(!is.null(otherVars) && length(otherVars) > 0){
 						# consider rows with subtotal for this variable (if any)
