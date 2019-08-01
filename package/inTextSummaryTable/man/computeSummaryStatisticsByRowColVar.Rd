@@ -6,20 +6,22 @@
 \usage{
 computeSummaryStatisticsByRowColVar(data, var = NULL,
   varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
-  varTotalInclude = FALSE, type = "auto", rowVar = NULL,
-  rowInclude0 = FALSE, rowVarDataLevels = NULL, colVar = NULL,
-  colInclude0 = FALSE, colVarDataLevels = NULL,
+  varInclude0 = FALSE, varTotalInclude = FALSE, type = "auto",
+  rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
+  colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
   subjectVar = "USUBJID", labelVars = NULL, statsExtra = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{String, variable of \code{data} with variable to compute statistics on.
-Missing values, if present, are filtered.}
+\item{var}{String with variable of \code{data} to sort.}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
+
+\item{varInclude0}{Logical, if TRUE (FALSE by default)
+include rows with no counts for the count \code{var} or \code{varFL} variable(s).}
 
 \item{varTotalInclude}{Should the total across all categories of \code{var} 
 be included for the count table?
@@ -29,31 +31,19 @@ Either:
 \item{a character vector containing \code{var} for which the total should be included}
 }}
 
-\item{type}{String with type of table: 
-\itemize{
-\item{'summaryTable': }{summary table with custom statistics}
-\item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
-'countTable' otherwise
-}
-}}
-
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
-of the \code{rowVar} (assuming nested variable(s)) and
-rows with no counts for count \code{var}.}
+of the \code{rowVar} (assuming nested variable(s)).}
 
 \item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
 (in case of non nested row variable(s)).}
 
-\item{colVar}{Variable(s) of \code{data} used 
-for grouping in column in the final table. The total 
-for each subgroup across \code{rowVar} is computed.
-If variable(s) are not nested, possible combinations
-can be specified via \code{rowVarDataLevels}.}
+\item{colVar}{Character vector with variable(s) used for the columns.
+If multiple variables are specified, the variables should be sorted in hierarchical order,
+and are included in multi-columns layout.}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with no records, based on all combinations 
@@ -64,16 +54,7 @@ can be specified via \code{colVarDataLevels}.}
 \item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
 (in case of non nested column variable(s)).}
 
-\item{subjectVar}{String, variable of \code{data} with subject ID,
-'USUBJID' by default.}
-
 \item{labelVars}{named string with variable labels (names are the variable code)}
-
-\item{statsExtra}{(optional) Named list with functions for additional custom
-statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
-Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
-and return the corresponding summary statistic.}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',

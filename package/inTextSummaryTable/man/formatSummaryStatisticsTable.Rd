@@ -57,9 +57,6 @@ or only one statistic per category}
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
-\item{colTotalLab}{String, label for the total column included 
-if \code{colTotalInclude} is TRUE, 'Total' by default.}
-
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}
 

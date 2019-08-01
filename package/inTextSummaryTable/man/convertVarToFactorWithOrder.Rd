@@ -4,9 +4,9 @@
 \alias{convertVarToFactorWithOrder}
 \title{Convert a variable to a factor with levels in specified order.}
 \usage{
-convertVarToFactorWithOrder(data, var, otherVars = NULL,
-  method = c("auto", "alphabetical", "total"), totalFilterFct = NULL,
-  totalVar = "statN", catLast = "Other")
+convertVarToFactorWithOrder(data, var, otherVars = NULL, colVar = NULL,
+  colTotalLab = "Total", method = c("auto", "alphabetical", "total"),
+  totalFilterFct = NULL, totalVar = "statN", catLast = "Other")
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -15,6 +15,13 @@ convertVarToFactorWithOrder(data, var, otherVars = NULL,
 
 \item{otherVars}{Character vector with other variable(s) of \code{data}
 considered in the specific dimension.}
+
+\item{colVar}{Character vector with variable(s) used for the columns.
+If multiple variables are specified, the variables should be sorted in hierarchical order,
+and are included in multi-columns layout.}
+
+\item{colTotalLab}{String, label for the total column included 
+if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
 \item{method}{Ordering method to use, either:
 \itemize{

@@ -2,14 +2,7 @@
 title: "Creation of standard in-text tables for with the `inTextSummaryTable` package"
 author: "Laure Cougnaud"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output: 
-  rmarkdown::html_document:
-    toc: true
-    toc_depth: 5
-    number_sections: true
-    toc_float:
-      collapsed: false
-    highlight: "pygments"
+output: glpgStyle::html_report
 vignette: >
   %\VignetteIndexEntry{Creation of standard in-text summary tables}
   %\VignetteEngine{knitr::rmarkdown}
@@ -33,9 +26,12 @@ vignette: >
 	
 ```
 
-```{r loadPackages}
+```{r loadPackages, warning = FALSE}
 
-	library(inTextSummaryTable)
+	library(glpgUtilityFct)
+	library(tools)# toTitleCase
+	library(plyr) # for ddply
+	library(pander) # for session info
 
 ```
 
@@ -46,9 +42,6 @@ The function `loadDataADaMSDTM` of the `glpgUtilityFct` package might be used to
 into a similar format into R.
 
 ```{r loadData}	
-	
-	library(glpgUtilityFct)
-	library(tools)# toTitleCase
 
 	# load example data
 	data(ADaMDataPelican)
@@ -158,8 +151,6 @@ Efficacy analyses will be performed on the Full Analysis Set.
 
 ## Adverse Events
 
-### Summary table
-
 ### Treatment-emergent summary table
 
 ```{r table-summaryTable}
@@ -231,6 +222,8 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		var = varAESummary,
 		varLab = varAESummaryLabels,
 		varGeneralLab = "Subjects with, n(%):",
+		# force the inclusion of lines for variable without count:
+		varInclude0 = TRUE,
 		# include the total for the worst-case scenario
 		varTotalInclude = "WORSTINT",
 		# statistics:
@@ -267,8 +260,8 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTA",
 		## total
-		# column total
-		dataTotal = dataTotalAE, colTotalInclude = TRUE,
+		# data
+		dataTotal = dataTotalAE,
 		# row total
 		rowVarTotalInclude = c("AESOC", "AEDECOD"), rowTotalLab = "Any TEAE",
 		stats = getStats("n (%)"),
@@ -280,14 +273,7 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
 			"and Preferred Term reported in at least 1 subject in any treatment group (Safety Analysis Set)"
 		),
-		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx"),
-		# include only events occuring in at least 25% for at least one preferred term:
-		filterFct = function(x)
-			ddply(x, "AESOC", function(x){ # per AESOC to include the total
-				ddply(x, "AEDECOD", function(y)
-					if(any(y$statPercN >= 25))	y
-				)
-			})
+		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx")
 	)
 
 ```
@@ -301,8 +287,8 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTA",
 		## total
-		# column total
-		dataTotal = dataTotalAE, colTotalInclude = TRUE,
+		# data
+		dataTotal = dataTotalAE, 
 		# row total
 		rowVarTotalInclude = c("AESOC", "AEDECOD"), rowTotalLab = "Any TEAE",
 		stats = getStats("n (%)"),
@@ -345,7 +331,9 @@ Efficacy analyses will be performed on the Full Analysis Set.
 	dataAEWC$WORSTINT <- dataAEWC$AESEV
 	labelVars["WORSTINT"] <- "Worst-case scenario"
 
-	## datasets used for the total:
+	## datasets used for the total: 
+	# for total: compute worst-case across SOC and across AE term
+	# (otherwise patient counted in multiple categories if present different categories for different AEs)
 	dataTotalRow <- list(
 		# within SOC (across AEDECOD)
 		'AEDECOD' = ddply(dataAEWC, c("AESOC", "USUBJID", "TRTA"), function(x){	
@@ -363,7 +351,7 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		rowVar = c("AESOC", "AEDECOD", "WORSTINT"), rowVarInSepCol = "WORSTINT",
 		# include total across SOC and across AEDECOD
 		rowVarTotalInclude = c("AESOC", "AEDECOD"), dataTotalRow = dataTotalRow, 
-		rowVarTotalByVar = "WORSTINT", # per worst-case scenario
+		rowVarTotalByVar = "WORSTINT", # count for each severity category for the total
 		rowTotalLab = "Any TEAE",
 		# sort per total in the total column
 		rowOrder = "total", 
