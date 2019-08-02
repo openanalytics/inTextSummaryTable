@@ -3,8 +3,7 @@
 \name{getMaxNDecimals}
 \alias{getMaxNDecimals}
 \title{Get maximum number of decimals in a variable,
-based on pre-defined rule and/or data (see the function:
- \code{\link{getNDecimals}})}
+based on pre-defined rule and/or data.}
 \usage{
 getMaxNDecimals(x, ...)
 }
@@ -17,9 +16,8 @@ getMaxNDecimals(x, ...)
 Integer with maximum number of decimals in a character vector.
 }
 \description{
-Get maximum number of decimals in a variable,
-based on pre-defined rule and/or data (see the function:
- \code{\link{getNDecimals}})
+The function \code{\link{getNDecimals}}) extracts the number
+of decimals in a specific variable.
 }
 \author{
 Laure Cougnaud

@@ -2,10 +2,7 @@
 % Please edit documentation in R/decimals.R
 \name{getNDecimals}
 \alias{getNDecimals}
-\title{Get number of decimals for a specific vector,
-either from specific implemented rule (see \code{\link{getNDecimalsRule}}),
-or from the dataset itself (see \code{\link{getNDecimalsData}}),
-or both: in this case the minimum of both criterias is used.}
+\title{Get number of decimals for a specific vector.}
 \usage{
 getNDecimals(x, useRule = TRUE, rule = "1", useData = TRUE)
 }
@@ -35,9 +32,9 @@ Numeric vector of same length than \code{x}
 with the number of decimals
 }
 \description{
-Get number of decimals for a specific vector,
-either from specific implemented rule (see \code{\link{getNDecimalsRule}}),
-or from the dataset itself (see \code{\link{getNDecimalsData}}),
+The number of decimals is extracted from specific implemented rule
+(see \code{\link{getNDecimalsRule}}),
+from the data itself (see \code{\link{getNDecimalsData}}),
 or both: in this case the minimum of both criterias is used.
 }
 \author{

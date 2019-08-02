@@ -1245,7 +1245,8 @@ getStatisticsSummaryStatisticsTable <- function(
 			# in case more stats are specified than specified var
 			varsUsed <- setdiff(unique(as.character(summaryTable$variableInit)), NA)
 			if(!all(varsUsed %in% names(stats))){
-				stop("If 'stats' is specified for each variable, it should be specified for all variables.")
+				stop("If 'stats' is specified for each variable,",
+					"it should be specified for all variables specified in 'var'.")
 			}else stats <- stats[varsUsed]
 			statsVar <- unname(unique(unlist(lapply(stats, function(x)
 				if(!is.null(statsVarBy))	lapply(x, getStatColName)	else	getStatColName(x)))

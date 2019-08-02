@@ -1,4 +1,6 @@
-#'Create custom statistic sets to be passed to the \code{stats} parameter
+#' Extract default set of statistics.
+#' 
+#' This set of statistics is passed directly to the \code{stats} parameter
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
 #' @param type Character vector with type of statistics (multiple are possible):
 #' \itemize{
@@ -13,8 +15,9 @@
 #' This is applied for the statistic names used in each for the set defined in \code{type};
 #' and for the label of the list if \code{type} is of length 2.
 #' If there are multiple \code{type} or statistics within a set, the names are retained (to avoid confusion).
-#' @param x (optional, recommended) Vector for which the statistics 
-#' should be computed on (has an effect only for continuous variable).
+#' @param x (optional, recommended for continuous variable) Numeric vector 
+#' for which the statistics should be computed on 
+#' (has an effect only for continuous variable).
 #' If specified, this is used to derive the number of decimals to include.
 #' If not specified, the values are rounded with \code{\link{formatC}}.
 #' @param nDecCont Integer with base number of decimals 
@@ -95,12 +98,12 @@ getStats <- function(
 			)
 		}else{
 			list(
-				Mean = expression(formatC(statMean)),
-				Median = expression(formatC(statMedian)),
-				SD = expression(formatC(statSD)),
-				SE = expression(formatC(statSE)),
-				Min = expression(formatC(statMin)),
-				Max = expression(formatC(statMax))
+				Mean = quote(formatC(statMean)),
+				Median = quote(formatC(statMedian)),
+				SD = quote(formatC(statSD)),
+				SE = quote(formatC(statSE)),
+				Min = quote(formatC(statMin)),
+				Max = quote(formatC(statMax))
 			)
 		}
 	)
@@ -111,51 +114,32 @@ getStats <- function(
 		if("count" %in% type)	statsBase[c("n", "%", "m")],
 		if('n (%)' %in% type)
 			list('n (%)' = 
-				bquote(paste0(.(statsBase$n), " (", .(statsBase$`%`), ")"))
+				bquote(
+					ifelse(
+						is.na(statPercN), "-",
+						ifelse(statN == 0, "0", 
+							paste0(.(statsBase$n), " (", .(statsBase$`%`), ")")
+						)
+					)
+				)
 			),
 		if('median (range)' %in% type)	
 			list('Median (range)' = 
-				if(!is.null(nDecContBase)){
-					bquote(
-						paste0(
-							roundCustomText(statMedian, .(nDecContBase + 1)), " (", 
-							roundCustomText(statMin, .(nDecContBase)), ",", 
-							roundCustomText(statMax, .(nDecContBase))
-							, ")"
-						)
-					)
-				}else{
-					expression(paste0(formatC(statMedian), " (", formatC(statMin), ",", formatC(statMax), ")"))
-				}
+				bquote(paste0(
+					.(statsBase$Median), 
+					" (", .(statsBase$Min), ",", .(statsBase$Max), ")"
+				))
 			),
 		if('median\n(range)' %in% type)
 			list('Median\n(range)' = 
-				if(!is.null(nDecContBase)){
-					bquote(
-						paste0(
-							roundCustomText(statMedian, .(nDecContBase + 1)), "\n(", 
-							roundCustomText(statMin, .(nDecContBase)), ",",  
-							roundCustomText(statMax, .(nDecContBase)), 
-							")"
-						)
-					)
-				}else{
-					expression(paste0(formatC(statMedian), "\n(", formatC(statMin), ",", formatC(statMax), ")"))
-				}
+				bquote(paste0(
+					.(statsBase$Median), 
+					"\n(", .(statsBase$Min), ",", .(statsBase$Max), ")"
+				))
 			),
 		if('mean (se)' %in% type)
 			list('Mean (SE)' = 
-				if(!is.null(nDecContBase)){
-					bquote(
-						paste0(
-							roundCustomText(statMean, .(nDecContBase + 1)), " (",  
-							roundCustomText(statSE, .(nDecContBase + 2)), 
-							")"
-						)
-					)
-				}else{
-					expression(paste0(formatC(statMean), " (", formatC(statSE), ")"))
-				}
+				bquote(paste0(.(statsBase$Mean), " (", .(statsBase$SE),  ")"))
 			)
 	)
 	
