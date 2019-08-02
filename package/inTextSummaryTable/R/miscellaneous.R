@@ -103,7 +103,7 @@ convertVarFlag <- function(x){
 	if(any(!x %in% c("", "Y", "N")))
 		stop("Flag variables should only contain: '', 'Y' or 'N'.")
 	x <- as.character(x)
-	xRF <- factor(ifelse(x == "", NA_character, ifelse(x == "Y", "", "N")), levels = c("", "N"))
+	xRF <- factor(ifelse(x == "", NA_character_, ifelse(x == "Y", "", "N")), levels = c("", "N"))
 
 	return(xRF)
 
