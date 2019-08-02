@@ -149,7 +149,7 @@ factor variable
 
 #### Count table for 'flag'-variables
 
-For 'flag' variable (e.g ending with 'FL' in _ADaM_/_SDTM_ format),
+For **'flag' variable** (typically ending with 'FL' in _ADaM_ or _SDTM_ format),
 only the counts for the flagged records are typically of interest.
 If some of the variables are of this type, they should be passed additionally to the 
 `varFlag` parameter.
@@ -167,9 +167,9 @@ If some of the variables are of this type, they should be passed additionally to
 
 ### Summary statistics table
 
-**A summary statistics table** indicates **standard distribution statistics
+**A summary statistics table** indicates **standard distribution statistics** of a numeric variable:
   (mean, median, minimum, maximum, standard error, standard deviation, and count
-  statistics) of a numeric variable**.
+  statistics)
 
 If `var` parameter is set to a numeric variable of interest, its summary
 statistics are displayed.
@@ -182,9 +182,7 @@ statistics are displayed.
 
 ### Mixed table
 
-If multiple variables are specified, their statistics are indicated in the
-horizontal direction.
-Discrete and numeric variable can be combined.
+Summary statistics are extracted for a combined set of discrete and numeric variables.
 
 ```{r mixedTable}
 

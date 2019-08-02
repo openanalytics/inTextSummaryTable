@@ -32,6 +32,7 @@ vignette: >
 	library(tools)# toTitleCase
 	library(plyr) # for ddply
 	library(pander) # for session info
+	library(inTextSummaryTable)
 
 ```
 
@@ -352,10 +353,9 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		# include total across SOC and across AEDECOD
 		rowVarTotalInclude = c("AESOC", "AEDECOD"), dataTotalRow = dataTotalRow, 
 		rowVarTotalByVar = "WORSTINT", # count for each severity category for the total
-		rowTotalLab = "Any TEAE",
+		rowTotalLab = "Any TEAE", rowVarLab = c(AESOC = "Subjects with, n(%):", WORSTINT = "Worst-case scenario"),
 		# sort per total in the total column
 		rowOrder = "total", 
-		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		## column variables
 		colVar = "TRTA", 
 		stats = getStats("n (%)"),
