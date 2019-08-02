@@ -34,7 +34,7 @@ Missing values, if present, are filtered.}
 Only the counts for records flagged (with 'Y') are retained.}
 
 \item{varInclude0}{Logical, if TRUE (FALSE by default)
-include rows with no counts for the count \code{var} or \code{varFL} variable(s).}
+include rows with no counts for the count \code{var} or \code{varFlag} variable(s).}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.

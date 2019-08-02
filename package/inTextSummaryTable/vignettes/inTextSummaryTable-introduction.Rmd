@@ -147,6 +147,23 @@ factor variable
 
 ```
 
+#### Count table for 'flag'-variables
+
+For 'flag' variable (e.g ending with 'FL' in _ADaM_/_SDTM_ format),
+only the counts for the flagged records are typically of interest.
+If some of the variables are of this type, they should be passed additionally to the 
+`varFlag` parameter.
+
+```{r count-flag-variables}
+
+	getSummaryStatisticsTable(
+		data = dataSLExample,
+		var = c("SAFFL", "FASFL", "PKFL"),
+		varFlag = c("SAFFL", "FASFL", "PKFL")
+	)
+
+```
+
 ### Summary statistics table
 
 **A summary statistics table** indicates **standard distribution statistics

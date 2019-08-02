@@ -21,7 +21,7 @@ specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
 
 \item{varInclude0}{Logical, if TRUE (FALSE by default)
-include rows with no counts for the count \code{var} or \code{varFL} variable(s).}
+include rows with no counts for the count \code{var} or \code{varFlag} variable(s).}
 
 \item{varTotalInclude}{Should the total across all categories of \code{var} 
 be included for the count table?
