@@ -46,7 +46,7 @@ Only the counts for records flagged (with 'Y') are retained.}
 \item{varLab}{Label for the \code{var} variable.}
 
 \item{varInclude0}{Logical, if TRUE (FALSE by default)
-include rows with no counts for the count \code{var} or \code{varFL} variable(s).}
+include rows with no counts for the count \code{var} or \code{varFlag} variable(s).}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
 

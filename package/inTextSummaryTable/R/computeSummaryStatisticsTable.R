@@ -562,6 +562,10 @@ computeSummaryStatisticsTable <- function(
 		if(length(idxColTotal) > 0)	summaryTable <- summaryTable[-idxColTotal, ]
 	}
 	
+	if("variableGroup" %in% colnames(summaryTable) && length(unique(subset(summaryTable, !isTotal)$variableGroup)) < 2){
+		summaryTable[, which(colnames(summaryTable) == "variableGroup")] <- NULL
+	}
+	
 	# sort columns
 	colSorted <- c(rowVar, colVar, "isTotal", statsVarInit, statsVar)
 	colSorted <- intersect(colSorted, colnames(summaryTable)) 
@@ -699,7 +703,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' include rows with no records, based on all combinations 
 #' of the \code{rowVar} (assuming nested variable(s)).
 #' @param varInclude0 Logical, if TRUE (FALSE by default)
-#' include rows with no counts for the count \code{var} or \code{varFL} variable(s).
+#' include rows with no counts for the count \code{var} or \code{varFlag} variable(s).
 #' @param colInclude0 Logical, if TRUE (FALSE by default),
 #' include columns with no records, based on all combinations 
 #' of the \code{columnVar} (assuming nested variable(s)).
