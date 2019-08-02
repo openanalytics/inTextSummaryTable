@@ -87,3 +87,4 @@ Compute summary statistics by specified \code{rowVar} and \code{colVar}
 \author{
 Laure Cougnaud
 }
+\keyword{internal}

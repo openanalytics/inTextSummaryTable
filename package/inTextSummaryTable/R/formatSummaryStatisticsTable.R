@@ -534,6 +534,7 @@ formatSummaryStatisticsTable <- function(
 #' @param pad Integer vector with padding.
 #' @return Integer vector with 'smooth' padding.
 #' @author Laure Cougnaud
+#' @keywords internal
 smoothPadding <- function(pad){
 
 	# extract indices in vector which have padding > 1 with previous row

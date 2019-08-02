@@ -15,7 +15,7 @@ vignette: >
 	
 	library(knitr)
 	opts_chunk$set(
-		echo = TRUE, results = 'asis', warning = FALSE, 
+		echo = TRUE, results = 'markup', warning = FALSE, 
 		error = FALSE, message = FALSE, cache = FALSE,
 		fig.width = 8, fig.height = 7,
 		fig.path = "./figures_vignette/",
@@ -179,15 +179,14 @@ Discrete and numeric variable can be combined.
 
 ## Format statistics
 
+The set of summary statistics can be combined and the format customized via the `stats` 
+parameter. 
+This parameter is an list of `expression` of the statistics (columns) computed by default (`stat[X]` variable(s)).
+
+If an unique statistic expression is specified, the 'Statistic' column doesn't appear 
+in the table. In case multiple statistics are specified, these are included as separated row.
+
 ### User-custom set of statistics
-
-The set of summary statistics can be combined and the format customized
-via the `stats` parameter. This parameter is an list of `expression` of the
-statistics computed by default (`stat[X]` variable(s)).
-
-If an unique statistic expression is specified, the 'Statistic' column doesn't
-appear in the table. In case multiple statistics are specified, these are
-included as separated row.
 
 For example, the following count table is restricted to the number of subjects
 per categories:
@@ -215,20 +214,19 @@ range:
 		stats = list(
 			`median` = expression(statMedian),
 			`(min, max)` = expression(paste0("(", statMin, ",", statMax, ")"))
-		),
-		statsLayout = "rowInSepCol"
+		)
 	)
 
 ```
 
 ### Default sets of available statistics
 
-The `getStats` function wraps up a common default set of statistics, that are passed
-directly to the `stats` function.
+A common default set of statistics are available via the `getStats` function
+which can be passed directly to the `stats` function.
 
 For a continuous variable, it is **recommended to pass also the
 variable to the `getStats` function** to get
-appropriate number of standard number of decimals 
+standard number of number of decimals 
 (see section \@ref(numberDecimalsContinuousVariable)).
 
 ```{r getStats}
@@ -300,8 +298,9 @@ The statistics can also be provided for each variable separately:
 
 ### Extra statistics
 
-A set of extra statistics, not available in the default statistics, can
-be specified via the `statsExtra` (named list of functions).
+Extra statistics (not available in the default set of statistics) should 
+be specified via the `statsExtra` parameter.
+
 These statistics are then available for customization via the `stats` parameter.
 
 For example, the Coefficient of Variation (as a percentage) is computed for the
@@ -334,7 +333,9 @@ the statistics are formatted in the `stats` parameter.
 Some internal defaults (based on Mock TLFs) are available for a counts or summary table when the
 set of statistics of interest are extracted with the `getStats` function.
 
-#### Categorical variable
+#### `getStats` function
+
+##### Categorical variable
 
 When the `getStats` function is used,
 the counts for a categorical variables are formatted as described in the Mock TLFs:
@@ -352,7 +353,7 @@ the counts for a categorical variables are formatted as described in the Mock TL
 
 ```
 
-#### Continuous variable {#numberDecimalsContinuousVariable}
+##### Continuous variable {#numberDecimalsContinuousVariable}
 
 When specifying the default set of available statistics with the `getStats` function,
 and **only if the variable is specified** (`x` parameter),
@@ -365,8 +366,9 @@ the number of decimals for a continuous variable is determined by:
     such as the number of decimals according
     the rule won't be higher that the actual number of decimals available in the data
 2. Taking the **maximum number of decimals** across all individual values via the `getMaxNDecimals` function, 
-which is used as 'base' number of decimals considered for the summary statistics ($n_{dec, base}$)
-3. The actual number of decimals for each statistics is extracted (based on the Mock TLFs) with:
+which is used as 'base' number of decimals considered for the summary statistics
+3. The actual number of decimals for each statistic is extracted (based on the Mock TLFs) by adding
+to the 'base' number of decimals:
     + **0 extra decimal for the minimum, maximum**
     + **1 extra decimal for the mean, median, sd**
     + **2 extra decimals for SE**
@@ -380,9 +382,9 @@ the number of decimals of interest can be fixed via the `nDecCont` parameter.
 	# %FEV1 at baseline
 	print(dataSL$PFEVBL)
 	
-	# extract the number of decimals for each value:
+	## Extract the number of decimals for each value:
 	
-	# based on pre-define rule, this metric should be displayed with 1 decimal:
+	# based on pre-defined rule, this metric should be displayed with 1 decimal:
 	getNDecimalsRule(x = dataSL$PFEVBL)
 	
 	# but available in the data only with 0 decimals
@@ -391,16 +393,16 @@ the number of decimals of interest can be fixed via the `nDecCont` parameter.
 	# The minimum of the #decimals based on the data and pre-defined rule is:
 	getNDecimals(x = dataSL$PFEVBL)
 	
-	# Take the maximum number of decimals 
+	## Take the maximum number of decimals 
 	getMaxNDecimals(x = dataSL$PFEVBL)
 	
-	# Custom set of statistics are extracted when x is specified:
+	## Custom set of statistics are extracted when x is specified:
 	getStats(x = dataSL$PFEVBL)
 	
 	# To fix the number of decimals:
 	getStats(type = "summary", nDecCont = 1)
 	
-	# extract sets of statistics of interest
+	## Create summary statistics table
 	getSummaryStatisticsTable(
 		data = dataSL,
 		var = c("AGE", "PFEVBL"),
@@ -413,7 +415,7 @@ the number of decimals of interest can be fixed via the `nDecCont` parameter.
 ```
 
 Notes: by default the `round` function in R rounds the number to the even number in case of 0.5. 
-The `roundCustomText` function rounds to the closest digits.
+The `roundCustomText` function rounds to the closest digit.
 
 #### Custom `stats` function (Advanced)
 
@@ -820,7 +822,7 @@ specified), `rowVarLab` is set to this unique label.
 	
 ```
 
-## Total 
+## Total
 
 The **total number of subjects** is displayed in the **column header**
 and used for the **computation of the percentages** in the table body.
@@ -840,7 +842,7 @@ subject-level (`ADSL`) dataset.
 ```{r countTable-LB-customDenominator}
 
 	# dataset used to extract the 'Total'
-	dataTotal <- dataAll$ADSL
+	dataTotal <- subset(dataAll$ADSL, TRT01P != "Screen Failure")
 	# should contain columns specified in 'colVar'
 	dataTotal$TRTP <- dataTotal$TRT01P 
 	
@@ -969,12 +971,6 @@ variable is additionally specified in `rowVarTotalInSepRow`.
 
 ```
 
-If the total number of events should be included across all elements of a
-specific row variable, this variable is specified in the the
-`rowVarTotalInclude` variable.
-
-The label for the total is customized via the `rowTotalLab` parameter.
-
 ### Remove total in column header
 
 The total number of subjects in each column is by default included.
@@ -1001,16 +997,19 @@ This is not displayed if `colHeaderTotalInclude` is set to FALSE.
 
 ## Labels
 
-If the data is loaded into R with the `loadDataADAM` function, each column of the
-dataframe contains a specific label in its 'label' attribute.
+If the data is loaded into R with the `read_haven` of the `haven` package,
+ or the `loadDataADaMSDTM` function of the `glpgUtilityFct` package, the label
+ for each variable is stored in the 'label' attribute of the corresponding
+ column.
 
 However, if this label is lost (e.g. if the object is subsetted), 
-labels (for variable, row and column) can be specified via the
-`labelVars` parameter, or a specific '[parameter]Lab' parameter (e.g.
-`rowVarLab`, `colVarLab`, `varLab`, ...).
+labels are specified via the `labelVars` parameter for all variables at once, 
+or via specific `[parameter]Lab` parameter, as `rowVarLab`/`colVarLab`/`varLab`
+for the row/column/variable to summarize respectively.
 
 ## Title and footnote
 
+Title and footnote are specified via the corresponding `title` and `footer` parameters.
 The convenient function `toTitleCase` from the `tools` package
 is used to set title case for the title of the summary statistics table.
 
@@ -1126,7 +1125,7 @@ A list of `flextable` can be included into a `rmarkdown` document with the
 If only a subset of the records should be displayed in the final table,
 a custom filtering functions is specified via the `filterFct` parameter.
 
-```{r countTable-AE-filterFct-rowVar1}
+```{r countTable-AE-filterFct}
 
 	library(plyr)
 		
@@ -1145,7 +1144,7 @@ a custom filtering functions is specified via the `filterFct` parameter.
 		title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 2 patients in System Organ Class"
 	)
 	
-	# AE term with at least one term with more than 25% in the treatment
+	# AE term with at least one term with more than 20% in the treatment
 	getSummaryStatisticsTable(
 		data = subset(dataAE, TRTEMFL == "Y"),
 		rowVar = c("AESOC", "AEDECOD"),
@@ -1155,7 +1154,7 @@ a custom filtering functions is specified via the `filterFct` parameter.
 		filterFct = function(x)
 			ddply(x, "AEDECOD", function(xTerm){
 				xTermTreatment <- subset(xTerm, grepl("75 mg", TRTP))
-				if(any(xTermTreatment$statPercN >= 20))	xTerm		
+				if(xTermTreatment$statPercN >= 20)	xTerm		
 			}),
 		labelVars = labelVars,
 		title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 20% patients in treatment category"
@@ -1164,9 +1163,34 @@ a custom filtering functions is specified via the `filterFct` parameter.
 ```
 
 Note: to help for the creation of this filtering function,
-the displaying data could be extracted via the `computeSummaryStatisticsTable`
+the displaying data could be extracted first via the `computeSummaryStatisticsTable`
 function (instead of creating directly the in-text table via the
-`getSummaryStatisticsTable`).
+`getSummaryStatisticsTable`), then used to define the `filterFct` parameter.
+
+```{r countTable-AE-filterFct- details}
+
+	x <- computeSummaryStatisticsTable(
+		data = subset(dataAE, TRTEMFL == "Y"),
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+		colVar = "TRTP",
+		stats = getStats("n (%)"),
+		labelVars = labelVars
+	)
+	head(x)
+	# for specific AEDECOD
+	xTerm <- subset(x, AEDECOD == "Viral upper respiratory tract infection")
+	# identify the record for treated patient:
+	subset(xTerm, grepl("75 mg", TRTP))
+	# keep all records (placebo + treatment) if percentage if higher than 20%:
+	# if no 'else' condition, nothing (NULL) is returned:
+	if(subset(xTerm, grepl("75 mg", TRTP))$statPercN >= 20)	xTerm
+	# across all AE terms:
+	ddply(x, "AEDECOD", function(xTerm)
+		if(subset(xTerm, grepl("75 mg", TRTP))$statPercN >= 20)	xTerm
+	)
+	# format it as a function and pass it to the 'filterFct' parameter
+```
 
 # Table export
 
@@ -1272,6 +1296,33 @@ The supporting data displayed in the `flextable` object is outputted to a R
 	pander(summaryTable)
 
 ```
+
+## Intermediary table in long format
+
+The supporting data for the summary statistics table, including
+the entire set of statistics (as numeric) and combined statistic set
+is accessed via the
+`computeSummaryStatisticsTable`.
+
+Please note the presence of the `isTotal` column,
+which flags the records containing the number of subjects
+reported in the table header.
+
+```{r computeSummaryStatisticsTable}
+
+	summaryTable <- computeSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarTotalInclude = c("AESOC", "AEDECOD"),
+		colVar = "TRTP",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotal,
+		labelVars = labelVars,
+		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
+	)
+	subset(summaryTable, isTotal)
+	
+```	
 
 # Data pre-processing
 

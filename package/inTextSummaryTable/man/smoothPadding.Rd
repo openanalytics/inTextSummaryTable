@@ -18,3 +18,4 @@ Smooth padding, e.g. remove padding bigger than 1
 \author{
 Laure Cougnaud
 }
+\keyword{internal}

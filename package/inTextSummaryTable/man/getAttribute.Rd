@@ -24,3 +24,4 @@ Get specific attribute from a summaryTable or a list of summaryTables
 \author{
 Laure Cougnaud
 }
+\keyword{internal}

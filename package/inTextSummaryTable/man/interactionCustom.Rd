@@ -36,3 +36,4 @@ are ordered similarly as the levels of the input \code{var} (if present).
 \author{
 Laure Cougnaud
 }
+\keyword{internal}

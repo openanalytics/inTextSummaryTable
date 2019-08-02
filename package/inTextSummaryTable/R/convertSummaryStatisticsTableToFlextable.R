@@ -283,6 +283,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 #' @importFrom officer fp_text
 #' @importFrom flextable display
 #' @author Laure Cougnaud
+#' @keywords internal
 formatSuperSubscriptToFlextable <- function(
 	dataTable, ft, 
 	fontname = "Times",

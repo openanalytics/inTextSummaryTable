@@ -65,3 +65,4 @@ Compute custom statistics specified by the user.
 \author{
 Laure Cougnaud
 }
+\keyword{internal}
