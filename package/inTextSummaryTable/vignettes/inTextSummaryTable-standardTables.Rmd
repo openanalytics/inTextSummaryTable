@@ -59,11 +59,9 @@ Please note that the content or formatting (e.g. number of decimals)
 of the table might depends of the study and dataset 
 (refer to the specific study _Standard Analysis Plan_), and be subject to change.
 
-# Statistical analyses
+# Subject information
 
-## Subject information
-
-### Demographics and Baseline Disease Characteristics
+## Demographics and Baseline Disease Characteristics
 
 ```{r table-demography}
 
@@ -148,7 +146,7 @@ of the table might depends of the study and dataset
 
 Efficacy analyses will be performed on the Full Analysis Set.
 
-# Safety Analysis
+# Safety Analyses
 
 ## Adverse Events
 
@@ -157,7 +155,7 @@ Efficacy analyses will be performed on the Full Analysis Set.
 ```{r table-summaryTable}
 
 	# consider only safety analysis set AND TREATMENT-EMERGENT!
-	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
+	dataTEAE <- subset(dataAll$ADAE, FASFL == "Y" & TRTEMFL == "Y")
 	
 	# order treatment and severity categories
 	dataTEAE <- convertVarToFactor(
@@ -362,11 +360,58 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		labelVars = labelVars,
 		dataTotal = dataTotalAE,
 		title = toTitleCase(paste("Table: Treatment-emergent Adverse Events by system organ",
-			"and preferred term by worst-case (Safety Analysis Set)"
+			"and preferred term by worst-case (Full Analysis Set)"
 		)),
 		file = file.path("tables_CSR", "Table_TEAE_Severity.docx")
 	)
 	
+```
+
+## Laboratory safety
+
+### Table of laboratory abnormalities
+
+```{r tableLab}
+
+	# The analysis of abnormalities will focus on assessments reported during the treatment period.
+	dataLB <- subset(dataAll$ADLB, FASFL == "Y")
+	# in this dataset, worst-case also flag with 'DTYPE' == "WOC"
+	
+	dataLBWCWithAbn <- subset(dataLBWC, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
+
+	# Total based on available post-dose records
+	dataLBPostBaseline <- subset(dataLB, !AVISIT %in% c("Screening", "Worst-case post-baseline", "Baseline"))
+	
+	# order treatments and lab parameters
+	
+	# convert factors
+	dataLBWCWithAbn <- convertVarToFactor(
+		data = dataLBWCWithAbn,
+		var = c("PARCAT1", "PARAM", "TRTA", "SHIFT1"),
+		varNum = c("PARCAT1N", "PARAMN", "TRTAN", "SHIFT1N")
+	)
+
+	# shift table or QC versus baseline
+	getSummaryStatisticsTable(
+		data = dataLBWCWithAbn,
+		rowVar = c("PARCAT1", "PARAM", "SHIFT1"), rowVarInSepCol = "SHIFT1",
+		colVar = "TRTA",
+		rowVarLab = c(
+			'PARCAT1' = "Laboratory Parameter\nn (%)", 
+			'SHIFT1' = "Shift of Worst Case Abnormality"
+		),
+#		rowVarTotalInclude = "SHIFT1",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		# TO ASK: should the rows be ordered based on the total also for the worst-case column?
+		rowOrder = "total",
+		dataTotal = dataLBPostBaseline, colVarTotalPerc = c("TRTA", "PARAM"),
+		title = toTitleCase(paste("Table: Treatment-emergent",
+			"Worst-case Laboratory Abnormalities (full analysis set))"
+		)),
+		file = file.path("tables_CSR", "Table_Lab_Severity.docx")
+	)
+
 ```
 
 ## Vital signs
