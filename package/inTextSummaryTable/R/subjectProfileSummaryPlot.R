@@ -304,7 +304,7 @@ subjectProfileSummaryPlot <- function(data,
 
 	# facetting
 	if(!is.null(facetVar))
-		gg <- gg + facet_wrap(aes_string(facetVar), scales = facetScale)
+		gg <- gg + facet_wrap(facetVar, scales = facetScale)
 	
 	# palettes
 	if(!is.null(colorVar)){

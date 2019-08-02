@@ -1,10 +1,11 @@
-1.9.0
+2.0.0
     o include vignette with template tables
     o formatSummaryStatisticsTable: fixes when multiple records for total (rowVarTotalByVar)
     o computeSummaryStatisticsTable: possibility to sort rows per total but not include total column
     o convertVarFlag, varFlag
     o varInclude0: to include empty rows for count variable
     o computeSummaryStatisticsTable: possibility to specify varSubgroupLab even for one variable
+    o subjectProfileSummaryPlot: fix facet specification
 1.8.0
     o GLPG flextable functions moved to the glpgStyle package
 1.7.0
