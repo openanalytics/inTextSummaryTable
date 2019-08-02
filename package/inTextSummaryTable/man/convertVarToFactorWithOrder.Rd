@@ -56,3 +56,4 @@ Convert a variable to a factor with levels in specified order.
 \author{
 Laure Cougnaud
 }
+\keyword{internal}

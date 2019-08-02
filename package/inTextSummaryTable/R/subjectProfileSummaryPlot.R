@@ -441,6 +441,7 @@ subjectProfileSummaryPlot <- function(data,
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @author Laure Cougnaud
+#' @keywords internal
 subjectProfileSummaryTable <- function(
 	data, xVar, text, 
 	xLim = NULL, 

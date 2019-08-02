@@ -25,6 +25,7 @@ roundCustomText <- function(..., format = c("text", "number")) {
 #' @return Object with attribute, or \code{default} is doesn't
 #' exists in \code{summaryTable}
 #' @author Laure Cougnaud
+#' @keywords internal
 getAttribute <- function(summaryTable, name, default = NULL){
 	
 	attribute <- if(is.data.frame(summaryTable)){
@@ -61,6 +62,7 @@ getAttribute <- function(summaryTable, name, default = NULL){
 #' \item{'dataLevels': }{dtaa.frame with mapping between the \code{var} variable(s) and the new factor levels}
 #' }
 #' @author Laure Cougnaud
+#' @keywords internal
 interactionCustom <- function(data, var, 
 	varDataLevels = NULL){
 

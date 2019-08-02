@@ -6,6 +6,7 @@
     o varInclude0: to include empty rows for count variable
     o computeSummaryStatisticsTable: possibility to specify varSubgroupLab even for one variable
     o subjectProfileSummaryPlot: fix facet specification
+    o internal functions
 1.8.0
     o GLPG flextable functions moved to the glpgStyle package
 1.7.0

@@ -43,13 +43,13 @@
 #' @param dataTotalPerc Data.frame used to extract the Total count per column, 
 #' used for the computation of the percentage: 'statPercN' parameter.
 #' It should contain the variables specified by \code{colVarTotalPerc}.
-#' @param dataTotalRow Data.frame used to extract the total count per row
+#' @param dataTotalRow Data.frame used to extract the total count across all
+#' elements of the row
 #' variable, in case \code{rowVarTotalInclude} is specified,
 #' or list of such data.frame for each variable (named by variable).
-#' @param dataTotalCol Data.frame used to extract the total count per column
-#' variable, in case \code{colTotalInclude} is TRUE.
-#' or list of such data.frame for each \code{rowVar} variable
-#' (and 'total' for \code{rowVar}).
+#' @param dataTotalCol Data.frame from which the total across columns is 
+#' extracted (in case \code{colTotalInclude} is TRUE)
+#' or list of such data.frame for each \code{rowVar} variable.
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table 
 #' (after statistics computation).
@@ -144,6 +144,7 @@
 #' @author Laure Cougnaud
 #' @importFrom dplyr n_distinct
 #' @importFrom plyr ddply rbind.fill dlply
+#' @importFrom glpgUtilityFct getLabelVar
 #' @export
 computeSummaryStatisticsTable <- function(
 	data,  
@@ -266,7 +267,7 @@ computeSummaryStatisticsTable <- function(
 			factor(x, levels = if(is.factor(x))	levels(x)	else	sort(unique(x)))
 		})
 		
-	# get general statistics (by group if specified)
+	# get general statistics for each combination of rowVar/colVar
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
 		var = var, varLab = varLab, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
@@ -287,6 +288,7 @@ computeSummaryStatisticsTable <- function(
 		simplify = FALSE
 	)
 	
+	# get statistics across columns by row
 	if(colTotalInclude){
 		
 		dataForColTotal <- if(!is.null(dataTotalCol)){
@@ -310,6 +312,11 @@ computeSummaryStatisticsTable <- function(
 		
 		if(nrow(summaryTableColTotal) > 0)
 			summaryTableColTotal[, colVar] <- colTotalLab
+			
+		summaryTable <- rbind.fill(summaryTable, summaryTableColTotal)
+		summaryTable[, colVar] <- lapply(colVar, function(x)
+			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
+		)
 		
 	}
 	
@@ -449,26 +456,7 @@ computeSummaryStatisticsTable <- function(
 		}
 	}else dataTotal <- data
 	
-	## column total
-	if(colTotalInclude){
-		
-		# total summary table
-		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
-			data = dataTotal, 
-			type = "countTable", 
-			subjectVar = subjectVar, labelVars = labelVars
-		)
-		if(nrow(summaryTableTotalCol) > 0)
-			summaryTableTotalCol[, colVar] <- colTotalLab
-		
-		summaryTable <- rbind.fill(summaryTable, summaryTableColTotal)
-		summaryTable[, colVar] <- lapply(colVar, function(x)
-			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
-		)
-		
-	}
-	
-	# get counts (for column header total)
+	# get total for column headers:
 	summaryTableTotal <- computeSummaryStatisticsTableTotal(
 		data = dataTotal, 
 		colVar = colVar, colVarTotal = colVarTotal,
@@ -574,6 +562,13 @@ computeSummaryStatisticsTable <- function(
 		if(length(idxColTotal) > 0)	summaryTable <- summaryTable[-idxColTotal, ]
 	}
 	
+	# sort columns
+	colSorted <- c(rowVar, colVar, "isTotal", statsVarInit, statsVar)
+	colSorted <- intersect(colSorted, colnames(summaryTable)) 
+	colSorted <- c(colSorted, setdiff(colnames(summaryTable), colSorted))
+	if(length(colSorted ) > 0)
+		summaryTable <- summaryTable[, colSorted]
+	
 	# table attributes
 	attrTable <- list(
 			
@@ -628,6 +623,7 @@ computeSummaryStatisticsTable <- function(
 #' @return data.frame with total table.
 #' @author Laure Cougnaud
 #' @importFrom reshape2 melt
+#' @keywords internal
 computeSummaryStatisticsTableTotal <- function(
 	data, 
 	colVar = NULL, colVarTotal = colVar,
@@ -750,6 +746,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' }
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
+#' @keywords internal
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
 	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars), varInclude0 = FALSE,
@@ -1073,6 +1070,7 @@ computeSummaryStatistics <- function(data,
 #' @return Factor \code{var} variable of \code{data} with specified order.
 #' @importFrom plyr daply
 #' @author Laure Cougnaud
+#' @keywords internal
 convertVarToFactorWithOrder <- function(
 	data, var, otherVars = NULL, 
 	colVar = NULL, colTotalLab = "Total",
@@ -1195,6 +1193,7 @@ convertVarToFactorWithOrder <- function(
 #' \item{'statsVar': }{Character vector with statistics names}
 #' }
 #' @author Laure Cougnaud
+#' @keywords internal
 getStatisticsSummaryStatisticsTable <- function(
 	summaryTable, statsVarInit, 
 	var = NULL, stats = NULL, statsVarBy = NULL){

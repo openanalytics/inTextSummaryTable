@@ -54,3 +54,4 @@ Compute summary statistics total table.
 \author{
 Laure Cougnaud
 }
+\keyword{internal}
