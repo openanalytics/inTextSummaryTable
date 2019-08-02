@@ -2,8 +2,7 @@
 % Please edit documentation in R/custom_stats.R
 \name{getStats}
 \alias{getStats}
-\title{Create custom statistic sets to be passed to the \code{stats} parameter
-of the \code{\link{computeSummaryStatisticsTable}} function.}
+\title{Extract default set of statistics.}
 \usage{
 getStats(type = "summary", includeName = TRUE, x = NULL,
   nDecCont = getMaxNDecimals, nDecN = 0, nDecm = nDecN,
@@ -25,8 +24,9 @@ This is applied for the statistic names used in each for the set defined in \cod
 and for the label of the list if \code{type} is of length 2.
 If there are multiple \code{type} or statistics within a set, the names are retained (to avoid confusion).}
 
-\item{x}{(optional, recommended) Vector for which the statistics 
-should be computed on (has an effect only for continuous variable).
+\item{x}{(optional, recommended for continuous variable) Numeric vector 
+for which the statistics should be computed on 
+(has an effect only for continuous variable).
 If specified, this is used to derive the number of decimals to include.
 If not specified, the values are rounded with \code{\link{formatC}}.}
 
@@ -45,7 +45,7 @@ function to extract summary statistics.
 If multiple \code{type} are specified, they are combined to a list.
 }
 \description{
-Create custom statistic sets to be passed to the \code{stats} parameter
+This set of statistics is passed directly to the \code{stats} parameter
 of the \code{\link{computeSummaryStatisticsTable}} function.
 }
 \examples{

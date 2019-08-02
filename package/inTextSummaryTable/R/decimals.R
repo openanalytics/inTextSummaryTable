@@ -1,6 +1,8 @@
-#' Get number of decimals for a specific vector,
-#' either from specific implemented rule (see \code{\link{getNDecimalsRule}}),
-#' or from the dataset itself (see \code{\link{getNDecimalsData}}),
+#' Get number of decimals for a specific vector.
+#' 
+#' The number of decimals is extracted from specific implemented rule
+#' (see \code{\link{getNDecimalsRule}}),
+#' from the data itself (see \code{\link{getNDecimalsData}}),
 #' or both: in this case the minimum of both criterias is used.
 #' @param useRule Logical (TRUE by default), should the \code{rule} be applied?
 #' @param useData Logical (TRUE by default), should the number of decimals
@@ -28,8 +30,10 @@ getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 }
 
 #' Get maximum number of decimals in a variable,
-#' based on pre-defined rule and/or data (see the function:
-#'  \code{\link{getNDecimals}})
+#' based on pre-defined rule and/or data.
+#' 
+#' The function \code{\link{getNDecimals}}) extracts the number
+#' of decimals in a specific variable.
 #' @param ... Any parameters for the \code{\link{getNDecimals}} function.
 #' @inheritParams getNDecimals
 #' @return Integer with maximum number of decimals in a character vector.
