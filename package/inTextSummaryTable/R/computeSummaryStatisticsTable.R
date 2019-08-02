@@ -222,17 +222,17 @@ computeSummaryStatisticsTable <- function(
 		}
 	}
 
-	if(colTotalInclude & is.null(colVar)){
-		warning("Column 'total' is not included because no column variable is specified.")
-		colTotalInclude <- FALSE
-	}
-	
-	# include the column total in case the rows should be ordered by total
+	# Always compute the column total, because the rows could be asked to be ordered 
+	# based on the total category or total can be extracted within a function specified in rowOrder
+	# excepted when no column variable is specified
 	colTotalIncludeInit <- colTotalInclude
-	# always compute the total, because the rows could be asked to be ordered 
-	# based on the total categories or total can be extracted within a function specified in rowOrder
+	if(is.null(colVar)){
+		if(colTotalIncludeInit)	
+			warning("Column 'total' is not included because no column variable is specified.")
+		colTotalInclude <- FALSE
+	}else	colTotalInclude <- TRUE
+	
 	if(!is.null(colVar))
-		colTotalInclude <- TRUE 
 #	checkIfTotal <- function(x)	!is.function(x) && any(x == "total")
 #	if(!colTotalInclude && any(sapply(rowOrder, checkIfTotal)))
 #		colTotalInclude <- TRUE
@@ -570,7 +570,8 @@ computeSummaryStatisticsTable <- function(
 	
 	# remove the rows with total if should be ordered by total but the total not included
 	if(!colTotalIncludeInit & colTotalInclude){
-		summaryTable <- summaryTable[which(!summaryTable[, colVar] %in% colTotalLab), ]
+		idxColTotal <- which(rowSums(summaryTable[, colVar, drop = FALSE] == colTotalLab) > 0)
+		if(length(idxColTotal) > 0)	summaryTable <- summaryTable[-idxColTotal, ]
 	}
 	
 	# table attributes
