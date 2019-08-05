@@ -631,7 +631,6 @@ These categories are specified via additional **levels in the `rowVar`/`colVar` 
 		stats = getStats("n (%)"),
 		footer = "Statistics: n (%)"
 	)
-	stop("test")
 
 ```
 
@@ -889,8 +888,52 @@ subject-level (`ADSL`) dataset.
 
 ```
 
+### Computation of the percentage
+
 A different dataset used for the computation of the percentage can be specified
 via the `dataTotalPerc` (by default set as `dataTotal`).
+If the total number of subjects differ between the components of the table, 
+the extra row/column(s) variable(s) are specified via `colVarTotalPerc`/`rowVarTotalPerc`.
+
+For example, in the table of shift of worst-case laboratory abnormalities: the total number
+of subjects for the computation of the percentage are extracted based on the number of subjects 
+with available post-dose measurements **per laboratory parameter**.
+
+```{r rowVarTotalPerc}
+
+	dataLB <- subset(dataAll$ADLB, FASFL == "Y" & PARAMCD %in% c("BACT", "ALB"))
+	
+	# worst-case scenario with abnormalities
+	dataLBWC <- subset(dataLB, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
+
+	# data considered for the total
+	dataLBPostBaseline <- subset(dataLB, !AVISIT %in% c("Baseline", "Screening", "Worst-case post-baseline"))
+	
+	# post-baseline measurements  are not available for all subjects 
+	library(plyr)
+	pander(dataLBPostBaseline %>% group_by(PARAM, TRTA) %>% dplyr::summarise(`# subjects` = n_distinct(USUBJID)))
+	
+	# by default, the same total number of subjects 
+	# per treatment is used across all rows/parameters
+	getSummaryStatisticsTable(
+		data = dataLBWC,
+		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
+		stats = getStats("n (%)"),
+		emptyValue = 0, rowAutoMerge = FALSE,
+		dataTotal = dataLBPostBaseline
+	)
+	
+	# percentage based on total number of subjects with available
+	# post-baseline measurements PER parameter:
+	getSummaryStatisticsTable(
+		data = dataLBWC,
+		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
+		stats = getStats("n (%)"),
+		emptyValue = 0, rowAutoMerge = FALSE,
+		dataTotal = dataLBPostBaseline, rowVarTotalPerc = "PARAM"
+	)
+	
+```
 
 ### Total number of subjects across columns {#colTotal}
 
