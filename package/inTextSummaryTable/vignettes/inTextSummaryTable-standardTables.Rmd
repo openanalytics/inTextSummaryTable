@@ -132,6 +132,10 @@ of the table might depends of the study and dataset
 	labelVars["SEXC"] <- "Gender" # use 'Gender' and not 'Sex' label
 	labelVars["AGEC"] <- "Age, categorized (years)"
 	labelVars["DIAGDURYC"] <- sub(" (years)", ", categorized (years)", labelVars["DIAGDURY"], fixed = TRUE)
+	dataDM$RACE <- factor(dataDM$RACE, 
+		levels = levels(dataDM$RACE), 
+		labels = simpleCap(tolower(levels(dataDM$RACE)))
+	) # lower-case (if not already in ADaM)
 	
 	## Define set of statistics of interest:
 	# 'Median (range)' for continuous variable
@@ -169,10 +173,6 @@ of the table might depends of the study and dataset
 	)
 	
 ```
-
-# Efficacy analysis
-
-Efficacy analyses will be performed on the Full Analysis Set.
 
 # Safety Analyses
 
@@ -298,7 +298,7 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		rowOrder = "total", 
 		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
-			"and Preferred Term reported in at least 1 subject in any treatment group (Safety Analysis Set)"
+			"and Preferred Term (Safety Analysis Set)"
 		),
 		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx")
 	)
@@ -385,6 +385,7 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		## column variables
 		colVar = "TRTA", 
 		stats = getStats("n (%)"),
+		emptyValue = "0",
 		labelVars = labelVars,
 		dataTotal = dataTotalAE,
 		title = toTitleCase(paste("Table: Treatment-emergent Adverse Events by system organ",
@@ -434,6 +435,7 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		title = toTitleCase(paste("Table: Treatment-emergent",
 			"Worst-case Laboratory Abnormalities (full analysis set))"
 		)),
+		emptyValue = "0",
 		file = file.path("tables_CSR", "Table_Lab_Severity.docx")
 	)
 
@@ -476,6 +478,7 @@ Efficacy analyses will be performed on the Full Analysis Set.
 		labelVars = labelVars,
 		# total: all post-baseline
 		dataTotal = dataECGPostBaseline, 
+		emptyValue = "0",
 		rowVarTotalPerc = "PARAM", # total per parameter
 		# ensure that categories are below the type of abnormality
 		rowAutoMerge = FALSE,
@@ -520,6 +523,60 @@ Efficacy analyses will be performed on the Full Analysis Set.
 			"Vital Sign Abnormalities (Safety Analysis Set)"
 		)),
 		file = file.path("tables_CSR", "Table_VitalSigns_Severity.docx")
+	)
+
+```
+
+# Pharmacokinetics analysis
+
+```{r PK}
+
+	dataPK <- subset(dataAll$ADPP, PKFL == "Y")
+	
+	dataPK <- convertVarToFactor(data = dataPK, 
+		var = c("TRTA", "PARAMCD", "PARCAT1"), 
+		varNum = c("TRTAN", "PARAMN", "PARCAT1N")
+	)
+	
+	# build labels
+	labelsPK <- c(
+		AUC08H = "AUC_{0-8h} (ng*h/mL)",
+		AUCTAU = "AUC_{0-t} (ng*h/mL)",
+		CMAX = "C_{max} (ng/mL)",
+		CTROUGH = "Ctrough (ng/mL)",
+		TLAG = "t_{lag} (h)",
+		TMAX = "t_{max} (h)"
+	)
+	dataPK$PARAM <- factor(dataPK$PARAMCD, 
+		levels = levels(dataPK$PARAMCD), 
+		labels = labelsPK[levels(dataPK$PARAMCD)]
+	)
+	
+	# build statistics of interest
+	statsPK <- dlply(dataPK, "PARAM", function(dataParam)
+		# median (min-max) for tmax:
+		if(all(dataParam$PARAMCD == "TMAX")){
+			getStats("median\n(range)", x = dataParam$AVAL, includeName = FALSE)
+		# mean (CV %) for others
+		}else{
+			nDecBase <- getMaxNDecimals(dataParam$AVAL)
+			list(bquote(paste0(
+				roundCustomText(statMean, .(nDecBase + 1)), 
+				" (", roundCustomText(statCV, .(nDecBase + 1)), ")"
+			)))
+		}
+	)
+	
+	getSummaryStatisticsTable(
+		data = dataPK,
+		rowVar = c("PARCAT1", "PARAM"), colVar = "TRTA",
+		var = "AVAL",
+		rowVarLab = c('PARCAT1' = "PK parameters"),
+		statsExtra = list(statCV = cv), stats = statsPK, statsVarBy = "PARAM",
+		emptyValue = "-",
+		title = toTitleCase("Table: Summary of PK parameters (pharmacokinetics analysis set)"),
+		file = file.path("tables_CSR", "Table_PK_Parameters.docx"),
+		footer = "Values are arithmetic means (CV%) except median (min-max) for tmax."
 	)
 
 ```
