@@ -422,24 +422,68 @@ Efficacy analyses will be performed on the Full Analysis Set.
 	# shift table or QC versus baseline
 	getSummaryStatisticsTable(
 		data = dataLBWCWithAbn,
-		rowVar = c("PARCAT1", "PARAM", "SHIFT1"), rowVarInSepCol = "SHIFT1",
+		rowVar = c("PARCAT1", "PARAM"), 
 		colVar = "TRTA",
-		rowVarLab = c(
-			'PARCAT1' = "Laboratory Parameter\nn (%)", 
-			'SHIFT1' = "Shift of Worst Case Abnormality"
-		),
-#		rowVarTotalInclude = "SHIFT1",
+		var = "SHIFT1", rowVarInSepCol = "variableGroup", varSubgroupLab = "Shift of Worst Case Abnormality",
+		rowVarLab = c('PARCAT1' = "Laboratory Parameter\nn (%)"),
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		# TO ASK: should the rows be ordered based on the total also for the worst-case column?
 		rowOrder = "total",
-		dataTotal = dataLBPostBaseline, colVarTotalPerc = c("TRTA", "PARAM"),
+		dataTotal = dataLBPostBaseline, rowVarTotalPerc = "PARAM",
 		title = toTitleCase(paste("Table: Treatment-emergent",
 			"Worst-case Laboratory Abnormalities (full analysis set))"
 		)),
 		file = file.path("tables_CSR", "Table_Lab_Severity.docx")
 	)
 
+```
+
+## Electrocardiogram
+
+```{r ECG-formatData}
+
+	# data of interest
+	paramsECG <- c("QT", "QTCF", "QRS", "PR", "RR", "EGHR")
+
+	dataECG <- subset(dataAll$ADEG, FASFL == "Y" & PARAMCD %in% paramsECG)
+	dataECG <- convertVarToFactor(dataECG, var = c("TRTA", "PARAM"), varNum = c("TRTAN", "PARAMN"))
+	
+	# consider all non-missing post-baseline records
+	dataECGPostBaseline <- subset(dataECG, AVISIT %in% c("Screening", "Baseline", "Worst-case post-baseline"))
+	
+	# worst-case scenario:
+	dataECGWC <- subset(dataECG, AVISIT == "Worst-case post-baseline")
+	dataECGWC <- convertVarToFactor(dataECGWC, 
+		var = c("AVALCAT1", "CHGCAT1"), 
+		varNum = c("AVALCA1N", "CHGCAT1N")
+	)
+	
+	# treatment-emergent (a flag should be included in the data)
+	# if absnormality is worse compared to baseline
+	dataECGWC$TRTEMFL <- with(dataECGWC, ifelse(AVALCAT1 == "" | AVALCA1N > BASECA1N, "Y", "N"))
+	
+	# create the table
+	getSummaryStatisticsTable(
+		data = dataECGWC,
+		colVar = "TRTA",
+		rowVar = "PARAM", rowVarLab = c('PARAM' = "ECG Parameter"),
+		var = c("AVALCAT1", "CHGCAT1"),
+		rowVarInSepCol = c("variable", "variableGroup"),
+		varGeneralLab = "Abnormality",
+		varSubgroupLab = "Worst-Case Post-Baseline",
+		stats = getStats("n (%)"),
+		labelVars = labelVars,
+		# total: all post-baseline
+		dataTotal = dataECGPostBaseline, 
+		rowVarTotalPerc = "PARAM", # total per parameter
+		# ensure that categories are below the type of abnormality
+		rowAutoMerge = FALSE,
+		title = toTitleCase(paste("Table: Treatment-emergent worst-case",
+			"ECG abnormalities and change from baseline ECH abnormalities (full analysis set)"
+		))
+	)
+	
 ```
 
 ## Vital signs
