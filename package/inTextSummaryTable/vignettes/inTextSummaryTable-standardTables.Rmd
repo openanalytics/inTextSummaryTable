@@ -168,12 +168,14 @@ of the table might depends of the study and dataset
 		rowAutoMerge = FALSE,
 		rowInclude0 = FALSE, emptyValue = 0,
 		title = toTitleCase("Table: Demographic Data (Full Analysis Set)"),
-		file = file.path("tables_CSR", "Table_demographicDataAndBaselineCharacteristics.docx")
+		file = file.path("tables_CSR", "Table_demographicData.docx")
 	)
 	
 ```
 
 ## Baseline disease characteristics
+
+Please note that the content of the table strongly depends on the study.
 
 ```{r table-baselineDiseaseCharacteristics}
 
@@ -208,9 +210,53 @@ of the table might depends of the study and dataset
 		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
 		stats = stats, statsGeneralLab = "",
 		rowAutoMerge = FALSE,
-		labelVars = labelVars
+		labelVars = labelVars,
+		title = toTitleCase("Table: Baseline Disease Characteristics (full analysis set)"),
+		file = file.path("tables_CSR", "Table_BaselineCharacteristics.docx")
 	)
 
+```
+
+## Medical History and Concomitant Diseases
+
+```{r table-MH}
+
+	dataCM <- subset(dataAll$ADCM, FASFL == "Y" & PRICONFL == "Y")
+
+	# sort variable according to corresponding numeric variables
+	dataCM <- convertVarToFactor(
+		data = dataCM, 
+		var = c("TRTP"),
+		varNum = c("TRTPN")
+	)
+	
+	dataCM$CMDECOD <- simpleCap(tolower(dataCM$CMDECOD))
+	
+	getSummaryStatisticsTable(
+		data = dataCM,
+		colVar = "TRTP", colTotalInclude = TRUE, colTotalLab = "All subjects",
+		rowVar = "CMDECOD", 
+		rowVarLab = c(CMDECOD = "Prior and Concomitant Therapy, n(%)"),
+		stats  = getStats("n (%)"),
+		# TODO: add possibility to specify directly columns to order by?
+#		rowOrder = function(summaryTable){
+#			dataTotal <- subset(summaryTable, grepl("All subjects", TRTP))
+#			dataTreatment <- subset(summaryTable, grepl("treatmentX", TRTP))
+#			dataAll <- merge(dataTotal, dataTreatment, by = "CMDECOD", suffixes = c(".total", ".treated"))
+#			dataAll[order(dataAll[, c("statPercN.total", "statPercN.treated")]), "CMDECOD"]
+#		},
+		filterFct = function(summaryTable){
+			ddply(summaryTable, "CMDECOD", function(xTerm){
+				dataTotal <- subset(xTerm, grepl("All subjects", TRTP))
+				if(xTerm$isTotal || dataTotal$statPercN > 10)	xTerm
+			})
+		},
+		emptyValue = 0,
+		title = toTitleCase(paste("Prior and concomitant therapies taken by at least",
+			"10% of subjects overall (full analyis set)"
+		))
+	)
+	
 ```
 
 # Safety Analyses
@@ -365,7 +411,8 @@ of the table might depends of the study and dataset
 		rowOrder = "total", 
 		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
-			"and Preferred Term reported in at least 25% of the subjects in any treatment group (Safety Analysis Set)"
+			"and Preferred Term reported in at least 25% of the subjects",
+			"in any treatment group (Safety Analysis Set)"
 		),
 		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast25PercentsSubject.docx"),
 		# include only events occuring in at least 25% for at least one preferred term:
@@ -428,8 +475,9 @@ of the table might depends of the study and dataset
 		emptyValue = "0",
 		labelVars = labelVars,
 		dataTotal = dataTotalAE,
-		title = toTitleCase(paste("Table: Treatment-emergent Adverse Events by system organ",
-			"and preferred term by worst-case (Full Analysis Set)"
+		title = toTitleCase(paste("Table: Treatment-emergent Adverse",
+			"Events by system organ",
+			"and preferred term by worst-case (safety Analysis Set)"
 		)),
 		file = file.path("tables_CSR", "Table_TEAE_Severity.docx")
 	)
@@ -473,7 +521,7 @@ of the table might depends of the study and dataset
 		rowOrder = "total",
 		dataTotal = dataLBPostBaseline, rowVarTotalPerc = "PARAM",
 		title = toTitleCase(paste("Table: Treatment-emergent",
-			"Worst-case Laboratory Abnormalities (full analysis set))"
+			"Worst-case Laboratory Abnormalities (safety analysis set))"
 		)),
 		emptyValue = "0",
 		file = file.path("tables_CSR", "Table_Lab_Severity.docx")
@@ -523,7 +571,7 @@ of the table might depends of the study and dataset
 		# ensure that categories are below the type of abnormality
 		rowAutoMerge = FALSE,
 		title = toTitleCase(paste("Table: Treatment-emergent worst-case",
-			"ECG abnormalities and change from baseline ECH abnormalities (full analysis set)"
+			"ECG abnormalities and change from baseline ECH abnormalities (safety analysis set)"
 		)),
 		file = file.path("tables_CSR", "Table_ECG.docx")
 	)
