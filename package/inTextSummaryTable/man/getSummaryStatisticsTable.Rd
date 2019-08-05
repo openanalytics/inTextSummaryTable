@@ -119,7 +119,7 @@ list(var1 = "bold").
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}
 
-\item{rowVarTotalByVar}{Character vector with extra \code{codeVar}
+\item{rowVarTotalByVar}{Character vector with extra \code{rowVar}
 for which to compute the row total by.
 Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.}
 

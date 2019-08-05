@@ -89,7 +89,7 @@ of the table might depends of the study and dataset
 
 ```
 
-## Demographics and Baseline Disease Characteristics
+## Demographics
 
 ```{r table-demography}
 
@@ -102,8 +102,7 @@ of the table might depends of the study and dataset
 		"SEXC", "AGE", "AGEC",
 		"RACE", #"ETHNIC"
 		"HEIGHT", "WEIGHTBL", 
-		"BMIBL",
-		"DIAGDURY", "DIAGDURYC"
+		"BMIBL", "BMIBLGR1"
 	)
 	
 	# Add missing variables:
@@ -130,12 +129,16 @@ of the table might depends of the study and dataset
 	
 	## Reformat labels:
 	labelVars["SEXC"] <- "Gender" # use 'Gender' and not 'Sex' label
-	labelVars["AGEC"] <- "Age, categorized (years)"
-	labelVars["DIAGDURYC"] <- sub(" (years)", ", categorized (years)", labelVars["DIAGDURY"], fixed = TRUE)
+	labelVars["BMIBLGR1"] <- sub(" group", "", labelVars["BMIBLGR1"])
+	labelVars["AGEC"] <- labelVars["AGE"] <- "Age (years)"
 	dataDM$RACE <- factor(dataDM$RACE, 
 		levels = levels(dataDM$RACE), 
 		labels = simpleCap(tolower(levels(dataDM$RACE)))
 	) # lower-case (if not already in ADaM)
+	
+	# Add details count stat for categorical variable:
+	idxDMCat <- !colwise(is.numeric)(dataDM[, varsDM])
+	labelVars[varsDM[idxDMCat]] <- paste0(labelVars[varsDM[idxDMCat]], ", n (%)")
 	
 	## Define set of statistics of interest:
 	# 'Median (range)' for continuous variable
@@ -163,15 +166,51 @@ of the table might depends of the study and dataset
 		labelVars = labelVars,
 		# if only one category, should be included in separated row (e.g. RACE: White)
 		rowAutoMerge = FALSE,
-		rowInclude0 = FALSE,
-		title = toTitleCase(
-			paste("Table: Descriptive Statistics of Demographic Data",
-				"and Baseline Characteristics (Full Analysis Set)"
-			)
-		),
+		rowInclude0 = FALSE, emptyValue = 0,
+		title = toTitleCase("Table: Demographic Data (Full Analysis Set)"),
 		file = file.path("tables_CSR", "Table_demographicDataAndBaselineCharacteristics.docx")
 	)
 	
+```
+
+## Baseline disease characteristics
+
+```{r table-baselineDiseaseCharacteristics}
+
+	# data of interest
+	dataBDC <- subset(dataAll$ADSL, FASFL == "Y")
+
+	# variables of interest
+	varsBDC <- c("ORKTDURW", "SWBL", "PFEVBL", "PFEVGR1", "F508DYN", "SMOKE")
+	idxBDCCat <- !colwise(is.numeric)(dataBDC[, varsBDC])
+	labelVars[varsBDC[idxBDCCat]] <- paste0(labelVars[varsBDC[idxBDCCat]], ", n (%)")
+	
+	# sort variable according to corresponding numeric variables
+	dataBDC <- convertVarToFactor(
+		data = dataBDC, 
+		var = c("TRT01P", "PFEVGR1"),
+		varNum = c("TRT01PN", "PFEVGR1N")
+	)
+	
+	# statistics
+	stats <- sapply(varsBDC, function(var){
+		if(is.numeric(dataBDC[, var])){
+			getStats(type = "mean (range)", x = dataBDC[, var])
+		}else getStats("n (%)", includeName = FALSE)
+	}, simplify = FALSE)
+
+	dataBDC$SMOKE <- factor(dataBDC$SMOKE, labels = simpleCap(tolower(unique(dataBDC$SMOKE))))
+	
+	# create table
+	getSummaryStatisticsTable(
+		data = dataBDC,
+		var = varsBDC, varGeneralLab = "Parameter",
+		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
+		stats = stats, statsGeneralLab = "",
+		rowAutoMerge = FALSE,
+		labelVars = labelVars
+	)
+
 ```
 
 # Safety Analyses
@@ -297,6 +336,7 @@ of the table might depends of the study and dataset
 		# sort rows based on the total column:
 		rowOrder = "total", 
 		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
+		colTotalInclude = TRUE,
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
 			"and Preferred Term (Safety Analysis Set)"
 		),
@@ -403,7 +443,7 @@ of the table might depends of the study and dataset
 ```{r tableLab}
 
 	# The analysis of abnormalities will focus on assessments reported during the treatment period.
-	dataLB <- subset(dataAll$ADLB, FASFL == "Y")
+	dataLB <- subset(dataAll$ADLB, SAFFL == "Y")
 	# (in this dataset, worst-case also flagged with 'DTYPE' == "WOC")
 	
 	dataLBWCWithAbn <- subset(dataLB, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
@@ -448,7 +488,7 @@ of the table might depends of the study and dataset
 	# data of interest
 	paramsECG <- c("QT", "QTCF", "QRS", "PR", "RR", "EGHR")
 
-	dataECG <- subset(dataAll$ADEG, FASFL == "Y" & PARAMCD %in% paramsECG)
+	dataECG <- subset(dataAll$ADEG, SAFFL == "Y" & PARAMCD %in% paramsECG)
 	dataECG <- convertVarToFactor(dataECG, var = c("TRTA", "PARAM"), varNum = c("TRTAN", "PARAMN"))
 	
 	# consider all non-missing post-baseline records
@@ -497,8 +537,8 @@ of the table might depends of the study and dataset
 ```{r tableVitalSigns}
 
 	# analyis set and parameters of interest
-	paramVS <- c("HR", "DIABP", "SYSBP", "TEMP")
-	dataVS <- subset(dataAll$ADVS, FASFL == "Y" & PARAMCD %in% paramVS)
+	paramVS <- c("HR", "DIABP", "SYSBP", "TEMP", "RESP")
+	dataVS <- subset(dataAll$ADVS, SAFFL == "Y" & PARAMCD %in% paramVS)
 	
 	dataVS <- convertVarToFactor(
 		data = dataVS,
@@ -523,7 +563,8 @@ of the table might depends of the study and dataset
 		title = toTitleCase(paste("Table: Treatment-emergent Worst-case",
 			"Vital Sign Abnormalities (Safety Analysis Set)"
 		)),
-		file = file.path("tables_CSR", "Table_VitalSigns_Severity.docx")
+		file = file.path("tables_CSR", "Table_VitalSigns_Severity.docx"),
+		emptyValue = 0
 	)
 
 ```

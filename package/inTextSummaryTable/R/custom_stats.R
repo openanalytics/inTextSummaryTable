@@ -10,6 +10,7 @@
 #' \item{'median (range)': }{median (minimum, maximum)}
 #' \item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
 #' \item{'mean (se)': }{mean and standard deviation}
+#' \item{'mean (range)': }{mean and (minimum, maximum)}
 #' }
 #' @param includeName Logical, should the statistics name be included (TRUE by default)?
 #' This is applied for the statistic names used in each for the set defined in \code{type};
@@ -67,7 +68,7 @@ getStats <- function(
 		choices = c(
 			"summary", "count", "n (%)", 
 			"median (range)", "median\n(range)",
-			"mean (se)"
+			"mean (se)", "mean (range)"
 		),
 		several.ok = TRUE
 	)
@@ -140,6 +141,13 @@ getStats <- function(
 		if('mean (se)' %in% type)
 			list('Mean (SE)' = 
 				bquote(paste0(.(statsBase$Mean), " (", .(statsBase$SE),  ")"))
+			),
+		if('mean (range)' %in% type)
+			list('Mean (range)' = 
+				bquote(paste0(
+					.(statsBase$Mean), 
+					" (", .(statsBase$Min), ",", .(statsBase$Max), ")"
+				))
 			)
 	)
 	
