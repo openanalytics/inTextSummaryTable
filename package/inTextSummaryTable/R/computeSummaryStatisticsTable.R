@@ -992,7 +992,11 @@ computeSummaryStatistics <- function(data,
 			
 			# to avoid that ddply with empty data returns entire data.frame
 			if(nrow(data) == 0){
-				res <- data.frame(statN = 0, statm = 0)
+				if(!is.null(var)){
+					res <- data.frame()
+				}else{
+					res <- data.frame(statN = 0, statm = 0)
+				}
 				statsExtraFct(
 					res = res, statsExtra = statsExtra,
 					data = data

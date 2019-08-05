@@ -16,7 +16,7 @@ formatSummaryStatisticsTable(summaryTable,
   "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"),
-  statsValueLab = "StatisticValue", emptyValue = "-",
+  statsValueLab = "StatisticValue", emptyValue = "0",
   vline = c("none", "auto"))
 }
 \arguments{
