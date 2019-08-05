@@ -17,6 +17,7 @@ getStats(type = "summary", includeName = TRUE, x = NULL,
 \item{'median (range)': }{median (minimum, maximum)}
 \item{'median\n(range)': }{median and (minimum, maximum) below (linebreak)}
 \item{'mean (se)': }{mean and standard deviation}
+\item{'mean (range)': }{mean and (minimum, maximum)}
 }}
 
 \item{includeName}{Logical, should the statistics name be included (TRUE by default)?

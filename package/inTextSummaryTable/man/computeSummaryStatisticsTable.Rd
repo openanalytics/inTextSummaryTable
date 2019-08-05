@@ -118,7 +118,7 @@ for which to include the total for each group.}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
 Otherwise (by default) the total is included in the header row of each category.}
 
-\item{rowVarTotalByVar}{Character vector with extra \code{codeVar}
+\item{rowVarTotalByVar}{Character vector with extra \code{rowVar}
 for which to compute the row total by.
 Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.}
 
