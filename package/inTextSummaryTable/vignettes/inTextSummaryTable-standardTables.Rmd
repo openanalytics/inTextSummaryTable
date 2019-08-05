@@ -84,7 +84,7 @@ of the table might depends of the study and dataset
 		filterFct = function(x)
 			subset(x, isTotal | !grepl("Screen Failure", TRT01P)),
 		title = toTitleCase("Table: subject disposition (full analysis set)"),
-		file = file.path("table_CSR", "Table_subjectDisposition.docx")
+		file = file.path("tables_CSR", "Table_subjectDisposition.docx")
 	)
 
 ```
@@ -327,7 +327,7 @@ of the table might depends of the study and dataset
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
 			"and Preferred Term reported in at least 25% of the subjects in any treatment group (Safety Analysis Set)"
 		),
-		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast1Subject.docx"),
+		file = file.path("tables_CSR", "Table_TEAE_SOCPT_atLeast25PercentsSubject.docx"),
 		# include only events occuring in at least 25% for at least one preferred term:
 		filterFct = function(x)
 			ddply(x, "AESOC", function(x){ # per AESOC to include the total
@@ -484,7 +484,8 @@ of the table might depends of the study and dataset
 		rowAutoMerge = FALSE,
 		title = toTitleCase(paste("Table: Treatment-emergent worst-case",
 			"ECG abnormalities and change from baseline ECH abnormalities (full analysis set)"
-		))
+		)),
+		file = file.path("tables_CSR", "Table_ECG.docx")
 	)
 	
 ```
