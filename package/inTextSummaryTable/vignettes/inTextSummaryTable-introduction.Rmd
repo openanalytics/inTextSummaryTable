@@ -631,6 +631,7 @@ These categories are specified via additional **levels in the `rowVar`/`colVar` 
 		stats = getStats("n (%)"),
 		footer = "Statistics: n (%)"
 	)
+	stop("test")
 
 ```
 

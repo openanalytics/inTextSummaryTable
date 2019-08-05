@@ -61,6 +61,34 @@ of the table might depends of the study and dataset
 
 # Subject information
 
+## Subject disposition
+
+```{r table-subjectDisposition}
+	
+	# data of interest
+	dataDM <- dataAll$ADSL
+	
+	varDMFL <- grep("FL$", colnames(dataDM), value = TRUE)
+	varDMFLLabel <- sub(" Flag$", "", labelVars[varDMFL])
+	
+	getSummaryStatisticsTable(
+		data = dataDM,
+		var = varDMFL, varFlag = varDMFL, varGeneralLab = "Analysis Set, N", 
+		varLab = varDMFLLabel,
+		stats = getStats("n (%)"),
+		colVar = "TRT01P",
+		labelVars = labelVars,
+		colTotalInclude = TRUE, colTotalLab = "All subjects",
+		varInclude0 = TRUE,
+		# remove 'Screen Failure' column
+		filterFct = function(x)
+			subset(x, isTotal | !grepl("Screen Failure", TRT01P)),
+		title = toTitleCase("Table: subject disposition (full analysis set)"),
+		file = file.path("table_CSR", "Table_subjectDisposition.docx")
+	)
+
+```
+
 ## Demographics and Baseline Disease Characteristics
 
 ```{r table-demography}
