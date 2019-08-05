@@ -375,9 +375,9 @@ Efficacy analyses will be performed on the Full Analysis Set.
 
 	# The analysis of abnormalities will focus on assessments reported during the treatment period.
 	dataLB <- subset(dataAll$ADLB, FASFL == "Y")
-	# in this dataset, worst-case also flag with 'DTYPE' == "WOC"
+	# (in this dataset, worst-case also flagged with 'DTYPE' == "WOC")
 	
-	dataLBWCWithAbn <- subset(dataLBWC, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
+	dataLBWCWithAbn <- subset(dataLB, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
 
 	# Total based on available post-dose records
 	dataLBPostBaseline <- subset(dataLB, !AVISIT %in% c("Screening", "Worst-case post-baseline", "Baseline"))
@@ -422,36 +422,27 @@ Efficacy analyses will be performed on the Full Analysis Set.
 
 	# analyis set and parameters of interest
 	paramVS <- c("HR", "DIABP", "SYSBP", "TEMP")
-	dataVS <- subset(dataAll$ADVS, SAFFL == "Y" & PARAMCD %in% paramVS)
+	dataVS <- subset(dataAll$ADVS, FASFL == "Y" & PARAMCD %in% paramVS)
 	
 	dataVS <- convertVarToFactor(
 		data = dataVS,
-		var = c("PARAM", "ANRIND", "TRTA"),
-		varNum = c("PARAMN", "ANRINDN", "TRTAN")
+		var = c("PARAM", "ANRIND", "TRTA", "SHIFT1"),
+		varNum = c("PARAMN", "ANRINDN", "TRTAN", "SHIFT1N")
 	)
 	
-	dataVSPostBaseline <- subset(dataVS, AVISITN > 0)
+	dataVSWCWithAbn <- subset(dataVS, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
+	dataVSWCWithAbn$SHIFT1 <- droplevels(dataVSWCWithAbn$SHIFT1)
 	
-	# treatment-emergent if differs from baseline or L/H and baseline results are missing
-	dataVSPostBaseline$TRTEMFL <- ifelse(
-		with(dataVSPostBaseline, (ANRIND != BNRIND) | (ANRIND %in% c("L", "H") & BNRIND == "")),
-		"Y", "N"
-	)
-	
-	dataVSPostBaselineTE <- subset(dataVSPostBaseline, TRTEMFL == "Y")
-	
+	dataVSPostBaseline <- subset(dataVS,AVISIT != "Worst-case post-baseline")
+		
 	getSummaryStatisticsTable(
-		data = dataVSPostBaselineTE,
+		data = dataVSWCWithAbn,
 		rowVar = "PARAM", rowVarLab = c(PARAM = "Vital Signs Parameter, n(%)"),
 		colVar = "TRTA", 
-		var = "ANRIND", rowVarInSepCol = "variableGroup", varSubgroupLab = "Worst Case Post-Baseline",
-		# categories should be included in different rows
-		rowAutoMerge = FALSE,
+		var = "SHIFT1", rowVarInSepCol = "variableGroup", varSubgroupLab = "Worst Case Post-Baseline",
+#		varInclude0 = TRUE,
 		stats = getStats("n (%)"),
-		dataTotal = dataTotalAE,
-		# VS at normal not included in the table
-		filterFct = function(x)
-			subset(x, isTotal | variableGroup != "N"), 
+		dataTotal = dataVSPostBaseline, colVarTotalPerc = c("TRTA", "PARAM"),
 		labelVars = labelVars,
 		title = toTitleCase(paste("Table: Treatment-emergent Worst-case",
 			"Vital Sign Abnormalities (Safety Analysis Set)"

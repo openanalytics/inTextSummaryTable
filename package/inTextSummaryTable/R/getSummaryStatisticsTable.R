@@ -28,7 +28,7 @@ getSummaryStatisticsTable <- function(
 	rowTotalLab = NULL,
 	rowInclude0 = FALSE, 
 	rowAutoMerge = TRUE,
-	emptyValue = "-",
+	emptyValue = "0",
 	rowVarTotalPerc = NULL,
 	## column variable
 	colVar = NULL, 
