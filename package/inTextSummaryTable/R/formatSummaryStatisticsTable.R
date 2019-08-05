@@ -87,7 +87,7 @@ formatSummaryStatisticsTable <- function(
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
-	emptyValue = "0",
+	emptyValue = "-",
 	vline = c("none", "auto")
 	){
 		

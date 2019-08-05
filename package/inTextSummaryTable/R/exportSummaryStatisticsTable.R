@@ -28,7 +28,7 @@ exportSummaryStatisticsTable <- function(
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colHeaderTotalInclude = TRUE,
 	statsValueLab = "StatisticValue",
-	emptyValue = "0",
+	emptyValue = "-",
 	labelVars = NULL, 
 	file = NULL, landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 14.4,
