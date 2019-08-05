@@ -810,7 +810,6 @@ computeSummaryStatisticsByRowColVar <- function(
 			)
 		}else{
 			summaryTableVarList <- lapply(var, function(varI){
-						
 				varITotalInclude <- 
 					(is.logical(varTotalInclude) && varTotalInclude) || 
 					varI %in% varTotalInclude
@@ -822,7 +821,7 @@ computeSummaryStatisticsByRowColVar <- function(
 					filterEmptyVar = !varInclude0
 				)
 				# only store the variable if more than one specified variable
-				if(!is.null(sumTable) && length(var) > 1){
+				if(!is.null(sumTable) && nrow(sumTable) > 0 && length(var) > 1){
 					cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
 				}else sumTable
 				
