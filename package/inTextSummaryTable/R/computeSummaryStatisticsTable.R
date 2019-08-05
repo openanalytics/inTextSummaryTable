@@ -26,7 +26,7 @@
 #' (if any, set to NULL if none). By default, category labelled 'Other' is printed last.
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
 #' for which to include the total for each group.
-#' @param rowVarTotalByVar Character vector with extra \code{codeVar}
+#' @param rowVarTotalByVar Character vector with extra \code{rowVar}
 #' for which to compute the row total by.
 #' Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.
 #' @param varGeneralLab String with general label for variable specified in \code{var}.

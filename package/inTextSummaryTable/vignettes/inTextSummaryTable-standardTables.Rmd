@@ -183,7 +183,7 @@ of the table might depends of the study and dataset
 ```{r table-summaryTable}
 
 	# consider only safety analysis set AND TREATMENT-EMERGENT!
-	dataTEAE <- subset(dataAll$ADAE, FASFL == "Y" & TRTEMFL == "Y")
+	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
 	
 	# order treatment and severity categories
 	dataTEAE <- convertVarToFactor(
