@@ -500,7 +500,8 @@ Please note that the content of the table strongly depends on the study.
 	dataAEWC <- ddply(dataTEAE, c("AEDECOD", "USUBJID", "TRTA"), function(x){
 		x[which.max(x$AESEVN), ]
 	})
-	dataAEWC$WORSTINT <- dataAEWC$AESEV
+	# worst-case scenario in lower case
+	dataAEWC$WORSTINT <- simpleCap(tolower(dataAEWC$AESEV))
 	labelVars["WORSTINT"] <- "Worst-case scenario"
 
 	## datasets used for the total: 
@@ -564,6 +565,10 @@ Please note that the content of the table strongly depends on the study.
 		data = dataLBWCWithAbn,
 		var = c("PARCAT1", "PARAM", "TRTA", "SHIFT1"),
 		varNum = c("PARCAT1N", "PARAMN", "TRTAN", "SHIFT1N")
+	)
+	# convert category to lower case
+	dataLBWCWithAbn$PARCAT1 <- factor(dataLBWCWithAbn$PARCAT1, 
+		labels = simpleCap(tolower(levels(dataLBWCWithAbn$PARCAT1)))
 	)
 
 	# shift table or QC versus baseline
