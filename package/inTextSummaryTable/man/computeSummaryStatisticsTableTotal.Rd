@@ -43,6 +43,9 @@ statistics across columns in a separated column.}
 
 \item{colVarLevels}{list with levels of each \code{colVar}}
 
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
+
 \item{labelVars}{named string with variable labels (names are the variable code)}
 }
 \value{

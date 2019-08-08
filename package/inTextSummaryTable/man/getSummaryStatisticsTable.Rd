@@ -168,6 +168,9 @@ can be specified via \code{colVarDataLevels}.}
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
 
+\item{colTotalLab}{String, label for the total column included 
+if \code{colTotalInclude} is TRUE, 'Total' by default.}
+
 \item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
 The names are reported in the header.
 The following variables are recognized, if the table is a: 
@@ -200,6 +203,12 @@ by naming each element of the list:
 list(varName1 = list(...), varName2 = list()) and/or for each element in:
 \code{statsVarBy}, by naming each sublist.}
 
+\item{statsExtra}{(optional) Named list with functions for additional custom
+statistics to be computed, only available for 'summaryTable',
+e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
+Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+and return the corresponding summary statistic.}
+
 \item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
 which the statistics should be computed by.
 In this case, \code{stats} (nested list or not) should be additionally nested
@@ -210,6 +219,9 @@ Only included if no \code{statsVar} if longer than 1.}
 
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
+
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
 
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table 
@@ -240,6 +252,15 @@ or list of such data.frame for each variable (named by variable).}
 \item{dataTotalCol}{Data.frame from which the total across columns is 
 extracted (in case \code{colTotalInclude} is TRUE)
 or list of such data.frame for each \code{rowVar} variable.}
+
+\item{type}{String with type of table: 
+\itemize{
+\item{'summaryTable': }{summary table with custom statistics}
+\item{'countTable': }{count table}
+\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+'countTable' otherwise
+}
+}}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 
