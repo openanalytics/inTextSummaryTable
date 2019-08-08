@@ -562,8 +562,12 @@ computeSummaryStatisticsTable <- function(
 		if(length(idxColTotal) > 0)	summaryTable <- summaryTable[-idxColTotal, ]
 	}
 	
-	if("variableGroup" %in% colnames(summaryTable) && length(unique(subset(summaryTable, !isTotal)$variableGroup)) < 2){
-		summaryTable[, which(colnames(summaryTable) == "variableGroup")] <- NULL
+	# if only flag variables, remove 'variableGroup'
+	# (otherwise empty line when not specifying 'stats')
+	if("variableGroup" %in% colnames(summaryTable)){
+		uniqueGroup <- all(subset(summaryTable, !isTotal)$variableGroup == "")
+		if(uniqueGroup)
+			summaryTable[, which(colnames(summaryTable) == "variableGroup")] <- NULL
 	}
 	
 	# sort columns
