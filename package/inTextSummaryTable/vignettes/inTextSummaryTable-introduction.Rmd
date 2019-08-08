@@ -1421,7 +1421,7 @@ The supporting data displayed in the `flextable` object is outputted to a R
 		style = "presentation",
 		outputType = "data.frame"
 	)
-	kable(summaryTable)
+	pander(summaryTable, split.table = Inf)
 
 ```
 
@@ -1431,10 +1431,6 @@ The supporting data for the summary statistics table, including
 the entire set of statistics (as numeric) and combined statistic set
 is accessed via the
 `computeSummaryStatisticsTable`.
-
-Please note the presence of the `isTotal` column,
-which flags the records containing the number of subjects
-reported in the table header.
 
 ```{r computeSummaryStatisticsTable}
 
@@ -1448,7 +1444,17 @@ reported in the table header.
 		labelVars = labelVars,
 		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
 	)
-	subset(summaryTable, isTotal)
+	pander(summaryTable)
+	
+```	
+
+Please note the presence of the `isTotal` column,
+which flags the records containing the number of subjects
+reported in the table header.
+
+```{r computeSummaryStatisticsTable-isTotal}
+
+	pander(subset(summaryTable, isTotal))
 	
 ```	
 
