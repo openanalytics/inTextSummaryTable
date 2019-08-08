@@ -274,7 +274,8 @@ Please note that the content of the table strongly depends on the study.
 		emptyValue = 0,
 		title = toTitleCase(paste("Prior and concomitant therapies reported in at least",
 			"2 subjects overall by ATC class (level 4) and generic term (full analyis set)"
-		))
+		)),
+		file = file.path("tables_CSR", "Table_CM.docx")
 	)
 	
 ```
@@ -313,7 +314,7 @@ Please note that the content of the table strongly depends on the study.
 		title = paste("Table: %pFEV_{1}", 
 			toTitleCase("actual value and changes from baseline per time point (full analysis set)"				
 		)),
-		file = file.path("tables_CSR", "Table_TEAE_summary.docx")
+		file = file.path("tables_CSR", "Table_pFEV1ChangeFromBaseline.docx")
 	)
 	
 ```
@@ -332,8 +333,8 @@ Please note that the content of the table strongly depends on the study.
 	# order treatment and severity categories
 	dataTEAE <- convertVarToFactor(
 		data = dataTEAE,
-		var = c("TRTA", "AESEV"),
-		varNum = c("TRTAN", "AESEVN")
+		var = c("TRTA"),
+		varNum = c("TRTAN")
 	)
 	
 	# data considered for the total
@@ -354,13 +355,11 @@ Please note that the content of the table strongly depends on the study.
 	# TEAE with worst intensity
 
 	# build worst-case scenario
-	dataTEAE <- ddply(dataTEAE, c("USUBJID", "TRTA"), function(x){
-		maxAESEVN <- max(subset(dataTEAE, TRTEMFL == "Y")$AESEVN)
+	dataTEAE <- ddply(dataTEAE, c("USUBJID", "TRTA"), function(x)
 		cbind.data.frame(x, 
-			WORSTINT = with(x, 
-				ifelse(TRTEMFL == "Y" & AESEVN == maxAESEVN, as.character(AESEV), NA_character_))
-		)
-	})
+			WORSTINT = with(x, ifelse(AESEVN == max(AESEVN), simpleCap(tolower(AESEV)), NA_character_))
+	))
+
 
 	# study-drug related TEAE
 	dataTEAE$TEAEREL <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AREL == "Related", "Y", "N"))
@@ -403,12 +402,13 @@ Please note that the content of the table strongly depends on the study.
 		# dataset used for the total in the header column (and for percentage as default)
 		dataTotal = dataTotalAE,
 		# title/export
-		title = toTitleCase("Table: Summary table of TEAEs (safety analysis set)"),
+		title = toTitleCase("Table: Summary Table of Treatment-emergent Adverse Events (safety analysis set)"),
 		file = file.path("tables_CSR", "Table_TEAE_summary.docx")
 	)
 	
 ```
 
+### Treatment-emergent incidence table
 
 #### Events occuring in at least one subject
 
@@ -484,7 +484,7 @@ Please note that the content of the table strongly depends on the study.
 
 ```
 
-### Severity
+### Treatment-emergent worst-case table
 
 ```{r tableTEAE-worstCase}
 
