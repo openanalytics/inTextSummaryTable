@@ -80,6 +80,9 @@ used as denominator for the percentage computation, by default same as \code{col
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
 
+\item{colTotalLab}{String, label for the total column included 
+if \code{colTotalInclude} is TRUE, 'Total' by default.}
+
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
@@ -127,6 +130,18 @@ used as denominator for the percentage computation.
 By default the total is only computed by column (NULL by default).
 If the total should be based on the total number of records per variable,
 \code{rowVarTotalPerc} should be set to 'variable'.}
+
+\item{type}{String with type of table: 
+\itemize{
+\item{'summaryTable': }{summary table with custom statistics}
+\item{'countTable': }{count table}
+\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+'countTable' otherwise
+}
+}}
+
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
 
 \item{dataTotal}{Data.frame used to extract the Total count per column, indicated
 in 'N' in column header.
@@ -181,6 +196,12 @@ list(varName1 = list(...), varName2 = list()) and/or for each element in:
 which the statistics should be computed by.
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}
+
+\item{statsExtra}{(optional) Named list with functions for additional custom
+statistics to be computed, only available for 'summaryTable',
+e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
+Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+and return the corresponding summary statistic.}
 
 \item{statsGeneralLab}{String with general label for statistics, 'Statistic' by default.
 Only included if no \code{statsVar} if longer than 1.}

@@ -31,6 +31,15 @@ Either:
 \item{a character vector containing \code{var} for which the total should be included}
 }}
 
+\item{type}{String with type of table: 
+\itemize{
+\item{'summaryTable': }{summary table with custom statistics}
+\item{'countTable': }{count table}
+\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
+'countTable' otherwise
+}
+}}
+
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
@@ -54,7 +63,16 @@ can be specified via \code{colVarDataLevels}.}
 \item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
 (in case of non nested column variable(s)).}
 
+\item{subjectVar}{String, variable of \code{data} with subject ID,
+'USUBJID' by default.}
+
 \item{labelVars}{named string with variable labels (names are the variable code)}
+
+\item{statsExtra}{(optional) Named list with functions for additional custom
+statistics to be computed, only available for 'summaryTable',
+e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
+Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
+and return the corresponding summary statistic.}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',

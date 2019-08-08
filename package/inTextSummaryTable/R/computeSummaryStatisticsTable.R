@@ -86,6 +86,7 @@
 #' @inheritParams computeSummaryStatisticsTableTotal
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @inheritParams getStatisticsSummaryStatisticsTable
+#' @inheritParams convertVarToFactorWithOrder
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; or list of such data.frame if
 #' \code{byVar} is specified.
@@ -450,7 +451,7 @@ computeSummaryStatisticsTable <- function(
 		if(!is.null(colVarTotal)){
 			dataTotal[, colVarTotal] <- lapply(colVarTotal, function(var)
 				if(is.factor(summaryTable[, var])){
-					factor(dataTotal[, var], levels = levels(summaryTable[, var]))
+					factor(dataTotal[, var], levels = colVarLevels[[var]])
 				}else dataTotal[, var]
 			)
 		}
@@ -565,7 +566,7 @@ computeSummaryStatisticsTable <- function(
 	# if only flag variables, remove 'variableGroup'
 	# (otherwise empty line when not specifying 'stats')
 	if("variableGroup" %in% colnames(summaryTable)){
-		uniqueGroup <- all(subset(summaryTable, !isTotal)$variableGroup == "")
+		uniqueGroup <- all(summaryTable[which(!summaryTable$isTotal), "variableGroup"] == "")
 		if(uniqueGroup)
 			summaryTable[, which(colnames(summaryTable) == "variableGroup")] <- NULL
 	}
@@ -728,6 +729,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' \item{a character vector containing \code{var} for which the total should be included}
 #' }
 #' @inheritParams convertVarToFactorWithOrder
+#' @inheritParams computeSummaryStatistics
 #' @inheritParams glpgUtilityFct::getLabelVar
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,

@@ -103,7 +103,10 @@ getMaxNDecimalsData <- function(x)
 #' \item{missing value (NA) (class without valid data): }{'-'}
 #' \item{other: }{'x.x\%' (1 decimal)}
 #' }
-#' @param x Numeric with percentage
+#' @param x Numeric vector with percentage(s)
+#' @param nDec Integer of length 1, number
+#' of decimals used to round the percentage,
+#' 1 by default.
 #' @return String with formatted percentage
 #' @author Laure Cougnaud
 #' @examples

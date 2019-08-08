@@ -4,7 +4,7 @@ author: "Laure Cougnaud"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: glpgStyle::html_report
 vignette: >
-  %\VignetteIndexEntry{Introduction to the `inTextSummaryTable` package}
+  %\VignetteIndexEntry{Introduction to the inTextSummaryTable package}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -16,13 +16,16 @@ vignette: >
 	library(knitr)
 	opts_chunk$set(
 		echo = TRUE, results = 'markup', warning = FALSE, 
-		error = FALSE, message = FALSE, cache = FALSE,
+		# stop document execution if error (not the default)
+		error = FALSE, 
+		message = FALSE, cache = FALSE,
 		fig.width = 8, fig.height = 7,
 		fig.path = "./figures_vignette/",
-		#out.width = '0.7\\textwidth', 
-		fig.align = 'center')#, out.height = 0.5\\textwidth', fig.path = 'graphs/') 
-	options(width = 170)#, stringsAsFactors = FALSE
-	options(warn = 1)#instead of warn = 0 by default -> to have place where warnings occur in the call to Sweave function
+		fig.align = 'center')
+	options(width = 170)
+	# instead of warn = 0 by default
+	# include warnings when they occur in the document
+	options(warn = 1)
 	
 ```
 
@@ -37,6 +40,7 @@ Each table can be exported into a `docx` document.
 ```{r loadPackages}
 
 	library(inTextSummaryTable)
+	library(pander)
 
 ```
 

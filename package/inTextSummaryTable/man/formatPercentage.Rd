@@ -7,7 +7,11 @@
 formatPercentage(x, nDec = 1)
 }
 \arguments{
-\item{x}{Numeric with percentage}
+\item{x}{Numeric vector with percentage(s)}
+
+\item{nDec}{Integer of length 1, number
+of decimals used to round the percentage,
+1 by default.}
 }
 \value{
 String with formatted percentage
