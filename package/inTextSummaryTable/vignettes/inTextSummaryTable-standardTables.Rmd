@@ -382,7 +382,6 @@ Please note that the content of the table strongly depends on the study.
 		# sort rows based on the total column:
 		rowOrder = "total", 
 		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Total"),
-		colTotalInclude = TRUE,
 		title = paste("Table: Treatment-emergent Adverse Events by System Organ Class",
 			"and Preferred Term (Safety Analysis Set)"
 		),
@@ -440,7 +439,7 @@ Please note that the content of the table strongly depends on the study.
 	
 	# extract worst-case scenario data (only one record if multiple with same severity)
 	dataAEWC <- ddply(dataTEAE, c("AEDECOD", "USUBJID", "TRTA"), function(x){
-		x[seq_len(nrow(x)) == which.max(x$AESEV), ]
+		x[which.max(x$AESEVN), ]
 	})
 	dataAEWC$WORSTINT <- dataAEWC$AESEV
 	labelVars["WORSTINT"] <- "Worst-case scenario"
@@ -451,11 +450,11 @@ Please note that the content of the table strongly depends on the study.
 	dataTotalRow <- list(
 		# within SOC (across AEDECOD)
 		'AEDECOD' = ddply(dataAEWC, c("AESOC", "USUBJID", "TRTA"), function(x){	
-			x[seq_len(nrow(x)) == which.max(x$WORSTINT), ]
+			x[which.max(x$AESEVN), ]
 		}),
 		# across SOC
 		'AESOC' = ddply(dataAEWC, c("USUBJID", "TRTA"), function(x){	
-			x[seq_len(nrow(x)) == which.max(x$WORSTINT), ]
+			x[which.max(x$AESEVN), ]
 		})
 	)
 	
@@ -517,11 +516,10 @@ Please note that the content of the table strongly depends on the study.
 		rowVarLab = c('PARCAT1' = "Laboratory Parameter\nn (%)"),
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
-		# TO ASK: should the rows be ordered based on the total also for the worst-case column?
-		rowOrder = "total",
+		rowOrder = c("PARCAT1" = "total", "PARAM" = "total", "variableGroup" = "auto"),
 		dataTotal = dataLBPostBaseline, rowVarTotalPerc = "PARAM",
 		title = toTitleCase(paste("Table: Treatment-emergent",
-			"Worst-case Laboratory Abnormalities (safety analysis set))"
+			"Worst-case Laboratory Abnormalities (safety analysis set)"
 		)),
 		emptyValue = "0",
 		file = file.path("tables_CSR", "Table_Lab_Severity.docx")
@@ -544,22 +542,30 @@ Please note that the content of the table strongly depends on the study.
 	
 	# worst-case scenario:
 	dataECGWC <- subset(dataECG, AVISIT == "Worst-case post-baseline")
+	# treatment-emergent
+	dataECGWC$TRTEMFL <- with(dataECGWC, ifelse(BASECAT1 != CHGCAT1, "Y", "N"))
+	dataECGWCTE <- subset(dataECGWC, TRTEMFL == "Y")
 	dataECGWC <- convertVarToFactor(dataECGWC, 
 		var = c("AVALCAT1", "CHGCAT1"), 
 		varNum = c("AVALCA1N", "CHGCAT1N")
 	)
 	
-	# treatment-emergent (a flag should be included in the data)
-	# if absnormality is worse compared to baseline
-	dataECGWC$TRTEMFL <- with(dataECGWC, ifelse(AVALCAT1 == "" | AVALCA1N > BASECA1N, "Y", "N"))
+	# treatment-emergent if abnormality is worse compared to baseline
+	# (abnormal category for change from baseline is always treatment-emergent)
+#	idxTEAVAL <- with(dataECGWC, AVALCAT1 == "" | AVALCA1N > BASECA1N)
+#	dataECGWC[which(!idxTEAVAL), "AVALCAT1"] <- NA_character_
 	
 	# create the table
 	getSummaryStatisticsTable(
 		data = dataECGWC,
+		# layout:
 		colVar = "TRTA",
 		rowVar = "PARAM", rowVarLab = c('PARAM' = "ECG Parameter"),
+		# metrics to compute statistics on
 		var = c("AVALCAT1", "CHGCAT1"),
+		# in a separated column
 		rowVarInSepCol = c("variable", "variableGroup"),
+		# labels
 		varGeneralLab = "Abnormality",
 		varSubgroupLab = "Worst-Case Post-Baseline",
 		stats = getStats("n (%)"),
@@ -570,8 +576,12 @@ Please note that the content of the table strongly depends on the study.
 		rowVarTotalPerc = "PARAM", # total per parameter
 		# ensure that categories are below the type of abnormality
 		rowAutoMerge = FALSE,
+		# only retain abnormalities:
+		filterFct = function(x){
+			subset(x, !variableGroup %in% c("<= 450 msec", "<= 30 msec"))
+		},
 		title = toTitleCase(paste("Table: Treatment-emergent worst-case",
-			"ECG abnormalities and change from baseline ECH abnormalities (safety analysis set)"
+			"ECG abnormalities and change from baseline ECG abnormalities (safety analysis set)"
 		)),
 		file = file.path("tables_CSR", "Table_ECG.docx")
 	)

@@ -762,8 +762,9 @@ The adverse events are sorted based on the incidence in the treated group.
 
 ##### Row order based on a custom specified function
 
-If the method to order the rows is more complex, a function can be specified for
-the`rowOrder` parameter.
+If the method to order the rows is more complex, the `rowOrder` parameter specifies
+a function taking the summary table as input and returning the order
+levels of the elements in the row variable.
 
 For example, the adverse event table is sorted based on the counts of patient
 presenting this event across all treatment classes, and in case of ties based on 
@@ -858,15 +859,15 @@ subject-level (`ADSL`) dataset.
 ```{r countTable-LB-customDenominator}
 
 	# dataset used to extract the 'Total'
-	dataTotal <- subset(dataAll$ADSL, TRT01P != "Screen Failure")
+	dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Screen Failure")
 	# should contain columns specified in 'colVar'
-	dataTotal$TRTP <- dataTotal$TRT01P 
+	dataTotalAE$TRTA <- dataTotalAE$TRT01A 
 	
 	# by default, total number of subjects extracted from data
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
@@ -877,12 +878,12 @@ subject-level (`ADSL`) dataset.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars
 	)
 
@@ -910,8 +911,7 @@ with available post-dose measurements **per laboratory parameter**.
 	dataLBPostBaseline <- subset(dataLB, !AVISIT %in% c("Baseline", "Screening", "Worst-case post-baseline"))
 	
 	# post-baseline measurements  are not available for all subjects 
-	library(plyr)
-	pander(dataLBPostBaseline %>% group_by(PARAM, TRTA) %>% dplyr::summarise(`# subjects` = n_distinct(USUBJID)))
+	pander(aggregate(USUBJID ~ PARAM + TRTA, data = dataLBPostBaseline, n_distinct))
 	
 	# by default, the same total number of subjects 
 	# per treatment is used across all rows/parameters
@@ -930,18 +930,23 @@ with available post-dose measurements **per laboratory parameter**.
 		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
 		stats = getStats("n (%)"),
 		emptyValue = 0, rowAutoMerge = FALSE,
-		dataTotal = dataLBPostBaseline, rowVarTotalPerc = "PARAM"
+		# total for column header
+		dataTotal = dataLBPostBaseline, 
+		dataTotalPerc = dataLBPostBaseline,
+		rowVarTotalPerc = "PARAM"
 	)
 	
 ```
 
 ### Total number of subjects across columns {#colTotal}
 
-The total of the number of subjects across all columns is included 
+The total of the number of subjects **across all columns** is included 
 if the `colTotalInclude` is set to TRUE.
 
-A subject presenting the **same event in multiple column(s) are counted once**
+By default, the total number of subjects is extracted based on the
+input dataset across columns: subjects presenting the **same event in multiple column(s) are counted once**
 in the column total (e.g. for adverse event table in a context of cross-over experiment).
+A different dataset for the total column can also be specified via the `dataTotalCol` parameter.
 
 This column is by default labelled 'Total', but this can be customized with the
 `colTotalLab` parameter.
@@ -989,7 +994,8 @@ with the label specified in `rowTotalLab`.
 
 ```
 
-The total can also be included for each elements in the nested row variable.
+In case multiple row variables are specified, the total can also
+be included for each of this variable.
 In this case, the total is by default included in the header of each category
 of this variable.
 
@@ -1026,6 +1032,65 @@ variable is additionally specified in `rowVarTotalInSepRow`.
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
 		dataTotal = dataTotal,
+		labelVars = labelVars
+	)
+
+```
+
+A different dataset considered for the row total is specified via the 
+`dataTotalRow` parameter.
+
+For example, in the worst-case treatment-emergent adverse events table, the total
+per SOC and across SOCs should count the patient once per severity class.
+
+For example, the patient: '202-4903-03' present a moderate severity for headache, and mild severity
+for the chest injury and fall, but is only counted in the once in the table total.
+
+```{r dataTotalRow}
+
+	dataTEAEInterest <- subset(
+		dataAll$ADAE, 
+		SAFFL == "Y" & TRTEMFL == "Y" &
+		AESOC %in% c("Injury, poisoning and procedural complications", "Nervous system disorders")
+	)
+
+	# extract worst-case scenario data (only one record if multiple with same severity)
+	dataTEAEInterestWC <- ddply(dataTEAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x){
+		x[which.max(x$AESEVN), ]
+	})
+	pander(ddply(dataTEAEInterestWC[, c("USUBJID", "TRTA", "AESOC", "AEDECOD", "AESEV", "AESEVN")], "USUBJID"), split.tables = Inf)
+
+	## datasets used for the total: 
+	# for total: compute worst-case across SOC and across AE term
+	# (otherwise patient counted in multiple categories if present different categories for different AEs)
+	dataTotalRow <- list(
+		# within SOC (across AEDECOD)
+		'AEDECOD' = ddply(dataTEAEInterestWC, c("AESOC", "USUBJID", "TRTA"), function(x){	
+			x[which.max(x$AESEVN), ]
+		}),
+		# across SOC
+		'AESOC' = ddply(dataTEAEInterestWC, c("USUBJID", "TRTA"), function(x){	
+			x[which.max(x$AESEVN), ]
+		})
+	)
+
+	getSummaryStatisticsTable(
+		data = dataTEAEInterestWC,
+		## row variables:
+		rowVar = c("AESOC", "AEDECOD", "AESEV"), rowVarInSepCol = "AESEV",
+		# include total across SOC and across AEDECOD
+		dataTotal = dataTotalAE, # total for column header and denominator
+		rowVarTotalInclude = c("AESOC", "AEDECOD"), 
+		dataTotalRow = dataTotalRow, # data for total row
+		rowVarTotalByVar = "AESEV", # count for each severity category for the total
+		rowTotalLab = "Any TEAE", 
+		rowVarLab = c(AESOC = "Subjects with, n(%):", AESEV = "Worst-case scenario"),
+		# sort per total in the total column
+		rowOrder = "total", 
+		## column variables
+		colVar = "TRTA", 
+		stats = getStats("n (%)"),
+		emptyValue = "0",
 		labelVars = labelVars
 	)
 
