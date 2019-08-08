@@ -36,7 +36,6 @@ Each table can be exported into a `docx` document.
 
 ```{r loadPackages}
 
-	library(pander)
 	library(inTextSummaryTable)
 
 ```
@@ -696,7 +695,7 @@ This variable is either:
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", colTotalInclude = TRUE,
+		colVar = "TRTP", colTotalInclude = TRUE, colTotalLab = "Number of subjects",
 		rowOrder = "total",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
@@ -708,7 +707,7 @@ This variable is either:
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
 		colVar = "TRTP", 
-		rowOrder = "total", colTotalInclude = TRUE, colTotalLab = "Number of subjects",
+		rowOrder = "total", 
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
@@ -911,7 +910,7 @@ with available post-dose measurements **per laboratory parameter**.
 	dataLBPostBaseline <- subset(dataLB, !AVISIT %in% c("Baseline", "Screening", "Worst-case post-baseline"))
 	
 	# post-baseline measurements  are not available for all subjects 
-	pander(aggregate(USUBJID ~ PARAM + TRTA, data = dataLBPostBaseline, n_distinct))
+	kable(aggregate(USUBJID ~ PARAM + TRTA, data = dataLBPostBaseline, function(x) length(unique(x))))
 	
 	# by default, the same total number of subjects 
 	# per treatment is used across all rows/parameters
@@ -956,13 +955,13 @@ This column is by default labelled 'Total', but this can be customized with the
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		colTotalInclude = TRUE, colTotalLab = "All subjects",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars
 	)
 
@@ -983,12 +982,12 @@ with the label specified in `rowTotalLab`.
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarTotalInclude = "AESOC", rowTotalLab = "Any AE", 
 		rowVarTotalInSepRow = "Any AE",
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars
 	)
 
@@ -1005,12 +1004,12 @@ of this variable.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarTotalInclude = "AEDECOD", 
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars
 	)
 
@@ -1026,12 +1025,12 @@ variable is additionally specified in `rowVarTotalInSepRow`.
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarTotalInclude = "AEDECOD",
 		rowVarTotalInSepRow = "AEDECOD",
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars
 	)
 
@@ -1058,7 +1057,7 @@ for the chest injury and fall, but is only counted in the once in the table tota
 	dataTEAEInterestWC <- ddply(dataTEAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x){
 		x[which.max(x$AESEVN), ]
 	})
-	pander(ddply(dataTEAEInterestWC[, c("USUBJID", "TRTA", "AESOC", "AEDECOD", "AESEV", "AESEVN")], "USUBJID"), split.tables = Inf)
+	kable(ddply(dataTEAEInterestWC[, c("USUBJID", "TRTA", "AESOC", "AEDECOD", "AESEV", "AESEVN")], "USUBJID"), split.tables = Inf)
 
 	## datasets used for the total: 
 	# for total: compute worst-case across SOC and across AE term
@@ -1108,12 +1107,12 @@ This is not displayed if `colHeaderTotalInclude` is set to FALSE.
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarTotalInclude = "AEDECOD",
 		rowVarTotalInSepRow = "AEDECOD",
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
 		),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars,
 		colHeaderTotalInclude = FALSE
 	)
@@ -1143,9 +1142,9 @@ is used to set title case for the title of the summary statistics table.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars,
 		title = toTitleCase("MOR106-CL-102: Adverse Events by System Organ Class and Preferred Term (Safety Analysis Set, Part 1)"),
 		footer = c(
@@ -1338,9 +1337,9 @@ By default, the table is styled for a CSR report.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars,
 		title = "Table: Adverse Events by System Organ Class and Preferred Term",
 		footer = c(
@@ -1360,9 +1359,9 @@ In this case, the color/style follows _Galapagos_ style guidelines.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars,
 		title = "Table: Adverse Events by System Organ Class and Preferred Term",
 		footer = c(
@@ -1405,9 +1404,9 @@ The supporting data displayed in the `flextable` object is outputted to a R
 	summaryTable <- getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars,
 		title = "Table: Adverse Events by System Organ Class and Preferred Term",
 		footer = c(
@@ -1418,7 +1417,7 @@ The supporting data displayed in the `flextable` object is outputted to a R
 		style = "presentation",
 		outputType = "data.frame"
 	)
-	pander(summaryTable)
+	kable(summaryTable)
 
 ```
 
@@ -1439,9 +1438,9 @@ reported in the table header.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		labelVars = labelVars,
 		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
 	)
@@ -1499,10 +1498,10 @@ or related to the treatment and with high severity.
 	# create the table
 	getSummaryStatisticsTable(
 		data = dataAEGroup,
-		colVar = "TRTP", 
+		colVar = "TRTA", 
 		rowVar = "AEGRP", 
 		labelVars = labelVars,
-		dataTotal = dataTotal,
+		dataTotal = dataTotalAE,
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		title = "Table: Adverse events: counts for groups of interest",
 		footer = "Statistics: n (%)"

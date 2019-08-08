@@ -1149,7 +1149,8 @@ convertVarToFactorWithOrder <- function(
 		
 	}else{
 		
-		varLevels <- method(data)
+		varLevels <- as.character(method(data))
+		varLevels <- c(varLevels, setdiff(as.character(unique(data[, var])), varLevels))
 		res <- factor(data[, var], levels = varLevels)
 		
 	}

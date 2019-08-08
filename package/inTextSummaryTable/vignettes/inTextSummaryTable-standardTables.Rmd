@@ -238,13 +238,16 @@ Please note that the content of the table strongly depends on the study.
 		rowVar = "CMDECOD", 
 		rowVarLab = c(CMDECOD = "Prior and Concomitant Therapy, n(%)"),
 		stats  = getStats("n (%)"),
-		# TODO: add possibility to specify directly columns to order by?
-#		rowOrder = function(summaryTable){
-#			dataTotal <- subset(summaryTable, grepl("All subjects", TRTP))
-#			dataTreatment <- subset(summaryTable, grepl("treatmentX", TRTP))
-#			dataAll <- merge(dataTotal, dataTreatment, by = "CMDECOD", suffixes = c(".total", ".treated"))
-#			dataAll[order(dataAll[, c("statPercN.total", "statPercN.treated")]), "CMDECOD"]
-#		},
+		# sort rows based on counts of subjects in the total column and then treatment if ties
+		rowOrder = function(summaryTable){
+			table <- ddply(summaryTable, "CMDECOD", function(x){
+				c(
+					total = subset(x, grepl("All subjects", TRTP))$statN,
+					treatment = subset(x, grepl("treatmentX", TRTP))$statN	
+				)
+			})
+			with(table, CMDECOD[order(total, treatment, decreasing = TRUE)])
+		},
 		filterFct = function(summaryTable){
 			ddply(summaryTable, "CMDECOD", function(xTerm){
 				dataTotal <- subset(xTerm, grepl("All subjects", TRTP))
