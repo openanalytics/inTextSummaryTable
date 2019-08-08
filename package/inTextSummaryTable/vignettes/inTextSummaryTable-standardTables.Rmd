@@ -262,6 +262,45 @@ Please note that the content of the table strongly depends on the study.
 	
 ```
 
+# Efficacy Analyses
+
+```{r table-spirometry}
+
+	dataPFEV1 <- subset(dataAll$ADRE, 
+		FASFL == "Y" & PARAMCD == "FEV1PP" &
+		(
+			AVISIT == "Baseline" |
+			# retain only: valid spirometry assessment (CRIT1)
+			(AVISIT %in% c("Day 14", "Day 28", "Follow-up") & CRIT1FL == "Y")
+		)
+	)
+	
+	dataPFEV1 <- convertVarToFactor(dataPFEV1, 
+		var = c("TRTP", "AVISIT"), 
+		varNum = c("TRTPN", "AVISITN")
+	)
+
+	statsEff <- sapply(c("AVAL", "CHG"), function(var){
+		getStats(
+			type = c("n", "mean (se)", "median (range)"),
+			x = dataPFEV1[[var]]
+		)
+	}, simplify = FALSE)
+	
+	getSummaryStatisticsTable(
+		data = dataPFEV1,
+		colVar = c("TRTP", "AVISIT"),
+		var = c("AVAL", "CHG"), varGeneralLab = "",
+		stats = statsEff,
+		labelVars = labelVars,
+		title = paste("Table: %pFEV_{1}", 
+			toTitleCase("actual value and changes from baseline per time point (full analysis set)"				
+		)),
+		file = file.path("tables_CSR", "Table_TEAE_summary.docx")
+	)
+	
+```
+
 # Safety Analyses
 
 ## Adverse Events
