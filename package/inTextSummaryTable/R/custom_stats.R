@@ -6,6 +6,7 @@
 #' \itemize{
 #' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 #' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
+#' \item{'n': }{number of subjects}
 #' \item{'n (\%)': }{number of subjects (percentage)}
 #' \item{'median (range)': }{median (minimum, maximum)}
 #' \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
@@ -36,6 +37,7 @@
 #' # for count table:
 #' getStats("count")
 #' getStats("n (%)")
+#' getStats("n")
 #' # for continuous variable:
 #' getStats("summary")
 #' getStats("mean (se)")
@@ -66,7 +68,7 @@ getStats <- function(
 	type <- match.arg(
 		type,
 		choices = c(
-			"summary", "count", "n (%)", 
+			"summary", "count", "n", "n (%)", 
 			"median (range)", "median\n(range)",
 			"mean (se)", "mean (range)"
 		),
@@ -109,12 +111,12 @@ getStats <- function(
 		}
 	)
 	
-	stats <- c(
-		if("summary" %in% type)	
-			statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
-		if("count" %in% type)	statsBase[c("n", "%", "m")],
-		if('n (%)' %in% type)
-			list('n (%)' = 
+	statsList <- sapply(type, function(typeI){
+		switch(typeI,
+			summary = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
+			count = statsBase[c("n", "%", "m")],
+			n = statsBase["n"],
+			`n (%)` = list('n (%)' = 
 				bquote(
 					ifelse(
 						is.na(statPercN), "-",
@@ -124,34 +126,32 @@ getStats <- function(
 					)
 				)
 			),
-		if('median (range)' %in% type)	
-			list('Median (range)' = 
+			`median (range)` = list('Median (range)' = 
 				bquote(paste0(
 					.(statsBase$Median), 
 					" (", .(statsBase$Min), ",", .(statsBase$Max), ")"
 				))
 			),
-		if('median\n(range)' %in% type)
-			list('Median\n(range)' = 
+			`median\n(range)` = list('Median\n(range)' = 
 				bquote(paste0(
 					.(statsBase$Median), 
 					"\n(", .(statsBase$Min), ",", .(statsBase$Max), ")"
 				))
 			),
-		if('mean (se)' %in% type)
-			list('Mean (SE)' = 
+			`mean (se)` = list('Mean (SE)' = 
 				bquote(paste0(.(statsBase$Mean), " (", .(statsBase$SE),  ")"))
 			),
-		if('mean (range)' %in% type)
-			list('Mean (range)' = 
+			`mean (range)` = list('Mean (range)' = 
 				bquote(paste0(
 					.(statsBase$Mean), 
 					" (", .(statsBase$Min), ",", .(statsBase$Max), ")"
 				))
 			)
-	)
+		)
+	}, simplify = FALSE)
+	stats <- unlist(unname(statsList), recursive = FALSE)
 	
-	if(any(duplicated(names(type))))
+	if(any(duplicated(names(stats))))
 		warning("Returned statistics have duplicated names (you probably included multiple 'type' statistics).",
 			"Be sure to provide only one statistic with the same name to the in-text table functions.")
 	

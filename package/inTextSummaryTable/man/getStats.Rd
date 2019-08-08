@@ -13,6 +13,7 @@ getStats(type = "summary", includeName = TRUE, x = NULL,
 \itemize{
 \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
+\item{'n': }{number of subjects}
 \item{'n (\%)': }{number of subjects (percentage)}
 \item{'median (range)': }{median (minimum, maximum)}
 \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
@@ -55,6 +56,7 @@ of the \code{\link{computeSummaryStatisticsTable}} function.
 # for count table:
 getStats("count")
 getStats("n (\%)")
+getStats("n")
 # for continuous variable:
 getStats("summary")
 getStats("mean (se)")
