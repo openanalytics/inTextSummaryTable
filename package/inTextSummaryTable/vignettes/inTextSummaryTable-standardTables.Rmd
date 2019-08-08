@@ -112,6 +112,7 @@ of the table might depends of the study and dataset
 		labels = c("<18", "[18,65[", "[65,85[", ">=85"),
 		right = FALSE
 	))
+	labelVars["AGEC"] <- labelVars["AGE"]
 	dataDM$DIAGDURYC <- droplevels(cut(
 		dataDM$DIAGDURY, 
 		breaks = c(-Inf, 1, 2, 5, 10, 20, Inf), 
@@ -128,17 +129,25 @@ of the table might depends of the study and dataset
 	)
 	
 	## Reformat labels:
-	labelVars["SEXC"] <- "Gender" # use 'Gender' and not 'Sex' label
-	labelVars["BMIBLGR1"] <- sub(" group", "", labelVars["BMIBLGR1"])
-	labelVars["AGEC"] <- labelVars["AGE"] <- "Age (years)"
+	labelsDM <- labelVars[varsDM]
+	# add unit for age
+	labelsDM["AGEC"] <- labelsDM["AGE"] <- "Age (years)"
+	# for sex: gender instead of sex
+	labelsDM["SEXC"] <- "Gender"
+	# set unit at the end of the label
+	labelsDM <- sub("(.*)( \\(.+\\))(.*)", "\\1\\3\\2", labelsDM)
+	labelsDM["BMIBLGR1"] <- sub(" group", "", labelsDM["BMIBLGR1"])
+	labelsDM <- sub("kg/m2", "kg/m^{2}", labelsDM)
+	
+	# set Race in lower-case (if not already in ADaM)
 	dataDM$RACE <- factor(dataDM$RACE, 
 		levels = levels(dataDM$RACE), 
 		labels = simpleCap(tolower(levels(dataDM$RACE)))
-	) # lower-case (if not already in ADaM)
+	) 
 	
 	# Add details count stat for categorical variable:
 	idxDMCat <- !colwise(is.numeric)(dataDM[, varsDM])
-	labelVars[varsDM[idxDMCat]] <- paste0(labelVars[varsDM[idxDMCat]], ", n (%)")
+	labelsDM[idxDMCat] <- paste0(labelsDM[idxDMCat], ", n (%)")
 	
 	## Define set of statistics of interest:
 	# 'Median (range)' for continuous variable
@@ -156,7 +165,7 @@ of the table might depends of the study and dataset
 	getSummaryStatisticsTable(
 		data = dataDM, 
 		# variables to summarize
-		var = varsDM,
+		var = varsDM, varLab = labelsDM,
 		varGeneralLab = "Parameter",
 		# column
 		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
@@ -184,8 +193,6 @@ Please note that the content of the table strongly depends on the study.
 
 	# variables of interest
 	varsBDC <- c("ORKTDURW", "SWBL", "PFEVBL", "PFEVGR1", "F508DYN", "SMOKE")
-	idxBDCCat <- !colwise(is.numeric)(dataBDC[, varsBDC])
-	labelVars[varsBDC[idxBDCCat]] <- paste0(labelVars[varsBDC[idxBDCCat]], ", n (%)")
 	
 	# sort variable according to corresponding numeric variables
 	dataBDC <- convertVarToFactor(
@@ -203,10 +210,20 @@ Please note that the content of the table strongly depends on the study.
 
 	dataBDC$SMOKE <- factor(dataBDC$SMOKE, labels = simpleCap(tolower(unique(dataBDC$SMOKE))))
 	
+	# format labels (if needed)
+	labelsBDC <- labelVars[varsBDC]
+	labelsBDC <- sub(" group", "", sub("%FEV1", "pFEV_{1} (%)", labelsBDC))
+	# add 'n (%)' in label for categorical variables
+	idxBDCCat <- !colwise(is.numeric)(dataBDC[, varsBDC])
+	labelsBDC[idxBDCCat] <- paste0(labelsBDC[idxBDCCat], ", n (%)")
+	dataBDC$PFEVGR1 <- factor(dataBDC$PFEVGR1, 
+		labels = sub("Baseline %FEV1 ", "",levels(dataBDC$PFEVGR1))
+	)
+	
 	# create table
 	getSummaryStatisticsTable(
 		data = dataBDC,
-		var = varsBDC, varGeneralLab = "Parameter",
+		var = varsBDC, varGeneralLab = "Parameter", varLab = labelsBDC,
 		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
 		stats = stats, statsGeneralLab = "",
 		rowAutoMerge = FALSE,
