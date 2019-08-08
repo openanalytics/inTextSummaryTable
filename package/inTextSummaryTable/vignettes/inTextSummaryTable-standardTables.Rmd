@@ -247,33 +247,33 @@ Please note that the content of the table strongly depends on the study.
 		varNum = c("TRTPN")
 	)
 	
+	# Terms should be in lower-case
 	dataCM$CMDECOD <- simpleCap(tolower(dataCM$CMDECOD))
+	dataCM$ATC4NME <- simpleCap(tolower(dataCM$ATC4NME))
+	# if missing ATC4 class, set it to: 'Other'
+	dataCM$ATC4NME[dataCM$ATC4NME %in% c("", ".")] <- "Other"
 	
 	getSummaryStatisticsTable(
 		data = dataCM,
 		colVar = "TRTP", colTotalInclude = TRUE, colTotalLab = "All subjects",
-		rowVar = "CMDECOD", 
-		rowVarLab = c(CMDECOD = "Prior and Concomitant Therapy, n(%)"),
-		stats  = getStats("n (%)"),
+		rowVar = c("ATC4NME", "CMDECOD"), 
+		rowVarLab = c(ATC4NME = "ATC class", CMDECOD = "Generic term, n(%)"),
+		# include total across generic terms and across ATC4 classes
+		rowVarTotalInclude = c("ATC4NME", "CMDECOD"), 
+		rowTotalLab = "Any prior and concomitant medication",
+		stats = getStats("n (%)"),
 		# sort rows based on counts of subjects in the total column and then treatment if ties
-		rowOrder = function(summaryTable){
-			table <- ddply(summaryTable, "CMDECOD", function(x){
-				c(
-					total = subset(x, grepl("All subjects", TRTP))$statN,
-					treatment = subset(x, grepl("treatmentX", TRTP))$statN	
-				)
-			})
-			with(table, CMDECOD[order(total, treatment, decreasing = TRUE)])
-		},
+		rowOrder = "total",
 		filterFct = function(summaryTable){
-			ddply(summaryTable, "CMDECOD", function(xTerm){
-				dataTotal <- subset(xTerm, grepl("All subjects", TRTP))
-				if(xTerm$isTotal || dataTotal$statPercN > 10)	xTerm
-			})
+			ddply(summaryTable, "ATC4NME", function(xATC4)
+				ddply(xATC4, "CMDECOD", function(xTerm)
+					if(subset(xTerm, grepl("All subjects", TRTP))$statN >= 2)	xTerm
+				)
+			)
 		},
 		emptyValue = 0,
-		title = toTitleCase(paste("Prior and concomitant therapies taken by at least",
-			"10% of subjects overall (full analyis set)"
+		title = toTitleCase(paste("Prior and concomitant therapies reported in at least",
+			"2 subjects overall by ATC class (level 4) and generic term (full analyis set)"
 		))
 	)
 	
