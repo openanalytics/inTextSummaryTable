@@ -236,8 +236,8 @@ and \code{colVar}/\code{rowVar} is NA}
 Note: the total count per category of the row variables is included
 in a row with this variable set to 'Total'.}
 
-\item{dataTotal}{Data.frame used to extract the Total count per column, indicated
-in 'N' in column header.
+\item{dataTotal}{Data.frame used to extract the Total number of subject
+per column in column header ('N = [X]').
 It should contain the variables specified by \code{colVarTotal}.}
 
 \item{dataTotalPerc}{Data.frame used to extract the Total count per column, 
@@ -251,7 +251,14 @@ or list of such data.frame for each variable (named by variable).}
 
 \item{dataTotalCol}{Data.frame from which the total across columns is 
 extracted (in case \code{colTotalInclude} is TRUE)
-or list of such data.frame for each \code{rowVar} variable.}
+or list of such data.frame for each \code{rowVar} variable.
+This data is used for:
+\itemize{
+\item{the header of the total column in case \code{dataTotal} is
+not specified}
+\item{the denominator of the percentages in the total column
+in case \code{dataTotalPerc} is not specified}
+}}
 
 \item{type}{String with type of table: 
 \itemize{

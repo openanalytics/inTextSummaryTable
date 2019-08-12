@@ -143,8 +143,8 @@ If the total should be based on the total number of records per variable,
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{dataTotal}{Data.frame used to extract the Total count per column, indicated
-in 'N' in column header.
+\item{dataTotal}{Data.frame used to extract the Total number of subject
+per column in column header ('N = [X]').
 It should contain the variables specified by \code{colVarTotal}.}
 
 \item{dataTotalPerc}{Data.frame used to extract the Total count per column, 
@@ -158,7 +158,14 @@ or list of such data.frame for each variable (named by variable).}
 
 \item{dataTotalCol}{Data.frame from which the total across columns is 
 extracted (in case \code{colTotalInclude} is TRUE)
-or list of such data.frame for each \code{rowVar} variable.}
+or list of such data.frame for each \code{rowVar} variable.
+This data is used for:
+\itemize{
+\item{the header of the total column in case \code{dataTotal} is
+not specified}
+\item{the denominator of the percentages in the total column
+in case \code{dataTotalPerc} is not specified}
+}}
 
 \item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
 The names are reported in the header.

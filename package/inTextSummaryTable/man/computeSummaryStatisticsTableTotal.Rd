@@ -8,8 +8,9 @@ computeSummaryStatisticsTableTotal(data, colVar = NULL,
   colVarTotal = colVar, rowVarTotal = NULL, var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
   colTotalLab = "Total", colInclude0 = FALSE,
-  colTotalInclude = FALSE, colVarDataLevels = NULL,
-  colVarLevels = NULL, subjectVar = "USUBJID", labelVars = NULL)
+  colTotalInclude = FALSE, dataTotalCol = NULL,
+  colVarDataLevels = NULL, colVarLevels = NULL,
+  subjectVar = "USUBJID", labelVars = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -37,6 +38,9 @@ can be specified via \code{colVarDataLevels}.}
 
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
+
+\item{dataTotalCol}{Data.frame from which the total across columns is 
+extracted (in case \code{colTotalInclude} is TRUE).}
 
 \item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
 (in case of non nested column variable(s)).}

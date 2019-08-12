@@ -1,3 +1,5 @@
+2.0.1
+    o computeSummaryStatisticsTable: fix for column header in case dataset for total columns is specified
 2.0.0
     o include vignette with template tables
     o formatSummaryStatisticsTable: fixes when multiple records for total (rowVarTotalByVar)

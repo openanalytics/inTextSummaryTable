@@ -37,8 +37,8 @@
 #' This will be included in the table header (see 'rowVarLab' attribute of the output).
 #' Empty by default.
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable
-#' @param dataTotal Data.frame used to extract the Total count per column, indicated
-#' in 'N' in column header.
+#' @param dataTotal Data.frame used to extract the Total number of subject
+#' per column in column header ('N = [X]').
 #' It should contain the variables specified by \code{colVarTotal}.
 #' @param dataTotalPerc Data.frame used to extract the Total count per column, 
 #' used for the computation of the percentage: 'statPercN' parameter.
@@ -50,6 +50,13 @@
 #' @param dataTotalCol Data.frame from which the total across columns is 
 #' extracted (in case \code{colTotalInclude} is TRUE)
 #' or list of such data.frame for each \code{rowVar} variable.
+#' This data is used for:
+#' \itemize{
+#' \item{the header of the total column in case \code{dataTotal} is
+#' not specified}
+#' \item{the denominator of the percentages in the total column
+#' in case \code{dataTotalPerc} is not specified}
+#' }
 #' @param filterFct (optional) Function based on computed statistics of
 #' \code{rowVar}/code{colVar} which returns a subset of the summary table 
 #' (after statistics computation).
@@ -455,14 +462,20 @@ computeSummaryStatisticsTable <- function(
 				}else dataTotal[, var]
 			)
 		}
-	}else dataTotal <- data
+		dataTotalColTotalHeader <- dataTotal
+	}else{
+		dataTotal <- data
+		# in case no 'dataTotal' is included, consider 'dataTotalCol' for the header across columns
+		dataTotalColTotalHeader <- if(colTotalInclude)	dataForColTotal
+	}
 	
 	# get total for column headers:
 	summaryTableTotal <- computeSummaryStatisticsTableTotal(
 		data = dataTotal, 
 		colVar = colVar, colVarTotal = colVarTotal,
 		colTotalLab = colTotalLab,
-		colInclude0 = colInclude0, colTotalInclude = colTotalInclude,
+		colInclude0 = colInclude0, 
+		colTotalInclude = colTotalInclude, dataTotalCol = dataTotalColTotalHeader,
 		colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
 		subjectVar = subjectVar,
 		# not used:
@@ -479,13 +492,18 @@ computeSummaryStatisticsTable <- function(
 	## compute percentages
 	
 	# get counts (for percentage computation)
-	if(is.null(dataTotalPerc))	dataTotalPerc <- dataTotal
+	if(is.null(dataTotalPerc)){
+		dataTotalPerc <- dataTotal
+		dataTotalPercTotalHeader <- dataTotalColTotalHeader
+	}else{
+		dataTotalPercTotalHeader <- dataTotalPerc
+	}
 	if(!all(colVarTotalPerc %in% colnames(summaryTable)))
 		stop("'colVarTotalPerc' are not in the computed summary statistics table.")
 	computeTotalPerc <- !setequal(colVarTotal, colVarTotalPerc) | !is.null(rowVarTotalPerc)
 	summaryTableTotalPerc <- if(computeTotalPerc){
 		computeSummaryStatisticsTableTotal(
-			data = dataTotalPerc, 
+			data = dataTotalPerc, dataTotalCol = dataTotalPercTotalHeader,
 			colVar = colVar, colVarTotal = colVarTotalPerc,
 			colTotalLab = colTotalLab,
 			colInclude0 = colInclude0, colTotalInclude = colTotalInclude,
@@ -628,6 +646,8 @@ computeSummaryStatisticsTable <- function(
 #' @param colVarLevels list with levels of each \code{colVar}
 #' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
 #' statistics across columns in a separated column.
+#' @param dataTotalCol Data.frame from which the total across columns is 
+#' extracted (in case \code{colTotalInclude} is TRUE).
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame with total table.
 #' @author Laure Cougnaud
@@ -640,7 +660,7 @@ computeSummaryStatisticsTableTotal <- function(
 	var = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars),
 	colTotalLab = "Total",
 	colInclude0 = FALSE,
-	colTotalInclude = FALSE,
+	colTotalInclude = FALSE, dataTotalCol = NULL,
 	colVarDataLevels = NULL, colVarLevels = NULL,
 	subjectVar = "USUBJID",
 	labelVars = NULL){
@@ -681,8 +701,9 @@ computeSummaryStatisticsTableTotal <- function(
 	if(colTotalInclude){
 		colVarTotalTI <- setdiff(colVarTotal, colVar)
 		if(length(colVarTotalTI) == 0)	colVarTotalTI <- NULL
+		if(is.null(dataTotalCol))	dataTotalCol <- data
 		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
-			data = data, 
+			data = dataTotalCol, 
 			type = "countTable", 
 			colVar = colVarTotalTI,
 			rowVar = rowVarTotal,
