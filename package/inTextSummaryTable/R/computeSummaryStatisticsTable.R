@@ -738,10 +738,14 @@ computeSummaryStatisticsTableTotal <- function(
 #' @param varLab Named character vector with label for each variable 
 #' specified in \code{var}.
 #' By default, extracted from the \code{labelVars}.
-#' @param rowVarDataLevels Data.frame with levels to consider for the \code{rowVar} variable(s)
-#' (in case of non nested row variable(s)).
-#' @param colVarDataLevels Data.frame with levels to consider for the \code{colVar} variable(s)
-#' (in case of non nested column variable(s)).
+#' @param rowVarDataLevels Data.frame with unique combinations of \code{rowVar}
+#' to be included in columns.
+#' Each column should correspond to \code{colVar} and as factor
+#' if the elements should be ordered in the final table.
+#' @param colVarDataLevels Data.frame with unique combinations of \code{colVar}
+#' to be included in columns.
+#' Each column should correspond to \code{colVar} and as factor
+#' if the elements should be ordered in the final table.
 #' @param varTotalInclude Should the total across all categories of \code{var} 
 #' be included for the count table?
 #' Either:
