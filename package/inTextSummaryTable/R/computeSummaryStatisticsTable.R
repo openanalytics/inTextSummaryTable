@@ -40,13 +40,15 @@
 #' @param dataTotal Data.frame used to extract the Total number of subject
 #' per column in column header ('N = [X]').
 #' It should contain the variables specified by \code{colVarTotal}.
-#' @param dataTotalPerc Data.frame used to extract the Total count per column, 
-#' used for the computation of the percentage: 'statPercN' parameter.
+#' If not specified, the total number of subjects is extracted from the \code{data}.
+#' @param dataTotalPerc Data.frame used to extract the Total count per column 
+#' for the computation of the percentage ('statPercN' statistic).
+#' By default same as \code{dataTotal} .
 #' It should contain the variables specified by \code{colVarTotalPerc}.
 #' @param dataTotalRow Data.frame used to extract the total count across all
 #' elements of the row
 #' variable, in case \code{rowVarTotalInclude} is specified,
-#' or list of such data.frame for each variable (named by variable).
+#' or list of such data.frame for each \code{rowVar} variable (named by variable).
 #' @param dataTotalCol Data.frame from which the total across columns is 
 #' extracted (in case \code{colTotalInclude} is TRUE)
 #' or list of such data.frame for each \code{rowVar} variable.
