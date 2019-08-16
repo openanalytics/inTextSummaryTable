@@ -78,8 +78,10 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
-\item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
-(in case of non nested row variable(s)).}
+\item{rowVarDataLevels}{Data.frame with unique combinations of \code{rowVar}
+to be included in columns.
+Each column should correspond to \code{colVar} and as factor
+if the elements should be ordered in the final table.}
 
 \item{rowOrder}{Specify how the rows should be ordered in the table, either a:
 \itemize{
@@ -162,8 +164,10 @@ of the \code{columnVar} (assuming nested variable(s)).
 If variable(s) are not nested, possible combinations
 can be specified via \code{colVarDataLevels}.}
 
-\item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
-(in case of non nested column variable(s)).}
+\item{colVarDataLevels}{Data.frame with unique combinations of \code{colVar}
+to be included in columns.
+Each column should correspond to \code{colVar} and as factor
+if the elements should be ordered in the final table.}
 
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}

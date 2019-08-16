@@ -47,8 +47,10 @@ grouping in row in the final table.}
 include rows with no records, based on all combinations 
 of the \code{rowVar} (assuming nested variable(s)).}
 
-\item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
-(in case of non nested row variable(s)).}
+\item{rowVarDataLevels}{Data.frame with unique combinations of \code{rowVar}
+to be included in columns.
+Each column should correspond to \code{colVar} and as factor
+if the elements should be ordered in the final table.}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
@@ -60,8 +62,10 @@ of the \code{columnVar} (assuming nested variable(s)).
 If variable(s) are not nested, possible combinations
 can be specified via \code{colVarDataLevels}.}
 
-\item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
-(in case of non nested column variable(s)).}
+\item{colVarDataLevels}{Data.frame with unique combinations of \code{colVar}
+to be included in columns.
+Each column should correspond to \code{colVar} and as factor
+if the elements should be ordered in the final table.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}

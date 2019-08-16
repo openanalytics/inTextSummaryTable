@@ -68,8 +68,10 @@ a separated row (by default) or in the row containing the header of the variable
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
-\item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
-(in case of non nested column variable(s)).}
+\item{colVarDataLevels}{Data.frame with unique combinations of \code{colVar}
+to be included in columns.
+Each column should correspond to \code{colVar} and as factor
+if the elements should be ordered in the final table.}
 
 \item{colVarTotal}{String with column(s) considered to compute the total by,
 reported in the header of the table, by default same as \code{colVar}.}
@@ -86,8 +88,10 @@ if \code{colTotalInclude} is TRUE, 'Total' by default.}
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
-\item{rowVarDataLevels}{Data.frame with levels to consider for the \code{rowVar} variable(s)
-(in case of non nested row variable(s)).}
+\item{rowVarDataLevels}{Data.frame with unique combinations of \code{rowVar}
+to be included in columns.
+Each column should correspond to \code{colVar} and as factor
+if the elements should be ordered in the final table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 

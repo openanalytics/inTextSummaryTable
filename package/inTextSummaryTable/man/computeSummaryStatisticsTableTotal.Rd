@@ -42,8 +42,10 @@ statistics across columns in a separated column.}
 \item{dataTotalCol}{Data.frame from which the total across columns is 
 extracted (in case \code{colTotalInclude} is TRUE).}
 
-\item{colVarDataLevels}{Data.frame with levels to consider for the \code{colVar} variable(s)
-(in case of non nested column variable(s)).}
+\item{colVarDataLevels}{Data.frame with unique combinations of \code{colVar}
+to be included in columns.
+Each column should correspond to \code{colVar} and as factor
+if the elements should be ordered in the final table.}
 
 \item{colVarLevels}{list with levels of each \code{colVar}}
 
