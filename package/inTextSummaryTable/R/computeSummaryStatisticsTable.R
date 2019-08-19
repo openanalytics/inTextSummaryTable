@@ -243,7 +243,7 @@ computeSummaryStatisticsTable <- function(
 		colTotalInclude <- FALSE
 	}else	colTotalInclude <- TRUE
 	
-	if(!is.null(colVar))
+#	if(!is.null(colVar))
 #	checkIfTotal <- function(x)	!is.function(x) && any(x == "total")
 #	if(!colTotalInclude && any(sapply(rowOrder, checkIfTotal)))
 #		colTotalInclude <- TRUE
