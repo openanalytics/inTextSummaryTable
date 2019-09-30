@@ -17,7 +17,7 @@ getStats(type = "summary", includeName = TRUE, x = NULL,
 \item{'n (\%)': }{number of subjects (percentage)}
 \item{'median (range)': }{median (minimum, maximum)}
 \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
-\item{'mean (se)': }{mean and standard deviation}
+\item{'mean (se)': }{mean and standard error}
 \item{'mean (range)': }{mean and (minimum, maximum)}
 }}
 
