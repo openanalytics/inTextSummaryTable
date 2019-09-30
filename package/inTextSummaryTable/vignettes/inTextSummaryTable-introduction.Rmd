@@ -1322,7 +1322,7 @@ function (instead of creating directly the in-text table via the
 
 # Table export
 
-## Export table in a Word document
+## Export table to a Word document
 
 The table is **exported to a Word document** (_docx_) by specifying a file name
 in the **`file`** parameter.
@@ -1457,6 +1457,59 @@ reported in the table header.
 	pander(subset(summaryTable, isTotal))
 	
 ```	
+
+## Export table of pre-computed summary statistics
+
+To create a table in similar format as the in-text tables created by the package,
+from pre-computed summary statistics (e.g. from CRO or from a different software as _SAS_)
+the function `exportSummaryStatisticsTable` is used.
+This function takes as input a data.frame which should contain the 
+summary statistics in a long format, in which the statistic value (`statsVar`);
+statistic type (if multiple), grouping row and columns (`rowVar` and `colVar`)
+are stored as different columns in the data.frame.
+
+```{r exportSummaryStatisticsTable}
+
+	dataPFEV1 <- subset(dataAll$ADRE, 
+		FASFL == "Y" & PARAMCD == "FEV1PP" &
+		(
+			AVISIT == "Baseline" |
+			# retain only: valid spirometry assessment (CRIT1)
+			(AVISIT %in% c("Day 14", "Day 28", "Follow-up") & CRIT1FL == "Y")
+			)
+	)
+	
+	# create example of data.frame containing statistics of interest
+	statsEff <- sapply(c("AVAL", "CHG"), function(var){
+		getStats(
+			type = c("n", "mean (se)", "median (range)"),
+			x = dataPFEV1[[var]]
+		)
+	}, simplify = FALSE)
+	summaryTable <- computeSummaryStatisticsTable(
+		data = dataPFEV1,
+		colVar = c("TRTP", "AVISIT"),
+		var = c("AVAL", "CHG"), varGeneralLab = "",
+		stats = statsEff,
+		labelVars = labelVars
+	)
+	
+	# format df with statistics to in-text tables format
+	exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		statsVar = c("Mean (SE)", "Median (range)"),
+		rowVar = "variable", rowVarLab = "Statistic",
+		colVar = c("TRTP", "AVISIT"),
+		colHeaderTotalInclude = TRUE,
+		labelVars = simpleCap(tolower(labelVars[c("AVAL", "CHG")])),
+		title = toTitleCase("Table: Sweat chloride inferential statistics of the changes from baseline per time point (pharmacodynamics analysis Set, Mean Value from both arms)"),
+		file = file.path("tables_CSR", "Table_SweatChlorideChangeFromBaseline_inferential.docx")
+	)
+
+```
+
+If the column headers should contain total number of subjects, 
+the corresponding counts should be stored in records with the column `isTotal` set to TRUE.
 
 # Data pre-processing
 

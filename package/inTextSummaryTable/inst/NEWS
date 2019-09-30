@@ -1,3 +1,5 @@
+2.1.1
+    o example of the exportSummaryStatisticsTable function in the vignette
 2.0.1
     o computeSummaryStatisticsTable: fix for column header in case dataset for total columns is specified
     o getStats: fix documentation: 'mean (se)'
