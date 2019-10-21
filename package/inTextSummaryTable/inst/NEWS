@@ -1,3 +1,6 @@
+2.1.2
+    o rowOrder as a function: fix when row total is included
+    o introductory vignette: additional example for rowOrder
 2.1.1
     o example of the exportSummaryStatisticsTable function in the vignette
 2.0.1

@@ -746,7 +746,7 @@ specified.
 
 The adverse events are sorted based on the incidence in the treated group.
 
-```{r rowOrder-filterFct}
+```{r rowOrder-rowOrderTotalFilterFct}
 
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
@@ -773,7 +773,7 @@ For example, the adverse event table is sorted based on the counts of patient
 presenting this event across all treatment classes, and in case of ties based on 
 the counts of treated-patients presenting this event.
 
-```{r countTable-LB-rowOrder-customFunction}
+```{r rowOrder-function-example1}
 
 	library(plyr)
 	getSummaryStatisticsTable(
@@ -794,6 +794,39 @@ the counts of treated-patients presenting this event.
 		title = "Table: Adverse Events ordered based on total counts",
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
 		footer = "Statistics: n (%)"
+	)
+
+```
+
+The adverse event table is now ordered based on the counts in the placebo, then
+treated-patients column, for the organ class and the adverse event term separately.
+
+```{r rowOrder-function-example2}
+
+	getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarLab = labelVars[c("AEDECOD")],
+		rowVarTotalInclude = c("AESOC", "AEDECOD"),
+		colVar = "TRTP", colTotalInclude = TRUE,
+		rowOrder = list(
+			AESOC = function(table){
+				# records with total for each AESOC
+				nAESOCPlacebo <- subset(table, !isTotal & grepl("placebo", TRTP) & AEDECOD == "Total")
+				nAESOCTreat <- subset(table, !isTotal & grepl("75 mg", TRTP) & AEDECOD == "Total")
+				nAESOCDf <- merge(nAESOCPlacebo, nAESOCTreat, by = "AESOC", suffixes = c(".placebo", ".treatment"))
+				nAESOCDf[with(nAESOCDf, order(`statN.placebo`, `statN.treatment`, decreasing = TRUE)), "AESOC"]
+			},
+			AEDECOD = function(table){
+				# records with counts for each AEDECOD
+				nAEDECODPlacebo <- subset(table, !isTotal & grepl("placebo", TRTP) & AEDECOD != "Total")
+				nAEDECODTreat <- subset(table, !isTotal & grepl("75 mg", TRTP) & AEDECOD != "Total")
+				nAEDECODDf <- merge(nAEDECODPlacebo, nAEDECODTreat, by = "AEDECOD", suffixes = c(".placebo", ".treatment"))
+				nAEDECODDf[with(nAEDECODDf, order(`statN.placebo`, `statN.treatment`, decreasing = TRUE)), "AEDECOD"]
+			}
+		),
+		stats = getStats("n (%)"),
+		labelVars = labelVars
 	)
 
 ```
