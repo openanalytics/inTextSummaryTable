@@ -1,3 +1,5 @@
+2.2.0
+    o possibility to have cells in bold
 2.1.2
     o rowOrder as a function: fix when row total is included
     o introductory vignette: additional example for rowOrder
