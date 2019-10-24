@@ -20,7 +20,7 @@
 #' @param colorTable Named character vector with color for the table background/body/text/line,
 #' e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.
 #' @inheritParams glpgStyle::getDimPage
-#' @inheritParams formatSuperSubscriptToFlextable
+#' @inheritParams formatCustomFlextable
 #' @inheritParams formatSummaryStatisticsTable
 #' @return \code{\link[flextable]{flextable}} object with summary table
 #' If \code{summaryTable} is a list of summary tables,
@@ -206,9 +206,9 @@ convertSummaryStatisticsTableToFlextable <- function(
 	# correct the position of horizontal lines
 	ft <- ft %>% fix_border_issues()
 	
-	# Format superscript (if any)
+	# Custom formatting (if any)
 	# for body
-	ft <- formatSuperSubscriptToFlextable(
+	ft <- formatCustomFlextable(
 		dataTable = summaryTable, 
 		ft = ft, 
 		fontname = fontname,
@@ -216,7 +216,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	)
 	# for title
 	if(!is.null(title))
-		ft <- formatSuperSubscriptToFlextable(
+		ft <- formatCustomFlextable(
 			dataTable = data.frame(title), ft = ft, 
 			part = "header",
 			fontname = fontname,
@@ -225,7 +225,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 		)
 	# for header
 	if(!is.null(headerDf))
-		ft <- formatSuperSubscriptToFlextable(
+		ft <- formatCustomFlextable(
 			dataTable = headerDf, ft = ft, 
 			part = "header",
 			fontname = fontname,
@@ -267,8 +267,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 }
 
-#' Format superscript/subscripts in a flextable.
-#' Superscript should be indicated as 'a^{b}' and subscript as 'a_{b}' the input summary table.
+#' Format superscript/subscripts/bold cells in a flextable.
+#' Superscript should be indicated as 'a^{b}',
+#' subscript as 'a_{b}' and bold as bold{a} in the
+#'  the input summary table.
 #' @param dataTable data.frame with data used in table,
 #' summary table for body or header data.frame for the header.
 #' @param ft Corresponding \code{\link[flextable]{flextable}}.
@@ -277,14 +279,15 @@ convertSummaryStatisticsTableToFlextable <- function(
 #' @param part string with part of the table to consider, 
 #' see \code{\link[flextable]{display}}.
 #' @param iBase Integer with base row index (if different than 0).
-#' @param bold Logical (FALSE by default) should the superscript/subscript be indicated in bold?
+#' @param bold Logical (FALSE by default) should the superscript/subscript 
+#' be indicated in bold?
 #' @return \code{\link[flextable]{flextable}} with superscript/subscript.
 #' @importFrom stats as.formula
 #' @importFrom officer fp_text
 #' @importFrom flextable display
 #' @author Laure Cougnaud
 #' @keywords internal
-formatSuperSubscriptToFlextable <- function(
+formatCustomFlextable <- function(
 	dataTable, ft, 
 	fontname = "Times",
 	part = "body",
@@ -292,7 +295,11 @@ formatSuperSubscriptToFlextable <- function(
 	iBase = 0,
 	bold = FALSE){
 
-	patterns <- c("superscript" = "(.+)\\^\\{(.+)\\}(.*)", "subscript" = "(.+)_\\{(.+)\\}(.*)")
+	patterns <- c(
+		"bold" = "(.*)bold\\{(.+)\\}(.*)",
+		"superscript" = "(.+)\\^\\{(.+)\\}(.*)", 
+		"subscript" = "(.+)_\\{(.+)\\}(.*)"
+	)
 	
 	for(patternName in names(patterns)){
 		
@@ -300,18 +307,18 @@ formatSuperSubscriptToFlextable <- function(
 
 		# extract indices with superscript
 		dataTableMat <- as.matrix(dataTable)
-		idxSuperscriptMat <- grep(pattern, dataTableMat)
+		idxPatternMat <- grep(pattern, dataTableMat)
 		
 		# if any
-		if(length(idxSuperscriptMat) > 0){
+		if(length(idxPatternMat) > 0){
 			
 			# convert matrix indices to [row, col]
-			idxSuperscriptAI <- arrayInd(idxSuperscriptMat, .dim = dim(dataTableMat))
+			idxPatternAI <- arrayInd(idxPatternMat, .dim = dim(dataTableMat))
 			
 			# for each element with superscript
-			for(iSP in seq_along(idxSuperscriptMat)){
+			for(idx in seq_along(idxPatternMat)){
 				
-				textInit <- dataTableMat[idxSuperscriptMat[iSP]]
+				textInit <- dataTableMat[idxPatternMat[idx]]
 				# split text with before/after superscript
 				idxMatches <- regexec(pattern = pattern, textInit)
 				textSplit <- regmatches(textInit, idxMatches)
@@ -321,26 +328,29 @@ formatSuperSubscriptToFlextable <- function(
 					
 					# create formatters: should be list of formula
 					fm <- c(
-						list(
-							as.formula(paste0("value ~ as.character('", el[2], "')")),
-							as.formula(paste0("pow ~ as.character('", el[3], "')"))
-						),
+						if(el[2] != "")
+							list(as.formula(paste0("valueBefore ~ as.character('", el[2], "')"))),
+						list(as.formula(paste0("valueExtract ~ as.character('", el[3], "')"))),
 						if(el[4] != "")
-							list(as.formula(paste0("value2 ~ as.character('", el[4], "')")))
+							list(as.formula(paste0("valueAfter ~ as.character('", el[4], "')")))
 					)
 					
 					# set superscript/subscript in flextable
 					ft <- ft %>% display(
-						i = idxSuperscriptAI[iSP, 1] + iBase,
-						col_key = idxSuperscriptAI[iSP, 2],
-						pattern = paste0("{{value}}{{pow}}", if(el[4] != "") "{{value2}}"),
+						i = idxPatternAI[idx, 1] + iBase,
+						col_key = idxPatternAI[idx, 2],
+						pattern = paste0(
+							if(el[2] != "")	"{{valueBefore}}",
+							"{{valueExtract}}", 
+							if(el[4] != "") "{{valueAfter}}"
+						),
 						formatters = fm,
-						fprops = list(pow = 
+						fprops = list(valueExtract = 
 							fp_text(
-								vertical.align = patternName, 
+								vertical.align = ifelse(patternName == "bold", "baseline", patternName), 
 								font.size = fontsize,
 								font.family = fontname,
-								bold = bold
+								bold = (patternName == "bold" || bold)
 							)
 						),
 						part = part

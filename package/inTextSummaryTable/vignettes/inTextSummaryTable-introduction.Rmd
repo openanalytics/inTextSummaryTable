@@ -1251,6 +1251,43 @@ footnote or specify custom variable labels.
 
 ```
 
+### Bold
+
+Specific cells of the table can be highlight in bold by using the
+syntax: `bold{}` in the `stats` or `statsExtra` function.
+
+This highlighting may depend:
+
+* on a additional variable via the `statsExtra` parameter:  
+for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", paste0("bold{", toString(AVAL), "}"), toString(AVAL))`
+* on the values of computed statistics, via the `stats` parameter:
+
+```{r summaryTable-PP-rowVarWithLabel-rowVarLab-bold}
+	
+	getSummaryStatisticsTable(
+		data = subset(dataPP, PARCAT1 == "Lumacaftor"),
+		var = "AVAL",
+		colVar = "TRTP",
+		rowVar = "PARAMRF",
+		rowVarLab = c(
+			'PARAMRF' = "Pharmacokinetics parameter", 
+			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
+		),
+		labelVars = labelVars,
+		stats = list(
+			expression(paste0(
+				ifelse(statMean > statMedian, 
+					paste0("bold{", roundCustomText(statMean, 1), "}"), 
+					statMean
+				), 
+				"\n(", 
+				roundCustomText(statSE, 2),")")
+			)
+		)
+	)	
+
+```
+
 ## Multiple table creation
 
 Multiple tables can be created for each element of
