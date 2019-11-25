@@ -1024,6 +1024,7 @@ computeSummaryStatistics <- function(data,
 			
 			# to avoid that ddply with empty data returns entire data.frame
 			if(nrow(data) == 0){
+				
 				if(!is.null(var)){
 					res <- data.frame()
 				}else{
@@ -1033,20 +1034,41 @@ computeSummaryStatistics <- function(data,
 					res = res, statsExtra = statsExtra,
 					data = data
 				)
+				
 			}else{
-				res <- ddply(data, var, function(x){
-					if(!(filterEmptyVar & nrow(x) == 0)){
-						res <- data.frame(
-							statN = getNSubjects(x),
-							statm = getNRecords(x)
-						)
-						statsExtraFct(
-							res = res, statsExtra = statsExtra,
-							data = x
-						)
+				
+				if(!is.null(var)){
+					
+					varLevels <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
+					resList <- lapply(varLevels, function(level){
+						x <- data[which(data[, var] == level), ]	
+						# compute stats in data or if filterEmptyVar is FALSE
+						if(!(nrow(x) == 0 & filterEmptyVar)){
+							res <- setNames(
+								data.frame(level, getNSubjects(x), getNRecords(x)),
+								c(var, "statN", "statm")
+							)
+							res <- statsExtraFct(
+								res = res, statsExtra = statsExtra,
+								data = x
+							)
+						}
+					})
+					resList <- resList[!sapply(resList, is.null)]
+					if(length(resList) > 0){
+						res <- do.call(rbind, resList)
+						rownames(res) <- NULL
+					}else{
+						res <- data.frame()
 					}
-				}, .drop = FALSE)
+					
+				}else{
+					res <- data.frame(statN = getNSubjects(data), statm = getNRecords(data))
+					res <- statsExtraFct(res = res, statsExtra = statsExtra, data = data)
+				}
+				
 				if(varTotalInclude & (!(filterEmptyVar & nrow(data) == 0))){
+					
 					resTotal <- data.frame(
 						statN = getNSubjects(data),
 						statm = getNRecords(data)
