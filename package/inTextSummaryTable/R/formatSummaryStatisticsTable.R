@@ -1,28 +1,9 @@
 #' Format summary statistics table for export
 #' @param summaryTable Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.
-#' @param rowVar Character vector with variable(s) used for the rows.
-#' If multiple variables are specified, the variables should be sorted in hierarchical order.
-#' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
-#' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
-#' included in separated column in the table, NULL by default. 
-#' To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
-#' This is only available if \code{rowVar} if not specified.
-#' Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-#' separately by this variable.
-#' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowTotalLab label for the row with total
 #' @param rowAutoMerge Logical, if TRUE (by default) automatically merging of rows,
 #' e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
 #' or only one statistic per category
-#' @param statsLayout String with layout for the statistics names 
-#' (in case more than one statistic is included), among:
-#' \itemize{
-#' \item{row: }{Statistics are included in rows in the first column of the table}
-#' \item{'col': }{Statistics are included in columns (last row of the header).
-#' This option is not compatible with categorical variable(s).}
-#' \item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-#' the \code{rowVar} variable(s)}
-#' }
 #' @param colHeaderTotalInclude Logical, if TRUE include the total of number of patients
 #' (\code{'statN'}) in the header.
 #' @param statsValueLab String with label for the statistic value, 
@@ -38,9 +19,8 @@
 #' \item{'none' (default): }{no vertical lines included}
 #' \item{'auto': }{vertical lines included between sub-groups}
 #' }
-#' @param statsVar Character vector with columns of \code{summaryTable} with
-#' statistic variables.
 #' @inheritParams subjectProfileSummaryPlot
+#' @inheritParams mergeSummaryTableRowsFt
 #' @inheritParams computeSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
@@ -72,12 +52,10 @@ formatSummaryStatisticsTable <- function(
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = NULL,
-	rowVarFormat = NULL,
 	# total
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"), 
 	rowVarTotalInSepRow = getAttribute(summaryTable, "rowVarTotalInSepRow"),
 	rowTotalLab = NULL,
-	rowAutoMerge = TRUE,
 	# column
 	colVar = getAttribute(summaryTable, "colVar"),
 	colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
@@ -88,11 +66,13 @@ formatSummaryStatisticsTable <- function(
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
 	emptyValue = "-",
-	vline = c("none", "auto")
+	outputType = c("flextable", "DT", "data.frame"),
+	vline = c("none", "auto"),
+	rowAutoMerge = TRUE,
+	rowVarFormat = NULL,
+	...
 	){
 		
-	vline <- match.arg(vline)
-
 	if(!is.data.frame(summaryTable)){
 		
 		inputParams <- as.list(environment())
@@ -153,14 +133,21 @@ formatSummaryStatisticsTable <- function(
 		nTotal <- NA
 	}
 		
+	# ID variables
+	idVars <- c(rowVar, colVar)
+	
 	# convert from wide to long format
 	statsVar <- if(is.null(statsVar)){
 		setdiff(colnames(dataWithTotal),  
 			c(rowVar, colVar, "variable", "variableGroup", "isTotal")
 		)
 	}else{statsVar}
+
+	if(statsValueLab == "Statistic")
+		stop("'statsValueLab' should be different than 'Statistic'.")
+	
 	dataLong <- melt(dataWithTotal, 
-		id.vars = c(rowVar, colVar),
+		id.vars = idVars,
 		measure.vars = statsVar,
 		value.name = statsValueLab,
 		variable.name = "Statistic"
@@ -206,350 +193,30 @@ formatSummaryStatisticsTable <- function(
 				paste0(statsValueLab, "\n(N=",  nTotal, ")")
 	}
 	
-	getTotalRow <- function(data)
-		which(rowSums(data[, rowVar, drop = FALSE] == "Total") == length(rowVar))
-	
-	hlineParams <- mergeParams <- formatParams <- NULL
-	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & length(statsVar) > 1)
-	if(mergeRows){
+	res <- switch(outputType,
+			
+		'data.frame' = {
+			
+			dataLong
+			
+		},
 		
-		rowVarUsed <- c(rowVar, if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
+		'flextable' = {
 		
-		# important: sort data.frame with specified row variables!
-		dataLong <- ddply(dataLong, rowVar)
-		if(".id" %in% colnames(dataLong))	dataLong$`.id` <- NULL
-		
-		# in case than rowVar are factor, can have issues to include additional rows (*invalid factor*), so convert them as character
-		rowVarUsedFact <- names(which(sapply(dataLong[, rowVarUsed, drop = FALSE], is.factor)))
-		if(length(rowVarUsedFact) > 0)
-			dataLong[, rowVarUsedFact] <- colwise(.fun = as.character)(dataLong[, rowVarUsedFact, drop = FALSE])
-	
-		# if more than one rowVar, convert them to different rows
-		rowVarInRow <- setdiff(rowVarUsed, rowVarInSepCol) # row variables to merge
-		rowVarFinal <- rowVarInRow[length(rowVarInRow)] # final column = more nested row variable
-		rowVarToModify <- rowVarInRow[-length(rowVarInRow)] # variables to merge
-		
-		if(length(rowVarToModify) > 0){
-			
-			# save initial value of rowVarFinal for later
-			dataLong$rowVarFinal <- dataLong[, rowVarFinal]
-			
-			dataLong$rowPadding <- rowPadding <- length(rowVarInRow)-1
-			idxTotalRow <- getTotalRow(data = dataLong)
-			dataLong[idxTotalRow, "rowPadding"] <- 0
-				
-			# include the value in each rowVar in the column of the more nested variable
-			# start by the second more nested variable
-			for(i in rev(seq_along(rowVarToModify))){
-					
-				var <- rowVarToModify[i]
-				varX <- dataLong[, var]
-				
-				## add new rows
-				
-				# get indices of rows to replicates
-				dataVarI <- dataLong[, rowVarToModify[seq_len(i)]]
-				# fix in case value in one column is NA
-				# -> interaction is set to NA (without concatenating other columns)
-				dataVarI[is.na(dataVarI)] <- ""
-				idxRowToRepl <- which(!duplicated(interaction(dataVarI))) 
-				idxRowToRepl <- setdiff(idxRowToRepl, idxTotalRow)
-				
-				# if the sub-total for this variable is computed and not included in separated row
-				varNested <- rowVarInRow[match(var, rowVarInRow)+1]
-				if(varNested %in% rowVarTotalInclude & !varNested %in% rowVarTotalInSepRow){
-					
-					# in case multiple records for total, add extra rows
-					idxTotalNested <- which(dataLong[, varNested] == "Total")
-					idxTotalNested <- idxTotalNested[which(diff(idxTotalNested) == 1) + 1]
-					idxRowToRepl <- unique(c(idxRowToRepl, idxTotalNested))
-					
-					# include the variable in the final column
-					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
-					check <- ifelse(
-						var == "variable" & varNested == "variableGroup",
-						# if variable total is included only for certain variables
-						any(!dataLong[idxRowToRepl, rowVarFinal] %in% c("Total", "")),
-						# otherwise, should be 'Total'
-						any(dataLong[idxRowToRepl, rowVarFinal] != "Total")
-					)
-					if(check)	stop("Missing total sub-category")
-					dataLong[idxRowToRepl, rowVarFinal] <- dataLong[idxRowToRepl, var]
-					
-				}else{
-					
-					# new element:
-					# convert to character in case is a factor
-					val <- as.character(varX[idxRowToRepl])
-					isNAVal <- which(is.na(val))
-					if(length(isNAVal) > 0){
-						val <- val[-isNAVal]
-						idxRowToRepl <- idxRowToRepl[-isNAVal]
-					}
-					
-					dataLong <- dataLong[sort(c(idxRowToRepl, seq_len(nrow(dataLong)))), ]
-					# fill columns
-					idxRowToRepl <- idxRowToRepl + seq_along(idxRowToRepl)-1 # indices of replicates rows in new df
-					# set var element in final row column
-					dataLong[idxRowToRepl, rowVarFinal] <- val #ifelse(is.na(val) | val == "", "Non specified", val)
-					# and set to rest to NA
-					dataLong[idxRowToRepl, !colnames(dataLong) %in% c(rowVarFinal, rowVarToModify)] <- NA
-					# save the padding for flextable
-					dataLong[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
-				
-				}
-									
-			}
-			
-			# if only one element in last nested rowVar (e.g. only one Statistic, or counts with categories)
-			# merge with previous row (concatenate values)
-			if(rowAutoMerge && statsLayout != "rowInSepCol" && (length(statsVar) > 1 | "variableGroup" %in% rowVar)){
-				idxNARVF <- which(!is.na(dataLong$rowVarFinal))
-				idxMore2El <- which(diff(idxNARVF) == 1) # consecutive NAs
-				if(length(idxMore2El) > 0)
-					idxNARVF <- idxNARVF[-unique(c(idxMore2El, idxMore2El+1))]
-				if(length(idxNARVF) > 0){
-					# get value of only element (next row)
-					dataNARVF <- dataLong[idxNARVF, ] 
-					# for final rowVar, concatenate the different values
-					dataNARVF[, rowVarFinal] <- paste(
-						dataLong[idxNARVF-1, rowVarFinal], 
-						dataLong[idxNARVF, rowVarFinal]
-					)
-					# get the padding value of the last row
-					dataNARVF[, "rowPadding"] <- dataLong[idxNARVF-1, "rowPadding"]
-					dataLong[idxNARVF-1, ] <- dataNARVF
-					dataLong <- dataLong[-idxNARVF, ]
-				}
-			}
-			
-			# merge rows, e.g. unique statistic for a subgroup are fill in the sub-group directly
-			colContentTable <- setdiff(colnames(dataLong), c(rowVar, rowVarFinal, "rowVarFinal", "rowPadding"))
-			idxIsNA <- which(is.na(dataLong[, rowVarFinal]))
-			if(length(idxIsNA) > 0){
-				
-				# first case: values are the same than in previous row
-				# e.g. only total included (e.g. rest is NA)
-				idxIsNaSameValueAsPreviousRow <- rowSums(
-					dataLong[idxIsNA-1, colContentTable, drop = FALSE] == 
-					dataLong[idxIsNA, colContentTable, drop = FALSE]
-				) == length(colContentTable)
-	
-				# second case: table content to fill (previous row) is all NA
-				idxIsNaButNotContent <- rowSums(is.na(dataLong[idxIsNA-1, colContentTable, drop = FALSE])) == length(colContentTable)
-				
-				idxIsNaToRemove <- which(!idxIsNaButNotContent & !idxIsNaSameValueAsPreviousRow)
-				
-				# don't consider the case that it is NA, e.g. if subgroup in input data is NA
-				if(length(idxIsNaToRemove) > 0)
-					idxIsNA  <- idxIsNA[-idxIsNaToRemove]
-				if(length(idxIsNA) > 0){
-					dataIsNa <- dataLong[idxIsNA, ]
-					dataIsNa[, c("rowPadding", rowVarFinal)] <- dataLong[idxIsNA-1,  c("rowPadding", rowVarFinal)]
-					dataLong[idxIsNA-1, ] <- dataIsNa
-					dataLong <- dataLong[-idxIsNA, ] 
-				}
-			}
-			
-			dataLong[, c(rowVarToModify, "rowVarFinal")] <- rownames(dataLong) <- NULL
-			
-			# order columns (in case rowVarInSepCol and row stats)
-			rowColsFinal <- c(rowVarFinal, rowVarInSepCol)
-			dataLong <- dataLong[, c(rowColsFinal, setdiff(colnames(dataLong), rowColsFinal))]
-			
-			# adjust padding:
-			# in case missing element in one of the nested variable
-			# padding should be reduced
-			dataLong$rowPadding <- smoothPadding(pad = dataLong$rowPadding)
-			
-			# save indices of rows to set padding in flextable
-			padParams <- lapply(setdiff(unique(dataLong$rowPadding), 0), function(pad)
-				list(i = which(dataLong$rowPadding == pad), j = 1, part = "body", padding.left = pad)				
+			dataLong <- formatSummaryStatisticsTableFt(
+				data = dataLong,
+				rowVar = rowVar, rowVarInSepCol = rowVarInSepCol, rowVarTotalInclude = rowVarTotalInclude,
+				statsLayout = statsLayout, statsVar = statsVar, 
+				rowVarLab = rowVarLab,
+				vline = vline,
+				rowAutoMerge = rowAutoMerge, rowVarFormat = rowVarFormat,
+				rowVarTotalInSepRow = rowVarTotalInSepRow
 			)
 			
-		}else	padParams <- list()
-	
-		## extract extra parameters for flextable (including header)
-		
-		## extract horizontal lines
-		
-		# rows with indent set to 0 (and no lines if all rows have no indent)
-		idxHLine <- if(length(rowVarToModify) > 0 & !all(dataLong$rowPadding == 0))	which(dataLong$rowPadding == 0)-1
-		idxHLine <- unique(idxHLine[idxHLine > 0])
-		
-		# remove lines between rows with same indent (e.g. multiple total rows)
-		if(length(rowVarInSepCol) > 0)
-			idxHLine <- idxHLine[idxHLine %in% cumsum(rle(dataLong[, rowVarFinal])$lengths)]
-		
-		if(!is.null(rowVarTotalInclude)){
-			idxRowTotal <- which(dataLong[, rowVarFinal] == "Total" & dataLong$rowPadding == 0)
-			idxHLine <- c(idxHLine, idxRowTotal[length(idxRowTotal)]) # + include horizontal line after row total
-			if(is.null(rowTotalLab)){
-				rowTotalLabVars <- rowVarLab[rowVarInRow]
-				rowTotalLabVars <- rowTotalLabVars[!is.na(rowTotalLabVars)]
-				rowTotalLab <- paste("Any", toString(rowTotalLabVars))
-			}
-			dataLong[idxRowTotal, rowVarFinal] <- rowTotalLab
 		}
 		
-		# extract special formatting
-		# if rowVar to format has been merged, extract corresponding rows based on padding
-		rowVarFormat <- rowVarFormat[names(rowVarFormat) %in% rowVar]
-		for(var in names(rowVarFormat)){
-			# if variable has been merged, first column and extract row indices based on padding
-			if(var %in% rowVarInRow){
-				if(length(rowVarToModify) > 0){
-					pad <- match(var, rowVarInRow)-1
-					i <- which(dataLong$rowPadding == pad)
-				}else{
-					i <- seq_len(nrow(dataLong))
-				}
-				j <- 1
-			# otherwise, extract column idx and consider all rows
-			}else{
-				j <- match(var, colnames(dataLong))
-				i <- seq_len(nrow(dataLong))
-			}
-			formatParams <- c(formatParams, 
-				list(list(i = i, j = j, part = "body", type = unname(rowVarFormat[[var]])))
-			)
-		}	
-		
-		dataLong$rowPadding <- NULL
-		if(length(idxHLine) > 0)
-			hlineParams <- c(hlineParams, list(
-				list(i = idxHLine, part = "body", j = 1:ncol(dataLong))
-			))
-		for(var in rowVarInSepCol[-length(rowVarInSepCol)]){
-			i <- which(diff(as.numeric(factor(dataLong[, var], exclude = ""))) != 0)
-			if(length(i) > 0)
-				hlineParams <- c(hlineParams, list(
-					list(
-						i = i, 
-						part = "body", 
-						j = seq(from = which(colnames(dataLong) == var), to = ncol(dataLong))
-					)
-				))
-		}
-		
-		# merge rows for rowVarInSepCol
-		for(var in rowVarInSepCol){
-			varPrev <- intersect(rowVar[seq_len(match(var, rowVar))], colnames(dataLong))
-			varPrevBin <- convertVectToBinary(interactionCustom(dataLong[, varPrev, drop = FALSE])$x)
-			idx <- which(diff(varPrevBin) == 0)
-			if(length(idx) > 0){
-				idxFact <- cut(seq_along(idx), breaks = c(-Inf, which(diff(idx) != 1), Inf))
-				for(l in levels(idxFact)){
-					i <- idx[idxFact == l]
-					i <- c(i, max(i)+1)
-					mergeParams <- c(mergeParams, list(list(
-						i = i,
-						j = match(var, colnames(dataLong)),
-						part = "body"
-					)))
-				}
-			}
-		}
-			
-		# label header for rows
-		rowVarLabs <- c(
-			rowVarLab[setdiff(rowVarInRow, "Statistic")], 
-			if(statsLayout == "row")	rowVarLab["Statistic"]
-		)
-		colnames(dataLong)[match(rowVarFinal, colnames(dataLong))] <- headerRow <-
-			paste(rowVarLabs, collapse = "_")
-		colnames(dataLong)[match(rowVarInSepCol, colnames(dataLong))] <- headerRowVarInSepCol <- rowVarLab[rowVarInSepCol]
-		
-	}
+	)
 	
-	# extract header (in case multiple 'colVar' specified)
-	header <- sapply(colnames(dataLong), function(x){
-		res <- strsplit(x, split = "_")[[1]]
-		# remove empty header
-		res[!res %in% c("", "NA")] #formatSummaryStatisticsTable
-	}, simplify = FALSE)
-	nRowsHeader <- max(sapply(header, length))
-	# in less elements in one column, replicate the first element (to have it merged in final ft)
-	headerDf <- as.data.frame(
-		do.call(cbind, 
-			lapply(header, function(x){
-				x1 <- if(length(x) == 0)	""	else	x[1] # fix in case var is empty
-				c(rep(x1, nRowsHeader - length(x)), x)
-			}
-		))
-	, stringsAsFactors = FALSE)
-	colnames(headerDf) <- colnames(dataLong)
-	attributes(dataLong)$summaryTable$header <- headerDf
+	return(res)
 	
-	if(!is.null(hlineParams))
-		attributes(dataLong)$summaryTable$hlineParams <- hlineParams
-	
-	if(!is.null(mergeParams))
-		attributes(dataLong)$summaryTable$mergeParams <- mergeParams
-	
-	if(!is.null(formatParams))
-		attributes(dataLong)$summaryTable$formatParams <- formatParams
-	
-	# extract vertical lines (specified by the right border)
-	if(vline == "auto"){
-		vLineParams <- lapply(seq_len(nrow(headerDf)-1), function(i){
-			idx <- diff(as.numeric(factor(unlist(headerDf[i, ]), exclude = "")))
-			j <- which(idx != 0)
-			if(!all(idx == 0))	list(i = i:nrow(headerDf), part = "header", j = j)
-		})
-		if(length(vLineParams) > 0)
-			vLineParams <- c(vLineParams, list(list(j = vLineParams[[length(vLineParams)]]$j, part = "body")))
-	}else	vLineParams <- NULL
-	attributes(dataLong)$summaryTable$vlineParams <- vLineParams
-	attributes(dataLong)$summaryTable$vline <- vline
-	
-	if(mergeRows){
-		
-		if(length(headerRow) > 0 && headerRow != ""){
-		
-			# save padding of header
-			idxRowHeaderForPad <- which(headerDf[, headerRow] != "")[-1] # consider header for row column
-			padParams <- c(
-				padParams,
-				lapply(seq_along(idxRowHeaderForPad), function(i)
-					list(i = idxRowHeaderForPad[i], j = 1, part = "header", padding.left = i)
-				)
-			)
-			
-			attributes(dataLong)$summaryTable$rowVar <- headerRow
-			
-		}
-		
-		if(length(padParams) > 0)
-			attributes(dataLong)$summaryTable$padParams <- padParams
-
-	}
-	
-	return(dataLong)
-	
-}
-
-
-#' Smooth padding, e.g. remove padding bigger than 1
-#' @param pad Integer vector with padding.
-#' @return Integer vector with 'smooth' padding.
-#' @author Laure Cougnaud
-#' @keywords internal
-smoothPadding <- function(pad){
-
-	# extract indices in vector which have padding > 1 with previous row
-	idxPaddingTooBig <- which(diff(pad) > 1)+1
-	while(length(idxPaddingTooBig) > 0){
-		# if next rows have same padding, include also their indices
-		idxPad <- lapply(idxPaddingTooBig, function(i){
-			idxExtra <- which(cumsum(abs(diff(pad[seq(from = i, to = length(pad))]))) == 0) + i
-			idx <- c(i, idxExtra)
-		})
-		# set padding to padding of previous row
-		pad[unlist(idxPad)] <- rep(pad[idxPaddingTooBig-1]+1, times = sapply(idxPad, length))
-		idxPaddingTooBig <- which(diff(pad) > 1)
-	}
-	
-	return(pad)
-
 }

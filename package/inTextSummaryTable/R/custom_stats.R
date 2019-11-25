@@ -1,4 +1,61 @@
-#' Extract default set of statistics.
+
+#' Get default set of statistics for variables of interest and specific dataset
+#' 
+#' This set of statistics is passed directly to the \code{stats} parameter
+#' of the \code{\link{computeSummaryStatisticsTable}} function.
+#' @param data 
+#' @param var Character vector with variables of interest
+#' @param type String with type of statistics to extract:
+#' \itemize{
+#' \item{'default': }{default sets of statistics, 
+#' see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
+#' \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
+#' }
+#' @param extra List with extra statistics to include, or function to apply on each
+#' \code{var} (e.g. depending on the class of \code{var}) to get such list.
+#' @param ... parameters passed to the \code{\link{getStats}} function
+#' @return List with statistics to compute, named by \code{var}
+#' @author Laure Cougnaud
+#' @export
+getStatsData <- function(
+	data, var = NULL, type = c("default", "all"), 
+	extra = NULL, ...){
+	
+	type <- match.arg(type)
+	
+	getType <- function(var = NULL){
+		switch(type,
+			'all' = ifelse(!is.null(var) && is.numeric(data[, var]), "summary", "count"),
+			'default' = ifelse(!is.null(var) && is.numeric(data[, var]), "summary-default", "count-default")
+		)
+	}
+	
+	getExtra <- function(var = NULL){
+		if(!is.null(extra)){
+			listExtra <- lapply(extra, function(extraEl){
+				if(is.function(extraEl))	extraEl(data[, var])	else	extraEl
+			})
+			listExtra <- listExtra[!sapply(listExtra, is.null)]
+		}
+	}
+	
+	if(is.null(var)){
+		stats <- getStats(type = getType(), ...)
+		stats <- c(stats, getExtra())
+	}else{
+		stats <- sapply(var, function(varI){
+			typeVar <- getType(var = varI)
+			statsVar <- getStats(type = typeVar, x = data[, varI], ...)
+			c(statsVar, getExtra(var = varI))
+		}, simplify = FALSE)
+		
+	}
+	
+	return(stats)
+
+}
+
+#'  Get default set of statistics for one particular variable.
 #' 
 #' This set of statistics is passed directly to the \code{stats} parameter
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
@@ -6,6 +63,10 @@
 #' \itemize{
 #' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 #' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
+#' \item{'summary-default': }{all statistics for 'summaryTable' (\code{type} parameter), 
+#' excepted percentage and number of records}
+#' \item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
+#' excepted number of records}
 #' \item{'n': }{number of subjects}
 #' \item{'n (\%)': }{number of subjects (percentage)}
 #' \item{'median (range)': }{median (minimum, maximum)}
@@ -68,7 +129,9 @@ getStats <- function(
 	type <- match.arg(
 		type,
 		choices = c(
-			"summary", "count", "n", "n (%)", 
+			"summary-default", "count-default", 
+			"summary", "count", 
+			"n", "n (%)", 
 			"median (range)", "median\n(range)",
 			"mean (se)", "mean (range)"
 		),
@@ -76,7 +139,7 @@ getStats <- function(
 	)
 	
 	# number of decimals for continuous variable
-	nDecContBase <- if(is.function(nDecCont) & !is.null(x)){
+	nDecContBase <- if(is.function(nDecCont) & !is.null(x) & is.numeric(x)){
 		nDecCont(x)
 	}else	if(is.numeric(nDecCont))	nDecCont	
 	
@@ -113,8 +176,10 @@ getStats <- function(
 	
 	statsList <- sapply(type, function(typeI){
 		switch(typeI,
-			summary = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
-			count = statsBase[c("n", "%", "m")],
+			`summary-default` = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max")],
+			`count-default` = statsBase[c("n", "%")],
+			`summary` = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
+			`count` = statsBase[c("n", "%", "m")],
 			n = statsBase["n"],
 			`n (%)` = list('n (%)' = 
 				bquote(

@@ -72,9 +72,8 @@ Either:
 \item{varTotalInSepRow}{Logical, should the total per variable be included in
 a separated row (by default) or in the row containing the header of the variable?}
 
-\item{rowVar}{Character vector with variable(s) used for the rows.
-If multiple variables are specified, the variables should be sorted in hierarchical order.
-The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
+\item{rowVar}{Variable(s) of \code{data} used for
+grouping in row in the final table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
@@ -105,13 +104,6 @@ function(x) subset(x, TRTP == "treatmentX")}
 
 \item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
 (if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
-
-\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table, NULL by default. 
-To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
-This is only available if \code{rowVar} if not specified.
-Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-separately by this variable.}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:
@@ -175,7 +167,15 @@ statistics across columns in a separated column.}
 \item{colTotalLab}{String, label for the total column included 
 if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
-\item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
+\item{stats}{(Optionally) Either:
+\itemize{
+\item{string with: }{
+\itemize{
+\item{'default': }{default sets of statistics, 
+see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
+\item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
+}}
+\item{Named list of expressions or call objects of summary statistics of interest: }{
 The names are reported in the header.
 The following variables are recognized, if the table is a: 
 \itemize{
@@ -205,7 +205,8 @@ in the table.
 The statistics can be specified for each \code{var} (if multiple), 
 by naming each element of the list:
 list(varName1 = list(...), varName2 = list()) and/or for each element in:
-\code{statsVarBy}, by naming each sublist.}
+\code{statsVarBy}, by naming each sublist.
+}}}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
@@ -296,16 +297,6 @@ Set to NULL (by default) of no footer should be included.}
 If NULL, the summary table is not exported but only returned as output.}
 
 \item{outputType}{String with output type, 'data.frame' or 'flextable'.}
-
-\item{statsLayout}{String with layout for the statistics names 
-(in case more than one statistic is included), among:
-\itemize{
-\item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header).
-This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the \code{rowVar} variable(s)}
-}}
 
 \item{style}{string with table style in case \code{outputType} is 'flextable',
  either 'report' or 'presentation'.

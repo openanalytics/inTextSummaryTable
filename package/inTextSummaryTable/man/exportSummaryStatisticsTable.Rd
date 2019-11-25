@@ -18,7 +18,7 @@ exportSummaryStatisticsTable(summaryTable,
   emptyValue = "-", labelVars = NULL, file = NULL,
   landscape = (style == "presentation"), margin = 1,
   rowPadBase = 14.4, title = NULL, footer = NULL,
-  outputType = c("flextable", "data.frame"),
+  outputType = c("flextable", "DT", "data.frame"),
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), fontsize = switch(style,
@@ -28,18 +28,10 @@ exportSummaryStatisticsTable(summaryTable,
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
 
-\item{rowVar}{Character vector with variable(s) used for the rows.
-If multiple variables are specified, the variables should be sorted in hierarchical order.
-The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
+\item{rowVar}{Variable(s) of \code{data} used for
+grouping in row in the final table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
-
-\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table, NULL by default. 
-To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
-This is only available if \code{rowVar} if not specified.
-Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-separately by this variable.}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:
@@ -93,19 +85,6 @@ If vector > 1, specified for each element of \code{byVar} (in order of the level
 Set to NULL (by default) of no footer should be included.}
 
 \item{outputType}{String with output type, 'data.frame' or 'flextable'.}
-
-\item{statsVar}{Character vector with columns of \code{summaryTable} with
-statistic variables.}
-
-\item{statsLayout}{String with layout for the statistics names 
-(in case more than one statistic is included), among:
-\itemize{
-\item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header).
-This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the \code{rowVar} variable(s)}
-}}
 
 \item{style}{string with table style in case \code{outputType} is 'flextable',
  either 'report' or 'presentation'.
