@@ -84,6 +84,46 @@
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
+#' @param stats (Optionally) Either:
+#' \itemize{
+#' \item{string with: }{
+#' \itemize{
+#' \item{'default': }{default sets of statistics, 
+#' see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
+#' \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
+#' }}
+#' \item{Named list of expressions or call objects of summary statistics of interest: }{
+#' The names are reported in the header.
+#' The following variables are recognized, if the table is a: 
+#' \itemize{
+#' \item{'summaryTable': }{
+#' \itemize{
+#' \item{'statN': }{number of subjects}
+#' \item{'statMean': }{mean of \code{var}}
+#' \item{'statSD': }{standard deviation of \code{var}}
+#' \item{'statSE': }{standard error of \code{var}}
+#' \item{'statMedian': }{median of \code{var}}
+#' \item{'statMin': }{minimum of \code{var}}
+#' \item{'statMax': }{maximum of \code{var}}
+#' \item{'statPerc': }{percentage of subjects}
+#' \item{'statm': }{number of records}
+#' }
+#' }
+#' \item{'countTable': }{
+#' \itemize{
+#' \item{'statN': }{number of subjects}
+#' \item{'statPercN': }{percentage of subjects}
+#' \item{'statm': }{number of records}
+#' }
+#' }
+#' }
+#' If \code{stats} if of length 1, the name of the summary statistic is not included
+#' in the table.
+#' The statistics can be specified for each \code{var} (if multiple), 
+#' by naming each element of the list:
+#' list(varName1 = list(...), varName2 = list()) and/or for each element in:
+#' \code{statsVarBy}, by naming each sublist.
+#' }}
 #' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
 #' Only included if no \code{statsVar} if longer than 1.
 #' @param varIncludeTotal This argument is deprecated, please use: 'varTotalInclude' instead.
@@ -190,6 +230,10 @@ computeSummaryStatisticsTable <- function(
 	labelVars = NULL,
 	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars)
 ){
+	
+	# get default set of statistics
+	if(is.character(stats) && length(stats) == 1)
+		stats <- getStatsData(data = data, var = var, type = stats)
 	
 	# check if 'varIncludeTotal' is not default
 	if(!(is.logical(varIncludeTotal) && length(varIncludeTotal) == 1 && !varIncludeTotal)){

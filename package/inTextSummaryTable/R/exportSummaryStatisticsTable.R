@@ -34,7 +34,7 @@ exportSummaryStatisticsTable <- function(
 	margin = 1, rowPadBase = 14.4,
 	title = NULL,
 	footer = NULL,
-	outputType = c("flextable", "data.frame"),
+	outputType = c("flextable", "DT", "data.frame"),
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	style = "report", colorTable = getColorTable(style = style),
@@ -62,10 +62,12 @@ exportSummaryStatisticsTable <- function(
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		statsValueLab = statsValueLab,
 		emptyValue = emptyValue,
-		vline = vline
+		vline = vline,
+		outputType = outputType
 	)
 	
-	if(outputType == "flextable" | !is.null(file)){
+	createFt <- outputType == "flextable" | (!is.null(file) & file_ext(file) == "docx")
+	if(createFt){
 		
 		# create flextable only with header to extract dimensions header
 		summaryTableFt <- convertSummaryStatisticsTableToFlextable(
@@ -81,9 +83,21 @@ exportSummaryStatisticsTable <- function(
 		
 	}
 	
+	createDT <- outputType == "DT"
+	if(createDT == "DT"){
+		
+		summaryTableDT <- convertSummaryStatisticsTableToDT(
+			summaryTable = summaryTableLong,
+			rowVar = rowVar,
+			rowVarInSepCol = rowVarInSepCol
+		)
+		
+	}
+	
 	result <- switch(outputType,
 		'data.frame' = summaryTableLong,	
-		'flextable' = summaryTableFt
+		'flextable' = summaryTableFt,
+		'DT' = summaryTableDT
 	)
 	
 	return(result)

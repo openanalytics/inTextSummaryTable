@@ -2,7 +2,7 @@
 % Please edit documentation in R/custom_stats.R
 \name{getStats}
 \alias{getStats}
-\title{Extract default set of statistics.}
+\title{Get default set of statistics for one particular variable.}
 \usage{
 getStats(type = "summary", includeName = TRUE, x = NULL,
   nDecCont = getMaxNDecimals, nDecN = 0, nDecm = nDecN,
@@ -13,6 +13,10 @@ getStats(type = "summary", includeName = TRUE, x = NULL,
 \itemize{
 \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
 \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
+\item{'summary-default': }{all statistics for 'summaryTable' (\code{type} parameter), 
+excepted percentage and number of records}
+\item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
+excepted number of records}
 \item{'n': }{number of subjects}
 \item{'n (\%)': }{number of subjects (percentage)}
 \item{'median (range)': }{median (minimum, maximum)}

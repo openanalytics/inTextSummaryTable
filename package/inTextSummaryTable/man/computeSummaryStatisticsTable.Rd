@@ -173,7 +173,15 @@ not specified}
 in case \code{dataTotalPerc} is not specified}
 }}
 
-\item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
+\item{stats}{(Optionally) Either:
+\itemize{
+\item{string with: }{
+\itemize{
+\item{'default': }{default sets of statistics, 
+see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
+\item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
+}}
+\item{Named list of expressions or call objects of summary statistics of interest: }{
 The names are reported in the header.
 The following variables are recognized, if the table is a: 
 \itemize{
@@ -203,7 +211,8 @@ in the table.
 The statistics can be specified for each \code{var} (if multiple), 
 by naming each element of the list:
 list(varName1 = list(...), varName2 = list()) and/or for each element in:
-\code{statsVarBy}, by naming each sublist.}
+\code{statsVarBy}, by naming each sublist.
+}}}
 
 \item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
 which the statistics should be computed by.

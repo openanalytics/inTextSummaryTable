@@ -8,37 +8,25 @@ formatSummaryStatisticsTable(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
   getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
-  rowVarFormat = NULL, rowVarTotalInclude = getAttribute(summaryTable,
-  "rowVarTotalInclude"), rowVarTotalInSepRow = getAttribute(summaryTable,
-  "rowVarTotalInSepRow"), rowTotalLab = NULL, rowAutoMerge = TRUE,
+  rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
+  rowVarTotalInSepRow = getAttribute(summaryTable,
+  "rowVarTotalInSepRow"), rowTotalLab = NULL,
   colVar = getAttribute(summaryTable, "colVar"),
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
   "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"),
   statsValueLab = "StatisticValue", emptyValue = "-",
-  vline = c("none", "auto"))
+  outputType = c("flextable", "DT", "data.frame"), vline = c("none",
+  "auto"), rowAutoMerge = TRUE, rowVarFormat = NULL, ...)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
 
-\item{rowVar}{Character vector with variable(s) used for the rows.
-If multiple variables are specified, the variables should be sorted in hierarchical order.
-The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
+\item{rowVar}{Variable(s) of \code{data} used for
+grouping in row in the final table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
-
-\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table, NULL by default. 
-To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
-This is only available if \code{rowVar} if not specified.
-Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-separately by this variable.}
-
-\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
-Currently, only possibility is to set the variable elements in bold, with:
-list(var1 = "bold").
-(Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which to include the total for each group.}
@@ -48,10 +36,6 @@ for which to include the total for each group.}
 Otherwise (by default) the total is included in the header row of each category.}
 
 \item{rowTotalLab}{label for the row with total}
-
-\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
-e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
-or only one statistic per category}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
@@ -65,19 +49,6 @@ if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 
-\item{statsVar}{Character vector with columns of \code{summaryTable} with
-statistic variables.}
-
-\item{statsLayout}{String with layout for the statistics names 
-(in case more than one statistic is included), among:
-\itemize{
-\item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header).
-This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the \code{rowVar} variable(s)}
-}}
-
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
@@ -89,6 +60,19 @@ See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 \item{'none' (default): }{no vertical lines included}
 \item{'auto': }{vertical lines included between sub-groups}
 }}
+
+\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
+e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
+or only one statistic per category}
+
+\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
+Currently, only possibility is to set the variable elements in bold, with:
+list(var1 = "bold").
+(Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
+
+\item{...}{Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
+\code{\link[ggplot2]{geom_text}}
+used for the \code{label}.}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:
