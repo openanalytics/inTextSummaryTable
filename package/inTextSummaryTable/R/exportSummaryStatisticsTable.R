@@ -3,6 +3,7 @@
 #' @param outputType String with output type, 'data.frame' or 'flextable'.
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams convertSummaryStatisticsTableToFlextable
+#' @inheritParams convertSummaryStatisticsTableToDT
 #' @return Depending on the \code{outputType}:
 #' \itemize{
 #' \item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
@@ -14,6 +15,7 @@
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
 #' @importFrom glpgStyle getColorTable
+#' @importFrom tools file_ext
 #' @export
 exportSummaryStatisticsTable <- function(
 	summaryTable, 
@@ -27,6 +29,7 @@ exportSummaryStatisticsTable <- function(
 	rowAutoMerge = TRUE,
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colHeaderTotalInclude = TRUE,
+	expandVar = NULL,
 	statsValueLab = "StatisticValue",
 	emptyValue = "-",
 	labelVars = NULL, 
@@ -66,7 +69,7 @@ exportSummaryStatisticsTable <- function(
 		outputType = outputType
 	)
 	
-	createFt <- outputType == "flextable" | (!is.null(file) & file_ext(file) == "docx")
+	createFt <- outputType == "flextable" | (!is.null(file) && file_ext(file) == "docx")
 	if(createFt){
 		
 		# create flextable only with header to extract dimensions header
@@ -84,12 +87,15 @@ exportSummaryStatisticsTable <- function(
 	}
 	
 	createDT <- outputType == "DT"
-	if(createDT == "DT"){
+	if(createDT){
 		
 		summaryTableDT <- convertSummaryStatisticsTableToDT(
 			summaryTable = summaryTableLong,
 			rowVar = rowVar,
-			rowVarInSepCol = rowVarInSepCol
+			rowVarInSepCol = rowVarInSepCol,
+			statsLayout = statsLayout, statsValueLab = statsValueLab,
+			statsVar = statsVar,
+			expandVar = expandVar
 		)
 		
 	}

@@ -22,11 +22,12 @@ getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
   colTotalLab = "Total", stats = NULL, statsExtra = NULL,
   statsVarBy = NULL, statsGeneralLab = "Statistic",
   statsValueLab = "StatisticValue", subjectVar = "USUBJID",
-  filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
-  dataTotalRow = NULL, dataTotalCol = NULL, type = "auto",
-  labelVars = NULL, landscape = (style == "presentation"),
-  margin = 1, rowPadBase = 14.4, title = NULL, footer = NULL,
-  file = NULL, outputType = c("flextable", "data.frame"),
+  expandVar = NULL, filterFct = NULL, dataTotal = NULL,
+  dataTotalPerc = dataTotal, dataTotalRow = NULL,
+  dataTotalCol = NULL, type = "auto", labelVars = NULL,
+  landscape = (style == "presentation"), margin = 1,
+  rowPadBase = 14.4, title = NULL, footer = NULL, file = NULL,
+  outputType = c("flextable", "DT", "data.frame"),
   statsLayout = c("row", "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), byVar = NULL,
   byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
@@ -104,6 +105,13 @@ function(x) subset(x, TRTP == "treatmentX")}
 
 \item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
 (if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
+
+\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
+included in separated column in the table, NULL by default. 
+To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
+This is only available if \code{rowVar} if not specified.
+Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
+separately by this variable.}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:
@@ -228,6 +236,9 @@ in case no \code{colVar} is specified: 'StatisticValue' by default.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
+\item{expandVar}{Character vector with variables of the summary table which
+should be expanded in the data (only for 'DT' output).}
+
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table 
 (after statistics computation).
@@ -297,6 +308,16 @@ Set to NULL (by default) of no footer should be included.}
 If NULL, the summary table is not exported but only returned as output.}
 
 \item{outputType}{String with output type, 'data.frame' or 'flextable'.}
+
+\item{statsLayout}{String with layout for the statistics names 
+(in case more than one statistic is included), among:
+\itemize{
+\item{row: }{Statistics are included in rows in the first column of the table}
+\item{'col': }{Statistics are included in columns (last row of the header).
+This option is not compatible with categorical variable(s).}
+\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
+the \code{rowVar} variable(s)}
+}}
 
 \item{style}{string with table style in case \code{outputType} is 'flextable',
  either 'report' or 'presentation'.
