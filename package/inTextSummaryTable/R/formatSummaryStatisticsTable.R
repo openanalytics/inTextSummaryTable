@@ -132,9 +132,6 @@ formatSummaryStatisticsTable <- function(
 		dataWithTotal <- summaryTable
 		nTotal <- NA
 	}
-		
-	# ID variables
-	idVars <- c(rowVar, colVar)
 	
 	# convert from wide to long format
 	statsVar <- if(is.null(statsVar)){
@@ -146,8 +143,9 @@ formatSummaryStatisticsTable <- function(
 	if(statsValueLab == "Statistic")
 		stop("'statsValueLab' should be different than 'Statistic'.")
 	
-	dataLong <- melt(dataWithTotal, 
-		id.vars = idVars,
+	dataLong <- melt(
+		data = dataWithTotal, 
+		id.vars = c(rowVar, colVar),
 		measure.vars = statsVar,
 		value.name = statsValueLab,
 		variable.name = "Statistic"
@@ -195,11 +193,9 @@ formatSummaryStatisticsTable <- function(
 	
 	res <- switch(outputType,
 			
-		'data.frame' = {
-			
-			dataLong
-			
-		},
+		'data.frame' = dataLong,
+		
+		'DT' = dataLong,
 		
 		'flextable' = {
 		
