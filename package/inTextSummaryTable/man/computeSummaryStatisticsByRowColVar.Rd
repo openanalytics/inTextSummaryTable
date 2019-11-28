@@ -70,8 +70,6 @@ if the elements should be ordered in the final table.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
-
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
 e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).

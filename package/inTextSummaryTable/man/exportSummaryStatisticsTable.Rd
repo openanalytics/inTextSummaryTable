@@ -14,16 +14,17 @@ exportSummaryStatisticsTable(summaryTable,
   rowVarTotalInSepRow = getAttribute(summaryTable,
   "rowVarTotalInSepRow"), rowAutoMerge = TRUE,
   colVar = getAttribute(summaryTable, "colVar"),
-  colHeaderTotalInclude = TRUE, expandVar = NULL,
-  statsValueLab = "StatisticValue", emptyValue = "-",
-  labelVars = NULL, file = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
-  footer = NULL, outputType = c("flextable", "DT", "data.frame"),
+  colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
+  emptyValue = "-", labelVars = NULL, file = NULL,
+  landscape = (style == "presentation"), margin = 1,
+  rowPadBase = 14.4, title = NULL, footer = NULL,
+  outputType = c("flextable", "DT", "data.frame"),
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), fontsize = switch(style,
   report = 8, presentation = 10), fontname = switch(style, report =
-  "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL)
+  "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL,
+  expandVar = NULL, noEscapeVar = NULL, barVar = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -66,16 +67,11 @@ and are included in multi-columns layout.}
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}
 
-\item{expandVar}{Character vector with variables of the summary table which
-should be expanded in the data (only for 'DT' output).}
-
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
 \item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
-
-\item{labelVars}{named string with variable labels (names are the variable code)}
 
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
@@ -137,6 +133,15 @@ depending on \code{outputType}:
 \item{'DT': }{number of rows in the table (currently only
 the height is used (e.g. \code{c(NA, 4)})
 }}}
+
+\item{expandVar}{Character vector with variables of the summary table which
+should be expanded in the data (only for 'DT' output).}
+
+\item{noEscapeVar}{Character vector with variables of \code{summaryTable}
+which shouldn't be escaped in the table (e.g. containing URLs).}
+
+\item{barVar}{Character vector with variables of \code{summaryTable}
+that should be represented as a bar.}
 }
 \value{
 Depending on the \code{outputType}:

@@ -35,7 +35,6 @@ exportSummaryStatisticsTable <- function(
 	rowAutoMerge = TRUE,
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colHeaderTotalInclude = TRUE,
-	expandVar = NULL,
 	statsValueLab = "StatisticValue",
 	emptyValue = "-",
 	labelVars = NULL, 
@@ -49,7 +48,9 @@ exportSummaryStatisticsTable <- function(
 	style = "report", colorTable = getColorTable(style = style),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	vline = "none", pageDim = NULL){
+	vline = "none", pageDim = NULL,
+	# DT-specific
+	expandVar = NULL, noEscapeVar = NULL, barVar = NULL){
 
 	outputType  <- match.arg(outputType)
 	
@@ -104,6 +105,8 @@ exportSummaryStatisticsTable <- function(
 			statsLayout = statsLayout, 
 			statsValueLab = statsValueLab,
 			expandVar = expandVar,
+			noEscapeVar = noEscapeVar,
+			barVar = barVar,
 			pageDim = pageDim,
 			title = title,
 			labelVars = labelVars

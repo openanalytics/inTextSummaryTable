@@ -4,6 +4,10 @@
 #' @param pageDim Numeric vector of length 2 with page width and height,
 #' in number of rows (currently only
 #' the height is used (e.g. \code{c(NA, 4)})
+#' @param noEscapeVar Character vector with variables of \code{summaryTable}
+#' which shouldn't be escaped in the table (e.g. containing URLs).
+#' @param barVar Character vector with variables of \code{summaryTable}
+#' that should be represented as a bar.
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams formatSummaryStatisticsTableFlextable
 #' @inheritParams exportSummaryStatisticsTableToFlextable
@@ -21,19 +25,9 @@ exportSummaryStatisticsTableToDT <- function(
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
 	title = NULL,
-	expandVar = NULL,
+	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
 	pageDim = NULL,
 	labelVars = NULL){
-	
-	# set row variable labels
-	rowVarLabs <- c(
-		rowVarLab[setdiff(rowVar, "Statistic")], 
-		if(statsLayout != "col")	rowVarLab["Statistic"]
-	)
-	colNames <- setNames(colnames(dataLong), colnames(dataLong))
-	idx <- match(names(rowVarLabs), colNames)
-	colNames[na.omit(idx)] <- rowVarLabs[!is.na(idx)]
-	colnames(dataLong) <- colNames
 
 	statsLayout <- match.arg(statsLayout)
 	
@@ -94,10 +88,32 @@ exportSummaryStatisticsTableToDT <- function(
 		
 	}
 	
+	if(!is.null(noEscapeVar)){
+		
+		escape <- which(!colnames(summaryTable) %in% noEscapeVar)
+		if(length(escape) == 0)	escape <- TRUE
+		
+	}else	escape <- TRUE
+	
+	# set row variable labels
+	rowVarLabs <- c(
+		rowVarLab[setdiff(rowVar, "Statistic")], 
+		if(statsLayout != "col")	rowVarLab["Statistic"]
+	)
+	colNames <- setNames(colnames(summaryTable), colnames(summaryTable))
+	idx <- match(names(rowVarLabs), colNames)
+	colNames[na.omit(idx)] <- rowVarLabs[!is.na(idx)]
+	colnames(summaryTable) <- colNames
+	
+	# page length
 	if(!is.null(pageDim)){
 		pageLength <- pageDim[2]
 		if(is.na(pageLength))	pageLength <- Inf
 	}else	pageLength <- Inf
+	
+	# bar
+	barVar <- intersect(barVar, colnames(summaryTable))
+	if(length(barVar) == 0) barVar <- NULL
 	
 	# create DT
 	res <- toDTGLPG(
@@ -106,7 +122,9 @@ exportSummaryStatisticsTableToDT <- function(
 		caption = title,
 		expandIdx = if(length(expandIdx) > 0)	expandIdx,
 		expandVar = if(length(expandVarDT) > 0)	expandVarDT,
-		pageLength = pageLength
+		escape = escape,
+		pageLength = pageLength,
+		barVar = barVar
 	)
 	
 	return(res)

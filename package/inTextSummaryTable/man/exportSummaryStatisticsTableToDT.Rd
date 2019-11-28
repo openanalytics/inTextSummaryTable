@@ -12,7 +12,8 @@ exportSummaryStatisticsTableToDT(summaryTable,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"),
   statsValueLab = "StatisticValue", title = NULL, expandVar = NULL,
-  pageDim = NULL, labelVars = NULL)
+  noEscapeVar = NULL, barVar = NULL, pageDim = NULL,
+  labelVars = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -53,14 +54,15 @@ If vector > 1, specified for each element of \code{byVar} (in order of the level
 \item{expandVar}{Character vector with variables of the summary table which
 should be expanded in the data (only for 'DT' output).}
 
+\item{noEscapeVar}{Character vector with variables of \code{summaryTable}
+which shouldn't be escaped in the table (e.g. containing URLs).}
+
+\item{barVar}{Character vector with variables of \code{summaryTable}
+that should be represented as a bar.}
+
 \item{pageDim}{Numeric vector of length 2 with page width and height,
 in number of rows (currently only
 the height is used (e.g. \code{c(NA, 4)})}
-
-\item{labelVars}{named string with variable labels (names are the variable code)}
-}
-\value{
-\code{\link[DT]{datatable}} object.
 }
 \description{
 Convert summary table to DT

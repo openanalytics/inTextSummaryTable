@@ -69,8 +69,6 @@ list(var1 = "bold").
 (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
 \item{rowTotalLab}{label for the row with total}
-
-\item{labelVars}{named string with variable labels (names are the variable code)}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:
