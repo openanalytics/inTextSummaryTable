@@ -1,9 +1,15 @@
 #' Export a summary table in \code{docx} format.
-
 #' @param outputType String with output type, 'data.frame' or 'flextable'.
+#' @param pageDim Numeric vector of length 2 with page width and height
+#' depending on \code{outputType}:
+#' \itemize{
+#' \item{'flextable': }{in inches in portrait format}
+#' \item{'DT': }{number of rows in the table (currently only
+#' the height is used (e.g. \code{c(NA, 4)})
+#' }}
 #' @inheritParams formatSummaryStatisticsTable
-#' @inheritParams convertSummaryStatisticsTableToFlextable
-#' @inheritParams convertSummaryStatisticsTableToDT
+#' @inheritParams exportSummaryStatisticsTableToFlextable
+#' @inheritParams exportSummaryStatisticsTableToDT
 #' @return Depending on the \code{outputType}:
 #' \itemize{
 #' \item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
@@ -49,53 +55,58 @@ exportSummaryStatisticsTable <- function(
 	
 	statsLayout <- match.arg(statsLayout)
 	
-	## format table
 	summaryTableLong <- formatSummaryStatisticsTable(
-		summaryTable = summaryTable,
-		rowVar = rowVar, rowVarLab = rowVarLab,
-		rowVarInSepCol = rowVarInSepCol,
-		rowVarTotalInSepRow = rowVarTotalInSepRow,
-		rowVarTotalInclude = rowVarTotalInclude,
-		rowTotalLab = rowTotalLab,
-		rowAutoMerge = rowAutoMerge,
-		rowVarFormat = rowVarFormat,
-		colVar = colVar,
-		statsVar = statsVar,
-		statsLayout = statsLayout,
+		summaryTable,
 		colHeaderTotalInclude = colHeaderTotalInclude,
+		statsLayout = statsLayout,
 		statsValueLab = statsValueLab,
-		emptyValue = emptyValue,
-		vline = vline,
-		outputType = outputType
+		emptyValue = emptyValue
 	)
 	
 	createFt <- outputType == "flextable" | (!is.null(file) && file_ext(file) == "docx")
 	if(createFt){
 		
 		# create flextable only with header to extract dimensions header
-		summaryTableFt <- convertSummaryStatisticsTableToFlextable(
+		summaryTableFt <- exportSummaryStatisticsTableToFlextable(
+			# for 'format' function
 			summaryTable = summaryTableLong,
+			rowVar = rowVar,
+			rowVarInSepCol = rowVarInSepCol,
+			rowVarLab = rowVarLab,
+			rowVarTotalInSepRow = rowVarTotalInSepRow,
+			rowVarTotalInclude = rowVarTotalInclude,
+			statsLayout = statsLayout,
+			statsVar = statsVar,
+			vline = vline,
+			rowAutoMerge = rowAutoMerge,
+			rowVarFormat = rowVarFormat,
+			rowTotalLab = rowTotalLab,
+			# for 'convert' function
 			landscape = landscape, margin = margin, rowPadBase = rowPadBase,
 			title = title, footer = footer,
 			style = style, fontsize = fontsize,
 			file = file,
 			fontname = fontname,
 			colorTable = colorTable,
-			pageDim = pageDim
+			pageDim = pageDim,
+			labelVars = labelVars
 		)
 		
 	}
 	
-	createDT <- outputType == "DT"
-	if(createDT){
+	if(outputType == "DT"){
 		
-		summaryTableDT <- convertSummaryStatisticsTableToDT(
+		summaryTableDT <- exportSummaryStatisticsTableToDT(
 			summaryTable = summaryTableLong,
 			rowVar = rowVar,
 			rowVarInSepCol = rowVarInSepCol,
-			statsLayout = statsLayout, statsValueLab = statsValueLab,
 			statsVar = statsVar,
-			expandVar = expandVar
+			statsLayout = statsLayout, 
+			statsValueLab = statsValueLab,
+			expandVar = expandVar,
+			pageDim = pageDim,
+			title = title,
+			labelVars = labelVars
 		)
 		
 	}

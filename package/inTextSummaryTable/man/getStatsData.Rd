@@ -8,7 +8,7 @@ getStatsData(data, var = NULL, type = c("default", "all"),
   extra = NULL, ...)
 }
 \arguments{
-\item{data}{}
+\item{data}{Data.frame with data.}
 
 \item{var}{Character vector with variables of interest}
 

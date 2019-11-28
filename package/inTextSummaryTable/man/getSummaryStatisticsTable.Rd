@@ -73,8 +73,9 @@ Either:
 \item{varTotalInSepRow}{Logical, should the total per variable be included in
 a separated row (by default) or in the row containing the header of the variable?}
 
-\item{rowVar}{Variable(s) of \code{data} used for
-grouping in row in the final table.}
+\item{rowVar}{Character vector with variable(s) used for the rows.
+If multiple variables are specified, the variables should be sorted in hierarchical order.
+The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
@@ -287,7 +288,7 @@ in case \code{dataTotalPerc} is not specified}
 }
 }}
 
-\item{labelVars}{Named string with variable labels (names are the variable code).}
+\item{labelVars}{named string with variable labels (names are the variable code)}
 
 \item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
 format.}
@@ -348,8 +349,13 @@ of the output list of table(s).}
 \item{'auto': }{vertical lines included between sub-groups}
 }}
 
-\item{pageDim}{Numeric vector of length 2 with page width and height in inches
-in portrait format.}
+\item{pageDim}{Numeric vector of length 2 with page width and height
+depending on \code{outputType}:
+\itemize{
+\item{'flextable': }{in inches in portrait format}
+\item{'DT': }{number of rows in the table (currently only
+the height is used (e.g. \code{c(NA, 4)})
+}}}
 }
 \value{
 Depending on the \code{outputType}:

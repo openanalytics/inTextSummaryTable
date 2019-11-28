@@ -22,6 +22,7 @@
 #' @inheritParams glpgStyle::getDimPage
 #' @inheritParams formatCustomFlextable
 #' @inheritParams formatSummaryStatisticsTable
+#' @inheritParams exportFlextableToDocx
 #' @return \code{\link[flextable]{flextable}} object with summary table
 #' If \code{summaryTable} is a list of summary tables,
 #' returns a list of \code{\link[flextable]{flextable}}.
