@@ -1,44 +1,15 @@
 #' Format summary statistics table for export
 #' @param summaryTable Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.
-#' @param rowTotalLab label for the row with total
-#' @param rowAutoMerge Logical, if TRUE (by default) automatically merging of rows,
-#' e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
-#' or only one statistic per category
 #' @param colHeaderTotalInclude Logical, if TRUE include the total of number of patients
 #' (\code{'statN'}) in the header.
 #' @param statsValueLab String with label for the statistic value, 
 #' in case no \code{colVar} is specified: 'StatisticValue' by default.
 #' @param emptyValue Value used to fill the table for missing values, '-' by default.
 #' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
-#' @param rowVarFormat Named list with special formatting for the \code{rowVar}.
-#' Currently, only possibility is to set the variable elements in bold, with:
-#' list(var1 = "bold").
-#' (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)
-#' @param vline String mentioning how vertical lines should be included, either: 
-#' \itemize{
-#' \item{'none' (default): }{no vertical lines included}
-#' \item{'auto': }{vertical lines included between sub-groups}
-#' }
 #' @inheritParams subjectProfileSummaryPlot
-#' @inheritParams mergeSummaryTableRowsFt
+#' @inheritParams formatSummaryStatisticsTableFlextable
 #' @inheritParams computeSummaryStatisticsTable
-#' @return summaryTable reformatted in long format, with extra attributes:
-#' \itemize{
-#' \item{'header': }{data.frame with header for each column}
-#' \item{'padParams': }{list of list of parameters to be passed to the 
-#' \code{\link[flextable]{padding}} function}
-#' \item{'rowVar': }{column of output with row variable}
-#' \item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
-#' \item{'vlineParams' and 'hlineParams': }{
-#' list of list with correspondingly parameters for
-#' vertical and horizontal lines
-#' }
-#' \item{'vline': }{\code{vline} parameter}
-#' \item{'formatParams': }{list of list with special formatting for the table,
-#' currently only used if \code{rowVarFormat} if specified.}
-#' }
-#' If \code{summaryTable} is a list of summary tables,
-#' returns a list of corresponding summary tables in long format.
+#' @return summaryTable reformatted to wide format
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar
 #' @importFrom reshape2 melt dcast
@@ -49,29 +20,16 @@
 formatSummaryStatisticsTable <- function(
 	summaryTable,
 	# row
-	rowVar = getAttribute(summaryTable, "rowVar"), 
-	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
-	rowVarInSepCol = NULL,
-	# total
-	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"), 
-	rowVarTotalInSepRow = getAttribute(summaryTable, "rowVarTotalInSepRow"),
-	rowTotalLab = NULL,
+	rowVar = getAttribute(summaryTable, "rowVar"),
 	# column
 	colVar = getAttribute(summaryTable, "colVar"),
 	colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
 	colHeaderTotalInclude = TRUE,
-	labelVars = NULL,
 	# stats
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
-	emptyValue = "-",
-	outputType = c("flextable", "DT", "data.frame"),
-	vline = c("none", "auto"),
-	rowAutoMerge = TRUE,
-	rowVarFormat = NULL,
-	...
-	){
+	emptyValue = "-"){
 		
 	if(!is.data.frame(summaryTable)){
 		
@@ -191,28 +149,8 @@ formatSummaryStatisticsTable <- function(
 				paste0(statsValueLab, "\n(N=",  nTotal, ")")
 	}
 	
-	res <- switch(outputType,
-			
-		'data.frame' = dataLong,
-		
-		'DT' = dataLong,
-		
-		'flextable' = {
-		
-			dataLong <- formatSummaryStatisticsTableFt(
-				data = dataLong,
-				rowVar = rowVar, rowVarInSepCol = rowVarInSepCol, rowVarTotalInclude = rowVarTotalInclude,
-				statsLayout = statsLayout, statsVar = statsVar, 
-				rowVarLab = rowVarLab,
-				vline = vline,
-				rowAutoMerge = rowAutoMerge, rowVarFormat = rowVarFormat,
-				rowVarTotalInSepRow = rowVarTotalInSepRow
-			)
-			
-		}
-		
-	)
+	attributes(dataLong)$summaryTable <- attributes(summaryTable)$summaryTable
 	
-	return(res)
+	return(dataLong)
 	
 }

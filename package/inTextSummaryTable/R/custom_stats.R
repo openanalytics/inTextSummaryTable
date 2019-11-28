@@ -3,7 +3,7 @@
 #' 
 #' This set of statistics is passed directly to the \code{stats} parameter
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
-#' @param data 
+#' @param data Data.frame with data.
 #' @param var Character vector with variables of interest
 #' @param type String with type of statistics to extract:
 #' \itemize{

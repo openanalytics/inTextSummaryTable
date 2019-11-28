@@ -6,36 +6,19 @@
 \usage{
 formatSummaryStatisticsTable(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
-  rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
-  getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = NULL,
-  rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-  rowVarTotalInSepRow = getAttribute(summaryTable,
-  "rowVarTotalInSepRow"), rowTotalLab = NULL,
   colVar = getAttribute(summaryTable, "colVar"),
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
-  "Total"), colHeaderTotalInclude = TRUE, labelVars = NULL,
+  "Total"), colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"),
-  statsValueLab = "StatisticValue", emptyValue = "-",
-  outputType = c("flextable", "DT", "data.frame"), vline = c("none",
-  "auto"), rowAutoMerge = TRUE, rowVarFormat = NULL, ...)
+  statsValueLab = "StatisticValue", emptyValue = "-")
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
 
-\item{rowVar}{Variable(s) of \code{data} used for
-grouping in row in the final table.}
-
-\item{rowVarLab}{Label for the \code{rowVar} variable(s).}
-
-\item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which to include the total for each group.}
-
-\item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
-(not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
-Otherwise (by default) the total is included in the header row of each category.}
-
-\item{rowTotalLab}{label for the row with total}
+\item{rowVar}{Character vector with variable(s) used for the rows.
+If multiple variables are specified, the variables should be sorted in hierarchical order.
+The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
@@ -47,51 +30,27 @@ if \code{colTotalInclude} is TRUE, 'Total' by default.}
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}
 
-\item{labelVars}{Named string with variable labels (names are the variable code).}
+\item{statsVar}{Character vector with columns of \code{summaryTable} with
+statistic variables.}
+
+\item{statsLayout}{String with layout for the statistics names 
+(in case more than one statistic is included), among:
+\itemize{
+\item{row: }{Statistics are included in rows in the first column of the table}
+\item{'col': }{Statistics are included in columns (last row of the header).
+This option is not compatible with categorical variable(s).}
+\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
+the \code{rowVar} variable(s)}
+}}
 
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
 
 \item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
-
-\item{vline}{String mentioning how vertical lines should be included, either: 
-\itemize{
-\item{'none' (default): }{no vertical lines included}
-\item{'auto': }{vertical lines included between sub-groups}
-}}
-
-\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
-e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
-or only one statistic per category}
-
-\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
-Currently, only possibility is to set the variable elements in bold, with:
-list(var1 = "bold").
-(Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
-
-\item{...}{Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
-\code{\link[ggplot2]{geom_text}}
-used for the \code{label}.}
 }
 \value{
-summaryTable reformatted in long format, with extra attributes:
-\itemize{
-\item{'header': }{data.frame with header for each column}
-\item{'padParams': }{list of list of parameters to be passed to the 
-\code{\link[flextable]{padding}} function}
-\item{'rowVar': }{column of output with row variable}
-\item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
-\item{'vlineParams' and 'hlineParams': }{
-list of list with correspondingly parameters for
-vertical and horizontal lines
-}
-\item{'vline': }{\code{vline} parameter}
-\item{'formatParams': }{list of list with special formatting for the table,
-currently only used if \code{rowVarFormat} if specified.}
-}
-If \code{summaryTable} is a list of summary tables,
-returns a list of corresponding summary tables in long format.
+summaryTable reformatted to wide format
 }
 \description{
 Format summary statistics table for export

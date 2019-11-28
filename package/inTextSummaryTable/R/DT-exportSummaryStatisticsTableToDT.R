@@ -1,17 +1,39 @@
 #' Convert summary table to DT
 #' @param expandVar Character vector with variables of the summary table which
 #' should be expanded in the data (only for 'DT' output).
-#' @inheritParams formatSummaryStatisticsTableFt
-#' @return \code{\link[DT]{data.tables}}
+#' @param pageDim Numeric vector of length 2 with page width and height,
+#' in number of rows (currently only
+#' the height is used (e.g. \code{c(NA, 4)})
+#' @inheritParams formatSummaryStatisticsTable
+#' @inheritParams formatSummaryStatisticsTableFlextable
+#' @inheritParams exportSummaryStatisticsTableToFlextable
+#' @inherit glpgUtilityFct::toDTGLPG return
 #' @author Laure Cougnaud
+#' @importFrom utils head
 #' @importFrom glpgUtilityFct toDTGLPG
 #' @export
-convertSummaryStatisticsTableToDT <- function(summaryTable, rowVar, 
+exportSummaryStatisticsTableToDT <- function(
+	summaryTable, 
+	rowVar = getAttribute(summaryTable, "rowVar"), 
+	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
+	rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"), 
+	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
-	rowVarInSepCol = NULL, title = NULL,
-	statsVar = NULL,
-	expandVar = NULL){
+	title = NULL,
+	expandVar = NULL,
+	pageDim = NULL,
+	labelVars = NULL){
+	
+	# set row variable labels
+	rowVarLabs <- c(
+		rowVarLab[setdiff(rowVar, "Statistic")], 
+		if(statsLayout != "col")	rowVarLab["Statistic"]
+	)
+	colNames <- setNames(colnames(dataLong), colnames(dataLong))
+	idx <- match(names(rowVarLabs), colNames)
+	colNames[na.omit(idx)] <- rowVarLabs[!is.na(idx)]
+	colnames(dataLong) <- colNames
 
 	statsLayout <- match.arg(statsLayout)
 	
@@ -27,7 +49,7 @@ convertSummaryStatisticsTableToDT <- function(summaryTable, rowVar,
 					inputParams$title, 
 					strsplit(names(summaryTable)[i], split = "\n")[[1]]
 				)
-			do.call(convertSummaryStatisticsTableToDT, inputParamsBy)		
+			do.call(exportSummaryStatisticsTableToDT, inputParamsBy)		
 		}, simplify = FALSE)	
 		if(!is.null(names(summaryTable)))
 			names(res) <- names(summaryTable)
@@ -41,7 +63,7 @@ convertSummaryStatisticsTableToDT <- function(summaryTable, rowVar,
 	
 	# nesting in row variables specified via: 'rowGroup' parameter for DT
 	rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
-	if(statsLayout == "row" & "Statistic" %in% colnames(data))
+	if(statsLayout == "row" & "Statistic" %in% colnames(summaryTable))
 		rowVarInRow <- c(rowVarInRow, "Statistic")
 	rowGroup <- head(rowVarInRow, -1)
 	if(length(rowGroup) == 0)	rowGroup <- NULL
@@ -55,7 +77,7 @@ convertSummaryStatisticsTableToDT <- function(summaryTable, rowVar,
 	if(!is.null(expandVar)){
 		
 		# extract expandVar which are in the column names
-		expandVarDT <- intersect(colnames(data), expandVar)
+		expandVarDT <- intersect(colnames(summaryTable), expandVar)
 		
 		# in case expandVar is one statistic,
 		# extract indices if statistics are in rows
@@ -63,13 +85,19 @@ convertSummaryStatisticsTableToDT <- function(summaryTable, rowVar,
 		if(length(expandVarStats) > 0){
 			if(statsLayout == "row" & "Statistic" %in% colnames(summaryTable)){
 				idxRow <- which(summaryTable$Statistic %in% expandVarStats)
-				idxCol <- grep(statsValueLab, colnames(summaryTable))
-				if(length(idxCol) > 0)	stop("Issue with extraction value column.")
+				colsInit <- sub("(.+)(\n\\(N=\\d{1,}\\))", "\\1", colnames(summaryTable))
+				idxCol <- which(colsInit == statsValueLab)
+				if(length(idxCol) != 1)	stop("Issue with extraction statistic value column during the formatting 'expandVar'.")
 				expandIdx <- cbind(row = idxRow, col = idxCol)
 			}
 		}
 		
 	}
+	
+	if(!is.null(pageDim)){
+		pageLength <- pageDim[2]
+		if(is.na(pageLength))	pageLength <- Inf
+	}else	pageLength <- Inf
 	
 	# create DT
 	res <- toDTGLPG(
@@ -77,7 +105,8 @@ convertSummaryStatisticsTableToDT <- function(summaryTable, rowVar,
 		rowGroup = rowGroup,
 		caption = title,
 		expandIdx = if(length(expandIdx) > 0)	expandIdx,
-		expandVar = if(length(expandVarDT) > 0)	expandVarDT
+		expandVar = if(length(expandVarDT) > 0)	expandVarDT,
+		pageLength = pageLength
 	)
 	
 	return(res)
