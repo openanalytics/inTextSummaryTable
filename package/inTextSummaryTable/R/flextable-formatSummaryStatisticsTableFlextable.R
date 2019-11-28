@@ -72,6 +72,18 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 		
 	vline <- match.arg(vline)
 	
+	if(!is.data.frame(summaryTable)){
+		
+		inputParams <- as.list(environment())
+		res <- sapply(summaryTable, function(summaryTableI){
+			inputParamsBy <- inputParams
+			inputParamsBy$summaryTable <- summaryTableI
+			do.call(formatSummaryStatisticsTableFlextable, inputParamsBy)		
+		}, simplify = FALSE)	
+		return(res)
+		
+	}
+	
 	hlineParams <- mergeParams <- formatParams <- NULL	
 	
 	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & length(statsVar) > 1)

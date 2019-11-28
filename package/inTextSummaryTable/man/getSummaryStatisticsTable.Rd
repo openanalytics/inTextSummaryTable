@@ -22,18 +22,18 @@ getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
   colTotalLab = "Total", stats = NULL, statsExtra = NULL,
   statsVarBy = NULL, statsGeneralLab = "Statistic",
   statsValueLab = "StatisticValue", subjectVar = "USUBJID",
-  expandVar = NULL, filterFct = NULL, dataTotal = NULL,
-  dataTotalPerc = dataTotal, dataTotalRow = NULL,
-  dataTotalCol = NULL, type = "auto", labelVars = NULL,
-  landscape = (style == "presentation"), margin = 1,
-  rowPadBase = 14.4, title = NULL, footer = NULL, file = NULL,
-  outputType = c("flextable", "DT", "data.frame"),
+  filterFct = NULL, dataTotal = NULL, dataTotalPerc = dataTotal,
+  dataTotalRow = NULL, dataTotalCol = NULL, type = "auto",
+  labelVars = NULL, landscape = (style == "presentation"),
+  margin = 1, rowPadBase = 14.4, title = NULL, footer = NULL,
+  file = NULL, outputType = c("flextable", "DT", "data.frame"),
   statsLayout = c("row", "col", "rowInSepCol"), style = "report",
   colorTable = getColorTable(style = style), byVar = NULL,
   byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
   colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
   presentation = 10), fontname = switch(style, report = "Times",
-  presentation = "Tahoma"), vline = "none", pageDim = NULL)
+  presentation = "Tahoma"), vline = "none", pageDim = NULL,
+  expandVar = NULL, noEscapeVar = NULL, barVar = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -237,9 +237,6 @@ in case no \code{colVar} is specified: 'StatisticValue' by default.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{expandVar}{Character vector with variables of the summary table which
-should be expanded in the data (only for 'DT' output).}
-
 \item{filterFct}{(optional) Function based on computed statistics of
 \code{rowVar}/code{colVar} which returns a subset of the summary table 
 (after statistics computation).
@@ -287,8 +284,6 @@ in case \code{dataTotalPerc} is not specified}
 'countTable' otherwise
 }
 }}
-
-\item{labelVars}{named string with variable labels (names are the variable code)}
 
 \item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
 format.}
@@ -356,6 +351,15 @@ depending on \code{outputType}:
 \item{'DT': }{number of rows in the table (currently only
 the height is used (e.g. \code{c(NA, 4)})
 }}}
+
+\item{expandVar}{Character vector with variables of the summary table which
+should be expanded in the data (only for 'DT' output).}
+
+\item{noEscapeVar}{Character vector with variables of \code{summaryTable}
+which shouldn't be escaped in the table (e.g. containing URLs).}
+
+\item{barVar}{Character vector with variables of \code{summaryTable}
+that should be represented as a bar.}
 }
 \value{
 Depending on the \code{outputType}:

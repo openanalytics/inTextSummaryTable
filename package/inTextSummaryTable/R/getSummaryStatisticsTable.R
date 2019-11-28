@@ -44,7 +44,6 @@ getSummaryStatisticsTable <- function(
 	statsValueLab = "StatisticValue",
 	## extra
 	subjectVar = "USUBJID",
-	expandVar = NULL,
 	filterFct = NULL,
 	dataTotal = NULL, dataTotalPerc = dataTotal, 
 	dataTotalRow = NULL, dataTotalCol = NULL,
@@ -61,7 +60,9 @@ getSummaryStatisticsTable <- function(
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	vline = "none", pageDim = NULL){
+	vline = "none", pageDim = NULL,
+	# DT
+	expandVar = NULL, noEscapeVar = NULL, barVar = NULL){
 
 	statsLayout <- match.arg(statsLayout)
 
@@ -125,7 +126,7 @@ getSummaryStatisticsTable <- function(
 		margin = margin, rowPadBase = rowPadBase,
 		outputType = outputType,
 		statsLayout = statsLayout,
-		expandVar = expandVar,
+		expandVar = expandVar, noEscapeVar = noEscapeVar, barVar = barVar,
 		style = style, colorTable = colorTable,
 		fontsize = fontsize,
 		fontname = fontname,
