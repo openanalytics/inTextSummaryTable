@@ -630,16 +630,16 @@ computeSummaryStatisticsTable <- function(
 	# if only flag variables, remove 'variableGroup'
 	# (otherwise empty line when not specifying 'stats')
 	if("variableGroup" %in% colnames(summaryTable)){
-		uniqueGroup <- all(summaryTable[which(!summaryTable$isTotal), "variableGroup"] == "")
+		uniqueGroup <- all(summaryTable[which(!summaryTable$isTotal), "variableGroup"] == "", na.rm = TRUE)
 		if(uniqueGroup)
 			summaryTable[, which(colnames(summaryTable) == "variableGroup")] <- NULL
 	}
 	
 	# sort columns
-	colSorted <- c(rowVar, colVar, "isTotal", statsVarInit, statsVar)
+	colSorted <- c(rowVar, colVar, "variable", "variableGroup", "isTotal", statsVarInit, statsVar)
 	colSorted <- intersect(colSorted, colnames(summaryTable)) 
 	colSorted <- c(colSorted, setdiff(colnames(summaryTable), colSorted))
-	if(length(colSorted ) > 0)
+	if(length(colSorted) > 0)
 		summaryTable <- summaryTable[, colSorted]
 	
 	# table attributes
@@ -1331,9 +1331,11 @@ getStatisticsSummaryStatisticsTable <- function(
 				}
 			}
 			
-			statsDf <- sapply(stats, function(expr)
-				eval(expr = expr, envir = sumTable)
-			, simplify = FALSE)
+			statsDf <- if(is.list(stats)){
+				sapply(stats, function(expr)
+					eval(expr = expr, envir = sumTable)
+				, simplify = FALSE)
+			}else	list(eval(expr = stats, envir = sumTable))
 			if(is.null(statsName))	names(statsDf) <- "Statistic"
 			
 			# save in summaryTable
