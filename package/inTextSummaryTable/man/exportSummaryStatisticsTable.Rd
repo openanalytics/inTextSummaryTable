@@ -73,6 +73,8 @@ in case no \code{colVar} is specified: 'StatisticValue' by default.}
 \item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 
+\item{labelVars}{named string with variable labels (names are the variable code)}
+
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
 

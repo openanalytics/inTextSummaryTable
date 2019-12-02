@@ -1,3 +1,6 @@
+2.4.0
+    o getStatisticsSummaryStatisticsTable: stats: support simple list by variable
+    o computeSummaryStatisticsTable: sort variable/variableGroup before stats in output
 2.3.0
     o extend package to DT output (reorganize format/convert/export steps)
     o computeSummaryStatisticsTable: ddply -> by (base R) to fix issue: names' attribute must be the same length as the vector
