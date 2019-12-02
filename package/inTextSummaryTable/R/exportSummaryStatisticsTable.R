@@ -25,6 +25,7 @@
 #' @export
 exportSummaryStatisticsTable <- function(
 	summaryTable, 
+	# row
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"), 
@@ -33,18 +34,23 @@ exportSummaryStatisticsTable <- function(
 	rowTotalLab = NULL,
 	rowVarTotalInSepRow = getAttribute(summaryTable, "rowVarTotalInSepRow"),
 	rowAutoMerge = TRUE,
+	# column
 	colVar = getAttribute(summaryTable, "colVar"), 
+	colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
 	colHeaderTotalInclude = TRUE,
+	# stats
+	statsVar = getAttribute(summaryTable, "statsVar"),
+	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",
 	emptyValue = "-",
+	# extra
 	labelVars = NULL, 
 	file = NULL, landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 14.4,
 	title = NULL,
-	footer = NULL,
 	outputType = c("flextable", "DT", "data.frame"),
-	statsVar = getAttribute(summaryTable, "statsVar"),
-	statsLayout = c("row", "col", "rowInSepCol"),
+	# flextable-specific
+	footer = NULL,
 	style = "report", colorTable = getColorTable(style = style),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
@@ -58,7 +64,14 @@ exportSummaryStatisticsTable <- function(
 	
 	summaryTableLong <- formatSummaryStatisticsTable(
 		summaryTable,
+		# row
+		rowVar = rowVar,
+		# column
+		colVar = colVar,
+		colTotalLab = colTotalLab,
 		colHeaderTotalInclude = colHeaderTotalInclude,
+		# stats
+		statsVar = statsVar,
 		statsLayout = statsLayout,
 		statsValueLab = statsValueLab,
 		emptyValue = emptyValue
