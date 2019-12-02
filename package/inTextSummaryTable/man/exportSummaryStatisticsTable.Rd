@@ -14,17 +14,19 @@ exportSummaryStatisticsTable(summaryTable,
   rowVarTotalInSepRow = getAttribute(summaryTable,
   "rowVarTotalInSepRow"), rowAutoMerge = TRUE,
   colVar = getAttribute(summaryTable, "colVar"),
-  colHeaderTotalInclude = TRUE, statsValueLab = "StatisticValue",
-  emptyValue = "-", labelVars = NULL, file = NULL,
-  landscape = (style == "presentation"), margin = 1,
-  rowPadBase = 14.4, title = NULL, footer = NULL,
-  outputType = c("flextable", "DT", "data.frame"),
+  colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
+  "Total"), colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
-  statsLayout = c("row", "col", "rowInSepCol"), style = "report",
-  colorTable = getColorTable(style = style), fontsize = switch(style,
-  report = 8, presentation = 10), fontname = switch(style, report =
-  "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL,
-  expandVar = NULL, noEscapeVar = NULL, barVar = NULL)
+  statsLayout = c("row", "col", "rowInSepCol"),
+  statsValueLab = "StatisticValue", emptyValue = "-",
+  labelVars = NULL, file = NULL, landscape = (style ==
+  "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
+  outputType = c("flextable", "DT", "data.frame"), footer = NULL,
+  style = "report", colorTable = getColorTable(style = style),
+  fontsize = switch(style, report = 8, presentation = 10),
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  vline = "none", pageDim = NULL, expandVar = NULL,
+  noEscapeVar = NULL, barVar = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -64,8 +66,24 @@ or only one statistic per category}
 If multiple variables are specified, the variables should be sorted in hierarchical order,
 and are included in multi-columns layout.}
 
+\item{colTotalLab}{String, label for the total column included 
+if \code{colTotalInclude} is TRUE, 'Total' by default.}
+
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the header.}
+
+\item{statsVar}{Character vector with columns of \code{summaryTable} with
+statistic variables.}
+
+\item{statsLayout}{String with layout for the statistics names 
+(in case more than one statistic is included), among:
+\itemize{
+\item{row: }{Statistics are included in rows in the first column of the table}
+\item{'col': }{Statistics are included in columns (last row of the header).
+This option is not compatible with categorical variable(s).}
+\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
+the \code{rowVar} variable(s)}
+}}
 
 \item{statsValueLab}{String with label for the statistic value, 
 in case no \code{colVar} is specified: 'StatisticValue' by default.}
@@ -90,23 +108,10 @@ width of the table: [width page extracted from \code{dimPage} - 2* margin]}
 Set to NULL (by default) if no title should be included.
 If vector > 1, specified for each element of \code{byVar} (in order of the levels).}
 
-\item{footer}{Character vector with footer(s) for the table.
-Set to NULL (by default) of no footer should be included.}
-
 \item{outputType}{String with output type, 'data.frame' or 'flextable'.}
 
-\item{statsVar}{Character vector with columns of \code{summaryTable} with
-statistic variables.}
-
-\item{statsLayout}{String with layout for the statistics names 
-(in case more than one statistic is included), among:
-\itemize{
-\item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header).
-This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the \code{rowVar} variable(s)}
-}}
+\item{footer}{Character vector with footer(s) for the table.
+Set to NULL (by default) of no footer should be included.}
 
 \item{style}{string with table style in case \code{outputType} is 'flextable',
  either 'report' or 'presentation'.
