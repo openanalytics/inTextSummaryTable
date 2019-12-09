@@ -70,7 +70,8 @@ the height is used (e.g. \code{c(NA, 4)})}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
 
-\item{...}{Extra parameters passed to the \code{\link[glpgUtilityFct]{toDTGLPG}}}
+\item{...}{Extra parameters passed to the 
+\code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}
 }
 \value{
 \code{\link[DT]{datatable}} object.

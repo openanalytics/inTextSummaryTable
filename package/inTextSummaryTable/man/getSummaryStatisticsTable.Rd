@@ -375,7 +375,8 @@ which shouldn't be escaped in the table (e.g. containing URLs).}
 \item{barVar}{Character vector with variables of \code{summaryTable}
 that should be represented as a bar.}
 
-\item{...}{Extra parameters passed to the \code{\link[glpgUtilityFct]{toDTGLPG}}}
+\item{...}{Extra parameters passed to the 
+\code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}
 }
 \value{
 Depending on the \code{outputType}:
@@ -386,7 +387,7 @@ all computed statistics}
 different columns for each \code{colVar}), with specified labels}
 \item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
  object with summary table}
-\item{'DT': }{\code[DT]{datatable} object with summary table}
+\item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
 }
 If multiple \code{outputType} are specified, a list of those objects, named
 by \code{outputType}.
