@@ -1,5 +1,14 @@
 #' Export a summary table in \code{docx} format.
 #' @param outputType String with output type, 'data.frame' or 'flextable'.
+#' @param rowVarInSepCol Character vector with \code{rowVar}
+#' that should be included in multiple columns.
+#' By default, if \code{outputType} is: 
+#' \itemize{
+#' \item{'flextable': }{NULL, the row variables are nested in the first column 
+#' of the table}
+#' \item{otherwise: }{\code{rowVar}, the row variables are included in
+#' separated columns}
+#' }
 #' @param pageDim Numeric vector of length 2 with page width and height
 #' depending on \code{outputType}:
 #' \itemize{
@@ -28,7 +37,7 @@ exportSummaryStatisticsTable <- function(
 	# row
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
-	rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"), 
+	rowVarInSepCol = if(outputType != "flextable")	rowVar, 
 	rowVarFormat = NULL,
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
 	rowTotalLab = NULL,
@@ -48,7 +57,7 @@ exportSummaryStatisticsTable <- function(
 	file = NULL, landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 14.4,
 	title = NULL,
-	outputType = c("flextable", "DT", "data.frame"),
+	outputType = "flextable",
 	# flextable-specific
 	footer = NULL,
 	style = "report", colorTable = getColorTable(style = style),
@@ -58,7 +67,9 @@ exportSummaryStatisticsTable <- function(
 	# DT-specific
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL){
 
-	outputType  <- match.arg(outputType)
+	outputType  <- match.arg(outputType, 
+		choices = c("flextable", "DT", "data.frame")
+	)
 	
 	statsLayout <- match.arg(statsLayout)
 	

@@ -13,12 +13,13 @@
 #' @param rowVar Character vector with variable(s) used for the rows.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order.
 #' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
-#' @param rowVarInSepCol Variable(s) of \code{rowVar} which should be 
-#' included in separated column in the table, NULL by default. 
-#' To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
+#' @param rowVarInSepCol Character vector with \code{rowVar}
+#' that should be included in multiple columns.
+#' NULL by default: the row variables are nested in the first column 
+#' of the table.
+#' To include the groups within a \code{var} variable in a separated column, 
+#' set: rowVarInSepCol == 'variableGroup'.
 #' This is only available if \code{rowVar} if not specified.
-#' Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-#' separately by this variable.
 #' @param statsLayout String with layout for the statistics names 
 #' (in case more than one statistic is included), among:
 #' \itemize{
