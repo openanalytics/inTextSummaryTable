@@ -8,6 +8,9 @@
 #' which shouldn't be escaped in the table (e.g. containing URLs).
 #' @param barVar Character vector with variables of \code{summaryTable}
 #' that should be represented as a bar.
+#' @param rowVarInSepCol Character vector with \code{rowVar}
+#' that should be included in multiple columns.
+#' By default, same as \code{rowVar}.
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams formatSummaryStatisticsTableFlextable
 #' @inheritParams exportSummaryStatisticsTableToFlextable
@@ -20,7 +23,7 @@ exportSummaryStatisticsTableToDT <- function(
 	summaryTable, 
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
-	rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"), 
+	rowVarInSepCol = rowVar, 
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = c("row", "col", "rowInSepCol"),
 	statsValueLab = "StatisticValue",

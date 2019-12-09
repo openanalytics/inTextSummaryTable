@@ -639,7 +639,8 @@ These categories are specified via additional **levels in the `rowVar`/`colVar` 
 
 ### Row variable
 
-By default, if multiple row variables are specified, they are considered nested
+By default (when `outputType` is set to: 'flextable'), if multiple row variables are specified, 
+they are considered nested
 and displayed in the first column of the final table.
 Each sub-category is indicated with a specific indent (customizable with
 `rowVarPadBase`).

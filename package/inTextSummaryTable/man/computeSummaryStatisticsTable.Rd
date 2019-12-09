@@ -303,18 +303,21 @@ elements of the variable}
 }
 \item{'isTotal': }{variable with logical flag, TRUE if the record contain the total by column}
 }
-The output contains additional the following attributes:
+Additionally, the output contains the following attributes:
 \itemize{
-\item{'statsVar': }{column name(s) of summary table with statistics
+\item{'statsVar': }{column name(s) of summary table with computed statistics
 included in the final table}
 \item{'rowVar': }{column name(s) of summary table with row variable
 included in the final table}
-\item{'colVar': }{column name(s) of summary table with col variable
-included in the final table}
 \item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
-\item{'rowVarTotalInclude': }{\code{rowVarTotalInclude}}
-} 
-The computed summary statistics are stored in the 'statsVar' attribute.
+\item{'rowVarTotalInclude': }{row variables whose total will be included:
+\code{rowVarTotalInclude} and 'variableGroup' if the variable total should be included}
+\item{'rowVarTotalInSepRow': }{row variables whose total will be included in a separated row:
+\code{rowVarTotalInSepRow} and 'variableGroup' if \code{varTotalInSepRow}}
+\item{'colVar': }{column name(s) of summary table with column variable
+included in the final table}
+\item{'colTotalLab': }{label for the total}
+}
 }
 \description{
 Compute summary statistics for a specific dataset and variables of interest

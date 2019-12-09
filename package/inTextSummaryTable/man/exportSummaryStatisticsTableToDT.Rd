@@ -7,8 +7,7 @@
 exportSummaryStatisticsTableToDT(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
-  getLabelVar(rowVar, labelVars = labelVars)),
-  rowVarInSepCol = getAttribute(summaryTable, "rowVarInSepCol"),
+  getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = rowVar,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = c("row", "col", "rowInSepCol"),
   statsValueLab = "StatisticValue", title = NULL, expandVar = NULL,
@@ -24,12 +23,9 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
-\item{rowVarInSepCol}{Variable(s) of \code{rowVar} which should be 
-included in separated column in the table, NULL by default. 
-To include the groups within a \code{var} variable in a separated column, set: rowVarInSepCol == 'variableGroup'.
-This is only available if \code{rowVar} if not specified.
-Note that the row total (if \code{rowTotalInclude} is TRUE) is computed 
-separately by this variable.}
+\item{rowVarInSepCol}{Character vector with \code{rowVar}
+that should be included in multiple columns.
+By default, same as \code{rowVar}.}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
 statistic variables.}
