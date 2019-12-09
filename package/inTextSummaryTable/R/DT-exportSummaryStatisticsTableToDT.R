@@ -96,14 +96,13 @@ exportSummaryStatisticsTableToDT <- function(
 	}else	escape <- TRUE
 	
 	# set row variable labels
+	colnamesDT <- colnames(summaryTable)
 	rowVarLabs <- c(
 		rowVarLab[setdiff(rowVar, "Statistic")], 
 		if(statsLayout != "col")	rowVarLab["Statistic"]
 	)
-	colNames <- setNames(colnames(summaryTable), colnames(summaryTable))
-	idx <- match(names(rowVarLabs), colNames)
-	colNames[na.omit(idx)] <- rowVarLabs[!is.na(idx)]
-	colnames(summaryTable) <- colNames
+	colnamesDT <- if(length(rowVarLabs) > 0)
+		setNames(names(rowVarLabs), rowVarLabs)
 	
 	# page length
 	if(!is.null(pageDim)){
@@ -115,17 +114,22 @@ exportSummaryStatisticsTableToDT <- function(
 	barVar <- intersect(barVar, colnames(summaryTable))
 	if(length(barVar) == 0) barVar <- NULL
 	
-	# create DT
-	res <- toDTGLPG(
-		data = summaryTable,
-		rowGroup = rowGroup,
-		caption = title,
-		expandIdx = if(length(expandIdx) > 0)	expandIdx,
-		expandVar = if(length(expandVarDT) > 0)	expandVarDT,
-		escape = escape,
-		pageLength = pageLength,
-		barVar = barVar
+	argsDT <- c(
+		list(
+			data = summaryTable,
+			rowGroup = rowGroup,
+			caption = title,
+			escape = escape,
+			pageLength = pageLength,
+			barVar = barVar
+		),
+		if(length(expandIdx) > 0)	list(expandIdx = expandIdx),
+		if(length(expandVarDT) > 0)	list(expandVar = expandVarDT),
+		if(length(colnamesDT) > 0)	list(colnames = colnamesDT)
 	)
+	
+	# create DT
+	res <- do.call(toDTGLPG, argsDT)
 	
 	return(res)
 	
