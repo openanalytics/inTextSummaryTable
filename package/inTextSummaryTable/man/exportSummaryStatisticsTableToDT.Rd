@@ -69,13 +69,8 @@ that should be represented as a bar.}
 in number of rows (currently only
 the height is used (e.g. \code{c(NA, 4)})}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
-
 \item{...}{Extra parameters passed to the 
 \code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}
-}
-\value{
-\code{\link[DT]{datatable}} object.
 }
 \description{
 Convert summary table to DT

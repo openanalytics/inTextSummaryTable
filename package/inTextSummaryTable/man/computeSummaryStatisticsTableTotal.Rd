@@ -51,8 +51,6 @@ if the elements should be ordered in the final table.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
-
-\item{labelVars}{named string with variable labels (names are the variable code)}
 }
 \value{
 data.frame with total table.
