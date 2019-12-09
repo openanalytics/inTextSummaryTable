@@ -45,7 +45,9 @@ the \code{rowVar} variable(s)}
 }}
 
 \item{statsValueLab}{String with label for the statistic value, 
-in case no \code{colVar} is specified: 'StatisticValue' by default.}
+'StatisticValue' by default.
+This is only used if the statistics provided in \code{stats} are not named
+and if no \code{colVar} is specified.}
 
 \item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}

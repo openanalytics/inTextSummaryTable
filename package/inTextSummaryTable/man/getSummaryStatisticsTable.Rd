@@ -34,7 +34,7 @@ getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
   colHeaderTotalInclude = TRUE, fontsize = switch(style, report = 8,
   presentation = 10), fontname = switch(style, report = "Times",
   presentation = "Tahoma"), vline = "none", pageDim = NULL,
-  expandVar = NULL, noEscapeVar = NULL, barVar = NULL)
+  expandVar = NULL, noEscapeVar = NULL, barVar = NULL, ...)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -235,7 +235,9 @@ to specify the statistics for each element in \code{statsVarBy}.}
 Only included if no \code{statsVar} if longer than 1.}
 
 \item{statsValueLab}{String with label for the statistic value, 
-in case no \code{colVar} is specified: 'StatisticValue' by default.}
+'StatisticValue' by default.
+This is only used if the statistics provided in \code{stats} are not named
+and if no \code{colVar} is specified.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
@@ -372,6 +374,8 @@ which shouldn't be escaped in the table (e.g. containing URLs).}
 
 \item{barVar}{Character vector with variables of \code{summaryTable}
 that should be represented as a bar.}
+
+\item{...}{Extra parameters passed to the \code{\link[glpgUtilityFct]{toDTGLPG}}}
 }
 \value{
 Depending on the \code{outputType}:
@@ -380,7 +384,8 @@ Depending on the \code{outputType}:
 all computed statistics}
 \item{'data.frame': }{summary table in a wide format (
 different columns for each \code{colVar}), with specified labels}
-\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object with summary table}
+\item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
+ object with summary table}
 \item{'DT': }{\code[DT]{datatable} object with summary table}
 }
 If multiple \code{outputType} are specified, a list of those objects, named

@@ -11,7 +11,7 @@ exportSummaryStatisticsTableToDT(summaryTable,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = "col", statsValueLab = "StatisticValue",
   title = NULL, expandVar = NULL, noEscapeVar = NULL,
-  barVar = NULL, pageDim = NULL, labelVars = NULL)
+  barVar = NULL, pageDim = NULL, labelVars = NULL, ...)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -47,7 +47,9 @@ the \code{rowVar} variable(s)
 }}
 
 \item{statsValueLab}{String with label for the statistic value, 
-in case no \code{colVar} is specified: 'StatisticValue' by default.}
+'StatisticValue' by default.
+This is only used if the statistics provided in \code{stats} are not named
+and if no \code{colVar} is specified.}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.
@@ -67,6 +69,8 @@ in number of rows (currently only
 the height is used (e.g. \code{c(NA, 4)})}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
+
+\item{...}{Extra parameters passed to the \code{\link[glpgUtilityFct]{toDTGLPG}}}
 }
 \value{
 \code{\link[DT]{datatable}} object.

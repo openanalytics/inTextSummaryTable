@@ -24,7 +24,7 @@ exportSummaryStatisticsTable(summaryTable,
   colorTable = getColorTable(style = style), fontsize = switch(style,
   report = 8, presentation = 10), fontname = switch(style, report =
   "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL,
-  expandVar = NULL, noEscapeVar = NULL, barVar = NULL)
+  expandVar = NULL, noEscapeVar = NULL, barVar = NULL, ...)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -94,7 +94,9 @@ the \code{rowVar} variable(s)
 }}
 
 \item{statsValueLab}{String with label for the statistic value, 
-in case no \code{colVar} is specified: 'StatisticValue' by default.}
+'StatisticValue' by default.
+This is only used if the statistics provided in \code{stats} are not named
+and if no \code{colVar} is specified.}
 
 \item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
@@ -157,6 +159,8 @@ which shouldn't be escaped in the table (e.g. containing URLs).}
 
 \item{barVar}{Character vector with variables of \code{summaryTable}
 that should be represented as a bar.}
+
+\item{...}{Extra parameters passed to the \code{\link[glpgUtilityFct]{toDTGLPG}}}
 }
 \value{
 Depending on the \code{outputType}:
@@ -165,7 +169,8 @@ Depending on the \code{outputType}:
 all computed statistics}
 \item{'data.frame': }{summary table in a wide format (
 different columns for each \code{colVar}), with specified labels}
-\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object with summary table}
+\item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
+ object with summary table}
 \item{'DT': }{\code[DT]{datatable} object with summary table}
 }
 If \code{summaryTable} is a list of summary tables,
