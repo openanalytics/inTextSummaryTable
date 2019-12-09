@@ -157,6 +157,7 @@ formatSummaryStatisticsTable <- function(
 	}
 	
 	attributes(dataLong)$summaryTable <- attributes(summaryTable)$summaryTable
+	attributes(dataLong)$summaryTable$statsLayout <- statsLayout
 	
 	return(dataLong)
 	

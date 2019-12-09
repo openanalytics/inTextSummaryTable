@@ -7,8 +7,7 @@
 exportSummaryStatisticsTable(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
-  getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = if
-  (outputType != "flextable") rowVar, rowVarFormat = NULL,
+  getLabelVar(rowVar, labelVars = labelVars)), rowVarFormat = NULL,
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
   rowTotalLab = NULL, rowVarTotalInSepRow = getAttribute(summaryTable,
   "rowVarTotalInSepRow"), rowAutoMerge = TRUE,
@@ -34,16 +33,6 @@ If multiple variables are specified, the variables should be sorted in hierarchi
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
-
-\item{rowVarInSepCol}{Character vector with \code{rowVar}
-that should be included in multiple columns.
-By default, if \code{outputType} is: 
-\itemize{
-\item{'flextable': }{NULL, the row variables are nested in the first column 
-of the table}
-\item{otherwise: }{\code{rowVar}, the row variables are included in
-separated columns}
-}}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:
@@ -162,6 +151,16 @@ that should be represented as a bar.}
 
 \item{...}{Extra parameters passed to the 
 \code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}
+
+\item{rowVarInSepCol}{Character vector with \code{rowVar}
+that should be included in multiple columns.
+By default, if \code{outputType} is: 
+\itemize{
+\item{'flextable': }{NULL, the row variables are nested in the first column 
+of the table}
+\item{otherwise: }{\code{rowVar}, the row variables are included in
+separated columns}
+}}
 }
 \value{
 Depending on the \code{outputType}:

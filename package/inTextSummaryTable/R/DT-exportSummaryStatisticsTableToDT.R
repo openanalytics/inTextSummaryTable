@@ -43,7 +43,7 @@ exportSummaryStatisticsTableToDT <- function(
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = rowVar, 
 	statsVar = getAttribute(summaryTable, "statsVar"),
-	statsLayout = "col",
+	statsLayout = getAttribute(summaryTable, "statsLayout", default = "col"),
 	statsValueLab = "StatisticValue",
 	title = NULL,
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,

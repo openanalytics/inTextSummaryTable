@@ -9,9 +9,10 @@ exportSummaryStatisticsTableToDT(summaryTable,
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
   getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = rowVar,
   statsVar = getAttribute(summaryTable, "statsVar"),
-  statsLayout = "col", statsValueLab = "StatisticValue",
-  title = NULL, expandVar = NULL, noEscapeVar = NULL,
-  barVar = NULL, pageDim = NULL, labelVars = NULL, ...)
+  statsLayout = getAttribute(summaryTable, "statsLayout", default =
+  "col"), statsValueLab = "StatisticValue", title = NULL,
+  expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
+  pageDim = NULL, labelVars = NULL, ...)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
