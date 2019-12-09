@@ -1,3 +1,5 @@
+2.4.0
+    o export to DT: fix rowVarInSepCol <-> labelVars spec
 2.3.1
     o getStatisticsSummaryStatisticsTable: stats: support simple list by variable
     o computeSummaryStatisticsTable: sort variable/variableGroup before stats in output
