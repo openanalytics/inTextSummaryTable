@@ -3,6 +3,7 @@
     o rowVarInSepCol default: NULL for flextable, rowVar otherwise
     o outputType: 'data.frame-base'
     o fix when one statistic and statistics in columns
+    o parameters can be passed to the toDTGLPG function
 2.3.1
     o getStatisticsSummaryStatisticsTable: stats: support simple list by variable
     o computeSummaryStatisticsTable: sort variable/variableGroup before stats in output

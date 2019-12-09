@@ -8,7 +8,8 @@
 #' all computed statistics}
 #' \item{'data.frame': }{summary table in a wide format (
 #' different columns for each \code{colVar}), with specified labels}
-#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object with summary table}
+#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
+#'  object with summary table}
 #' \item{'DT': }{\code[DT]{datatable} object with summary table}
 #' }
 #' If multiple \code{outputType} are specified, a list of those objects, named
@@ -74,7 +75,8 @@ getSummaryStatisticsTable <- function(
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none", pageDim = NULL,
 	# DT
-	expandVar = NULL, noEscapeVar = NULL, barVar = NULL){
+	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
+	...){
 
 	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
@@ -138,7 +140,8 @@ getSummaryStatisticsTable <- function(
 		style = style, colorTable = colorTable,
 		fontsize = fontsize,
 		fontname = fontname,
-		vline = vline, pageDim = pageDim
+		vline = vline, pageDim = pageDim,
+		...
 	)
 	
 	return(ft)

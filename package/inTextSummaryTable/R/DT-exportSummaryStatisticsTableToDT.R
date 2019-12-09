@@ -27,6 +27,8 @@
 #' the \code{rowVar} variable(s)
 #' }
 #' }
+#' @param ... Extra parameters passed to the 
+#' \code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams formatSummaryStatisticsTableFlextable
 #' @inheritParams exportSummaryStatisticsTableToFlextable
@@ -46,7 +48,8 @@ exportSummaryStatisticsTableToDT <- function(
 	title = NULL,
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
 	pageDim = NULL,
-	labelVars = NULL){
+	labelVars = NULL,
+	...){
 
 	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
 	
@@ -152,6 +155,18 @@ exportSummaryStatisticsTableToDT <- function(
 		if(length(expandVarDT) > 0)	list(expandVar = expandVarDT),
 		if(length(colnamesDT) > 0)	list(colnames = colnamesDT)
 	)
+	
+	# check if extra parameters for the 'toDTGLPG' function 
+	# specified by the user are not already specified in this function
+	argsDTExtra <- list(...)
+	isArgsDupl <- names(argsDTExtra) %in% names(argsDT)
+	if(any(isArgsDupl)){
+		warning(paste("Parameter(s):", toString(sQuote(names(argsDTExtra)[isArgsDupl])),
+			"are already specified internally, you may consider using in-text table specific",
+			"parameters instead.")
+		)
+	}
+	argsDT <- c(argsDT, argsDTExtra[!isArgsDupl])
 	
 	# create DT
 	res <- do.call(toDTGLPG, argsDT)

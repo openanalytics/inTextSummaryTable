@@ -41,7 +41,8 @@
 #' all computed statistics}
 #' \item{'data.frame': }{summary table in a wide format (
 #' different columns for each \code{colVar}), with specified labels}
-#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object with summary table}
+#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
+#'  object with summary table}
 #' \item{'DT': }{\code[DT]{datatable} object with summary table}
 #' }
 #' If \code{summaryTable} is a list of summary tables,
@@ -85,7 +86,8 @@ exportSummaryStatisticsTable <- function(
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none", pageDim = NULL,
 	# DT-specific
-	expandVar = NULL, noEscapeVar = NULL, barVar = NULL){
+	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
+	...){
 
 	outputType  <- match.arg(outputType, 
 		choices = c("flextable", "DT", "data.frame", "data.frame-base")
@@ -106,7 +108,7 @@ exportSummaryStatisticsTable <- function(
 		emptyValue = emptyValue
 	)
 	
-	createFt <- outputType == "flextable" | (!is.null(file) && file_ext(file) == "docx")
+	createFt <- "flextable" %in% outputType | (!is.null(file) && file_ext(file) == "docx")
 	if(createFt){
 		
 		# create flextable only with header to extract dimensions header
@@ -137,7 +139,7 @@ exportSummaryStatisticsTable <- function(
 		
 	}
 	
-	if(outputType == "DT"){
+	if("DT" %in% outputType){
 		
 		summaryTableDT <- exportSummaryStatisticsTableToDT(
 			summaryTable = summaryTableLong,
@@ -151,7 +153,8 @@ exportSummaryStatisticsTable <- function(
 			barVar = barVar,
 			pageDim = pageDim,
 			title = title,
-			labelVars = labelVars
+			labelVars = labelVars,
+			...
 		)
 		
 	}
