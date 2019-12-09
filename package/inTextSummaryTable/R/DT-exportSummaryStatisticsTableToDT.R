@@ -91,27 +91,33 @@ exportSummaryStatisticsTableToDT <- function(
 		
 	}
 	
-	if(!is.null(noEscapeVar)){
+	escape <- if(!is.null(noEscapeVar)){
 		
-		escape <- which(!colnames(summaryTable) %in% noEscapeVar)
-		if(length(escape) == 0)	escape <- TRUE
+		if(is.character(noEscapeVar)){
 		
-	}else	escape <- TRUE
+			escape <- which(!colnames(summaryTable) %in% noEscapeVar)
+			if(length(escape) == 0)	{
+				TRUE
+			}else	escape
+			
+		}else	noEscapeVar
+		
+	}else	TRUE
 	
 	# set row variable labels
 	colnamesDT <- colnames(summaryTable)
 	rowVarLabs <- c(
 		rowVarLab[setdiff(rowVar, "Statistic")], 
-		if(statsLayout != "col")	rowVarLab["Statistic"]
+		if(statsLayout != "col" && "Statistic" %in% colnames(summaryTable))	rowVarLab["Statistic"]
 	)
+	rowVarLabs <- rowVarLabs[!is.na(rowVarLabs)]
 	colnamesDT <- if(length(rowVarLabs) > 0)
 		setNames(names(rowVarLabs), rowVarLabs)
 	
 	# page length
-	if(!is.null(pageDim)){
-		pageLength <- pageDim[2]
-		if(is.na(pageLength))	pageLength <- Inf
-	}else	pageLength <- Inf
+	pageLength <- if(!is.null(pageDim) && !is.na(pageDim[2])){
+		pageDim[2]
+	}
 	
 	# bar
 	barVar <- intersect(barVar, colnames(summaryTable))
@@ -123,9 +129,9 @@ exportSummaryStatisticsTableToDT <- function(
 			rowGroup = rowGroup,
 			caption = title,
 			escape = escape,
-			pageLength = pageLength,
 			barVar = barVar
 		),
+		if(!is.null(pageLength))	list(pageLength = pageLength),
 		if(length(expandIdx) > 0)	list(expandIdx = expandIdx),
 		if(length(expandVarDT) > 0)	list(expandVar = expandVarDT),
 		if(length(colnamesDT) > 0)	list(colnames = colnamesDT)
