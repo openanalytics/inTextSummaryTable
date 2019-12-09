@@ -10,7 +10,7 @@
 #' different columns for each \code{colVar}), with specified labels}
 #' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
 #'  object with summary table}
-#' \item{'DT': }{\code[DT]{datatable} object with summary table}
+#' \item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
 #' }
 #' If multiple \code{outputType} are specified, a list of those objects, named
 #' by \code{outputType}.

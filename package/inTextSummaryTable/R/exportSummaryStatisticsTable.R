@@ -43,7 +43,7 @@
 #' different columns for each \code{colVar}), with specified labels}
 #' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
 #'  object with summary table}
-#' \item{'DT': }{\code[DT]{datatable} object with summary table}
+#' \item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
 #' }
 #' If \code{summaryTable} is a list of summary tables,
 #' returns a list of corresponding summary tables in long format.
