@@ -132,7 +132,8 @@ exportSummaryStatisticsTableToDT <- function(
 		}else	FALSE
 	})
 	idxColNum <- which(isColNum)
-	summaryTable[, idxColNum] <- sapply(summaryTable[, idxColNum], as.numeric, simplify = FALSE)
+	summaryTable[, idxColNum] <- sapply(summaryTable[, idxColNum, drop = FALSE],
+		as.numeric, simplify = FALSE)
 
 	# set row variable labels
 	colnamesDT <- colnames(summaryTable)
