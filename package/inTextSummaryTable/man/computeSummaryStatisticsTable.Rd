@@ -251,8 +251,6 @@ of the \code{columnVar} (assuming nested variable(s)).
 If variable(s) are not nested, possible combinations
 can be specified via \code{colVarDataLevels}.}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
-
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
 
