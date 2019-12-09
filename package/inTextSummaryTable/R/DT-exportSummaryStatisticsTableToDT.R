@@ -11,6 +11,22 @@
 #' @param rowVarInSepCol Character vector with \code{rowVar}
 #' that should be included in multiple columns.
 #' By default, same as \code{rowVar}.
+#' @param statsLayout String with layout for the statistics names 
+#' (in case more than one statistic is included), among:
+#' \itemize{
+#' \item{row: }{
+#' All statistics are included in different rows 
+#' in the first column of the table
+#' }
+#' \item{'col' (by default): }{
+#' Statistics are included in separated columns (last row of the header).
+#' This option is not compatible with categorical variable(s).
+#' }
+#' \item{'rowInSepCol': }{
+#' Statistics are included in different rows, but in a separated column than
+#' the \code{rowVar} variable(s)
+#' }
+#' }
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams formatSummaryStatisticsTableFlextable
 #' @inheritParams exportSummaryStatisticsTableToFlextable
@@ -25,14 +41,14 @@ exportSummaryStatisticsTableToDT <- function(
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarInSepCol = rowVar, 
 	statsVar = getAttribute(summaryTable, "statsVar"),
-	statsLayout = c("row", "col", "rowInSepCol"),
+	statsLayout = "col",
 	statsValueLab = "StatisticValue",
 	title = NULL,
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
 	pageDim = NULL,
 	labelVars = NULL){
 
-	statsLayout <- match.arg(statsLayout)
+	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
 	
 	if(!is.data.frame(summaryTable)){
 		

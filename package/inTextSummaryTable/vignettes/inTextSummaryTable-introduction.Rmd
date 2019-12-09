@@ -1391,15 +1391,65 @@ function (instead of creating directly the in-text table via the
 	# format it as a function and pass it to the 'filterFct' parameter
 ```
 
-# Table export
+# Table format/export
 
-## Export table to a Word document
+## Output formats {#outputFormat}
+
+The `outputType` parameter specifies the output format of the summary statistics table.
+
+### Word/PowerPoint
+
+#### General format
+
+To get the table in a format **suitable for _Word_/_PowerPoint_**,
+the _outputType_ parameter should be set to **'flextable'** (the default).
+
+```{r outputType-flextable}
+
+	summaryTableFt <- getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars,
+		title = "Table: Adverse Events by System Organ Class and Preferred Term",
+		footer = c(
+			"N=number of subjects with data; n=number of subjects with this observation",
+			"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population"
+		),
+		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+		outputType = "flextable"
+	)
+	class(summaryTableFt)
+	print(summaryTableFt)
+
+```
+
+This format is available via the [`flextable` R package](https://cran.r-project.org/package=flextable) 
+(see `?flextable`).
+
+When printed into the R console, this object is displayed in the browser. 
+This object can be inserted within a `rmarkdown` document by printing it 
+in the specified document chunk, providing than:
+
+* `flextable` version >= 0.4.7
+* for a `docx` document (`output_type`): [pandoc](https://pandoc.org/installing.html) version >= 2.0
+(see [`rmarkdown` documentation for Word](https://bookdown.org/yihui/rmarkdown/word-document.html))
+* for `pptx` document: [pandoc](https://pandoc.org/installing.html) version >= 2.4 
+(see [`rmarkdown` documentation for PowerPoint](https://bookdown.org/yihui/rmarkdown/powerpoint-presentation.html))
+
+A `rmarkdown` chunk can contains only one `flextable` object. 
+To include a list of `flextable` in a `rmarkdown` document, 
+the function `knitPrintListObjects` of the `glpgUtilityFct` package can be used.
+
+#### Export table to a Word file
 
 The table is **exported to a Word document** (_docx_) by specifying a file name
 in the **`file`** parameter.
 A summary table is **shared with medical writers** via this format.
 
-## Report or presentation
+#### Report or presentation
 
 The table can be styled via the `style` parameter.
 This parameter affects the fontsize, font family, color of the text and
@@ -1453,28 +1503,51 @@ Note: specific parameters can be used to export the table as
 landscape (`landscape`), specify custom margins (`margin`), row indent
 (`rowVarPadBase`), font size and family (`fontsize` and `font`).
 
-## Details on the output format {#outputFormat}
+### Interactive table: `DT`
 
-The `getSummaryStatisticsTable` function **returns a
-[`flextable`](https://cran.r-project.org/package=flextable) object (see
-`?flextable`)**.
+The summary statistics table is exported as an interactive table
+by setting the parameter: `outputType` to: 'DT'.
+A `datatable` object, available via the [DT](https://CRAN.R-project.org/package=DT) R
+package is created.
 
-When printed into the R console, this object is displayed in the browser. This
-object can be inserted within a `rmarkdown` document by printing it in the
-specified document chunk. 
-To include `flextable` in a `rmarkdown` document, `flextable` version >= 0.4.7 and for a
-`docx` document: [pandoc](https://pandoc.org/installing.html) version >= 2.0 and `pptx` document: pandoc version >= 2.4 are required.
+```{r outputType-DT}
 
-A `rmarkdown` chunk can contains only one `flextable` object. To include a list
-of `flextable` in a `rmarkdown` document, the function `knitPrintListObjects` of
-the `glpgUtilityFct` package can be used.
+	getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars,
+		title = "Table: Adverse Events by System Organ Class and Preferred Term",
+		footer = c(
+			"N=number of subjects with data; n=number of subjects with this observation",
+			"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population"
+		),
+		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+		outputType = "DT"
+	)
 
-## Output the table as `data.frame`
+```
 
-The supporting data displayed in the `flextable` object is outputted to a R
+Interactivity includes the functionalities to:
+
+* filter the table
+* order columns
+* export the table (or a subset of this)
+* custom interactivity as the possibility to have expandable rows/columns, 
+e.g. to include extra information (as patient profiles) of the subjects summarized in the table
+
+Such table can be included in a _html_ `rmarkdown` report.
+
+### `data.frame`
+
+#### Final table
+
+The supporting data displayed in the `flextable`/`DT` object is output to a R
 `data.frame` if `outputType` is set to `data.frame`.
 
-```{r outputType}
+```{r outputType-dataframe}
 
 	summaryTable <- getSummaryStatisticsTable(
 		data = dataAEInterest,
@@ -1496,12 +1569,67 @@ The supporting data displayed in the `flextable` object is outputted to a R
 
 ```
 
-## Intermediary table in long format
+#### Full table in long format
+
+The table with all the default computed summary statistics, specified
+set of statistics of interest and all row/column variables stored in
+a long format is available by using the `outputType` parameter to: 'data.frame-base'.
+
+Because all the variables of interest are stored in a long format,
+this format could be useful to compare the computed summary statistics between 
+different dataset versions.
+
+```{r outputType-dataframe-base}
+
+summaryTableAll <- getSummaryStatisticsTable(
+	data = dataAEInterest,
+	rowVar = c("AESOC", "AEDECOD"),
+	colVar = "TRTA",
+	stats = getStats("n (%)"),
+	dataTotal = dataTotalAE,
+	labelVars = labelVars,
+	title = "Table: Adverse Events by System Organ Class and Preferred Term",
+	footer = c(
+		"N=number of subjects with data; n=number of subjects with this observation",
+		"Denominator for percentage calculations = the total number of subjects per treatment group in the safety population"
+	),
+	rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+	style = "presentation",
+	outputType = "data.frame-base"
+)
+pander(summaryTableAll, split.table = Inf)
+
+```
+
+### Differences between the format
+
+Most of the functionalities and default parameters are the same
+between the `flextable` and `DT` format, at the exception of:
+
+* general layout: 
+    + for the `DT` format, by default the variables and statistics are
+    included in different columns: `rowVarInSepCol` is `rowVar` and `statsLayout` is set to 'col'
+    + for the `flextable` format, by default the row variables and statistics are nested:
+    `rowVarInSepCol` is set to: 'NULL' and the `statsLayout` is set to 'row'
+
+
+## Detailed framework of the creation of the in-text table
+
+The `getSummaryStatisticsTable` consists of the following framework:
+
+* computation of the summary statistics table with the `computeSummaryStatisticsTable`
+function
+* export of the table to the required format (`outputType` parameter)
+
+### Computation of the summary statistics
 
 The supporting data for the summary statistics table, including
 the entire set of statistics (as numeric) and combined statistic set
 is accessed via the
 `computeSummaryStatisticsTable`.
+
+This is equivalent of the table output by the `getSummaryStatisticsTable`
+function, with the `outputType` set to 'data.frame-base'.
 
 ```{r computeSummaryStatisticsTable}
 
@@ -1526,6 +1654,32 @@ reported in the table header.
 ```{r computeSummaryStatisticsTable-isTotal}
 
 	pander(subset(summaryTable, isTotal))
+	
+```	
+
+### Export table to the requested format
+
+The table is exported with the requested format (by default `flextable`)
+with the function `exportSummaryStatisticsTable`:
+
+* `flextable` format:
+```{r exportSummaryStatisticsTable-flextable}
+
+	exportSummaryStatisticsTable(summaryTable = summaryTable)
+	
+```	
+* `DT` format:
+```{r exportSummaryStatisticsTable-DT}
+
+	exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "DT")
+	
+```	
+* `data.frame` output
+```{r exportSummaryStatisticsTable-data.frame}
+
+	pander(
+		exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "data.frame")
+	)
 	
 ```	
 

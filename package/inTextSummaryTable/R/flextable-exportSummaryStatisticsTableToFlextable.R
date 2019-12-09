@@ -15,7 +15,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarInSepCol = NULL, 
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-	statsLayout = c("row", "col", "rowInSepCol"), 
+	statsLayout = "row", 
 	statsVar = getAttribute(summaryTable, "statsVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarTotalInSepRow = NULL,
@@ -35,7 +35,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 	file = NULL, pageDim = NULL,
 	labelVars = NULL){
 
-	statsLayout <- match.arg(statsLayout)
+	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
 	vline <- match.arg(vline)
 
 	# custom formatting for flextable

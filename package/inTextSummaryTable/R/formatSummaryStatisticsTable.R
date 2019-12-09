@@ -3,7 +3,9 @@
 #' @param colHeaderTotalInclude Logical, if TRUE include the total of number of patients
 #' (\code{'statN'}) in the header.
 #' @param statsValueLab String with label for the statistic value, 
-#' in case no \code{colVar} is specified: 'StatisticValue' by default.
+#' 'StatisticValue' by default.
+#' This is only used if the statistics provided in \code{stats} are not named
+#' and if no \code{colVar} is specified.
 #' @param emptyValue Value used to fill the table for missing values, '-' by default.
 #' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
 #' @inheritParams subjectProfileSummaryPlot
@@ -27,7 +29,7 @@ formatSummaryStatisticsTable <- function(
 	colHeaderTotalInclude = TRUE,
 	# stats
 	statsVar = getAttribute(summaryTable, "statsVar"),
-	statsLayout = c("row", "col", "rowInSepCol"),
+	statsLayout = "row",
 	statsValueLab = "StatisticValue",
 	emptyValue = "-"){
 		
@@ -43,7 +45,7 @@ formatSummaryStatisticsTable <- function(
 		
 	}
 		
-	statsLayout <- match.arg(statsLayout)
+	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
 	
 	if(statsLayout == "col" & "variableGroup" %in% rowVar){
 		warning("The layout of the statistics cannot be 'column' if categorical variable(s) are used, the statistics are set in rows.")
@@ -101,17 +103,22 @@ formatSummaryStatisticsTable <- function(
 	if(statsValueLab == "Statistic")
 		stop("'statsValueLab' should be different than 'Statistic'.")
 	
+	# in case only one statistic is computed and 'stats' was named
+	# retain the original name, otherwise use statsValueLab
+	statsValueNewName <- if(length(statsVar) == 1 && statsVar != "Statistic"){
+		statsVar
+	}else	statsValueLab
 	dataLong <- melt(
 		data = dataWithTotal, 
 		id.vars = c(rowVar, colVar),
 		measure.vars = statsVar,
-		value.name = statsValueLab,
+		value.name = statsValueNewName,
 		variable.name = "Statistic"
 	)
 	
 	if(length(statsVar) == 1 && n_distinct(dataLong$Statistic) == 1)	dataLong$Statistic <- NULL
 	
-	emptyStats <- which(is.na(dataLong[, statsValueLab]))
+	emptyStats <- which(is.na(dataLong[, statsValueNewName]))
 	if(length(emptyStats) > 0)
 		dataLong <- dataLong[-emptyStats, ]
 	
@@ -123,11 +130,11 @@ formatSummaryStatisticsTable <- function(
 	}
 	
 	# format statistic value
-	if(is.numeric(dataLong[, statsValueLab]))
-		dataLong[, statsValueLab] <- formatC(dataLong[, statsValueLab])
+	if(is.numeric(dataLong[, statsValueNewName]))
+		dataLong[, statsValueNewName] <- formatC(dataLong[, statsValueNewName])
 	
 	# put elements in 'colVar' in different columns (long -> wide format)
-	if(!is.null(colVar) | statsLayout == "col"){
+	if(!is.null(colVar) | (statsLayout == "col" & length(statsVar) > 1)){
 		rowVarForm <- c(
 			if(!is.null(rowVar)) paste(rowVar, collapse = " + "), 
 			if(length(statsVar) > 1 & statsLayout != "col")	"Statistic"
@@ -140,13 +147,13 @@ formatSummaryStatisticsTable <- function(
 			paste(colVarUsed, collapse = " + ")
 		))
 		dataLong <- dcast(dataLong, formula = formulaWithin, 
-			value.var = statsValueLab, fill = emptyValue
+			value.var = statsValueNewName, fill = emptyValue
 		)
 		if(all(rowVarForm == "."))	dataLong["."] <- NULL
 	}else{
 		if(colHeaderTotalInclude)
-			colnames(dataLong)[match(statsValueLab, colnames(dataLong))] <- 
-				paste0(statsValueLab, "\n(N=",  nTotal, ")")
+			colnames(dataLong)[match(statsValueNewName, colnames(dataLong))] <- 
+				paste0(statsValueNewName, "\n(N=",  nTotal, ")")
 	}
 	
 	attributes(dataLong)$summaryTable <- attributes(summaryTable)$summaryTable

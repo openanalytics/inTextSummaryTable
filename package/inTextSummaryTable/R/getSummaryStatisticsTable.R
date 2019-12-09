@@ -2,7 +2,19 @@
 #' @param varLab Label for the \code{var} variable.
 #' @inheritParams computeSummaryStatisticsTable
 #' @inheritParams exportSummaryStatisticsTable
-#' @inherit exportSummaryStatisticsTable return
+#' @return Depending on the \code{outputType}:
+#' \itemize{
+#' \item{'data.frame-base': }{input summary table in a long format with
+#' all computed statistics}
+#' \item{'data.frame': }{summary table in a wide format (
+#' different columns for each \code{colVar}), with specified labels}
+#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object with summary table}
+#' \item{'DT': }{\code[DT]{datatable} object with summary table}
+#' }
+#' If multiple \code{outputType} are specified, a list of those objects, named
+#' by \code{outputType}.
+#' If \code{byVar} is specified, each object consists of a list of tables,
+#' one for each element in \code{byVar}.
 #' @author Laure Cougnaud
 #' @importFrom glpgStyle getColorTable
 #' @export
@@ -52,8 +64,8 @@ getSummaryStatisticsTable <- function(
 	landscape = (style == "presentation"), 	margin = 1, rowPadBase = 14.4, 
 	title = NULL, footer = NULL,
 	file = NULL,
-	outputType = c("flextable", "DT", "data.frame"),
-	statsLayout = c("row", "col", "rowInSepCol"),
+	outputType = "flextable",
+	statsLayout = ifelse(outputType == "flextable", "row", "col"),
 	style = "report", 
 	colorTable = getColorTable(style = style),
 	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
@@ -63,10 +75,6 @@ getSummaryStatisticsTable <- function(
 	vline = "none", pageDim = NULL,
 	# DT
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL){
-
-	statsLayout <- match.arg(statsLayout)
-
-	outputType <- match.arg(outputType)
 
 	summaryTable <- computeSummaryStatisticsTable(
 		data = data,  
