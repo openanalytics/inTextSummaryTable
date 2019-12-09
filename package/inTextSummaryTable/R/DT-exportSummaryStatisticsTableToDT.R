@@ -122,7 +122,18 @@ exportSummaryStatisticsTableToDT <- function(
 		}else	noEscapeVar
 		
 	}else	TRUE
-	
+
+	# convert 'numeric-like' column to numeric in order to have nice filters
+	isColNum <- sapply(seq_len(ncol(summaryTable)), function(iCol){
+		x <- summaryTable[, iCol]
+		if(is.character(x)){
+			tryCatchW <- tryCatch(expr = as.numeric(x), warning = function(w) w)
+			!inherits(x = tryCatchW, what = "warning")
+		}else	FALSE
+	})
+	idxColNum <- which(isColNum)
+	summaryTable[, idxColNum] <- sapply(summaryTable[, idxColNum], as.numeric, simplify = FALSE)
+
 	# set row variable labels
 	colnamesDT <- colnames(summaryTable)
 	rowVarLabs <- c(
