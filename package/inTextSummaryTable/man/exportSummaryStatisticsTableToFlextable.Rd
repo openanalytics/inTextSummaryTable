@@ -8,9 +8,10 @@
 exportSummaryStatisticsTableToFlextable(summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"), rowVarInSepCol = NULL,
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-  statsLayout = "row", statsVar = getAttribute(summaryTable,
-  "statsVar"), rowVarLab = getAttribute(summaryTable, "rowVarLab",
-  default = getLabelVar(rowVar, labelVars = labelVars)),
+  statsLayout = getAttribute(summaryTable, "statsLayout", default =
+  "row"), statsVar = getAttribute(summaryTable, "statsVar"),
+  rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
+  getLabelVar(rowVar, labelVars = labelVars)),
   rowVarTotalInSepRow = NULL, vline = c("none", "auto"),
   rowAutoMerge = TRUE, rowVarFormat = NULL, rowTotalLab = NULL,
   landscape = (style == "presentation"), margin = 1,

@@ -15,7 +15,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarInSepCol = NULL, 
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-	statsLayout = "row", 
+	statsLayout = getAttribute(summaryTable, "statsLayout", default = "row"), 
 	statsVar = getAttribute(summaryTable, "statsVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarTotalInSepRow = NULL,

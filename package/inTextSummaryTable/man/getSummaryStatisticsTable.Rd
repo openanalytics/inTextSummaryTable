@@ -12,7 +12,6 @@ getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
   rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
   rowVarDataLevels = NULL, rowOrder = "auto",
   rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
-  rowVarInSepCol = if (outputType != "flextable") rowVar,
   rowVarFormat = NULL, rowVarTotalInclude = NULL,
   rowVarTotalByVar = NULL, rowVarTotalInSepRow = NULL,
   rowTotalLab = NULL, rowInclude0 = FALSE, rowAutoMerge = TRUE,
@@ -106,16 +105,6 @@ function(x) subset(x, TRTP == "treatmentX")}
 
 \item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
 (if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
-
-\item{rowVarInSepCol}{Character vector with \code{rowVar}
-that should be included in multiple columns.
-By default, if \code{outputType} is: 
-\itemize{
-\item{'flextable': }{NULL, the row variables are nested in the first column 
-of the table}
-\item{otherwise: }{\code{rowVar}, the row variables are included in
-separated columns}
-}}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:

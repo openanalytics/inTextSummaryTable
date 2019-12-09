@@ -58,7 +58,7 @@ exportSummaryStatisticsTable <- function(
 	# row
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
-	rowVarInSepCol = if(outputType != "flextable")	rowVar, 
+#	rowVarInSepCol = if(outputType != "flextable")	rowVar, 
 	rowVarFormat = NULL,
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
 	rowTotalLab = NULL,
@@ -93,6 +93,8 @@ exportSummaryStatisticsTable <- function(
 		choices = c("flextable", "DT", "data.frame", "data.frame-base")
 	)
 	
+	extraArgs <- list(...)
+	
 	summaryTableLong <- formatSummaryStatisticsTable(
 		summaryTable,
 		# row
@@ -112,15 +114,14 @@ exportSummaryStatisticsTable <- function(
 	if(createFt){
 		
 		# create flextable only with header to extract dimensions header
-		summaryTableFt <- exportSummaryStatisticsTableToFlextable(
+		argsExport <- list(
 			# for 'format' function
 			summaryTable = summaryTableLong,
 			rowVar = rowVar,
-			rowVarInSepCol = rowVarInSepCol,
+#			rowVarInSepCol = rowVarInSepCol,
 			rowVarLab = rowVarLab,
 			rowVarTotalInSepRow = rowVarTotalInSepRow,
 			rowVarTotalInclude = rowVarTotalInclude,
-			statsLayout = statsLayout,
 			statsVar = statsVar,
 			vline = vline,
 			rowAutoMerge = rowAutoMerge,
@@ -137,6 +138,11 @@ exportSummaryStatisticsTable <- function(
 			labelVars = labelVars
 		)
 		
+		if("rowVarInSepCol" %in% names(extraArgs))
+			argsExport <- c(argsExport, extraArgs["rowVarInSepCol"])
+			
+		summaryTableFt <- do.call(exportSummaryStatisticsTableToFlextable, argsExport)
+		
 	}
 	
 	if("DT" %in% outputType){
@@ -144,9 +150,8 @@ exportSummaryStatisticsTable <- function(
 		summaryTableDT <- exportSummaryStatisticsTableToDT(
 			summaryTable = summaryTableLong,
 			rowVar = rowVar,
-			rowVarInSepCol = rowVarInSepCol,
-			statsVar = statsVar,
-			statsLayout = statsLayout, 
+#			rowVarInSepCol = rowVarInSepCol,
+			statsVar = statsVar, 
 			statsValueLab = statsValueLab,
 			expandVar = expandVar,
 			noEscapeVar = noEscapeVar,
