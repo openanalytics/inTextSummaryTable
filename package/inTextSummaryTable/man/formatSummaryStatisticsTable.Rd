@@ -10,8 +10,8 @@ formatSummaryStatisticsTable(summaryTable,
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
   "Total"), colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
-  statsLayout = c("row", "col", "rowInSepCol"),
-  statsValueLab = "StatisticValue", emptyValue = "-")
+  statsLayout = "row", statsValueLab = "StatisticValue",
+  emptyValue = "-")
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -36,10 +36,11 @@ statistic variables.}
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header).
+\item{row (by default): }{All statistics are included in different rows 
+in the first column of the table}
+\item{'col': }{Statistics are included in separated columns (last row of the header).
 This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
+\item{'rowInSepCol': }{Statistics are included in different rows, but in a separated column than
 the \code{rowVar} variable(s)}
 }}
 

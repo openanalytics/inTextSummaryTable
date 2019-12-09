@@ -9,10 +9,9 @@ exportSummaryStatisticsTableToDT(summaryTable,
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
   getLabelVar(rowVar, labelVars = labelVars)), rowVarInSepCol = rowVar,
   statsVar = getAttribute(summaryTable, "statsVar"),
-  statsLayout = c("row", "col", "rowInSepCol"),
-  statsValueLab = "StatisticValue", title = NULL, expandVar = NULL,
-  noEscapeVar = NULL, barVar = NULL, pageDim = NULL,
-  labelVars = NULL)
+  statsLayout = "col", statsValueLab = "StatisticValue",
+  title = NULL, expandVar = NULL, noEscapeVar = NULL,
+  barVar = NULL, pageDim = NULL, labelVars = NULL)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
@@ -33,11 +32,18 @@ statistic variables.}
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header).
-This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the \code{rowVar} variable(s)}
+\item{row: }{
+All statistics are included in different rows 
+in the first column of the table
+}
+\item{'col' (by default): }{
+Statistics are included in separated columns (last row of the header).
+This option is not compatible with categorical variable(s).
+}
+\item{'rowInSepCol': }{
+Statistics are included in different rows, but in a separated column than
+the \code{rowVar} variable(s)
+}
 }}
 
 \item{statsValueLab}{String with label for the statistic value, 

@@ -16,7 +16,7 @@ exportSummaryStatisticsTable(summaryTable,
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
   "Total"), colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
-  statsLayout = c("row", "col", "rowInSepCol"),
+  statsLayout = ifelse(outputType == "flextable", "row", "col"),
   statsValueLab = "StatisticValue", emptyValue = "-",
   labelVars = NULL, file = NULL, landscape = (style ==
   "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
@@ -79,11 +79,18 @@ statistic variables.}
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row: }{Statistics are included in rows in the first column of the table}
-\item{'col': }{Statistics are included in columns (last row of the header).
-This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in rows, but in a separated column than
-the \code{rowVar} variable(s)}
+\item{row (by default when \code{outputType} is: 'flextable'): }{
+All statistics are included in different rows 
+in the first column of the table
+}
+\item{'col' (by default when \code{outputType} is: 'DT'): }{
+Statistics are included in separated columns (last row of the header).
+This option is not compatible with categorical variable(s).
+}
+\item{'rowInSepCol': }{
+Statistics are included in different rows, but in a separated column than
+the \code{rowVar} variable(s)
+}
 }}
 
 \item{statsValueLab}{String with label for the statistic value, 
@@ -154,8 +161,12 @@ that should be represented as a bar.}
 \value{
 Depending on the \code{outputType}:
 \itemize{
-\item{'flextable': }{\code{\link[flextable]{flextable}} object with summary table}
-\item{'data.frame': }{data.frame with summary table}
+\item{'data.frame-base': }{input summary table in a long format with
+all computed statistics}
+\item{'data.frame': }{summary table in a wide format (
+different columns for each \code{colVar}), with specified labels}
+\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object with summary table}
+\item{'DT': }{\code[DT]{datatable} object with summary table}
 }
 If \code{summaryTable} is a list of summary tables,
 returns a list of corresponding summary tables in long format.
