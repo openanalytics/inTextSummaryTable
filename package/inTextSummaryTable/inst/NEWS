@@ -1,3 +1,5 @@
+2.5.0
+    o getStats: base statistics available in: 'type'
 2.4.0
     o export to DT: fix rowVarInSepCol <-> labelVars spec, pageLength not specified by default
     o rowVarInSepCol default: NULL for flextable, rowVar otherwise

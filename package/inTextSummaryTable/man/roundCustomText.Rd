@@ -14,6 +14,9 @@ roundCustomText(..., format = c("text", "number"))
 \item{format}{string with format for the number: 
 'text' (with trailing zeros) (by default) or 'number'.}
 }
+\value{
+Rounded vector.
+}
 \description{
 Custom round function, rounding to the closest digits
 (instead of rounding to the even number in case of 0.5)
