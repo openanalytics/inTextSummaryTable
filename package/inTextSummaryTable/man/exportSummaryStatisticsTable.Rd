@@ -151,16 +151,6 @@ that should be represented as a bar.}
 
 \item{...}{Extra parameters passed to the 
 \code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}
-
-\item{rowVarInSepCol}{Character vector with \code{rowVar}
-that should be included in multiple columns.
-By default, if \code{outputType} is: 
-\itemize{
-\item{'flextable': }{NULL, the row variables are nested in the first column 
-of the table}
-\item{otherwise: }{\code{rowVar}, the row variables are included in
-separated columns}
-}}
 }
 \value{
 Depending on the \code{outputType}:
