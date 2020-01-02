@@ -37,6 +37,8 @@ the label of \code{var} extracted from \code{labelVars}}
 
 \item{newVar}{String with name of new variable to construct.}
 
+\item{labelVars}{named string with variable labels (names are the variable code)}
+
 \item{fctTest}{String with global default function to use to compare \code{var} and \code{value} specified
 in each sublist of \code{paramsList}.
 This is only used if \code{fctTest} is not specified in each sublist.}

@@ -67,12 +67,22 @@ getStatsData <- function(
 #' excepted percentage and number of records}
 #' \item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
 #' excepted number of records}
-#' \item{'n': }{number of subjects}
 #' \item{'n (\%)': }{number of subjects (percentage)}
 #' \item{'median (range)': }{median (minimum, maximum)}
 #' \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 #' \item{'mean (se)': }{mean and standard error}
 #' \item{'mean (range)': }{mean and (minimum, maximum)}
+#' \item{base statistics: }{
+#' \itemize{
+#' \item{'n': }{number of subjects}
+#' \item{'\%': }{percentage of subjects}
+#' \item{'Mean' (only for continuous variable): }{mean}
+#' \item{'Median' (only for continuous variable): }{median}
+#' \item{'SE' (only for continuous variable): }{standard error}
+#' \item{'SD' (only for continuous variable): }{standard deviation}
+#' \item{'Min' (only for continuous variable): }{minimum}
+#' \item{'Max' (only for continuous variable): }{maximum}
+#' }}
 #' }
 #' @param includeName Logical, should the statistics name be included (TRUE by default)?
 #' This is applied for the statistic names used in each for the set defined in \code{type};
@@ -99,11 +109,13 @@ getStatsData <- function(
 #' getStats("count")
 #' getStats("n (%)")
 #' getStats("n")
+#' getStats("%")
 #' # for continuous variable:
 #' getStats("summary")
 #' getStats("mean (se)")
 #' getStats("median (range)")
 #' getStats("median\n(range)")
+#' getStats(c("Mean", "SE"))
 #' 
 #' ## to not include statistic name in the table
 #' getStats("median\n(range)", includeName = FALSE)
@@ -125,18 +137,6 @@ getStats <- function(
 	nDecN = 0, nDecm = nDecN,
 	formatPercentage = formatPercentage
 ){
-	
-	type <- match.arg(
-		type,
-		choices = c(
-			"summary-default", "count-default", 
-			"summary", "count", 
-			"n", "n (%)", 
-			"median (range)", "median\n(range)",
-			"mean (se)", "mean (range)"
-		),
-		several.ok = TRUE
-	)
 	
 	# number of decimals for continuous variable
 	nDecContBase <- if(is.function(nDecCont) & !is.null(x) & is.numeric(x)){
@@ -174,13 +174,25 @@ getStats <- function(
 		}
 	)
 	
+	type <- match.arg(
+		arg = type,
+		choices = c(
+			"summary-default", "count-default", 
+			"summary", "count", 
+			"n (%)", 
+			"median (range)", "median\n(range)",
+			"mean (se)", "mean (range)",
+			names(statsBase)
+		),
+		several.ok = TRUE
+	)
+	
 	statsList <- sapply(type, function(typeI){
 		switch(typeI,
 			`summary-default` = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max")],
 			`count-default` = statsBase[c("n", "%")],
 			`summary` = statsBase[c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m")],
 			`count` = statsBase[c("n", "%", "m")],
-			n = statsBase["n"],
 			`n (%)` = list('n (%)' = 
 				bquote(
 					ifelse(
@@ -211,7 +223,8 @@ getStats <- function(
 					.(statsBase$Mean), 
 					" (", .(statsBase$Min), ",", .(statsBase$Max), ")"
 				))
-			)
+			),
+			if(typeI %in% names(statsBase))	statsBase[typeI]
 		)
 	}, simplify = FALSE)
 	stats <- unlist(unname(statsList), recursive = FALSE)

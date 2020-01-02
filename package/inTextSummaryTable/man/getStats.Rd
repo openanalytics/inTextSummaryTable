@@ -17,12 +17,22 @@ getStats(type = "summary", includeName = TRUE, x = NULL,
 excepted percentage and number of records}
 \item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
 excepted number of records}
-\item{'n': }{number of subjects}
 \item{'n (\%)': }{number of subjects (percentage)}
 \item{'median (range)': }{median (minimum, maximum)}
 \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 \item{'mean (se)': }{mean and standard error}
 \item{'mean (range)': }{mean and (minimum, maximum)}
+\item{base statistics: }{
+\itemize{
+\item{'n': }{number of subjects}
+\item{'\%': }{percentage of subjects}
+\item{'Mean' (only for continuous variable): }{mean}
+\item{'Median' (only for continuous variable): }{median}
+\item{'SE' (only for continuous variable): }{standard error}
+\item{'SD' (only for continuous variable): }{standard deviation}
+\item{'Min' (only for continuous variable): }{minimum}
+\item{'Max' (only for continuous variable): }{maximum}
+}}
 }}
 
 \item{includeName}{Logical, should the statistics name be included (TRUE by default)?
@@ -61,11 +71,13 @@ of the \code{\link{computeSummaryStatisticsTable}} function.
 getStats("count")
 getStats("n (\%)")
 getStats("n")
+getStats("\%")
 # for continuous variable:
 getStats("summary")
 getStats("mean (se)")
 getStats("median (range)")
 getStats("median\\n(range)")
+getStats(c("Mean", "SE"))
 
 ## to not include statistic name in the table
 getStats("median\\n(range)", includeName = FALSE)
