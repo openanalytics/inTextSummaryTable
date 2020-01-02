@@ -15,6 +15,10 @@
 #' \code{var} (e.g. depending on the class of \code{var}) to get such list.
 #' @param ... parameters passed to the \code{\link{getStats}} function
 #' @return List with statistics to compute, named by \code{var}
+#' @examples 
+#' library(glpgUtilityFct)
+#' data(ADaMDataPelican)
+#' getStatsData(data = ADaMDataPelican$ADSL, var = "WEIGHTBL")
 #' @author Laure Cougnaud
 #' @export
 getStatsData <- function(
@@ -127,6 +131,9 @@ getStatsData <- function(
 #' getStats(type = c('median (range)', 'mean (se)'), x = ADaMDataPelican$ADSL$WEIGHTBL)
 #' # compare with when 'x' is not specified:
 #' getStats(type = c('median (range)', 'mean (se)'))
+#' 
+#' ## custom function to format the percentages:
+#' getStats(type = "count", formatPercentage = function(x) round(x, 2))
 #' @author Laure Cougnaud
 #' @export
 getStats <- function(
@@ -135,7 +142,7 @@ getStats <- function(
 	x = NULL, 
 	nDecCont = getMaxNDecimals,
 	nDecN = 0, nDecm = nDecN,
-	formatPercentage = formatPercentage
+	formatPercentage = get("formatPercentage", envir = parent.frame())
 ){
 	
 	# number of decimals for continuous variable
@@ -150,7 +157,10 @@ getStats <- function(
 			n = bquote(roundCustomText(statN, .(nDecN))),
 			m = bquote(roundCustomText(statm, .(nDecm))),
 			# percentage
-			`%` = bquote(formatPercentage(statPercN))
+			`%` = substitute(
+				formatPercentage(statPercN), 
+				list(formatPercentage = formatPercentage)
+			)
 		),
 		# statistics for continuous variable
 		if(!is.null(nDecContBase)){

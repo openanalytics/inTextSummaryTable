@@ -240,6 +240,8 @@ range:
 
 ### Default sets of available statistics
 
+#### `getStats`
+
 A common default set of statistics are available via the `getStats` function
 which can be passed directly to the `stats` function.
 
@@ -296,6 +298,17 @@ standard number of number of decimals
 		stats = getStats("mean (se)")
 	)
 
+```
+
+#### `getStatsData`
+
+To get the default statistics for a set of variables of interest in a dataset, 
+the function `getStatsData` is used:
+
+```{r getStatsData}
+library(glpgUtilityFct)
+data(ADaMDataPelican)
+getStatsData(data = ADaMDataPelican$ADSL, var = c("SEX", "WEIGHTBL"))
 ```
 
 ### By variable/group
@@ -1422,7 +1435,7 @@ the _outputType_ parameter should be set to **'flextable'** (the default).
 		outputType = "flextable"
 	)
 	class(summaryTableFt)
-	print(summaryTableFt)
+	summaryTableFt
 
 ```
 
