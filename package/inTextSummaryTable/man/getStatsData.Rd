@@ -31,6 +31,11 @@ List with statistics to compute, named by \code{var}
 This set of statistics is passed directly to the \code{stats} parameter
 of the \code{\link{computeSummaryStatisticsTable}} function.
 }
+\examples{
+library(glpgUtilityFct)
+data(ADaMDataPelican)
+getStatsData(data = ADaMDataPelican$ADSL, var = "WEIGHTBL")
+}
 \author{
 Laure Cougnaud
 }

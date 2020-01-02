@@ -6,7 +6,7 @@
 \usage{
 getStats(type = "summary", includeName = TRUE, x = NULL,
   nDecCont = getMaxNDecimals, nDecN = 0, nDecm = nDecN,
-  formatPercentage = formatPercentage)
+  formatPercentage = get("formatPercentage", envir = parent.frame()))
 }
 \arguments{
 \item{type}{Character vector with type of statistics (multiple are possible):
@@ -89,6 +89,9 @@ data(ADaMDataPelican)
 getStats(type = c('median (range)', 'mean (se)'), x = ADaMDataPelican$ADSL$WEIGHTBL)
 # compare with when 'x' is not specified:
 getStats(type = c('median (range)', 'mean (se)'))
+
+## custom function to format the percentages:
+getStats(type = "count", formatPercentage = function(x) round(x, 2))
 }
 \author{
 Laure Cougnaud
