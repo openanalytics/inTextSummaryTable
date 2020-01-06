@@ -1,6 +1,7 @@
 #' Compute summary statistics for a specific dataset and variables of interest
 #' @param var Character vector, variable(s) of \code{data} to compute statistics on.
 #' Missing values, if present, are filtered.
+#' If NULL (by default), counts of the \code{rowVar} are returned.
 #' @param varFlag Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
 #' Only the counts for records flagged (with 'Y') are retained.
 #' @param rowOrder Specify how the rows should be ordered in the table, either a:
@@ -1008,7 +1009,7 @@ computeSummaryStatistics <- function(data,
 	type <- match.arg(type, choices = c("auto", "summaryTable", "countTable"))
 	
 	if(type == "auto")
-		type <- ifelse(is.numeric(data[, var]), "summaryTable", "countTable")
+		type <- ifelse(!is.null(var) && is.numeric(data[, var]), "summaryTable", "countTable")
 	
 	if(type == "summaryTable"){
 		if(is.null(var)){

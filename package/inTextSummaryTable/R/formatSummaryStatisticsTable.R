@@ -46,11 +46,6 @@ formatSummaryStatisticsTable <- function(
 	}
 		
 	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
-	
-	if(statsLayout == "col" & "variableGroup" %in% rowVar){
-		warning("The layout of the statistics cannot be 'column' if categorical variable(s) are used, the statistics are set in rows.")
-		statsLayout <- "row"
-	}
 		
 	## format table
 	if("isTotal" %in% colnames(summaryTable)){
