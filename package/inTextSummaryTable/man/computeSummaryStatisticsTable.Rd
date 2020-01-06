@@ -28,7 +28,8 @@ computeSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
 \item{data}{Data.frame with data.}
 
 \item{var}{Character vector, variable(s) of \code{data} to compute statistics on.
-Missing values, if present, are filtered.}
+Missing values, if present, are filtered.
+If NULL (by default), counts of the \code{rowVar} are returned.}
 
 \item{varFlag}{Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
 Only the counts for records flagged (with 'Y') are retained.}

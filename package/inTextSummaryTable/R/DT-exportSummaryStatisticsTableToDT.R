@@ -75,7 +75,8 @@ exportSummaryStatisticsTableToDT <- function(
 	}
 	
 	# important: sort data.frame with specified row variables!
-	summaryTable <- ddply(summaryTable, rowVar)
+	if(!is.null(rowVar))
+		summaryTable <- ddply(summaryTable, rowVar)
 	
 	# nesting in row variables specified via: 'rowGroup' parameter for DT
 	rowVarInRow <- setdiff(rowVar, rowVarInSepCol)

@@ -1,3 +1,6 @@
+2.5.1
+    o formatSummaryStatisticsTable: statistics in column with categorical variables is possible
+    o exportSummaryStatisticsTableToDT: remove: '.id' if no rowVar
 2.5.0
     o getStats: base statistics available in: 'type'
     o getStats: fix for custom formatPercentage function

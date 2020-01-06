@@ -107,7 +107,17 @@ width of the table: [width page extracted from \code{dimPage} - 2* margin]}
 Set to NULL (by default) if no title should be included.
 If vector > 1, specified for each element of \code{byVar} (in order of the levels).}
 
-\item{outputType}{String with output type, 'data.frame' or 'flextable'.}
+\item{outputType}{String with output type:
+\itemize{
+\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
+CSR, compatible with Word/PowerPoint export}
+\item{'DT'}{interactive table: \code{\link[DT]{datatable}} ,
+e.g. to be exported to html}
+\item{'data.frame': }{data.frame in wide format (with elements in 
+\code{colVar} in different columns)}
+\item{'data.frame-base'}{data.frame in long format (with elements in 
+\code{colVar} in different rows), useful for debugging}
+}}
 
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}

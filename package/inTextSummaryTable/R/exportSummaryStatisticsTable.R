@@ -1,5 +1,15 @@
 #' Export a summary table in \code{docx} format.
-#' @param outputType String with output type, 'data.frame' or 'flextable'.
+#' @param outputType String with output type:
+#' \itemize{
+#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
+#' CSR, compatible with Word/PowerPoint export}
+#' \item{'DT'}{interactive table: \code{\link[DT]{datatable}} ,
+#' e.g. to be exported to html}
+#' \item{'data.frame': }{data.frame in wide format (with elements in 
+#' \code{colVar} in different columns)}
+#' \item{'data.frame-base'}{data.frame in long format (with elements in 
+#' \code{colVar} in different rows), useful for debugging}
+#' }
 #' @param pageDim Numeric vector of length 2 with page width and height
 #' depending on \code{outputType}:
 #' \itemize{

@@ -39,7 +39,8 @@ getSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
 \item{data}{Data.frame with data.}
 
 \item{var}{Character vector, variable(s) of \code{data} to compute statistics on.
-Missing values, if present, are filtered.}
+Missing values, if present, are filtered.
+If NULL (by default), counts of the \code{rowVar} are returned.}
 
 \item{varFlag}{Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
 Only the counts for records flagged (with 'Y') are retained.}
@@ -299,7 +300,17 @@ Set to NULL (by default) of no footer should be included.}
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
 
-\item{outputType}{String with output type, 'data.frame' or 'flextable'.}
+\item{outputType}{String with output type:
+\itemize{
+\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
+CSR, compatible with Word/PowerPoint export}
+\item{'DT'}{interactive table: \code{\link[DT]{datatable}} ,
+e.g. to be exported to html}
+\item{'data.frame': }{data.frame in wide format (with elements in 
+\code{colVar} in different columns)}
+\item{'data.frame-base'}{data.frame in long format (with elements in 
+\code{colVar} in different rows), useful for debugging}
+}}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
