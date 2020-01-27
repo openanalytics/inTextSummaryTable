@@ -6,7 +6,7 @@
 \usage{
 getStats(type = "summary", includeName = TRUE, x = NULL,
   nDecCont = getMaxNDecimals, nDecN = 0, nDecm = nDecN,
-  formatPercentage = get("formatPercentage", envir = parent.frame()))
+  formatPercentage = inTextSummaryTable:::formatPercentage)
 }
 \arguments{
 \item{type}{Character vector with type of statistics (multiple are possible):
