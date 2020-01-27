@@ -1,3 +1,5 @@
+2.5.2
+    o getStats: fix formatPercentage default (conflict with DT::formatPercentage)
 2.5.1
     o formatSummaryStatisticsTable: statistics in column with categorical variables is possible
     o exportSummaryStatisticsTableToDT: remove: '.id' if no rowVar

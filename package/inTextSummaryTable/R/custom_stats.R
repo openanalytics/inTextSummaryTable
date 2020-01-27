@@ -142,7 +142,7 @@ getStats <- function(
 	x = NULL, 
 	nDecCont = getMaxNDecimals,
 	nDecN = 0, nDecm = nDecN,
-	formatPercentage = get("formatPercentage", envir = parent.frame())
+	formatPercentage = inTextSummaryTable:::formatPercentage
 ){
 	
 	# number of decimals for continuous variable
