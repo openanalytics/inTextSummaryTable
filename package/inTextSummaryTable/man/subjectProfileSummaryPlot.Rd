@@ -5,15 +5,16 @@
 \title{Plot subject summary profile}
 \usage{
 subjectProfileSummaryPlot(data, xVar = NULL, xLab = getLabelVar(xVar,
-  labelVars = labelVars), meanVar = "statMean", seVar = if ("statSE"
-  \%in\% colnames(data)) "statSE", yLab = paste(sub("^stat", "",
-  meanVar), if (!is.null(seVar)) paste("+-", sub("^stat", "", seVar))),
-  facetVar = NULL, facetScale = "free_y", colorVar = NULL,
+  labelVars = labelVars), xGap = NULL, xGapDiffNew = NULL,
+  meanVar = "statMean", seVar = if ("statSE" \%in\% colnames(data))
+  "statSE", yLab = paste(sub("^stat", "", meanVar), if (!is.null(seVar))
+  paste("+-", sub("^stat", "", seVar))), facetVar = NULL,
+  facetScale = "free_y", colorVar = NULL,
   colorLab = getLabelVar(colorVar, labelVars = labelVars),
   colorPalette = NULL, labelVars = NULL, useLinetype = TRUE,
   linetypePalette = NULL, useShape = TRUE, shapePalette = NULL,
   jitter = NULL, title = NULL, yLim = NULL, xLim = NULL,
-  yLimExpand = NULL, xAxisLabs = NULL,
+  yLimExpand = c(0.05, 0.05), xAxisLabs = NULL,
   sizePoint = GeomPoint$default_aes$size,
   sizeLine = GeomLine$default_aes$size,
   sizeLabel = GeomText$default_aes$size,
@@ -34,6 +35,14 @@ e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.}
 \item{xVar}{String, variable of \code{data} with variable for the x-axis.}
 
 \item{xLab}{String with label for the \code{xVar}.}
+
+\item{xGap}{(optional) Numeric vector of length 2 for which
+a gap should be created in the x-axis.
+Only available if \code{xVar} is specified and a numeric variable.}
+
+\item{xGapDiffNew}{Numeric vector of length 2 with new range
+of the \code{xGap}. If not specified, the minimum difference between
+consecutive x elements in the data is used.}
 
 \item{meanVar}{String, variable of \code{data} with the mean variable.}
 

@@ -2,6 +2,12 @@
 #' @param data Data.frame with summary statistics to represent in the plot,
 #' e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.
 #' @param xLab String with label for the \code{xVar}.
+#' @param xGap (optional) Numeric vector of length 2 for which
+#' a gap should be created in the x-axis.
+#' Only available if \code{xVar} is specified and a numeric variable.
+#' @param xGapDiffNew Numeric vector of length 2 with new range
+#' of the \code{xGap}. If not specified, the minimum difference between
+#' consecutive x elements in the data is used.
 #' @param meanVar String, variable of \code{data} with the mean variable.
 #' @param seVar String, variable of \code{data} with the standard error.
 #' @param yLab String with label for the y-axis.
@@ -76,9 +82,11 @@
 #' @import ggplot2
 #' @import cowplot
 #' @importFrom ggrepel geom_text_repel
+#' @importFrom scales trans_new
 #' @export
 subjectProfileSummaryPlot <- function(data,
-	xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars),
+	xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars), 
+	xGap = NULL, xGapDiffNew = NULL,
 	meanVar = "statMean", seVar = if("statSE" %in% colnames(data))	"statSE", 
 	yLab = paste(sub("^stat", "", meanVar), 
 		if(!is.null(seVar))	paste("+-", sub("^stat", "", seVar))),
@@ -93,7 +101,7 @@ subjectProfileSummaryPlot <- function(data,
 	jitter = NULL,
 	title = NULL,
 	yLim = NULL, xLim = NULL,
-	yLimExpand = NULL,
+	yLimExpand = c(0.05, 0.05),
 	xAxisLabs = NULL,
 	sizePoint = GeomPoint$default_aes$size,
 	sizeLine = GeomLine$default_aes$size,
@@ -149,7 +157,24 @@ subjectProfileSummaryPlot <- function(data,
 			return(res)
 		}
 	}
-
+	
+	
+	if(!is.null(xGap)){
+		if(!is.null(xVar)){
+			if(!is.numeric(data[, xVar])){
+				warning("'xGap' should only be specified for continuous x-variable, 'xGap' is ignored.")
+				xGap <- NULL
+			}
+		}else{
+			warning("'xGap' should only be specified if 'xVar' is specified, 'xGap' is ignored.")
+			xGap <- NULL
+		}
+		if(length(xGap) != 2){
+			warning("'xGap' should be of length 2, 'xGap' is ignored.")
+			xGap <- NULL
+		}
+	}
+		
 	varNotInData <- setdiff(c(meanVar, seVar), colnames(data))
 	if(length(varNotInData) > 0)
 		stop("Variable(s): ", toString(varNotInData), "are not in data.")
@@ -196,22 +221,11 @@ subjectProfileSummaryPlot <- function(data,
 				data$textLabel <- data[, meanVar]
 		}
 	}
-		
-	# base plot
-	aesBase <- c(
-		if(!is.null(xVar))	list(x = "xVar"),
-		if(!is.null(colorVar))	list(color = "colorVar")
-	)
-	aesLine <- c(
-		aesBase,
-		list(y = "meanVar"),
-		list(group = ifelse(!is.null(colorVar), "colorVar", 1)),
-		if(!is.null(colorVar) & useLinetype)	list(linetype = "colorVar")
-	)
+	
 	# base plot
 	gg <- ggplot()
 	
-	# horizontal line(s)
+	## horizontal line(s)
 	setLines <- function(gg, inputLine, typeLine = c("hline", "vline"), color, linetype){
 		typeLine <- match.arg(typeLine)
 		paramName <- switch(typeLine, "hline" = "yintercept", "vline" = "xintercept")
@@ -249,12 +263,81 @@ subjectProfileSummaryPlot <- function(data,
 			linetype = vLineLty
 		)
 	
+	# if break in the x-axis: remove data within breaks +
+	# create 'group' variable used in aesthetic of geom_line
+	if(!is.null(xGap)){
+		
+		# remove data contained within the gaps:
+		idxRetained <- which(data$xVar <= xGap[1] | data$xVar >= xGap[2])
+		data <- data[idxRetained, ]
+		
+		# separated lines with the: 'group' aesthetic:
+		lineGroup <- c(
+			list(ifelse(data[, xVar] < xGap[2], "Group1", "Group2")),
+			if(!is.null(colorVar))	list(data$colorVar)
+		)
+		data$lineGroup <- do.call(interaction, lineGroup)
+		
+		## create a transformation on the x-axis 
+		# to 'shift' the elements > xGap[2]
+		if(is.null(xGapDiffNew)){
+			xGapDiffNew <- min(diff(sort(unique(data$xVar))))
+		}
+		xShift <- xGap[2] - (xGap[1] + xGapDiffNew)
+		if(xShift < 0)	xShift <- xGap[2]
+		
+		# create programmatically transform and inverse functions
+		# 1) create empty functions 2) fill function body
+		transInvFct <- transFct <- function(x){}
+		body(transFct) <- bquote(ifelse(x >= .(xGap[2]), x - .(xShift), x))
+		body(transInvFct) <- bquote(ifelse(x >= .(xGap[2]), x + .(xShift), x))
+		xTrans <- trans_new(name = "xGap", transform = transFct, inverse = transInvFct)
+		
+		## horizontal lines:
+		gg <- gg + geom_vline(xintercept = xGap, linetype = 2, color = "grey")
+		
+		## add symbol x-axis:
+		# vjust not properly placed with: geom = 'text', so use geom_label
+		xGapPos <- xGap[1] + xGapDiffNew/2
+#		yGapPos <- ifelse(is.null(yLim), min(data$meanVar, na.rm = TRUE), yLim[1]) -
+#			yLimExpand[1] * ifelse(is.null(yLim), diff(range(data$meanVar, na.rm = TRUE)), diff(yLim))
+		dataGapSym <- data.frame(y = -Inf, x = xGapPos, label = "//")
+		gg <- gg + geom_text(
+			data = dataGapSym, aes_string(x = "x", y = "y", label = "label"),
+			show.legend = FALSE, inherit.aes = FALSE,
+			size = sizeLabel,
+			hjust = "center", vjust = 1
+		)	
+#	gg <- gg + annotate(geom = "label", 
+#			y = yGapPos, x = xGapPos, label = "//", 
+#			hjust = 0.5, vjust = 1,
+#			size = sizeLabel,
+#			label.size = 0
+#		)
+		
+	}else xTrans <- NULL
+	
 	# line + points
+	# base plot
+	aesBase <- c(
+		if(!is.null(xVar))	list(x = "xVar"),
+		if(!is.null(colorVar))	list(color = "colorVar")
+	)
+	aesLine <- c(
+		aesBase,
+		list(y = "meanVar"),
+		list(group = ifelse(
+			!is.null(xGap), "lineGroup",
+			ifelse(!is.null(colorVar), "colorVar", 1)
+		)),
+		if(!is.null(colorVar) & useLinetype)	list(linetype = "colorVar")
+	)
 	gg <- gg +
 		geom_line(
 			mapping = do.call(aes_string, aesLine), 
 			position = pd, size = sizeLine, data = data
-		) +
+		)
+	gg <- gg +
 		geom_point(
 			mapping = do.call(aes_string, 
 				c(
@@ -323,8 +406,8 @@ subjectProfileSummaryPlot <- function(data,
 		if(is.null(shapePalette))
 			shapePalette <- getGLPGShapePalette(x = data[, colorVar])
 		gg <- gg + scale_shape_manual(name = colorLab, values = shapePalette)			
-	}		
-	
+	}	
+
 	# labels for the axes/title
 	argsLab <- list(x = xLab, y = yLab, title = title)
 	argsLab <- argsLab[!sapply(argsLab, is.null)]
@@ -347,11 +430,14 @@ subjectProfileSummaryPlot <- function(data,
 	if(!is.null(yLimExpand))
 		gg <- gg + scale_y_continuous(expand = yLimExpand)
 	
-	# set limits for the axes
-	if((!is.null(xLim)) | (!is.null(yLim))){
-		argsCoordCart <- list(xlim = xLim, ylim = yLim)
+	# limits/clipping
+	argsCoordCart <- c(
+		if(!is.null(xLim))	list(xlim = xLim),
+		if(!is.null(yLim))	list(xlim = yLim),
+		if(!is.null(xGap))	list(clip = "off")
+	)
+	if(length(argsCoordCart) > 0)
 		gg <- gg + do.call(coord_cartesian, argsCoordCart)
-	}
 	
 	# set limits in the x-axis
 	# even if not specified, to have correct alignment with table
@@ -361,13 +447,19 @@ subjectProfileSummaryPlot <- function(data,
 		names(xAxisLabs) <- xAxisLabs
 	}
 	fctScaleX <- if(is.numeric(data[, xVar])){
+				
 		# limits should take the jitter into account!
 		scaleXLim <- max(jitter, GeomErrorbar$default_aes$width/2)
-		scale_x_continuous(
-			breaks = unname(xAxisLabs), 
-			limits = range(xAxisLabs) + c(-1, 1)*scaleXLim, 
-			labels = names(xAxisLabs)
+		
+		argsScaleXCont <- c(
+			list(
+				breaks = unname(xAxisLabs), 
+				limits = range(xAxisLabs) + c(-1, 1)*scaleXLim, 
+				labels = names(xAxisLabs)	
+			),
+			if(!is.null(xTrans))	list(trans = xTrans)
 		)
+		do.call(scale_x_continuous, argsScaleXCont)
 	}else	scale_x_discrete(breaks = unname(xAxisLabs), labels = names(xAxisLabs), drop = FALSE)
 	gg <- gg + fctScaleX
 	
@@ -393,7 +485,8 @@ subjectProfileSummaryPlot <- function(data,
 			style = style,
 			fontname = fontname,
 			fontsize = fontsize,
-			themeFct = themeFct
+			themeFct = themeFct,
+			xTrans = xTrans
 		)
 		
 		ggTable <- ggTable + fctScaleX
@@ -428,6 +521,7 @@ subjectProfileSummaryPlot <- function(data,
 #' @param colorLab String, label for \code{colorVar}, used in the legend.
 #' @param colorPalette (named) Vector with color palette.
 #' @param xLab String with label for the x-axis.
+#' @param xGap Numeric vector of length 2 with limits for the 'break' in the x-axis.
 #' @param textSize Size for the text.
 #' @param labelVars Named string with variable labels (names are the variable code).
 #' @param showLegend Logical, should the legend be displayed? TRUE by default.
@@ -438,6 +532,8 @@ subjectProfileSummaryPlot <- function(data,
 #' @param fontname String with font name.
 #' @param fontsize Numeric vector with font size.
 #' @param themeFct Function with ggplot2 theme.
+#' @param xTrans (optional) ggplot2 transformation
+#' for the x-axis.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @author Laure Cougnaud
@@ -456,7 +552,8 @@ subjectProfileSummaryTable <- function(
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10), # pt
 	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
-	textSize = fontsize/ggplot2:::.pt
+	textSize = fontsize/ggplot2:::.pt,
+	xTrans = NULL
 	){
 	
 	data$tableTextLabel <- if(is.expression(text)){
@@ -504,7 +601,11 @@ subjectProfileSummaryTable <- function(
 	
 	if(!is.null(xAxisLabs)){
 		ggTable <- if(is.numeric(data[, xVar])){
-			ggTable + scale_x_continuous(limits = xAxisLabs)
+			argsScaleXCont <- c(
+				list(limits = xAxisLab),
+				if(!is.null(xTrans))	list(trans = xTrans)
+			)
+			ggTable + do.call(scale_x_continuous, argsScaleXCont)
 		}else{
 			ggTable + scale_x_discrete(breaks = xAxisLabs)
 		}

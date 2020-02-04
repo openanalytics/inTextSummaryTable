@@ -11,7 +11,8 @@ subjectProfileSummaryTable(data, xVar, text, xLim = NULL,
   xAxisLabs = NULL, style = "report", fontname = switch(style, report
   = "Times", presentation = "Tahoma"), fontsize = switch(style, report =
   8, presentation = 10), themeFct = switch(style, report = theme_classic,
-  presentation = theme_bw), textSize = fontsize/ggplot2:::.pt)
+  presentation = theme_bw), textSize = fontsize/ggplot2:::.pt,
+  xTrans = NULL)
 }
 \arguments{
 \item{data}{Data.frame with data for the table.}
@@ -50,6 +51,11 @@ is discrete or vector with limits if continuous.}
 \item{themeFct}{Function with ggplot2 theme.}
 
 \item{textSize}{Size for the text.}
+
+\item{xTrans}{(optional) ggplot2 transformation
+for the x-axis.}
+
+\item{xGap}{Numeric vector of length 2 with limits for the 'break' in the x-axis.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object
