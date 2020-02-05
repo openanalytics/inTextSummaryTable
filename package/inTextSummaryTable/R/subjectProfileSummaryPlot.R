@@ -433,7 +433,7 @@ subjectProfileSummaryPlot <- function(data,
 	# limits/clipping
 	argsCoordCart <- c(
 		if(!is.null(xLim))	list(xlim = xLim),
-		if(!is.null(yLim))	list(xlim = yLim),
+		if(!is.null(yLim))	list(ylim = yLim),
 		if(!is.null(xGap))	list(clip = "off")
 	)
 	if(length(argsCoordCart) > 0)
@@ -602,7 +602,7 @@ subjectProfileSummaryTable <- function(
 	if(!is.null(xAxisLabs)){
 		ggTable <- if(is.numeric(data[, xVar])){
 			argsScaleXCont <- c(
-				list(limits = xAxisLab),
+				list(limits = xAxisLabs),
 				if(!is.null(xTrans))	list(trans = xTrans)
 			)
 			ggTable + do.call(scale_x_continuous, argsScaleXCont)
