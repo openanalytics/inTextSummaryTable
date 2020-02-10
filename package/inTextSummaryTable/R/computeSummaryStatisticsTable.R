@@ -308,10 +308,17 @@ computeSummaryStatisticsTable <- function(
 			stop("All flag variables in 'varFlag' should be specified in the 'var' parameter.")
 		# convert them to a format to only retain flagged records
 		data[, varFlag] <- colwise(convertVarFlag)(data[, varFlag, drop = FALSE])
-		# filter the'non' flagged counts
-		filterFct <- c(filterFct, 
-			list(function(x)	x[which(x$isTotal | !(x$variableInit %in% varFlag & x$variableGroup == "N")), ])
-		)
+		# filter the 'non' flagged counts:
+		# 'variableInit' only included
+		filterFctFlag <- function(x){x}		
+		body(filterFctFlag) <- bquote({
+			isVar <- if(.(length(var) > 1)){
+				x$variableInit %in% varFlag
+			}else{TRUE}
+			idxKept <- which(x$isTotal | !(isVar & x$variableGroup == "N"))
+			x[idxKept, ]
+		})
+		filterFct <- c(filterFct, list(filterFctFlag))
 	}
 	
 	# convert row and column variable to factor in the data

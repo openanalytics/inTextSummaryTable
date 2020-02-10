@@ -1,5 +1,6 @@
 2.6.0
     o subjectProfileSummaryPlot: xGap/xGapDiffNew new param
+    o computeSummaryStatisticsTable: fix for varFlag when only one variable is specified
 2.5.2
     o getStats: fix formatPercentage default (conflict with DT::formatPercentage)
 2.5.1
