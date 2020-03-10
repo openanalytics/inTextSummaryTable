@@ -4,12 +4,23 @@
 \alias{computeSummaryStatisticsByRowColVar}
 \title{Compute summary statistics by specified \code{rowVar} and \code{colVar}}
 \usage{
-computeSummaryStatisticsByRowColVar(data, var = NULL,
+computeSummaryStatisticsByRowColVar(
+  data,
+  var = NULL,
   varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
-  varInclude0 = FALSE, varTotalInclude = FALSE, type = "auto",
-  rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
-  colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
-  subjectVar = "USUBJID", labelVars = NULL, statsExtra = NULL)
+  varInclude0 = FALSE,
+  varTotalInclude = FALSE,
+  type = "auto",
+  rowVar = NULL,
+  rowInclude0 = FALSE,
+  rowVarDataLevels = NULL,
+  colVar = NULL,
+  colInclude0 = FALSE,
+  colVarDataLevels = NULL,
+  subjectVar = "USUBJID",
+  labelVars = NULL,
+  statsExtra = NULL
+)
 }
 \arguments{
 \item{data}{Data.frame with data.}

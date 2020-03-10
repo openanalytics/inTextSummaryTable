@@ -4,8 +4,7 @@
 \alias{getStatsData}
 \title{Get default set of statistics for variables of interest and specific dataset}
 \usage{
-getStatsData(data, var = NULL, type = c("default", "all"),
-  extra = NULL, ...)
+getStatsData(data, var = NULL, type = c("default", "all"), extra = NULL, ...)
 }
 \arguments{
 \item{data}{Data.frame with data.}

@@ -1,3 +1,5 @@
+2.6.1
+    o computeSummaryStatisticsTableTotal: fix in case rowVarTotalPerc is a factor
 2.6.0
     o subjectProfileSummaryPlot: xGap/xGapDiffNew new param
     o computeSummaryStatisticsTable: fix for varFlag when only one variable is specified

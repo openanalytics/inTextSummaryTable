@@ -4,8 +4,13 @@
 \alias{getStatisticsSummaryStatisticsTable}
 \title{Compute custom statistics specified by the user.}
 \usage{
-getStatisticsSummaryStatisticsTable(summaryTable, statsVarInit,
-  var = NULL, stats = NULL, statsVarBy = NULL)
+getStatisticsSummaryStatisticsTable(
+  summaryTable,
+  statsVarInit,
+  var = NULL,
+  stats = NULL,
+  statsVarBy = NULL
+)
 }
 \arguments{
 \item{summaryTable}{Summary table.}

@@ -4,9 +4,17 @@
 \alias{convertVarToFactorWithOrder}
 \title{Convert a variable to a factor with levels in specified order.}
 \usage{
-convertVarToFactorWithOrder(data, var, otherVars = NULL, colVar = NULL,
-  colTotalLab = "Total", method = c("auto", "alphabetical", "total"),
-  totalFilterFct = NULL, totalVar = "statN", catLast = "Other")
+convertVarToFactorWithOrder(
+  data,
+  var,
+  otherVars = NULL,
+  colVar = NULL,
+  colTotalLab = "Total",
+  method = c("auto", "alphabetical", "total"),
+  totalFilterFct = NULL,
+  totalVar = "statN",
+  catLast = "Other"
+)
 }
 \arguments{
 \item{data}{Data.frame with data.}

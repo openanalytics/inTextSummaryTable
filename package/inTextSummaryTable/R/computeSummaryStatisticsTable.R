@@ -76,8 +76,8 @@
 #' reported in the header of the table, by default same as \code{colVar}.
 #' @param colVarTotalPerc String with column(s) considered to compute the total by,
 #' used as denominator for the percentage computation, by default same as \code{colVarTotal}.
-#' @param rowVarTotalPerc Character vector with row(s) considered to compute the total,
-#' used as denominator for the percentage computation.
+#' @param rowVarTotalPerc Character vector with row variables by which the total
+#' should be computed for the denominator for the percentage computation.
 #' By default the total is only computed by column (NULL by default).
 #' If the total should be based on the total number of records per variable,
 #' \code{rowVarTotalPerc} should be set to 'variable'.
@@ -567,7 +567,7 @@ computeSummaryStatisticsTable <- function(
 			colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
 			rowVarTotal = rowVarTotalPerc, 
 			var = var, varLab = varLab, labelVars = labelVars,
-			subjectVar = subjectVar
+			subjectVar = subjectVar	
 		)
 	}else	summaryTableTotal
 	summaryTable <- rbind.fill(
@@ -722,6 +722,24 @@ computeSummaryStatisticsTableTotal <- function(
 	subjectVar = "USUBJID",
 	labelVars = NULL){
 
+	# in case total should be computed by 'var'
+	# convert wide -> long format: one column with all variables
+	formatDataTotalWithVar <- function(data){
+		data <- melt(
+			data = data, 
+			measure.vars = var, 
+			variable.name = "variableInit",
+			value.name = "value",
+			factorsAsStrings = FALSE # reshape2 >= 1.4
+		)	
+		data <- data[!is.na(data$value), ]# remove records not in the variable
+		data$variable <- factor(
+			varLab[as.character(data$variableInit)],
+			levels = varLab[var]
+		)
+		return(data)
+	}
+
 	# total is computed based on number of elements available in each 'var'
 	# (and not # elements within each group of 'var')
 	if("variable" %in% rowVarTotal){
@@ -729,17 +747,7 @@ computeSummaryStatisticsTableTotal <- function(
 			warning("Total is not computed by variable because no 'var' is specified.")
 			rowVarTotal <- setdiff(rowVarTotal, "variable")
 		}else{
-			data <- melt(
-				data = data, 
-				measure.vars = var, 
-				variable.name = "variableInit",
-				value.name = "value"
-			)	
-			data <- data[!is.na(data$value), ]# remove records not in the variable
-			data$variable <- factor(
-				varLab[data$variableInit],
-				levels = varLab[var]
-			)
+			data <- formatDataTotal(data)
 		}
 	}
 	
@@ -759,6 +767,10 @@ computeSummaryStatisticsTableTotal <- function(
 		colVarTotalTI <- setdiff(colVarTotal, colVar)
 		if(length(colVarTotalTI) == 0)	colVarTotalTI <- NULL
 		if(is.null(dataTotalCol))	dataTotalCol <- data
+		
+		if("variable" %in% rowVarTotal)
+			dataTotalCol <- formatDataTotal(dataTotalCol)
+		
 		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
 			data = dataTotalCol, 
 			type = "countTable", 

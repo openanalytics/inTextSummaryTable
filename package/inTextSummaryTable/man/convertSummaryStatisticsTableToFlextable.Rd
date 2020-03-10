@@ -5,12 +5,20 @@
 \alias{convertSummaryStatisticsTableToFlextable}
 \title{Convert summary statistics table to flextable}
 \usage{
-convertSummaryStatisticsTableToFlextable(summaryTable, landscape = (style
-  == "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
-  footer = NULL, style = "report", colorTable = getColorTable(style =
-  style), fontname = switch(style, report = "Times", presentation =
-  "Tahoma"), fontsize = switch(style, report = 8, presentation = 10),
-  file = NULL, pageDim = NULL)
+convertSummaryStatisticsTableToFlextable(
+  summaryTable,
+  landscape = (style == "presentation"),
+  margin = 1,
+  rowPadBase = 14.4,
+  title = NULL,
+  footer = NULL,
+  style = "report",
+  colorTable = getColorTable(style = style),
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  fontsize = switch(style, report = 8, presentation = 10),
+  file = NULL,
+  pageDim = NULL
+)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
