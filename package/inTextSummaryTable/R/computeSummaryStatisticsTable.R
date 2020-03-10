@@ -747,7 +747,7 @@ computeSummaryStatisticsTableTotal <- function(
 			warning("Total is not computed by variable because no 'var' is specified.")
 			rowVarTotal <- setdiff(rowVarTotal, "variable")
 		}else{
-			data <- formatDataTotal(data)
+			data <- formatDataTotalWithVar(data)
 		}
 	}
 	
@@ -769,7 +769,7 @@ computeSummaryStatisticsTableTotal <- function(
 		if(is.null(dataTotalCol))	dataTotalCol <- data
 		
 		if("variable" %in% rowVarTotal)
-			dataTotalCol <- formatDataTotal(dataTotalCol)
+			dataTotalCol <- formatDataTotalWithVar(dataTotalCol)
 		
 		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
 			data = dataTotalCol, 
