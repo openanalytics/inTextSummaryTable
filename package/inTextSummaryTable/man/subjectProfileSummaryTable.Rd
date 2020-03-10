@@ -4,15 +4,26 @@
 \alias{subjectProfileSummaryTable}
 \title{Plot a table with \code{ggplot} of a variable of interest}
 \usage{
-subjectProfileSummaryTable(data, xVar, text, xLim = NULL,
-  colorVar = NULL, colorPalette = NULL,
-  colorLab = getLabelVar(colorVar, labelVars = labelVars), xLab = NULL,
-  labelVars = NULL, showLegend = TRUE, yAxisLabs = FALSE,
-  xAxisLabs = NULL, style = "report", fontname = switch(style, report
-  = "Times", presentation = "Tahoma"), fontsize = switch(style, report =
-  8, presentation = 10), themeFct = switch(style, report = theme_classic,
-  presentation = theme_bw), textSize = fontsize/ggplot2:::.pt,
-  xTrans = NULL)
+subjectProfileSummaryTable(
+  data,
+  xVar,
+  text,
+  xLim = NULL,
+  colorVar = NULL,
+  colorPalette = NULL,
+  colorLab = getLabelVar(colorVar, labelVars = labelVars),
+  xLab = NULL,
+  labelVars = NULL,
+  showLegend = TRUE,
+  yAxisLabs = FALSE,
+  xAxisLabs = NULL,
+  style = "report",
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  fontsize = switch(style, report = 8, presentation = 10),
+  themeFct = switch(style, report = theme_classic, presentation = theme_bw),
+  textSize = fontsize/ggplot2:::.pt,
+  xTrans = NULL
+)
 }
 \arguments{
 \item{data}{Data.frame with data for the table.}

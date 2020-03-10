@@ -8,8 +8,15 @@ Superscript should be indicated as 'a^{b}',
 subscript as 'a_{b}' and bold as bold{a} in the
  the input summary table.}
 \usage{
-formatCustomFlextable(dataTable, ft, fontname = "Times", part = "body",
-  fontsize = 8, iBase = 0, bold = FALSE)
+formatCustomFlextable(
+  dataTable,
+  ft,
+  fontname = "Times",
+  part = "body",
+  fontsize = 8,
+  iBase = 0,
+  bold = FALSE
+)
 }
 \arguments{
 \item{dataTable}{data.frame with data used in table,
