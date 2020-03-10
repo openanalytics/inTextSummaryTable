@@ -4,25 +4,51 @@
 \alias{computeSummaryStatisticsTable}
 \title{Compute summary statistics for a specific dataset and variables of interest}
 \usage{
-computeSummaryStatisticsTable(data, var = NULL, varFlag = NULL,
-  varInclude0 = FALSE, varLab = getLabelVar(var, data = data, labelVars
-  = labelVars), varGeneralLab = "Variable", varSubgroupLab = NULL,
-  varIgnore = NULL, varIncludeTotal = FALSE, varTotalInclude = FALSE,
-  varTotalInSepRow = FALSE, colVar = NULL, colVarDataLevels = NULL,
-  colVarTotal = colVar, colVarTotalPerc = colVarTotal,
-  colTotalInclude = FALSE, colTotalLab = "Total", rowVar = NULL,
-  rowVarDataLevels = NULL, rowVarLab = getLabelVar(rowVar, data = data,
-  labelVars = labelVars), rowOrder = "auto",
-  rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
-  rowVarTotalInclude = NULL, rowVarTotalInSepRow = NULL,
-  rowVarTotalByVar = NULL, rowVarTotalPerc = NULL, type = "auto",
-  subjectVar = "USUBJID", dataTotal = NULL,
-  dataTotalPerc = dataTotal, dataTotalRow = NULL,
-  dataTotalCol = NULL, stats = NULL, statsVarBy = NULL,
-  statsExtra = NULL, statsGeneralLab = "Statistic", filterFct = NULL,
-  rowInclude0 = FALSE, colInclude0 = FALSE, labelVars = NULL,
-  byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars =
-  labelVars))
+computeSummaryStatisticsTable(
+  data,
+  var = NULL,
+  varFlag = NULL,
+  varInclude0 = FALSE,
+  varLab = getLabelVar(var, data = data, labelVars = labelVars),
+  varGeneralLab = "Variable",
+  varSubgroupLab = NULL,
+  varIgnore = NULL,
+  varIncludeTotal = FALSE,
+  varTotalInclude = FALSE,
+  varTotalInSepRow = FALSE,
+  colVar = NULL,
+  colVarDataLevels = NULL,
+  colVarTotal = colVar,
+  colVarTotalPerc = colVarTotal,
+  colTotalInclude = FALSE,
+  colTotalLab = "Total",
+  rowVar = NULL,
+  rowVarDataLevels = NULL,
+  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
+  rowOrder = "auto",
+  rowOrderTotalFilterFct = NULL,
+  rowOrderCatLast = "Other",
+  rowVarTotalInclude = NULL,
+  rowVarTotalInSepRow = NULL,
+  rowVarTotalByVar = NULL,
+  rowVarTotalPerc = NULL,
+  type = "auto",
+  subjectVar = "USUBJID",
+  dataTotal = NULL,
+  dataTotalPerc = dataTotal,
+  dataTotalRow = NULL,
+  dataTotalCol = NULL,
+  stats = NULL,
+  statsVarBy = NULL,
+  statsExtra = NULL,
+  statsGeneralLab = "Statistic",
+  filterFct = NULL,
+  rowInclude0 = FALSE,
+  colInclude0 = FALSE,
+  labelVars = NULL,
+  byVar = NULL,
+  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars)
+)
 }
 \arguments{
 \item{data}{Data.frame with data.}
@@ -130,8 +156,8 @@ Otherwise (by default) the total is included in the header row of each category.
 for which to compute the row total by.
 Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.}
 
-\item{rowVarTotalPerc}{Character vector with row(s) considered to compute the total,
-used as denominator for the percentage computation.
+\item{rowVarTotalPerc}{Character vector with row variables by which the total
+should be computed for the denominator for the percentage computation.
 By default the total is only computed by column (NULL by default).
 If the total should be based on the total number of records per variable,
 \code{rowVarTotalPerc} should be set to 'variable'.}

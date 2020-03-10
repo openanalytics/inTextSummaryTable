@@ -5,21 +5,33 @@
 \alias{exportSummaryStatisticsTableToFlextable}
 \title{Convert summary table to flextable}
 \usage{
-exportSummaryStatisticsTableToFlextable(summaryTable,
-  rowVar = getAttribute(summaryTable, "rowVar"), rowVarInSepCol = NULL,
+exportSummaryStatisticsTableToFlextable(
+  summaryTable,
+  rowVar = getAttribute(summaryTable, "rowVar"),
+  rowVarInSepCol = NULL,
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-  statsLayout = getAttribute(summaryTable, "statsLayout", default =
-  "row"), statsVar = getAttribute(summaryTable, "statsVar"),
-  rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
-  getLabelVar(rowVar, labelVars = labelVars)),
-  rowVarTotalInSepRow = NULL, vline = c("none", "auto"),
-  rowAutoMerge = TRUE, rowVarFormat = NULL, rowTotalLab = NULL,
-  landscape = (style == "presentation"), margin = 1,
-  rowPadBase = 14.4, title = NULL, footer = NULL, style = "report",
-  colorTable = getColorTable(style = style), fontname = switch(style,
-  report = "Times", presentation = "Tahoma"), fontsize = switch(style,
-  report = 8, presentation = 10), file = NULL, pageDim = NULL,
-  labelVars = NULL)
+  statsLayout = getAttribute(summaryTable, "statsLayout", default = "row"),
+  statsVar = getAttribute(summaryTable, "statsVar"),
+  rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar,
+    labelVars = labelVars)),
+  rowVarTotalInSepRow = NULL,
+  vline = c("none", "auto"),
+  rowAutoMerge = TRUE,
+  rowVarFormat = NULL,
+  rowTotalLab = NULL,
+  landscape = (style == "presentation"),
+  margin = 1,
+  rowPadBase = 14.4,
+  title = NULL,
+  footer = NULL,
+  style = "report",
+  colorTable = getColorTable(style = style),
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  fontsize = switch(style, report = 8, presentation = 10),
+  file = NULL,
+  pageDim = NULL,
+  labelVars = NULL
+)
 }
 \arguments{
 \item{summaryTable}{summary table as provided by teh \code{\link{formatSummaryStatisticsTable}}}

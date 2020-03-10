@@ -4,8 +4,15 @@
 \alias{combineVariables}
 \title{Create a data.frame combining set of records from same or multiple variables.}
 \usage{
-combineVariables(data, paramsList, newVar, labelVars = NULL,
-  fctTest = "==", includeAll = FALSE, labelAll = "Any")
+combineVariables(
+  data,
+  paramsList,
+  newVar,
+  labelVars = NULL,
+  fctTest = "==",
+  includeAll = FALSE,
+  labelAll = "Any"
+)
 }
 \arguments{
 \item{data}{Data.frame with data.}

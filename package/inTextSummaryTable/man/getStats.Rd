@@ -4,9 +4,15 @@
 \alias{getStats}
 \title{Get default set of statistics for one particular variable.}
 \usage{
-getStats(type = "summary", includeName = TRUE, x = NULL,
-  nDecCont = getMaxNDecimals, nDecN = 0, nDecm = nDecN,
-  formatPercentage = inTextSummaryTable:::formatPercentage)
+getStats(
+  type = "summary",
+  includeName = TRUE,
+  x = NULL,
+  nDecCont = getMaxNDecimals,
+  nDecN = 0,
+  nDecm = nDecN,
+  formatPercentage = inTextSummaryTable:::formatPercentage
+)
 }
 \arguments{
 \item{type}{Character vector with type of statistics (multiple are possible):
@@ -76,12 +82,12 @@ getStats("\%")
 getStats("summary")
 getStats("mean (se)")
 getStats("median (range)")
-getStats("median\\n(range)")
+getStats("median\n(range)")
 getStats(c("Mean", "SE"))
 
 ## to not include statistic name in the table
-getStats("median\\n(range)", includeName = FALSE)
-getStats(c("summary", "median\\n(range)"), includeName = FALSE)
+getStats("median\n(range)", includeName = FALSE)
+getStats(c("summary", "median\n(range)"), includeName = FALSE)
 
 ## to extract the number of decimals based on a continuous variable (see ?getMaxNDecimals) 
 library(glpgUtilityFct)

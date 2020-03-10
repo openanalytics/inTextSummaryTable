@@ -4,13 +4,22 @@
 \alias{computeSummaryStatisticsTableTotal}
 \title{Compute summary statistics total table.}
 \usage{
-computeSummaryStatisticsTableTotal(data, colVar = NULL,
-  colVarTotal = colVar, rowVarTotal = NULL, var = NULL,
+computeSummaryStatisticsTableTotal(
+  data,
+  colVar = NULL,
+  colVarTotal = colVar,
+  rowVarTotal = NULL,
+  var = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
-  colTotalLab = "Total", colInclude0 = FALSE,
-  colTotalInclude = FALSE, dataTotalCol = NULL,
-  colVarDataLevels = NULL, colVarLevels = NULL,
-  subjectVar = "USUBJID", labelVars = NULL)
+  colTotalLab = "Total",
+  colInclude0 = FALSE,
+  colTotalInclude = FALSE,
+  dataTotalCol = NULL,
+  colVarDataLevels = NULL,
+  colVarLevels = NULL,
+  subjectVar = "USUBJID",
+  labelVars = NULL
+)
 }
 \arguments{
 \item{data}{Data.frame with data.}

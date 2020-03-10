@@ -4,26 +4,42 @@
 \alias{exportSummaryStatisticsTable}
 \title{Export a summary table in \code{docx} format.}
 \usage{
-exportSummaryStatisticsTable(summaryTable,
+exportSummaryStatisticsTable(
+  summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
-  rowVarLab = getAttribute(summaryTable, "rowVarLab", default =
-  getLabelVar(rowVar, labelVars = labelVars)), rowVarFormat = NULL,
+  rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar,
+    labelVars = labelVars)),
+  rowVarFormat = NULL,
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-  rowTotalLab = NULL, rowVarTotalInSepRow = getAttribute(summaryTable,
-  "rowVarTotalInSepRow"), rowAutoMerge = TRUE,
+  rowTotalLab = NULL,
+  rowVarTotalInSepRow = getAttribute(summaryTable, "rowVarTotalInSepRow"),
+  rowAutoMerge = TRUE,
   colVar = getAttribute(summaryTable, "colVar"),
-  colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
-  "Total"), colHeaderTotalInclude = TRUE,
+  colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
+  colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = ifelse(outputType == "flextable", "row", "col"),
-  statsValueLab = "StatisticValue", emptyValue = "-",
-  labelVars = NULL, file = NULL, landscape = (style ==
-  "presentation"), margin = 1, rowPadBase = 14.4, title = NULL,
-  outputType = "flextable", footer = NULL, style = "report",
-  colorTable = getColorTable(style = style), fontsize = switch(style,
-  report = 8, presentation = 10), fontname = switch(style, report =
-  "Times", presentation = "Tahoma"), vline = "none", pageDim = NULL,
-  expandVar = NULL, noEscapeVar = NULL, barVar = NULL, ...)
+  statsValueLab = "StatisticValue",
+  emptyValue = "-",
+  labelVars = NULL,
+  file = NULL,
+  landscape = (style == "presentation"),
+  margin = 1,
+  rowPadBase = 14.4,
+  title = NULL,
+  outputType = "flextable",
+  footer = NULL,
+  style = "report",
+  colorTable = getColorTable(style = style),
+  fontsize = switch(style, report = 8, presentation = 10),
+  fontname = switch(style, report = "Times", presentation = "Tahoma"),
+  vline = "none",
+  pageDim = NULL,
+  expandVar = NULL,
+  noEscapeVar = NULL,
+  barVar = NULL,
+  ...
+)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}

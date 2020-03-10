@@ -5,8 +5,12 @@
 \alias{exportFlextableToDocx}
 \title{Export flextable to docx filr}
 \usage{
-exportFlextableToDocx(object, file, landscape = FALSE, breaksAfter = if
-  (!inherits(object, "flextable")) seq_along(object) else 1)
+exportFlextableToDocx(
+  object,
+  file,
+  landscape = FALSE,
+  breaksAfter = if (!inherits(object, "flextable")) seq_along(object) else 1
+)
 }
 \arguments{
 \item{object}{\code{\link[flextable]{flextable}} object, or list of such objects}
