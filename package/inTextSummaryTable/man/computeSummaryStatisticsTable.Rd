@@ -335,7 +335,7 @@ Additionally, the output contains the following attributes:
 \item{'statsVar': }{column name(s) of summary table with computed statistics
 included in the final table}
 \item{'rowVar': }{column name(s) of summary table with row variable
-included in the final table}
+included in the final table. This parameter should be mainly used for qualitative variables and 'nests' together different rows in the final output table.}
 \item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
 \item{'rowVarTotalInclude': }{row variables whose total will be included:
 \code{rowVarTotalInclude} and 'variableGroup' if the variable total should be included}
