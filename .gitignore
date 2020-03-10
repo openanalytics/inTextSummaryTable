@@ -21,3 +21,4 @@ test.Rmd
 *.txt
 testCreationPowerPoint.R
 *.pydevproject
+*.RData
