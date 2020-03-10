@@ -88,7 +88,7 @@ variable type. This can also be specified via the `type` parameter set to:
 Note: all functionalities described below for the summary statistics table are
 also available for the count table (and vice versa).
 
-The _Demographic_ data (`ADPD` dataset) is used as example for the summary
+The _Demographic_ data (`ADSL` dataset) is used as example for the summary
 statistics table.
 
 ```{r data-SL}
