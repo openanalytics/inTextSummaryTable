@@ -4,10 +4,16 @@
 \alias{computeSummaryStatistics}
 \title{Compute summary statistics of interest of an unique variable of interest.}
 \usage{
-computeSummaryStatistics(data, var = NULL, varTotalInclude = FALSE,
-  statsExtra = NULL, subjectVar = "USUBJID", filterEmptyVar = ((type
-  == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
-  type = "auto")
+computeSummaryStatistics(
+  data,
+  var = NULL,
+  varTotalInclude = FALSE,
+  statsExtra = NULL,
+  subjectVar = "USUBJID",
+  filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type ==
+    "summaryTable"),
+  type = "auto"
+)
 }
 \arguments{
 \item{data}{Data.frame with data.}

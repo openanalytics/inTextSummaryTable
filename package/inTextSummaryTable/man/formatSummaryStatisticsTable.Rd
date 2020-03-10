@@ -4,14 +4,17 @@
 \alias{formatSummaryStatisticsTable}
 \title{Format summary statistics table for export}
 \usage{
-formatSummaryStatisticsTable(summaryTable,
+formatSummaryStatisticsTable(
+  summaryTable,
   rowVar = getAttribute(summaryTable, "rowVar"),
   colVar = getAttribute(summaryTable, "colVar"),
-  colTotalLab = getAttribute(summaryTable, "colTotalLab", default =
-  "Total"), colHeaderTotalInclude = TRUE,
+  colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
+  colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
-  statsLayout = "row", statsValueLab = "StatisticValue",
-  emptyValue = "-")
+  statsLayout = "row",
+  statsValueLab = "StatisticValue",
+  emptyValue = "-"
+)
 }
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}

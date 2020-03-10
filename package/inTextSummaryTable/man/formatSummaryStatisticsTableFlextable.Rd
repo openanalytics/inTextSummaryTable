@@ -6,15 +6,22 @@
 \title{Merge nested rows of a summary table
 for a format compatible with \code{flextable}}
 \usage{
-formatSummaryStatisticsTableFlextable(summaryTable,
-  rowVar = getAttribute(summaryTable, "rowVar"), rowVarInSepCol = NULL,
+formatSummaryStatisticsTableFlextable(
+  summaryTable,
+  rowVar = getAttribute(summaryTable, "rowVar"),
+  rowVarInSepCol = NULL,
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-  statsLayout = "row", statsVar = getAttribute(summaryTable,
-  "statsVar"), rowVarLab = getAttribute(summaryTable, "rowVarLab",
-  default = getLabelVar(rowVar, labelVars = labelVars)),
-  rowVarTotalInSepRow = NULL, vline = c("none", "auto"),
-  rowAutoMerge = TRUE, rowVarFormat = NULL, rowTotalLab = NULL,
-  labelVars = NULL)
+  statsLayout = "row",
+  statsVar = getAttribute(summaryTable, "statsVar"),
+  rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar,
+    labelVars = labelVars)),
+  rowVarTotalInSepRow = NULL,
+  vline = c("none", "auto"),
+  rowAutoMerge = TRUE,
+  rowVarFormat = NULL,
+  rowTotalLab = NULL,
+  labelVars = NULL
+)
 }
 \arguments{
 \item{summaryTable}{summaryTable.frame with summaryTable}
