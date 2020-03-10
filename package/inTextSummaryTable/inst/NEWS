@@ -1,3 +1,5 @@
+2.6.1
+	o add text for explanation of 'rowVar' in 'computeSummaryStatisticsTable()'. Minor changes (e.g. typos) in the vignette.
 2.6.0
     o subjectProfileSummaryPlot: xGap/xGapDiffNew new param
     o computeSummaryStatisticsTable: fix for varFlag when only one variable is specified
