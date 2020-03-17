@@ -26,7 +26,9 @@ computeSummaryStatisticsTableTotal(
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.}
+and are included in multi-columns layout.
+Use: 'variable' to include the variables to summarize: \code{var}
+ (if multiple) in different columns.}
 
 \item{colVarTotal}{Character vector with column(s) considered to compute the total.}
 

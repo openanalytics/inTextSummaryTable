@@ -183,13 +183,17 @@ If the total should be based on the total number of records per variable,
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.}
+and are included in multi-columns layout.
+Use: 'variable' to include the variables to summarize: \code{var}
+ (if multiple) in different columns.}
 
 \item{colVarTotal}{String with column(s) considered to compute the total by,
-reported in the header of the table, by default same as \code{colVar}.}
+reported in the header of the table, by default same as \code{colVar}.
+Use: 'variable' to compute total by \code{var} (if multiple).}
 
 \item{colVarTotalPerc}{String with column(s) considered to compute the total by,
-used as denominator for the percentage computation, by default same as \code{colVarTotal}.}
+used as denominator for the percentage computation, by default same as \code{colVarTotal}.
+Use: 'variable' to compute total by \code{var} (if multiple).}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with no records, based on all combinations 
