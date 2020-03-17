@@ -1,5 +1,6 @@
-2.6.1
-	o add text for explanation of 'rowVar' in 'computeSummaryStatisticsTable()'. Minor changes (e.g. typos) in the vignette.
+2.7.0
+    o 'variable' can be include in 'colVar'
+    o add text for explanation of 'rowVar' in 'computeSummaryStatisticsTable()'. Minor changes (e.g. typos) in the vignette.
     o computeSummaryStatisticsTableTotal: fix in case rowVarTotalPerc is a factor
 2.6.0
     o subjectProfileSummaryPlot: xGap/xGapDiffNew new param
