@@ -889,6 +889,35 @@ specified), `rowVarLab` is set to this unique label.
 	
 ```
 
+### Layout for variable with summary statistics
+
+The variables to summarize (`var`) are included by default in rows.
+In case multiple variables are to be summarized, the different variables
+can be included in different columns by including the specific label: 'variable'
+in `colVar`.
+
+Beware that such layout only makes sense for variables
+with similar types (e.g. all numeric variables).
+
+```{r summaryTable-layout-var}
+
+	dataPFEV1 <- subset(dataAll$ADRE, FASFL == "Y" & PARAMCD == "FEV1PP" & AN01FL == "Y")
+	dataPFEV1 <- convertVarToFactor(
+		data = dataPFEV1, 
+		var = c("TRTP", "AVISIT"),
+		varNum = c("TRTPN", "AVISITN")
+	)
+	getSummaryStatisticsTable(
+		data = dataPFEV1,
+		var = c("AVAL", "CHG", "PCHG"),
+		colVar = c("variable", "TRTA"),
+		rowVar = "AVISIT",
+		labelVars = labelVars,
+		stats = getStats("summary-default")
+	)
+
+```
+
 ## Total
 
 The **total number of subjects** is displayed in the **column header**

@@ -26,7 +26,9 @@ considered in the specific dimension.}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.}
+and are included in multi-columns layout.
+Use: 'variable' to include the variables to summarize: \code{var}
+ (if multiple) in different columns.}
 
 \item{colTotalLab}{String, label for the total column included 
 if \code{colTotalInclude} is TRUE, 'Total' by default.}

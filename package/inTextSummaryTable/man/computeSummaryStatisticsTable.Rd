@@ -93,7 +93,9 @@ a separated row (by default) or in the row containing the header of the variable
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.}
+and are included in multi-columns layout.
+Use: 'variable' to include the variables to summarize: \code{var}
+ (if multiple) in different columns.}
 
 \item{colVarDataLevels}{Data.frame with unique combinations of \code{colVar}
 to be included in columns.
@@ -101,10 +103,12 @@ Each column should correspond to \code{colVar} and as factor
 if the elements should be ordered in the final table.}
 
 \item{colVarTotal}{String with column(s) considered to compute the total by,
-reported in the header of the table, by default same as \code{colVar}.}
+reported in the header of the table, by default same as \code{colVar}.
+Use: 'variable' to compute total by \code{var} (if multiple).}
 
 \item{colVarTotalPerc}{String with column(s) considered to compute the total by,
-used as denominator for the percentage computation, by default same as \code{colVarTotal}.}
+used as denominator for the percentage computation, by default same as \code{colVarTotal}.
+Use: 'variable' to compute total by \code{var} (if multiple).}
 
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
