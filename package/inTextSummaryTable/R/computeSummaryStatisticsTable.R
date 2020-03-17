@@ -74,8 +74,10 @@
 #' in a row with this variable set to 'Total'.
 #' @param colVarTotal String with column(s) considered to compute the total by,
 #' reported in the header of the table, by default same as \code{colVar}.
+#' Use: 'variable' to compute total by \code{var} (if multiple).
 #' @param colVarTotalPerc String with column(s) considered to compute the total by,
 #' used as denominator for the percentage computation, by default same as \code{colVarTotal}.
+#' Use: 'variable' to compute total by \code{var} (if multiple).
 #' @param rowVarTotalPerc Character vector with row variables by which the total
 #' should be computed for the denominator for the percentage computation.
 #' By default the total is only computed by column (NULL by default).
@@ -235,27 +237,12 @@ computeSummaryStatisticsTable <- function(
 	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars)
 ){
 	
-	# get default set of statistics
-	if(is.character(stats) && length(stats) == 1)
-		stats <- getStatsData(data = data, var = var, type = stats)
-	
-	# check if 'varIncludeTotal' is not default
-	if(!(is.logical(varIncludeTotal) && length(varIncludeTotal) == 1 && !varIncludeTotal)){
-		warning("Argument: 'varIncludeTotal' is deprecated, please use 'varTotalInclude' instead.")
-		varTotalInclude <- varIncludeTotal
-	}
-	
 	inputParams <- as.list(environment())
 	
 	if(nrow(data) == 0){
 		message("No data to report.")
 		return(invisible())
 	}
-	
-	if(!is.null(dataTotal) && !all(colVar %in% colnames(dataTotal)))
-		stop("The variable(s) specified in 'colVar': ",
-			toString(paste0("'", colVar, "'")), 
-			" are not available in 'dataTotal'.")
 
 	if(!is.null(byVar)){
 		if(!all(byVar %in% colnames(data))){
@@ -280,6 +267,30 @@ computeSummaryStatisticsTable <- function(
 			return(res)
 		}
 	}
+	
+	# get default set of statistics
+	if(is.character(stats) && length(stats) == 1)
+		stats <- getStatsData(data = data, var = var, type = stats)
+	
+	# check if 'varIncludeTotal' is not default
+	if(!(is.logical(varIncludeTotal) && length(varIncludeTotal) == 1 && !varIncludeTotal)){
+		warning("Argument: 'varIncludeTotal' is deprecated, please use 'varTotalInclude' instead.")
+		varTotalInclude <- varIncludeTotal
+	}
+	
+	if(!is.null(dataTotal) && !all(colVar %in% colnames(dataTotal)))
+		stop("The variable(s) specified in 'colVar': ",
+				toString(paste0("'", colVar, "'")), 
+				" are not available in 'dataTotal'.")
+	
+	# in case the variable should be in multiple columns, 'colVar' might include: 'variable'
+	colVarInit <- colVar
+	if("variable" %in% colVar){
+		if(!(!is.null(var) && length(var) > 1))
+			warning("'var' not included in columns because only one or no variable is specified.",
+				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
+	}
+	colVar <- setdiff(colVar, "variable")
 
 	# Always compute the column total, because the rows could be asked to be ordered 
 	# based on the total category or total can be extracted within a function specified in rowOrder
@@ -512,8 +523,9 @@ computeSummaryStatisticsTable <- function(
 	# data considered to compute the total
 	if(!is.null(dataTotal)){
 		# to have specified order for colVar in case different order 'dataTotal'
-		if(!is.null(colVarTotal)){
-			dataTotal[, colVarTotal] <- lapply(colVarTotal, function(var)
+		colVarTotalUsed <- setdiff(colVarTotal, "variable")
+		if(!is.null(colVarTotalUsed)){
+			dataTotal[, colVarTotalUsed] <- lapply(colVarTotalUsed, function(var)
 				if(is.factor(summaryTable[, var])){
 					factor(dataTotal[, var], levels = colVarLevels[[var]])
 				}else dataTotal[, var]
@@ -659,13 +671,13 @@ computeSummaryStatisticsTable <- function(
 		# attributes created from this function
 		statsVar = statsVar,
 		rowVar = c(rowVar, 
-			if(length(var) > 1)	"variable", 
+			if(length(var) > 1 & !"variable" %in% colVarInit)	"variable", 
 			# in case only one variable, but still count
 			if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
 		),
 		rowVarLab = c(
 			rowVarLab, 
-			if(length(var) > 1)	
+			if(length(var) > 1 & !"variable" %in% colVarInit)	
 				c("variable" = varGeneralLab),
 			if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varSubgroupLab),
 			if(length(statsVar) > 1)	c("Statistic" = statsGeneralLab)
@@ -684,7 +696,7 @@ computeSummaryStatisticsTable <- function(
 			)
 		},
 		rowVarTotalInSepRow = c(rowVarTotalInSepRow, if(varTotalInSepRow)	"variableGroup"),
-		colVar = colVar,
+		colVar = colVarInit,
 		colTotalLab = colTotalLab
 
 	)
@@ -742,10 +754,11 @@ computeSummaryStatisticsTableTotal <- function(
 
 	# total is computed based on number of elements available in each 'var'
 	# (and not # elements within each group of 'var')
-	if("variable" %in% rowVarTotal){
+	if("variable" %in% c(rowVarTotal, colVarTotal)){
 		if(is.null(var)){
 			warning("Total is not computed by variable because no 'var' is specified.")
 			rowVarTotal <- setdiff(rowVarTotal, "variable")
+			colVarTotal <- setdiff(colVarTotal, "variable")
 		}else{
 			data <- formatDataTotalWithVar(data)
 		}
@@ -768,7 +781,7 @@ computeSummaryStatisticsTableTotal <- function(
 		if(length(colVarTotalTI) == 0)	colVarTotalTI <- NULL
 		if(is.null(dataTotalCol))	dataTotalCol <- data
 		
-		if("variable" %in% rowVarTotal)
+		if("variable" %in% c(rowVarTotal, colVarTotal))
 			dataTotalCol <- formatDataTotalWithVar(dataTotalCol)
 		
 		summaryTableTotalCol <- computeSummaryStatisticsByRowColVar(
@@ -1194,6 +1207,8 @@ computeSummaryStatistics <- function(data,
 #' @param colVar Character vector with variable(s) used for the columns.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order,
 #' and are included in multi-columns layout.
+#' Use: 'variable' to include the variables to summarize: \code{var}
+#'  (if multiple) in different columns.
 #' @param colTotalLab String, label for the total column included 
 #' if \code{colTotalInclude} is TRUE, 'Total' by default.
 #' @return Factor \code{var} variable of \code{data} with specified order.
