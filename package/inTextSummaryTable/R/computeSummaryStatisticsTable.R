@@ -291,6 +291,7 @@ computeSummaryStatisticsTable <- function(
 				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
 	}
 	colVar <- setdiff(colVar, "variable")
+	if(length(colVar) == 0)	colVar <- NULL
 
 	# Always compute the column total, because the rows could be asked to be ordered 
 	# based on the total category or total can be extracted within a function specified in rowOrder

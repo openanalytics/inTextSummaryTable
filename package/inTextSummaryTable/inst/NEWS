@@ -1,5 +1,7 @@
+2.8.0
+    o fix when 'variable' in 'colVar' when no other col vars
 2.7.0
-    o 'variable' can be include in 'colVar'
+    o 'variable' can be included in 'colVar'
     o add text for explanation of 'rowVar' in 'computeSummaryStatisticsTable()'. Minor changes (e.g. typos) in the vignette.
     o computeSummaryStatisticsTableTotal: fix in case rowVarTotalPerc is a factor
 2.6.0
