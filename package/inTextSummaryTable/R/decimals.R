@@ -125,7 +125,7 @@ formatPercentage <- function(x, nDec = 1){
 									"<0.1",
 									ifelse(x > 99.9,
 											">99.9",
-											roundCustom(x, nDec)
+											as.character(roundCustom(x, nDec))
 									)
 							)
 					)
