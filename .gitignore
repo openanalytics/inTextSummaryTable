@@ -1,6 +1,5 @@
 *.project
 *.html
-/tests
 *.pdf
 *.tex
 *.png
