@@ -115,16 +115,21 @@ getMaxNDecimalsData <- function(x)
 #' @export
 formatPercentage <- function(x, nDec = 1){
 	
-	xRF <- ifelse(is.na(x), "-",
-		ifelse(x == 0, "0", 
-			ifelse(x == 100, "100%",
-				ifelse(x < 0.1, "<0.1%",
-					ifelse(x > 99.9, ">99.9%",
-						paste0(roundCustom(x, nDec), "%")
+	xRF <- ifelse(is.na(x),
+			"-",
+			ifelse(x == 0,
+					"0", 
+					ifelse(x == 100,
+							"100",
+							ifelse(x < 0.1,
+									"<0.1",
+									ifelse(x > 99.9,
+											">99.9",
+											as.character(roundCustom(x, nDec))
+									)
+							)
 					)
-				)
 			)
-		)
 	)
 	return(xRF)
 	
