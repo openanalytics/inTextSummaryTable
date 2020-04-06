@@ -207,9 +207,11 @@ getStats <- function(
 				bquote(
 					ifelse(
 						is.na(statPercN), "-",
-						ifelse(statN == 0, "0", 
-							paste0(.(statsBase$n), " (", .(statsBase$`%`), ")")
+						ifelse(statN == 0, "0",
+								ifelse(.(statsBase$`%`) == "100", paste0(.(statsBase$n), ""),
+									paste0(.(statsBase$n), " (", .(statsBase$`%`), ")")
 						)
+					  )
 					)
 				)
 			),

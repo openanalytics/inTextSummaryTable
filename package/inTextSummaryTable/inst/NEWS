@@ -1,3 +1,9 @@
+2.9.0
+	o remove '%' sign next to percentage in 'formatPercentage'
+	o modified 'getStats': when percentage is 100 it is not shown
+	o add unit tests for 'formatPercentage'
+	o add unit tests for 'getStats'
+	o new parameter varTotalInLastRow
 2.8.0
     o fix when 'variable' in 'colVar' when no other col vars
 2.7.0
