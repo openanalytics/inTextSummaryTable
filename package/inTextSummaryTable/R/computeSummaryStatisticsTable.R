@@ -1084,6 +1084,20 @@ computeSummaryStatistics <- function(data,
 			val <- data[, var]
 			emptyVar <- is.null(val) || length(val) == 0
 			res <- if(!(filterEmptyVar & emptyVar)){
+				
+				# check of multiple records per subject
+				if(!emptyVar){
+					isDupl <- duplicated(data[, subjectVar])
+					if(any(isDupl)){
+						dataDupl <- merge(data, data[isDupl, subjectVar, drop = FALSE])
+						stop("Extraction of statistics failed for ", var,
+							" because multiple records are available for ",
+							"the same ", subjectVar, ":\n",
+							paste(capture.output(print(dataDupl)), collapse = "\n")
+						)
+					}
+				}
+				
 				res <- data.frame(
 					statN = getNSubjects(data),
 					statm = getNRecords(data),
@@ -1098,6 +1112,7 @@ computeSummaryStatistics <- function(data,
 					res = res, statsExtra = statsExtra, 
 					val = val, data = data
 				)
+				
 			}
 		},
 		
