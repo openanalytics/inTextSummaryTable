@@ -145,9 +145,10 @@ formatSummaryStatisticsTable <- function(
 		varsFm <- all.vars(formulaWithin)
 		isDupl <- duplicated(dataLong[, varsFm])
 		if(any(isDupl)){
+			dataDupl <- merge(dataLong, dataLong[isDupl, varsFm, drop = FALSE])
 			stop("Table formatting to multiple columns failed because of ",
 				"duplicated records for each row/col:\n",
-				paste(capture.output(print(dataLong[isDupl, , drop = FALSE])), collapse = "\n")
+				paste(capture.output(print(dataDupl)), collapse = "\n")
 			)
 		}
 		dataLong <- dcast(dataLong, formula = formulaWithin, 
