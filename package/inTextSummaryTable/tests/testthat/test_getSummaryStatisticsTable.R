@@ -240,4 +240,26 @@ test_that("'statsLayout' is: 'col' for categorical variables", {
 			
 })
 
+test_that("'statsLayout' is: 'col' for categorical variables", {
+			
+	dataTable <- rbind(dataSL[1, ], dataSL)
+	vars <- "AGE"
+	stats <- getStatsData(
+		data = dataTable,
+		type = 'all',
+		var = vars
+	)$AGE
+	expect_error(
+		getSummaryStatisticsTable(
+			data = dataTable, 
+			var = vars,
+			colVar = "TRTP",
+			stats = stats,
+			colTotalInclude = TRUE
+		),
+		pattern = "multiple records are available"
+	)
+			
+})
+
 
