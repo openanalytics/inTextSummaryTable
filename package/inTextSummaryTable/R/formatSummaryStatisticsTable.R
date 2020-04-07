@@ -121,7 +121,8 @@ formatSummaryStatisticsTable <- function(
 	# e.g. in DM table: count per sub-group for categorical variable
 	if(!is.null(rowVar) & "Statistic" %in% colnames(dataLong)){
 		idxUniqueStatNotNamed <- which(!duplicated(dataLong[, c(rowVar, colVar)]) & dataLong$Statistic == "Statistic")
-		dataLong[idxUniqueStatNotNamed, "Statistic"] <- NA
+		if(length(idxUniqueStatNotNamed) > 0)
+			dataLong[idxUniqueStatNotNamed, "Statistic"] <- NA
 	}
 	
 	# format statistic value
@@ -141,6 +142,14 @@ formatSummaryStatisticsTable <- function(
 			"~", 
 			paste(colVarUsed, collapse = " + ")
 		))
+		varsFm <- all.vars(formulaWithin)
+		isDupl <- duplicated(dataLong[, varsFm])
+		if(any(isDupl)){
+			stop("Table formatting to multiple columns failed because of ",
+				"duplicated records for each row/col:\n",
+				paste(capture.output(print(dataLong[isDupl, , drop = FALSE])), collapse = "\n")
+			)
+		}
 		dataLong <- dcast(dataLong, formula = formulaWithin, 
 			value.var = statsValueNewName, fill = emptyValue
 		)
