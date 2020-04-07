@@ -240,7 +240,7 @@ test_that("'statsLayout' is: 'col' for categorical variables", {
 			
 })
 
-test_that("'statsLayout' is: 'col' for categorical variables", {
+test_that("No duplicated records for the same subject ID for continuous variable", {
 			
 	dataTable <- rbind(dataSL[1, ], dataSL)
 	vars <- "AGE"
