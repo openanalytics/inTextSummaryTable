@@ -210,7 +210,6 @@ getStats <- function(
 						ifelse(statN == 0, "0",
 							paste0(.(statsBase$n), " (", .(statsBase$`%`), ")")
 						)
-					  )
 					)
 				)
 			),
