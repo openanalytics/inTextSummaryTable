@@ -12,7 +12,9 @@ computeSummaryStatistics(
   subjectVar = "USUBJID",
   filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type ==
     "summaryTable"),
-  type = "auto"
+  type = "auto",
+  msgLabel = NULL,
+  msgVars = NULL
 )
 }
 \arguments{
@@ -46,6 +48,13 @@ statistics (by default, only TRUE if the final table is 'summaryTable')}
 'countTable' otherwise
 }
 }}
+
+\item{msgLabel}{(optional) String with label for the data (NULL by default), 
+included in the message/warning for checks.}
+
+\item{msgVars}{(optional) Character vector with columns of \code{data}
+containing extra variables (besides \code{var} and \code{subjectVar})
+that should be included in the message/warning for checks.}
 }
 \value{
 Data.frame with summary statistics in columns,

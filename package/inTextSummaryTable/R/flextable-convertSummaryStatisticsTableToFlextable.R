@@ -47,6 +47,10 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
 	
+	if(is.null(summaryTable)){
+		return(invisible())
+	}
+	
 	if(!is.data.frame(summaryTable)){
 		
 		inputParams <- as.list(environment())
@@ -285,7 +289,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 #' @return \code{\link[flextable]{flextable}} with superscript/subscript.
 #' @importFrom stats as.formula
 #' @importFrom officer fp_text
-#' @importFrom flextable display
+#' @importFrom flextable display compose as_b as_sup as_sub as_paragraph
+#' @importFrom utils packageVersion
 #' @author Laure Cougnaud
 #' @keywords internal
 formatCustomFlextable <- function(
@@ -326,36 +331,62 @@ formatCustomFlextable <- function(
 				
 				# for each superscript (in case multiple for the same text)
 				for(el in textSplit){
-					
-					# create formatters: should be list of formula
-					fm <- c(
-						if(el[2] != "")
-							list(as.formula(paste0("valueBefore ~ as.character('", el[2], "')"))),
-						list(as.formula(paste0("valueExtract ~ as.character('", el[3], "')"))),
-						if(el[4] != "")
-							list(as.formula(paste0("valueAfter ~ as.character('", el[4], "')")))
-					)
+			
+					iEl <- idxPatternAI[idx, 1] + iBase
+					jEl <- idxPatternAI[idx, 2]
 					
 					# set superscript/subscript in flextable
-					ft <- ft %>% display(
-						i = idxPatternAI[idx, 1] + iBase,
-						col_key = idxPatternAI[idx, 2],
-						pattern = paste0(
-							if(el[2] != "")	"{{valueBefore}}",
-							"{{valueExtract}}", 
-							if(el[4] != "") "{{valueAfter}}"
-						),
-						formatters = fm,
-						fprops = list(valueExtract = 
-							fp_text(
-								vertical.align = ifelse(patternName == "bold", "baseline", patternName), 
-								font.size = fontsize,
-								font.family = fontname,
-								bold = (patternName == "bold" || bold)
-							)
-						),
-						part = part
-					)
+					if(packageVersion("flextable") < "0.5.9"){
+						
+						# create formatters: should be list of formula
+						fm <- c(
+							if(el[2] != "")
+								list(as.formula(paste0("valueBefore ~ as.character('", el[2], "')"))),
+							list(as.formula(paste0("valueExtract ~ as.character('", el[3], "')"))),
+							if(el[4] != "")
+								list(as.formula(paste0("valueAfter ~ as.character('", el[4], "')")))
+						)
+						
+						ft <- ft %>% flextable::display(
+							i = iEl, col_key = jEl,
+							pattern = paste0(
+								if(el[2] != "")	"{{valueBefore}}",
+								"{{valueExtract}}", 
+								if(el[4] != "") "{{valueAfter}}"
+							),
+							formatters = fm,
+							fprops = list(valueExtract = 
+								fp_text(
+									vertical.align = 
+										ifelse(patternName == "bold", "baseline", patternName), 
+									font.size = fontsize,
+									font.family = fontname,
+									bold = (patternName == "bold" || bold)
+								)
+							),
+							part = part
+						)
+					}else{
+						
+						fctFm <- switch(patternName,
+							bold = flextable::as_b,
+							superscript = flextable::as_sup, 
+							subscript = flextable::as_sub
+						)
+						listValues <- c(
+							if(el[2] != "")	list(as_chunk(el[2])),
+							list(fctFm(el[3])),
+							if(el[4] != "")	list(as_chunk(el[4]))
+						)
+						para <- do.call(flextable::as_paragraph, listValues)
+						ft <- ft %>% flextable::compose(
+							i = iEl, j = jEl,
+							value = para,
+							part = part
+						)
+						
+					}
+					
 				}
 			}
 		}

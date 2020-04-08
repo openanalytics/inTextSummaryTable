@@ -14,7 +14,7 @@
 #' If different labels should be used for different elements of
 #' \code{byVar} variable, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
-#' @param facetVar String, variable of \code{data} for facetting.
+#' @param facetVar Character vector, variable(s) of \code{data} for facetting.
 #' @param facetScale String with type of scale used for facetting, 'free_y' by default
 #' (fixed scale in the x-axis and free in the y-axis).
 #' @param useLinetype Logical, if TRUE (FALSE by default) use also linetype

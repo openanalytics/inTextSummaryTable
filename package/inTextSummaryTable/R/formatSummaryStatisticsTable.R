@@ -18,6 +18,7 @@
 #' @importFrom plyr colwise
 #' @importFrom dplyr n_distinct
 #' @importFrom stats as.formula
+#' @importFrom utils capture.output
 #' @importFrom glpgStyle convertVectToBinary
 formatSummaryStatisticsTable <- function(
 	summaryTable,
@@ -60,15 +61,16 @@ formatSummaryStatisticsTable <- function(
 				if(length(idxTotal) == 1){
 					# for the total column, include the N in all columns (to be merged afterwards)
 					colToModif <- if(all(!is.na(x[, colVar])) && all(x[, colVar] == colTotalLab))	colVar	else	colVarWithCount
-					for(col in colToModif)
-						x[, col] <- paste0(x[, col], "\n(N=",  x[idxTotal , "statN"], ")")
+					for(col in colToModif){
+						x[, col] <- factor(paste0(x[, col], "\n(N=",  x[idxTotal , "statN"], ")"))
+					}
 					x[-idxTotal, ]
 				}else x
 			})
 		
 			# ensure that order of columns with Total is as specified in levels of the factor originally
 			for(col in colVar){
-				colVarWithCountEl <- unique(dataWithTotal[, col])
+				colVarWithCountEl <- levels(dataWithTotal[, col])
 				colVarInit <-  summaryTable[, col]
 				colVarEl <- if(is.factor(colVarInit))	levels(colVarInit)	else	unique(colVarInit)	
 				colVarWithCountElOrdered <- colVarWithCountEl[
@@ -80,6 +82,9 @@ formatSummaryStatisticsTable <- function(
 		}else{
 			idxTotal <- which(summaryTable$isTotal)
 			nTotal <- summaryTable[idxTotal, "statN"]
+			if(colHeaderTotalInclude && length(nTotal) > 1)
+				stop("Multiple values for the header total but",
+					" no column variables ('colVar') are specified.")
 			dataWithTotal <- summaryTable[-idxTotal, ]
 		}
 		
@@ -88,6 +93,14 @@ formatSummaryStatisticsTable <- function(
 		nTotal <- NA
 	}
 	
+	# Note: best way would be to make this function works for
+	# empty data.frame but dcast returns: 
+	# 'Error in dim(ordered) <- ns : dims [product 1] do not match the length of object [0]'
+	if(nrow(dataWithTotal) == 0){
+		message("No data remain after filtering of total rows.")
+		return(invisible())
+	}
+
 	# convert from wide to long format
 	statsVar <- if(is.null(statsVar)){
 		setdiff(colnames(dataWithTotal),  
@@ -143,6 +156,7 @@ formatSummaryStatisticsTable <- function(
 			paste(colVarUsed, collapse = " + ")
 		))
 		varsFm <- all.vars(formulaWithin)
+		varsFm <- setdiff(varsFm, ".")
 		isDupl <- duplicated(dataLong[, varsFm])
 		if(any(isDupl)){
 			dataDupl <- merge(dataLong, dataLong[isDupl, varsFm, drop = FALSE])
