@@ -15,7 +15,7 @@ test_that("subjectProfileSummaryPlot - basic plot", {
 	summaryTableDf <- computeSummaryStatisticsTable(
 		data = dataAll$ADPP,
 		var = "AVAL",
-		rowVar = "PARAM",
+		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT")
 	)
 			
@@ -26,7 +26,7 @@ test_that("subjectProfileSummaryPlot - basic plot", {
 		colorVar = "TRTP",
 		labelVars = labelVars,
 		useLinetype = TRUE,
-		facetVar = "PARAM"
+		facetVar = c("PARCAT1", "PARAM")
 	)
 			
 	vdiffr::expect_doppelganger(
