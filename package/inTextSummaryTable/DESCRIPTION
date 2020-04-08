@@ -2,7 +2,7 @@ Package: inTextSummaryTable
 Type: Package
 Title: Creation Of In-Text Summary Table
 Version: 2.9.0
-Date: 2020-04-07
+Date: 2020-04-08
 Author: Laure Cougnaud
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
 Description: Functions to create table of summary statistics or count tables are created

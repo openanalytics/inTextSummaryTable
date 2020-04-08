@@ -19,7 +19,8 @@ computeSummaryStatisticsByRowColVar(
   colVarDataLevels = NULL,
   subjectVar = "USUBJID",
   labelVars = NULL,
-  statsExtra = NULL
+  statsExtra = NULL,
+  msgLabel = NULL
 )
 }
 \arguments{
@@ -90,6 +91,9 @@ statistics to be computed, only available for 'summaryTable',
 e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
 Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 and return the corresponding summary statistic.}
+
+\item{msgLabel}{(optional) String with label for the data (NULL by default), 
+included in the message/warning for checks.}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',

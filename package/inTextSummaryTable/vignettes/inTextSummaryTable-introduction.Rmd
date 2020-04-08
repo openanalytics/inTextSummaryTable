@@ -170,9 +170,12 @@ If some of the variables are of this type, they should be passed additionally to
 
 ### Summary statistics table
 
-**A summary statistics table** indicates **standard distribution statistics** of a numeric variable:
-  (mean, median, minimum, maximum, standard error, standard deviation, and count
-  statistics)
+**A summary statistics table** indicates **standard distribution statistics** of a continuous
+ variable: mean, median, minimum, maximum, standard error, standard deviation, and count
+  statistics across subjects.
+For a continuous variable, the presence of different values for the same subject 
+(and across row/column variables) are checked and an appropriate error message
+is returned if multiple different values are available.
 
 If `var` parameter is set to a numeric variable of interest, its summary
 statistics are displayed.
@@ -1281,7 +1284,7 @@ footnote or specify custom variable labels.
 	getSummaryStatisticsTable(
 		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
 		var = "AVAL",
-		colVar = "TRTP",
+		colVar = c("TRTP", "AVISIT"),
 		rowVar = c("PARCAT1", "PARAMRF"),
 		rowVarLab = c(
 			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
@@ -1310,7 +1313,7 @@ for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", pa
 	getSummaryStatisticsTable(
 		data = subset(dataPP, PARCAT1 == "Lumacaftor"),
 		var = "AVAL",
-		colVar = "TRTP",
+		colVar = c("TRTP", "AVISIT"),
 		rowVar = "PARAMRF",
 		rowVarLab = c(
 			'PARAMRF' = "Pharmacokinetics parameter", 
@@ -1343,7 +1346,7 @@ For example, pharmacokinetic tables are created for each compound:
 	summaryTableList <- getSummaryStatisticsTable(
 		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
 		var = "AVAL",
-		colVar = "TRTP",
+		colVar = c("TRTP", "AVISIT"),
 		rowVar = "PARAMRF",
 		rowVarLab = c(
 			'PARAMRF' = "Pharmacokinetics parameter", 
@@ -1848,12 +1851,12 @@ Summary statistics can be visualized via **error bars** by:
 * visualizing the summary statistics via the `subjectProfileSummaryPlot`
   function
 
-```{r visualization, out.width = "100%", fig.height = 6, fig.width = 9}
+```{r visualization, out.width = "100%", fig.height = 15, fig.width = 15}
 
 	summaryTableDf <- computeSummaryStatisticsTable(
 		data = dataPP,
 		var = "AVAL",
-		rowVar = "PARAM",
+		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT")
 	)
 
@@ -1863,7 +1866,7 @@ Summary statistics can be visualized via **error bars** by:
 		xVar = "AVISIT",
 		colorVar = "TRTP",
 		labelVars = labelVars,
-		facetVar = "PARAM",
+		facetVar = c("PARCAT1", "PARAM"),
 		useLinetype = TRUE
 	)
 

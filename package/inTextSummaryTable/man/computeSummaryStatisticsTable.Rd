@@ -214,9 +214,9 @@ see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
 }}
 \item{Named list of expressions or call objects of summary statistics of interest: }{
 The names are reported in the header.
-The following variables are recognized, if the table is a: 
+The following variables are recognized, if the variable is: 
 \itemize{
-\item{'summaryTable': }{
+\item{continuous (or \code{type} is 'summaryTable': }{
 \itemize{
 \item{'statN': }{number of subjects}
 \item{'statMean': }{mean of \code{var}}
@@ -228,8 +228,10 @@ The following variables are recognized, if the table is a:
 \item{'statPerc': }{percentage of subjects}
 \item{'statm': }{number of records}
 }
+If multiple and different values are available for a specific \code{var}
+and subject ID, by \code{rowVar}/\code{colVar}: an error is available.
 }
-\item{'countTable': }{
+\item{categorical (or \code{type} is 'countTable': }{
 \itemize{
 \item{'statN': }{number of subjects}
 \item{'statPercN': }{percentage of subjects}

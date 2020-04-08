@@ -18,7 +18,8 @@ computeSummaryStatisticsTableTotal(
   colVarDataLevels = NULL,
   colVarLevels = NULL,
   subjectVar = "USUBJID",
-  labelVars = NULL
+  labelVars = NULL,
+  msgLabel = "total"
 )
 }
 \arguments{
@@ -64,6 +65,9 @@ if the elements should be ordered in the final table.}
 'USUBJID' by default.}
 
 \item{labelVars}{named string with variable labels (names are the variable code)}
+
+\item{msgLabel}{(optional) String with label for the data ('total' by default), 
+included in the message/warning for checks.}
 }
 \value{
 data.frame with total table.

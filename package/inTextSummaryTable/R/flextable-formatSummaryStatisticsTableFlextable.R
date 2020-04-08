@@ -74,6 +74,10 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 		
 	vline <- match.arg(vline)
 	
+	if(is.null(summaryTable)){
+		return(invisible())
+	}
+	
 	if(!is.data.frame(summaryTable)){
 		
 		inputParams <- as.list(environment())

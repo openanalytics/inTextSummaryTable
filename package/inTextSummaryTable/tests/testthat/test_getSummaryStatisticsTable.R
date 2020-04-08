@@ -6,7 +6,7 @@ data(ADaMDataPelican)
 data(labelVarsADaMPelican)
 
 # dataset used for the example
-dataLB <- ADaMDataPelican$ADLB
+dataLB <- subset(ADaMDataPelican$ADLB, AN01FL == "Y")
 
 # dataset used for the computation of the total (in one of the scenario)
 dataSL <- ADaMDataPelican$ADSL
@@ -28,8 +28,8 @@ for(type in c("summaryTable", "countTable")){
 
 				label <- paste0(
 					"type: ", type,
-					", include empty rows: ", colInclude0,
-					", include empty columns: ", rowInclude0,
+					", include empty rows: ", rowInclude0,
+					", include empty columns: ", colInclude0,
 					", data total specified: ", dataTotalSpecified
 				)
 #				print(label)
@@ -52,58 +52,74 @@ for(type in c("summaryTable", "countTable")){
 						)
 						do.call(getSummaryStatisticsTable, argsFct)
 					}
+					
+					if(type != "summaryTable"){
 				
-					# base table
-					getSummaryStatisticsTableCustom()		
+						# base table
+						getSummaryStatisticsTableCustom()		
+						
+						# row variable
+						getSummaryStatisticsTableCustom(rowVar = "PARAM") # one
+						getSummaryStatisticsTableCustom(rowVar = c("PARCAT1", "PARCAT2", "PARAM"), rowPadBase = 30) # multiple
+						
+						# column variable
+						getSummaryStatisticsTableCustom(colVar = "TRTP") # one
+						getSummaryStatisticsTableCustom(colVar = c("TRTP", "AVISIT"), 
+							dataTotal = if(dataTotalSpecified)	dataVS
+						) # multiple
 					
-					# row variable
-					getSummaryStatisticsTableCustom(rowVar = "PARAM") # one
-					getSummaryStatisticsTableCustom(rowVar = c("PARCAT1", "PARCAT2", "PARAM"), rowPadBase = 30) # multiple
+						# row and column
+						getSummaryStatisticsTableCustom(rowVar = "PARAM", colVar = "TRTP") # one
+						
+					}
+						
+					colVar <- c("TRTP", if(type == "summaryTable") "AVISIT")
 					
-					# column variable
-					getSummaryStatisticsTableCustom(colVar = "TRTP") # one
-					getSummaryStatisticsTableCustom(colVar = c("TRTP", "AVISIT"), 
+					# multiple row and columns
+					getSummaryStatisticsTableCustom(
+						rowVar = c("PARCAT2", "PARCAT1", "PARAM"), 
+						colVar = colVar,
 						dataTotal = if(dataTotalSpecified)	dataVS
-					) # multiple
-					
-					# row and column
-					getSummaryStatisticsTableCustom(rowVar = "PARAM", colVar = "TRTP") # one
-					getSummaryStatisticsTableCustom(rowVar = c("PARCAT2", "PARCAT1", "PARAM"), 
-						colVar = c("TRTP", "AVISIT"),
-						dataTotal = if(dataTotalSpecified)	dataVS) # multiple
+					) 
 					
 					# custom stats
 					getSummaryStatisticsTableCustom(
 						rowVar = c("PARCAT1", "PARCAT2", "PARAM"), 
-						colVar = c("TRTP", "AVISIT"), stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
+						colVar = colVar, 
+						stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
 						rowPadBase = 30,
 						dataTotal = if(dataTotalSpecified)	dataVS
 					)
 					
 					# include total row
-					getSummaryStatisticsTableCustom(
-						rowVar = c("PARCAT1", "PARCAT2", "PARAM"), 
-						colVar = "TRTP", stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
-						rowPadBase = 30,
-						rowVarTotalInclude = "PARCAT1"
-					)
+					if(type != "summaryTable"){
+						
+						getSummaryStatisticsTableCustom(
+							rowVar = c("PARCAT1", "PARCAT2", "PARAM"), 
+							colVar = colVar, 
+							stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
+							rowPadBase = 30,
+							rowVarTotalInclude = "PARCAT1"
+						)
 					
-					# include subtotal row
-					getSummaryStatisticsTableCustom(
-						rowVar = c("PARCAT1", "PARCAT2", "PARAM"), 
-						colVar = "TRTP", stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
-						rowPadBase = 30,
-						rowVarTotalInclude = c("PARCAT2", "PARAM")
-					)
-					
-					# in separated row
-					getSummaryStatisticsTableCustom(
-						rowVar = c("PARCAT1", "PARCAT2", "PARAM"), 
-						colVar = "TRTP", stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
-						rowPadBase = 30,
-						rowVarTotalInclude = c("PARCAT2", "PARAM"),
-						rowVarTotalInSepRow = c("PARCAT2", "PARAM")
-					)
+						# include subtotal row
+						getSummaryStatisticsTableCustom(
+							rowVar = c("PARCAT1", "PARCAT2", "PARAM"), 
+							colVar = colVar, stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
+							rowPadBase = 30,
+							rowVarTotalInclude = c("PARCAT2", "PARAM")
+						)
+						
+						# in separated row
+						getSummaryStatisticsTableCustom(
+							rowVar = c("PARCAT1", "PARCAT2", "PARAM"), 
+							colVar = colVar, stats = list(expression(paste0(statN, " (", round(statPercN), ")"))),
+							rowPadBase = 30,
+							rowVarTotalInclude = c("PARCAT2", "PARAM"),
+							rowVarTotalInSepRow = c("PARCAT2", "PARAM")
+						)
+						
+					}
 					
 				}))
 					
@@ -180,7 +196,7 @@ test_that("'statsLayout' is: 'col' for categorical variables", {
 		type = "default",
 		var = vars
 	)
-#	expect_silent({
+	expect_silent({
 				
 		# without treatment:
 		dt <- getSummaryStatisticsTable(
@@ -236,30 +252,7 @@ test_that("'statsLayout' is: 'col' for categorical variables", {
 			outputType = "flextable",
 			rowVar = "TRT01P"
 		)
-#	})
+	})
 			
 })
-
-test_that("No duplicated records for the same subject ID for continuous variable", {
-			
-	dataTable <- rbind(dataSL[1, ], dataSL)
-	vars <- "AGE"
-	stats <- getStatsData(
-		data = dataTable,
-		type = 'all',
-		var = vars
-	)$AGE
-	expect_error(
-		getSummaryStatisticsTable(
-			data = dataTable, 
-			var = vars,
-			colVar = "TRTP",
-			stats = stats,
-			colTotalInclude = TRUE
-		),
-		pattern = "multiple records are available"
-	)
-			
-})
-
 

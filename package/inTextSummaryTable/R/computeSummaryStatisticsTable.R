@@ -97,9 +97,9 @@
 #' }}
 #' \item{Named list of expressions or call objects of summary statistics of interest: }{
 #' The names are reported in the header.
-#' The following variables are recognized, if the table is a: 
+#' The following variables are recognized, if the variable is: 
 #' \itemize{
-#' \item{'summaryTable': }{
+#' \item{continuous (or \code{type} is 'summaryTable': }{
 #' \itemize{
 #' \item{'statN': }{number of subjects}
 #' \item{'statMean': }{mean of \code{var}}
@@ -111,8 +111,10 @@
 #' \item{'statPerc': }{percentage of subjects}
 #' \item{'statm': }{number of records}
 #' }
+#' If multiple and different values are available for a specific \code{var}
+#' and subject ID, by \code{rowVar}/\code{colVar}: an error is available.
 #' }
-#' \item{'countTable': }{
+#' \item{categorical (or \code{type} is 'countTable': }{
 #' \itemize{
 #' \item{'statN': }{number of subjects}
 #' \item{'statPercN': }{percentage of subjects}
@@ -293,7 +295,7 @@ computeSummaryStatisticsTable <- function(
 	colVar <- setdiff(colVar, "variable")
 	if(length(colVar) == 0)	colVar <- NULL
 
-	# Always compute the column total, because the rows could be asked to be ordered 
+	# Compute the column total if the rows could be asked to be ordered 
 	# based on the total category or total can be extracted within a function specified in rowOrder
 	# excepted when no column variable is specified
 	colTotalIncludeInit <- colTotalInclude
@@ -301,7 +303,10 @@ computeSummaryStatisticsTable <- function(
 		if(colTotalIncludeInit)	
 			warning("Column 'total' is not included because no column variable is specified.")
 		colTotalInclude <- FALSE
-	}else	colTotalInclude <- TRUE
+	}else{
+		check <- sapply(rowOrder, function(x) !(is.character(x) && x != "total"))
+		if(any(check))	colTotalInclude <- TRUE
+	}
 	
 #	if(!is.null(colVar))
 #	checkIfTotal <- function(x)	!is.function(x) && any(x == "total")
@@ -384,7 +389,8 @@ computeSummaryStatisticsTable <- function(
 			statsExtra = statsExtra,
 			type = type,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
-			subjectVar = subjectVar, labelVars = labelVars
+			subjectVar = subjectVar, labelVars = labelVars,
+			msgLabel = "total column"
 		)
 		
 		if(nrow(summaryTableColTotal) > 0)
@@ -458,7 +464,8 @@ computeSummaryStatisticsTable <- function(
 				type = type,
 				rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
 				colVar = colVar, colInclude0 = colInclude0, colVarDataLevels = colVarDataLevels,
-				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+				subjectVar = subjectVar, varLab = varLab, labelVars = labelVars,
+				msgLabel = paste("row total for", rVST)
 			)
 			
 			# include also the total across columns (if required)
@@ -481,7 +488,8 @@ computeSummaryStatisticsTable <- function(
 					statsExtra = statsExtra,
 					type = type,
 					rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
-					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars
+					subjectVar = subjectVar, varLab = varLab, labelVars = labelVars,
+					msgLabel = paste("total column for the row total for", rVST)
 				)
 				if(nrow(summaryTableRowSubtotalVarColTotal) > 0)
 					summaryTableRowSubtotalVarColTotal[, colVar] <- colTotalLab
@@ -549,7 +557,8 @@ computeSummaryStatisticsTable <- function(
 		colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
 		subjectVar = subjectVar,
 		# not used:
-		var = var, varLab = varLab, labelVars = labelVars
+		var = var, varLab = varLab, labelVars = labelVars,
+		msgLabel = "header total"
 	)
 	
 	# save total or not in the 'isTotal' column
@@ -580,7 +589,8 @@ computeSummaryStatisticsTable <- function(
 			colVarDataLevels = colVarDataLevels, colVarLevels = colVarLevels,
 			rowVarTotal = rowVarTotalPerc, 
 			var = var, varLab = varLab, labelVars = labelVars,
-			subjectVar = subjectVar	
+			subjectVar = subjectVar,
+			msgLabel = "total for percentage"
 		)
 	}else	summaryTableTotal
 	summaryTable <- rbind.fill(
@@ -718,6 +728,8 @@ computeSummaryStatisticsTable <- function(
 #' statistics across columns in a separated column.
 #' @param dataTotalCol Data.frame from which the total across columns is 
 #' extracted (in case \code{colTotalInclude} is TRUE).
+#' @param msgLabel (optional) String with label for the data ('total' by default), 
+#' included in the message/warning for checks.
 #' @inheritParams computeSummaryStatisticsByRowColVar
 #' @return data.frame with total table.
 #' @author Laure Cougnaud
@@ -733,7 +745,8 @@ computeSummaryStatisticsTableTotal <- function(
 	colTotalInclude = FALSE, dataTotalCol = NULL,
 	colVarDataLevels = NULL, colVarLevels = NULL,
 	subjectVar = "USUBJID",
-	labelVars = NULL){
+	labelVars = NULL,
+	msgLabel = "total"){
 
 	# in case total should be computed by 'var'
 	# convert wide -> long format: one column with all variables
@@ -773,7 +786,8 @@ computeSummaryStatisticsTableTotal <- function(
 		rowVar = rowVarTotal,
 		colInclude0 = colInclude0, 
 		colVarDataLevels = colVarDataLevels,
-		subjectVar = subjectVar
+		subjectVar = subjectVar,
+		msgLabel = msgLabel
 	)
 	
 	# counts across all elements of colVar
@@ -790,7 +804,10 @@ computeSummaryStatisticsTableTotal <- function(
 			type = "countTable", 
 			colVar = colVarTotalTI,
 			rowVar = rowVarTotal,
-			subjectVar = subjectVar
+			subjectVar = subjectVar,
+			msgLabel = paste0("total column", 
+				if(!is.null(msgLabel))	paste(" for the ", msgLabel)
+			)
 		)
 		if(nrow(summaryTableTotalCol) > 0)
 			summaryTableTotalCol[, colVar] <- colTotalLab
@@ -874,7 +891,8 @@ computeSummaryStatisticsByRowColVar <- function(
 	colVar = NULL, colInclude0 = FALSE, colVarDataLevels = NULL,
 	subjectVar = "USUBJID",
 	labelVars = NULL,
-	statsExtra = NULL){
+	statsExtra = NULL,
+	msgLabel = NULL){
 
 	if(is.logical(varTotalInclude) && length(varTotalInclude) > 1)
 		stop("If 'varTotalInclude' if a logical, it should be of length 1.")
@@ -882,7 +900,8 @@ computeSummaryStatisticsByRowColVar <- function(
 	computeSummaryStatisticsCustom <- function(...)
 		computeSummaryStatistics(..., 
 			subjectVar = subjectVar, 
-			statsExtra = statsExtra
+			statsExtra = statsExtra,
+			msgLabel = msgLabel
 		)
 		
 	# build variables used for grouping:
@@ -920,7 +939,8 @@ computeSummaryStatisticsByRowColVar <- function(
 				data = x, 
 				var = var, 
 				type = type,
-				varTotalInclude = varTotalInclude
+				varTotalInclude = varTotalInclude,
+				msgVars = groupVar
 			)
 		}else{
 			summaryTableVarList <- lapply(var, function(varI){
@@ -932,7 +952,8 @@ computeSummaryStatisticsByRowColVar <- function(
 					var = varI, 
 					type = type,
 					varTotalInclude = varITotalInclude,
-					filterEmptyVar = !varInclude0
+					filterEmptyVar = !varInclude0,
+					msgVars = groupVar
 				)
 				# only store the variable if more than one specified variable
 				if(!is.null(sumTable) && nrow(sumTable) > 0 && length(var) > 1){
@@ -1004,6 +1025,11 @@ computeSummaryStatisticsByRowColVar <- function(
 #' e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
 #' Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
 #' and return the corresponding summary statistic.
+#' @param msgLabel (optional) String with label for the data (NULL by default), 
+#' included in the message/warning for checks.
+#' @param msgVars (optional) Character vector with columns of \code{data}
+#' containing extra variables (besides \code{var} and \code{subjectVar})
+#' that should be included in the message/warning for checks.
 #' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{
@@ -1029,13 +1055,15 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @author Laure Cougnaud
 #' @importFrom stats na.omit median sd
 #' @importFrom methods formalArgs
+#' @importFrom utils capture.output
 #' @export
 computeSummaryStatistics <- function(data, 
 	var = NULL, varTotalInclude = FALSE,
 	statsExtra = NULL,
 	subjectVar = "USUBJID",
 	filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
-	type = "auto"){
+	type = "auto",
+	msgLabel = NULL, msgVars = NULL){
 
 	## checks parameters
 
@@ -1083,14 +1111,33 @@ computeSummaryStatistics <- function(data,
 			
 			val <- data[, var]
 			emptyVar <- is.null(val) || length(val) == 0
-			res <- if(!(filterEmptyVar & emptyVar)){
+			if(!(filterEmptyVar & emptyVar)){
 				
 				# check of multiple records per subject
 				if(!emptyVar){
+					
+					# filter records with same values per subject:
+					dataSubjVar <- data[, c(subjectVar, var)]
+					isDuplSubjVar <- duplicated(dataSubjVar)
+					if(any(isDuplSubjVar) > 0){
+						dataDupl <- merge(data, data[isDuplSubjVar, c(subjectVar, var), drop = FALSE])
+						dataDupl <- dataDupl[, unique(c(subjectVar, msgVars, var)), drop = FALSE]
+						message(sum(isDuplSubjVar), " record(s) with duplicated values",
+							" for ", var, 
+							" are filtered before the computation of the statistics ", 
+							if(!is.null(msgLabel))	paste("for the", msgLabel), ":\n",
+							paste(capture.output(print(dataDupl)), collapse = "\n")
+						)
+						data <- data[!isDuplSubjVar, ]
+						val <- data[, var]
+					}
+					
 					isDupl <- duplicated(data[, subjectVar])
 					if(any(isDupl)){
 						dataDupl <- merge(data, data[isDupl, subjectVar, drop = FALSE])
+						dataDupl <- dataDupl[, unique(c(subjectVar, msgVars, var)), drop = FALSE]
 						stop("Extraction of statistics failed for ", var,
+							if(!is.null(msgLabel))	paste(" for the", msgLabel), 
 							" because multiple records are available for ",
 							"the same ", subjectVar, ":\n",
 							paste(capture.output(print(dataDupl)), collapse = "\n")
@@ -1113,7 +1160,8 @@ computeSummaryStatistics <- function(data,
 					val = val, data = data
 				)
 				
-			}
+			}else	res <- NULL
+			
 		},
 		
 		'countTable' = {

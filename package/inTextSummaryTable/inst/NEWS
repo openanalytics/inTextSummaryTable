@@ -4,7 +4,9 @@
     o add unit tests for 'formatPercentage'
     o add unit tests for 'getStats'
     o formatSummaryStatisticsTable: check if multiple records in same row/col, check if only one 'stats' and no names
-    o computeSummaryStatistics: error when multiple records for same subject for cont var + unit test
+    o computeSummaryStatistics: error when multiple different records for same subject for cont var + unit test
+    o exportSummaryStatisticsTableToFlextable: fix when empty df after filter total rows
+    o fix for flextable >= 0.5.9: 'display' -> 'compose'
 2.8.0
     o fix when 'variable' in 'colVar' when no other col vars
 2.7.0

@@ -705,12 +705,12 @@ Please note that the content of the table strongly depends on the study.
 	
 	# build labels
 	labelsPK <- c(
-		AUC08H = "AUC_{0-8h} (ng*h/mL)",
-		AUCTAU = "AUC_{0-t} (ng*h/mL)",
-		CMAX = "C_{max} (ng/mL)",
-		CTROUGH = "Ctrough (ng/mL)",
-		TLAG = "t_{lag} (h)",
-		TMAX = "t_{max} (h)"
+		AUC08H = "AUC_{0-8h}\n(ng*h/mL)",
+		AUCTAU = "AUC_{0-t}\n(ng*h/mL)",
+		CMAX = "C_{max}\n(ng/mL)",
+		CTROUGH = "Ctrough\n(ng/mL)",
+		TLAG = "t_{lag}\n(h)",
+		TMAX = "t_{max}\n(h)"
 	)
 	dataPK$PARAM <- factor(dataPK$PARAMCD, 
 		levels = levels(dataPK$PARAMCD), 
@@ -734,7 +734,7 @@ Please note that the content of the table strongly depends on the study.
 	
 	getSummaryStatisticsTable(
 		data = dataPK,
-		rowVar = c("PARCAT1", "PARAM"), colVar = "TRTA",
+		rowVar = c("PARCAT1", "PARAM"), colVar = c("TRTA", "AVISIT"),
 		var = "AVAL",
 		rowVarLab = c('PARCAT1' = "PK parameters"),
 		statsExtra = list(statCV = cv), stats = statsPK, statsVarBy = "PARAM",
