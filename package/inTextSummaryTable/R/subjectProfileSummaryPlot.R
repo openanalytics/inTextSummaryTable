@@ -521,7 +521,6 @@ subjectProfileSummaryPlot <- function(data,
 #' @param colorLab String, label for \code{colorVar}, used in the legend.
 #' @param colorPalette (named) Vector with color palette.
 #' @param xLab String with label for the x-axis.
-#' @param xGap Numeric vector of length 2 with limits for the 'break' in the x-axis.
 #' @param textSize Size for the text.
 #' @param labelVars Named string with variable labels (names are the variable code).
 #' @param showLegend Logical, should the legend be displayed? TRUE by default.

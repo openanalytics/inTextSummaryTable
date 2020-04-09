@@ -65,8 +65,6 @@ is discrete or vector with limits if continuous.}
 
 \item{xTrans}{(optional) ggplot2 transformation
 for the x-axis.}
-
-\item{xGap}{Numeric vector of length 2 with limits for the 'break' in the x-axis.}
 }
 \value{
 \code{\link[ggplot2]{ggplot}} object
