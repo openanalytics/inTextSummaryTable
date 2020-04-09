@@ -21,7 +21,7 @@ getSummaryStatisticsTable(
   rowVarDataLevels = NULL,
   rowOrder = "auto",
   rowOrderTotalFilterFct = NULL,
-  rowOrderCatLast = "Other",
+  rowOrderCatLast = NULL,
   rowVarFormat = NULL,
   rowVarTotalInclude = NULL,
   rowVarTotalByVar = NULL,
@@ -143,8 +143,8 @@ To order rows based on one specific column category,
 e.g. to order based on the counts in the treatment column:
 function(x) subset(x, TRTP == "treatmentX")}
 
-\item{rowOrderCatLast}{String with category to be printed last of each \code{rowVar}
-(if any, set to NULL if none). By default, category labelled 'Other' is printed last.}
+\item{rowOrderCatLast}{String with category to be printed in the last 
+row of each \code{rowVar} (if any, set to NULL if none).}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:
