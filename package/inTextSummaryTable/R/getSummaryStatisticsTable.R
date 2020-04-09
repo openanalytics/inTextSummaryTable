@@ -31,7 +31,7 @@ getSummaryStatisticsTable <- function(
 	## row variables
 	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
 	rowVarDataLevels = NULL, 
-	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
+	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = NULL,
 #	rowVarInSepCol = if(outputType != "flextable")	rowVar,
 	rowVarFormat = NULL,
 	# total

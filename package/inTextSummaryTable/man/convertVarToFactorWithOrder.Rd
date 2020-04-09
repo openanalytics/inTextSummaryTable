@@ -13,7 +13,7 @@ convertVarToFactorWithOrder(
   method = c("auto", "alphabetical", "total"),
   totalFilterFct = NULL,
   totalVar = "statN",
-  catLast = "Other"
+  catLast = NULL
 )
 }
 \arguments{
@@ -54,7 +54,6 @@ to filter the total data considered for the ordering.}
 'statN' by default.}
 
 \item{catLast}{String with last category (if any).
-By default, category labelled 'Other' is last.
 Set to NULL if no specific category should be included as last element.}
 }
 \value{

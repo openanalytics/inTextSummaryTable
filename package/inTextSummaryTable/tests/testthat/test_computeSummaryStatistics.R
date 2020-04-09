@@ -6,6 +6,8 @@ dataLB <- ADaMDataPelican$ADLB
 dataSL <- ADaMDataPelican$ADSL
 dataSL$TRTP <- dataSL$TRT01P 
 
+dataAE <- ADaMDataPelican$ADAE
+
 ## tests different error/warning tracking mechanisms
 
 # in case of a summaryTable, 'var' should be specified ...
@@ -93,4 +95,30 @@ test_that("Filtering of duplicated records for the same subject ID for continuou
 
 	}
 	
+})
+
+test_that("More columns in dataTotalRow than in data to summarize", {
+		
+	treats <- unique(dataAE$TRTA)
+	dataTable <- subset(dataAE, !TRTA %in% treats[1])
+	
+	dataTotalRow <- list(AEDECOD = {
+		ddply(dataAE, c("USUBJID", "TRTA"), function(x){
+			x[which.max(x$AESEVN), ]
+		})
+	})
+	
+	expect_silent(
+		getSummaryStatisticsTable(
+			data = dataTable,
+			colVar = "TRTA",
+			rowVar = c("AEDECOD", "AESEV"),
+			rowVarInSepCol = "AESEV",
+			rowVarTotalInclude = "AEDECOD",
+			stats = getStats("n (%)"),
+			dataTotalRow = dataTotalRow,
+			rowVarTotalByVar = "AESEV"
+		)
+	)
+			
 })

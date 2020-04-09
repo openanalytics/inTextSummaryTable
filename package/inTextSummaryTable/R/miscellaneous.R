@@ -108,3 +108,28 @@ convertVarFlag <- function(x){
 	return(xRF)
 
 }
+
+#' Convert \code{rowVar} and \code{colVar} in \code{data} to factor
+#' @param data Data.frame with data.
+#' @param rowVar Character vector with variable(s) used for the rows.
+#' @param colVar Character vector with variable(s) used for the columns.
+#' @return Updated \code{data}
+#' @author Laure Cougnaud
+convertRowColVarToFactor <- function(data, rowVar = NULL, colVar = NULL){
+	
+	# convert row and column variable to factor in the data
+	# (if character, variables pre-defined as factor in one summary tables will be lost during rbind.fill)
+	if(!is.null(rowVar))
+		data[, rowVar] <- lapply(data[, rowVar, drop = FALSE], function(x){
+			levelsX <- if(is.factor(x))	levels(x)	else	sort(unique(x))
+			factor(x, levels = levelsX)
+		})
+	if(!is.null(colVar))
+		data[, colVar] <- lapply(data[, colVar, drop = FALSE], function(x){
+			levelsX <- if(is.factor(x))	levels(x)	else	sort(unique(x))
+			factor(x, levels = levelsX)
+		})
+
+	return(data)
+	
+}
