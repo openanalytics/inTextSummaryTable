@@ -23,8 +23,8 @@
 #' To order rows based on one specific column category,
 #' e.g. to order based on the counts in the treatment column:
 #' function(x) subset(x, TRTP == "treatmentX")
-#' @param rowOrderCatLast String with category to be printed last of each \code{rowVar}
-#' (if any, set to NULL if none). By default, category labelled 'Other' is printed last.
+#' @param rowOrderCatLast String with category to be printed in the last 
+#' row of each \code{rowVar} (if any, set to NULL if none). 
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
 #' for which to include the total for each group.
 #' @param rowVarTotalByVar Character vector with extra \code{rowVar}
@@ -219,7 +219,7 @@ computeSummaryStatisticsTable <- function(
 	colTotalInclude = FALSE, colTotalLab = "Total",
 	rowVar = NULL, rowVarDataLevels = NULL, 
 	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
-	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = "Other",
+	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = NULL,
 	rowVarTotalInclude = NULL,
 	rowVarTotalInSepRow = NULL,
 	rowVarTotalByVar = NULL,
@@ -338,16 +338,8 @@ computeSummaryStatisticsTable <- function(
 		filterFct <- c(filterFct, list(filterFctFlag))
 	}
 	
-	# convert row and column variable to factor in the data
-	# (if character, variables pre-defined as factor in one summary tables will be lost during rbind.fill)
-	if(!is.null(rowVar))
-		data[, rowVar] <- lapply(data[, rowVar, drop = FALSE], function(x){
-			factor(x, levels = if(is.factor(x))	levels(x)	else	sort(unique(x)))
-		})
-	if(!is.null(colVar))
-		data[, colVar] <- lapply(data[, colVar, drop = FALSE], function(x){
-			factor(x, levels = if(is.factor(x))	levels(x)	else	sort(unique(x)))
-		})
+	# convert row/column variables to factor
+	data <- convertRowColVarToFactor(data = data, rowVar = rowVar, colVar = colVar)
 		
 	# get general statistics for each combination of rowVar/colVar
 	summaryTable <- computeSummaryStatisticsByRowColVar(
@@ -382,6 +374,13 @@ computeSummaryStatisticsTable <- function(
 			# one unique df:
 			}else	dataTotalCol
 		}else	data
+
+		# convert row/column variables to factor
+		dataForColTotal <- convertRowColVarToFactor(
+			data = dataForColTotal, 
+			rowVar = rowVar, 
+			colVar = NULL
+		)
 		
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
 			data = dataForColTotal, 
@@ -456,6 +455,13 @@ computeSummaryStatisticsTable <- function(
 				rowVarOther <- c(rowVarOther, rowVarOtherExtra)
 			}
 			
+			# convert row/column variables to factor
+			dataForSubTotal <- convertRowColVarToFactor(
+				data = dataForSubTotal, 
+				rowVar = rowVarOther, 
+				colVar = colVar
+			)
+			
 			# compute statistics
 			summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 				data = dataForSubTotal, 
@@ -481,6 +487,13 @@ computeSummaryStatisticsTable <- function(
 					# one unique df:
 					}else	dataTotalCol
 				}else	dataForSubTotal
+		
+				# convert row/column variables to factor
+				dataForSubTotalForColTotal <- convertRowColVarToFactor(
+					data = dataForSubTotalForColTotal, 
+					rowVar = rowVarOther, 
+					colVar = NULL
+				)
 				
 				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotalForColTotal, 
@@ -548,6 +561,13 @@ computeSummaryStatisticsTable <- function(
 	}
 	
 	# get total for column headers:
+
+	# convert row/column variables to factor
+	dataTotal <- convertRowColVarToFactor(
+		data = dataTotal, 
+		rowVar = NULL, 
+		colVar = colVar
+	)
 	summaryTableTotal <- computeSummaryStatisticsTableTotal(
 		data = dataTotal, 
 		colVar = colVar, colVarTotal = colVarTotal,
@@ -581,6 +601,14 @@ computeSummaryStatisticsTable <- function(
 		stop("'colVarTotalPerc' are not in the computed summary statistics table.")
 	computeTotalPerc <- !setequal(colVarTotal, colVarTotalPerc) | !is.null(rowVarTotalPerc)
 	summaryTableTotalPerc <- if(computeTotalPerc){
+				
+		# convert row/column variables to factor
+		dataTotalPerc <- convertRowColVarToFactor(
+			data = dataTotalPerc, 
+			rowVar = NULL, 
+			colVar = colVar
+		)
+				
 		computeSummaryStatisticsTableTotal(
 			data = dataTotalPerc, dataTotalCol = dataTotalPercTotalHeader,
 			colVar = colVar, colVarTotal = colVarTotalPerc,
@@ -1266,7 +1294,6 @@ computeSummaryStatistics <- function(data,
 #' @param totalFilterFct (optional) Function which returns a subset of the data of interest,
 #' to filter the total data considered for the ordering.
 #' @param catLast String with last category (if any).
-#' By default, category labelled 'Other' is last.
 #' Set to NULL if no specific category should be included as last element.
 #' @param colVar Character vector with variable(s) used for the columns.
 #' If multiple variables are specified, the variables should be sorted in hierarchical order,
@@ -1285,26 +1312,33 @@ convertVarToFactorWithOrder <- function(
 	method = c("auto", "alphabetical", "total"),
 	totalFilterFct = NULL,
 	totalVar = "statN",
-	catLast = "Other"){
+	catLast = NULL){
 
 	if(!is.function(method)){
 		
 		method <- match.arg(method)
 	
 		res <- switch(method,
-			'auto' = if(is.factor(data[, var]))
-				data[, var]	else	
+			'auto' = if(is.factor(data[, var])){
+				varLevels <- levels(data[, var])
+				varLevels <- c(
+					setdiff(varLevels, catLast),
+					intersect(catLast, varLevels)
+				)
+				res <- factor(data[, var], levels = varLevels)
+			}else{
 				convertVarToFactorWithOrder(
 					data = data, var = var, catLast = catLast,
 					method = "alphabetical"
-				),
+				)
+			},
 			'alphabetical' = {
 				varLevels <- c(
-					if("Total" %in% data[, var])	"Total", 
-					sort(setdiff(unique(data[, var]), c(catLast, "Total")), decreasing = TRUE),
-					if(catLast %in% data[, var])	catLast
+					intersect("Total", data[, var]),
+					sort(setdiff(unique(data[, var]), c(catLast, "Total")), decreasing = FALSE),
+					intersect(catLast, data[, var])
 				)
-				factor(data[, var])
+				factor(data[, var], levels = varLevels)
 			},
 			'total' = {
 					
@@ -1334,9 +1368,9 @@ convertVarToFactorWithOrder <- function(
 					
 					totalPerVar <- daply(dataForTotal, var, function(x) sum(x[, totalVar], na.rm = TRUE))
 					varLevels <- c(
-						if("Total" %in% data[, var])	"Total", 
+						intersect("Total",  data[, var]), 
 						setdiff(names(sort(totalPerVar, decreasing = TRUE)), c("Total", catLast)),
-						if(catLast %in% data[, var])	catLast
+						intersect(catLast, data[, var])
 					)
 					varLevels <- c(varLevels, setdiff(as.character(unique(data[, var])), varLevels))
 					factor(data[, var], levels = varLevels)
@@ -1349,6 +1383,10 @@ convertVarToFactorWithOrder <- function(
 		varLevels <- as.character(method(data))
 		varLevels <- c(varLevels, setdiff(as.character(unique(data[, var])), varLevels))
 		if("Total" %in% varLevels)	varLevels <- c("Total", setdiff(varLevels, "Total"))
+		varLevels <- c(
+			setdiff(varLevels, catLast),
+			intersect(catLast, varLevels)
+		)
 		res <- factor(data[, var], levels = varLevels)
 		
 	}

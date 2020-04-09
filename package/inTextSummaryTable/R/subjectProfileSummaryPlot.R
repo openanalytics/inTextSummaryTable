@@ -5,6 +5,7 @@
 #' @param xGap (optional) Numeric vector of length 2 for which
 #' a gap should be created in the x-axis.
 #' Only available if \code{xVar} is specified and a numeric variable.
+#' Records with \code{xVar} within \code{xGap} are filtered from the plot.
 #' @param xGapDiffNew Numeric vector of length 2 with new range
 #' of the \code{xGap}. If not specified, the minimum difference between
 #' consecutive x elements in the data is used.
@@ -521,7 +522,6 @@ subjectProfileSummaryPlot <- function(data,
 #' @param colorLab String, label for \code{colorVar}, used in the legend.
 #' @param colorPalette (named) Vector with color palette.
 #' @param xLab String with label for the x-axis.
-#' @param xGap Numeric vector of length 2 with limits for the 'break' in the x-axis.
 #' @param textSize Size for the text.
 #' @param labelVars Named string with variable labels (names are the variable code).
 #' @param showLegend Logical, should the legend be displayed? TRUE by default.
@@ -537,7 +537,7 @@ subjectProfileSummaryPlot <- function(data,
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @author Laure Cougnaud
-#' @keywords internal
+#' @export
 subjectProfileSummaryTable <- function(
 	data, xVar, text, 
 	xLim = NULL, 
@@ -636,7 +636,12 @@ subjectProfileSummaryTable <- function(
 			# consider levels of color variable factor to
 			# set correct palette in case color palette specified for some elements
 			# without data (not represented in the plot)
-			colorPaletteAxes <- unname(colorPalette[levels(droplevels(data$colorVar))])
+			paletteEl <- if(is.factor(data[, colorVar])){
+				levels(droplevels(data[, colorVar]))
+			}else{
+				unique(data[, colorVar])
+			}
+			colorPaletteAxes <- unname(colorPalette[paletteEl])
 			list(axis.text.y = element_text(colour = colorPaletteAxes))
 		},
 		if(!showLegend)	list(legend.position = "none")
