@@ -77,4 +77,3 @@ Plot a table with \code{ggplot} of a variable of interest
 \author{
 Laure Cougnaud
 }
-\keyword{internal}

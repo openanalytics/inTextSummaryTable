@@ -537,7 +537,7 @@ subjectProfileSummaryPlot <- function(data,
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @author Laure Cougnaud
-#' @keywords internal
+#' @export
 subjectProfileSummaryTable <- function(
 	data, xVar, text, 
 	xLim = NULL, 
@@ -636,7 +636,12 @@ subjectProfileSummaryTable <- function(
 			# consider levels of color variable factor to
 			# set correct palette in case color palette specified for some elements
 			# without data (not represented in the plot)
-			colorPaletteAxes <- unname(colorPalette[levels(droplevels(data$colorVar))])
+			paletteEl <- if(is.factor(data[, colorVar])){
+				levels(droplevels(data[, colorVar]))
+			}else{
+				unique(data[, colorVar])
+			}
+			colorPaletteAxes <- unname(colorPalette[paletteEl])
 			list(axis.text.y = element_text(colour = colorPaletteAxes))
 		},
 		if(!showLegend)	list(legend.position = "none")

@@ -9,6 +9,7 @@
     o fix for flextable >= 0.5.9: 'display' -> 'compose'
     o rowOrderCatLast: NULL by default, used if rowVar is factor and rowOrder is function
     o computeSummaryStatisticsTable: fix when more columns in dataTotalRow than in data
+    o subjectProfileSummaryTable: export, fix when colorVar is not factor
 2.8.0
     o fix when 'variable' in 'colVar' when no other col vars
 2.7.0
