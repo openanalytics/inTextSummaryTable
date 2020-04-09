@@ -699,7 +699,14 @@ This variable is either:
 
 ```{r rowOrder-common}
 
-	# 'auto'
+	# 'auto':
+
+	# set order of SOC to reverse alphabetical order
+	dataAEInterest$AESOC <- factor(
+		dataAEInterest$AESOC, 
+		levels = rev(sort(unique(dataAEInterest$AESOC)))
+	)
+	# AEDECOD is not a factor -> sort alphabetically by default
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
