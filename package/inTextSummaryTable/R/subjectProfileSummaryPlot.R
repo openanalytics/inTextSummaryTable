@@ -5,6 +5,7 @@
 #' @param xGap (optional) Numeric vector of length 2 for which
 #' a gap should be created in the x-axis.
 #' Only available if \code{xVar} is specified and a numeric variable.
+#' Records with \code{xVar} within \code{xGap} are filtered from the plot.
 #' @param xGapDiffNew Numeric vector of length 2 with new range
 #' of the \code{xGap}. If not specified, the minimum difference between
 #' consecutive x elements in the data is used.
