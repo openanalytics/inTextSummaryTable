@@ -20,13 +20,14 @@ subjectProfileSummaryTable(
   style = "report",
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   fontsize = switch(style, report = 8, presentation = 10),
+  pointSize = 1.5,
   themeFct = switch(style, report = theme_classic, presentation = theme_bw),
   textSize = fontsize/ggplot2:::.pt,
   xTrans = NULL
 )
 }
 \arguments{
-\item{data}{Data.frame with data for the table.}
+\item{data}{Data.frame (in long format) with data for the table.}
 
 \item{xVar}{String, variable of \code{data} with variable for the x-axis.}
 
@@ -59,6 +60,8 @@ is discrete or vector with limits if continuous.}
 
 \item{fontsize}{Numeric vector with font size.}
 
+\item{pointSize}{Numeric indicating the size of points in the legend, 1.5 by default}
+
 \item{themeFct}{Function with ggplot2 theme.}
 
 \item{textSize}{Size for the text.}
@@ -73,5 +76,5 @@ for the x-axis.}
 Plot a table with \code{ggplot} of a variable of interest
 }
 \author{
-Laure Cougnaud
+Laure Cougnaud and Michela Pasetto
 }
