@@ -537,6 +537,7 @@ subjectProfileSummaryPlot <- function(data,
 #' for the x-axis.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
+#' @importFrom utils packageVersion
 #' @author Laure Cougnaud and Michela Pasetto
 #' @export
 subjectProfileSummaryTable <- function(
@@ -628,7 +629,10 @@ subjectProfileSummaryTable <- function(
 	
 	# default: expand by 0.6 units on each side
 	# cowplot cut labels if change expand_scale
-	ggTable <- ggTable + scale_y_discrete(expand = expansion(add = 0.2))
+	if(packageVersion("ggplot2") >= 3.3) {
+		ggTable <- ggTable + scale_y_discrete(expand = expansion(add = 0.2))
+	} else ggTable <- ggTable + scale_y_discrete(expand = expand_scale(add = 0.2))
+	
 
 	# theme
 	argsTheme <- c(
