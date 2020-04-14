@@ -512,7 +512,7 @@ subjectProfileSummaryPlot <- function(data,
 }
 
 #' Plot a table with \code{ggplot} of a variable of interest 
-#' @param data Data.frame with data for the table.
+#' @param data Data.frame (in long format) with data for the table.
 #' @param xVar String, variable of \code{data} with variable for the x-axis.
 #' @param text Character vector with colnames of \code{data}
 #' or expression based on colnames of \code{data} to extract
@@ -531,12 +531,13 @@ subjectProfileSummaryPlot <- function(data,
 #' @param style String with subject profile style, either 'report' or 'presentation'.
 #' @param fontname String with font name.
 #' @param fontsize Numeric vector with font size.
+#' @param pointSize Numeric indicating the size of points in the legend, 1.5 by default
 #' @param themeFct Function with ggplot2 theme.
 #' @param xTrans (optional) ggplot2 transformation
 #' for the x-axis.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
-#' @author Laure Cougnaud
+#' @author Laure Cougnaud and Michela Pasetto
 #' @export
 subjectProfileSummaryTable <- function(
 	data, xVar, text, 
@@ -551,6 +552,7 @@ subjectProfileSummaryTable <- function(
 	style = "report",
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10), # pt
+	pointSize = 1.5,
 	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
 	textSize = fontsize/ggplot2:::.pt,
 	xTrans = NULL
@@ -577,13 +579,26 @@ subjectProfileSummaryTable <- function(
 	)
 	# arguments for geom_text
 	argsGeomText <- list(
-		mapping = do.call("aes_string", aesTablePlot),
-		size = textSize
+			mapping = do.call("aes_string", aesTablePlot),
+			size = textSize,			
+			show.legend = FALSE
 	)
-
+	# arguments for geom_point
+	# geom_point is used with size = NA to avoid the 'a' in the legend
+	# this workaround will show points in the legend
+	aesPoint <- aesTablePlot
+	aesPoint[["label"]] <- NULL # remove 'label' not used for geom_point
+	argsGeomPoint <- list(
+			mapping = do.call("aes_string", aesPoint),
+			size = NA
+	)
+	
 	# base plot
-	ggTable <- ggplot(data = data) + do.call("geom_text", argsGeomText)
-
+	# returns warnings because size of points = NA
+	ggTable <- ggplot(data = data) + do.call("geom_text", argsGeomText) + 
+			do.call("geom_point", argsGeomPoint) +
+			guides(colour = guide_legend(override.aes = list(size = pointSize)))
+	
 	# axis limits
 	if(!is.null(xLim))
 		ggTable <- ggTable + coord_cartesian(xlim = xLim)
@@ -613,7 +628,7 @@ subjectProfileSummaryTable <- function(
 	
 	# default: expand by 0.6 units on each side
 	# cowplot cut labels if change expand_scale
-	ggTable <- ggTable + scale_y_discrete(expand = expand_scale(add = 0.2))
+	ggTable <- ggTable + scale_y_discrete(expand = expansion(add = 0.2))
 
 	# theme
 	argsTheme <- c(
