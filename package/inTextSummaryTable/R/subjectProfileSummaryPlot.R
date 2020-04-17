@@ -598,7 +598,7 @@ subjectProfileSummaryTable <- function(
 	# returns warnings because size of points = NA
 	ggTable <- ggplot(data = data) + do.call("geom_text", argsGeomText) + 
 			do.call("geom_point", argsGeomPoint) +
-			guides(colour = guide_legend(override.aes = list(size = pointSize)))
+			guides(colour = guide_legend(reverse = TRUE, override.aes = list(size = pointSize)))
 	
 	# axis limits
 	if(!is.null(xLim))
