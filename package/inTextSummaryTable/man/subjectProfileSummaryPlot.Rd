@@ -35,7 +35,6 @@ subjectProfileSummaryPlot(
   sizeLabel = GeomText$default_aes$size,
   widthErrorBar = GeomErrorbar$default_aes$width,
   tableText = NULL,
-  tableLabel = NULL,
   tableHeight = 0.1,
   label = FALSE,
   labelPadding = unit(1, "lines"),
@@ -133,9 +132,6 @@ for the available values for this parameter.}
 or expression from colnames of \code{data} to be represented in
 the table below the plot.
 By default, no table is displayed.}
-
-\item{tableLabel}{Character vector with label for \code{tableText},
-used as label for the x-axis of the table.}
 
 \item{tableHeight}{Numeric of length 1 with height for the table.}
 
