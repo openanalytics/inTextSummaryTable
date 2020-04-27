@@ -1857,8 +1857,8 @@ Summary statistics can be visualized via **error bars** by:
   `computeSummaryStatisticsTable` function (used for `getSummaryStatistics` function)
 * visualizing the summary statistics via the `subjectProfileSummaryPlot`
   function
-  
-```{r visualization-extractData}
+
+```{r visualization, out.width = "100%", fig.height = 15, fig.width = 15}
 
 	summaryTableDf <- computeSummaryStatisticsTable(
 		data = dataPP,
@@ -1866,30 +1866,6 @@ Summary statistics can be visualized via **error bars** by:
 		rowVar = c("PARCAT1", "PARAM"),
 		colVar = c("TRTP", "AVISIT")
 	)
-
-```
-
-## With table
-
-```{r visualization-table}
-
-	# create the plot
-	subjectProfileSummaryPlot(
-		data = subset(summaryTableDf, !isTotal & 
-			PARCAT1 == "Ivacaftor" & grepl("Ctrough", PARAM)
-		),
-		xVar = "AVISIT",
-		colorVar = "TRTP",
-		labelVars = labelVars,
-		useLinetype = TRUE,
-		tableText = "statN"
-	)
-
-```
-
-## By facets
-
-```{r visualization-facets, out.width = "100%", fig.height = 15, fig.width = 15}
 
 	# create the plot
 	subjectProfileSummaryPlot(

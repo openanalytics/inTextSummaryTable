@@ -97,11 +97,11 @@ getMaxNDecimalsData <- function(x)
 #' The following rules are used:
 #' \itemize{
 #' \item{percentage = 0\%: }{'0'}
-#' \item{ 0\% < percentage < 0.1\%: }{'<0.1\%'}
-#' \item{99.9\% < percentage < 100\%: }{'>99.9\%'}
-#' \item{percentage = 100\%: }{'100\%'}
+#' \item{ 0\% < percentage < 0.1\%: }{'<0.1'}
+#' \item{99.9\% < percentage < 100\%: }{'>99.9'}
+#' \item{percentage = 100\%: }{'100'}
 #' \item{missing value (NA) (class without valid data): }{'-'}
-#' \item{other: }{'x.x\%' (1 decimal)}
+#' \item{other: }{'x.x' (1 decimal)}
 #' }
 #' @param x Numeric vector with percentage(s)
 #' @param nDec Integer of length 1, number
@@ -125,7 +125,7 @@ formatPercentage <- function(x, nDec = 1){
 									"<0.1",
 									ifelse(x > 99.9,
 											">99.9",
-											as.character(roundCustom(x, nDec))
+											roundCustomText(x, digits = nDec)
 									)
 							)
 					)

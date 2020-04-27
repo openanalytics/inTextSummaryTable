@@ -49,6 +49,8 @@
 #' or expression from colnames of \code{data} to be represented in
 #' the table below the plot.
 #' By default, no table is displayed.
+#' @param tableLabel Character vector with label for \code{tableText},
+#' used as label for the x-axis of the table.
 #' @param tableHeight Numeric of length 1 with height for the table.
 #' @param byVar Variable(s) of \code{data} for which separated plot(s)
 #' should be created.
@@ -106,7 +108,7 @@ subjectProfileSummaryPlot <- function(data,
 	sizeLine = GeomLine$default_aes$size,
 	sizeLabel = GeomText$default_aes$size,
 	widthErrorBar = GeomErrorbar$default_aes$width,
-	tableText = NULL, tableHeight = 0.1,
+	tableText = NULL, tableLabel = NULL, tableHeight = 0.1,
 	label = FALSE, labelPadding = unit(1, "lines"), 
 	byVar = NULL,
 	hLine = NULL, hLineColor = "black", hLineLty = "solid",
@@ -596,7 +598,7 @@ subjectProfileSummaryTable <- function(
 	# returns warnings because size of points = NA
 	ggTable <- ggplot(data = data) + do.call("geom_text", argsGeomText) + 
 			do.call("geom_point", argsGeomPoint) +
-			guides(colour = guide_legend(override.aes = list(size = pointSize)))
+			guides(colour = guide_legend(reverse = TRUE, override.aes = list(size = pointSize)))
 	
 	# axis limits
 	if(!is.null(xLim))
