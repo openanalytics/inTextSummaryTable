@@ -1,8 +1,8 @@
+2.11.0
+	o modify 'formatPercentage' function to assure that percentages have the same number of decimals
 2.10.0
 	o modify default legend in subjectProfileSummaryTable to substitute the 'a' with the point
 	o substitute 'expand_scale' with 'expansion' in subjectProfileSummaryTable only for ggplot2 >= 3.3
-  o unit test update for ggplot2 3.3.0
-  o subjectProfilePlot: remove 'tableLabel' (not used)
 2.9.0
     o remove '%' sign next to percentage in 'formatPercentage'
     o modified 'getStats': when percentage is 100 it is not shown
