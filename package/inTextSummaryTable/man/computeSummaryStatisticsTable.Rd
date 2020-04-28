@@ -55,7 +55,9 @@ computeSummaryStatisticsTable(
 
 \item{var}{Character vector, variable(s) of \code{data} to compute statistics on.
 Missing values, if present, are filtered.
-If NULL (by default), counts of the \code{rowVar} are returned.}
+If NULL (by default), counts of the \code{rowVar} are returned.
+To also return counts of the \code{rowVar} in case other \code{var}
+are specified, you can include: 'all' in the \code{var}.}
 
 \item{varFlag}{Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
 Only the counts for records flagged (with 'Y') are retained.}
@@ -82,10 +84,11 @@ Empty by default.}
 
 \item{varTotalInclude}{Should the total across all categories of \code{var} 
 be included for the count table?
+Only used for categorical variables (and \code{var} not 'all').
 Either:
 \itemize{
-\item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
-\item{a character vector containing \code{var} for which the total should be included}
+\item{logical of length 1, if TRUE (FALSE by default) include the total for all categorical \code{var}}
+\item{a character vector containing categorical \code{var} for which the total should be included}
 }}
 
 \item{varTotalInSepRow}{Logical, should the total per variable be included in

@@ -10,8 +10,8 @@ computeSummaryStatistics(
   varTotalInclude = FALSE,
   statsExtra = NULL,
   subjectVar = "USUBJID",
-  filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type ==
-    "summaryTable"),
+  filterEmptyVar = ((type == "auto" && var != "all" && is.numeric(data[, var])) | type
+    == "summaryTable"),
   type = "auto",
   msgLabel = NULL,
   msgVars = NULL
@@ -21,11 +21,13 @@ computeSummaryStatistics(
 \item{data}{Data.frame with data.}
 
 \item{var}{String, variable of \code{data} with variable to compute statistics on.
-Missing values, if present, are filtered.}
+Missing values, if present, are filtered.
+If NULL or 'all', counts in the entire \code{data} are computed.}
 
 \item{varTotalInclude}{Logical (FALSE by default)
 Should the total across all categories of \code{var} 
-be included for the count table?}
+be included for the count table?
+Only used if \code{var} is a categorical variable.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
 statistics to be computed, only available for 'summaryTable',
