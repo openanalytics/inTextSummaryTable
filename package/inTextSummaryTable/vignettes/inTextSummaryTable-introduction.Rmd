@@ -118,6 +118,8 @@ percentage computation.)
 
 ```
 
+Please note that this is equivalent of setting (`var = 'all'`).
+
 #### Count table of categories
 
 If a **variable is specified** via the `var` parameter, the **counts of each
@@ -153,9 +155,16 @@ factor variable
 #### Count table for 'flag'-variables
 
 For **'flag' variable** (typically ending with 'FL' in _ADaM_ or _SDTM_ format),
-only the counts for the flagged records are typically of interest.
-If some of the variables are of this type, they should be passed additionally to the 
-`varFlag` parameter.
+only the counts for the 'flagged' records are typically of interest.
+Such variables typically contain only the following values:
+
+* 'Y' if the criteria is fulfilled
+* 'N' if the criteria is not is fulfilled
+* '' if the value is missing
+
+If such variables are specified via the `varFlag` parameter,
+only the counts for the corresponding flagged records (records with 'Y')
+are displayed in the table.
 
 ```{r count-flag-variables}
 
@@ -168,11 +177,23 @@ If some of the variables are of this type, they should be passed additionally to
 
 ```
 
+#### Inclusion of total across categories
+
+```{r count-varTotalInclude}
+
+	getSummaryStatisticsTable(data = dataSL, var = "SEX", varTotalInclude = TRUE)
+
+```
+
 ### Summary statistics table
 
 **A summary statistics table** indicates **standard distribution statistics** of a continuous
  variable: mean, median, minimum, maximum, standard error, standard deviation, and count
   statistics across subjects.
+Please note that **missing records for the variable are filtered**, so 
+the **count statistics** (number of subjects, records, percentage) are
+based **only on the non missing records**.
+  
 For a continuous variable, the presence of different values for the same subject 
 (and across row/column variables) are checked and an appropriate error message
 is returned if multiple different values are available.
@@ -553,6 +574,9 @@ The statistics can also be specified in different rows, but in a separated colum
 Grouping variable can be specified in the vertical direction (across rows) or
 in the horizontal direction (across columns).
 
+If no variables are specified in \code{var}, counts across row/column variable
+are displayed.
+
 The adverse events dataset is used for demonstration.
 
 ```{r countTable-AE-data}
@@ -612,43 +636,6 @@ hierarchical order.
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		colHeaderTotalInclude = FALSE
-	)
-
-```
-
-### Include empty row/columns
-
-The parameters **`rowInclude0` and `colInclude0`** are set to TRUE to 
-**include statistics for empty categories** within the row/column. 
-
-These categories are specified via additional **levels in the `rowVar`/`colVar` factor variables**.
-
-```{r countTable-emptyVars}
-
-	## only consider White blood cell adverse events
-	dataAESubset <- subset(dataAE, AEHLT == "Viral infections NEC")
-	
-	## create dummy categories for:
-	# treatment
-	dataAESubset$TRTP <- with(dataAESubset, 
-		factor(TRTP, levels = c(unique(as.character(TRTP)), "Treatment B"))
-	)
-	# low-level term category
-	dataAESubset$AELLT <- with(dataAESubset, 
-		factor(AELLT, levels = c(unique(as.character(AELLT)), "Lymphocyte percentage increased"))
-	)
-	
-	# create summary statistics table
-	getSummaryStatisticsTable(
-		data = dataAESubset,
-		type = "count",
-		rowVar = c("AEHLT", "AELLT"),
-		rowInclude0 = TRUE, colInclude0 = TRUE,
-		colVar = "TRTP",
-		labelVars = labelVars,
-		title = "Table: Adverse Events: white blood cell analyses",
-		stats = getStats("n (%)"),
-		footer = "Statistics: n (%)"
 	)
 
 ```
@@ -899,7 +886,45 @@ specified), `rowVarLab` is set to this unique label.
 	
 ```
 
-### Layout for variable with summary statistics
+### Include empty row/columns
+
+The parameters **`rowInclude0` and `colInclude0`** are set to TRUE to 
+**include statistics for empty categories** within the row/column. 
+
+These categories are specified via additional **levels in the `rowVar`/`colVar` factor variables**.
+
+```{r countTable-emptyVars}
+
+	## only consider White blood cell adverse events
+	dataAESubset <- subset(dataAE, AEHLT == "Viral infections NEC")
+	
+	## create dummy categories for:
+	# treatment
+	dataAESubset$TRTP <- with(dataAESubset, 
+		factor(TRTP, levels = c(unique(as.character(TRTP)), "Treatment B"))
+	)
+	# low-level term category
+	dataAESubset$AELLT <- with(dataAESubset, 
+		factor(AELLT, levels = c(unique(as.character(AELLT)), "Lymphocyte percentage increased"))
+	)
+	
+	# create summary statistics table
+	getSummaryStatisticsTable(
+		data = dataAESubset,
+		type = "count",
+		rowVar = c("AEHLT", "AELLT"),
+		rowInclude0 = TRUE, colInclude0 = TRUE,
+		colVar = "TRTP",
+		labelVars = labelVars,
+		title = "Table: Adverse Events: white blood cell analyses",
+		stats = getStats("n (%)"),
+		footer = "Statistics: n (%)"
+	)
+
+```
+
+
+### Layout for variables with summary statistics
 
 The variables to summarize (`var`) are included by default in rows.
 In case multiple variables are to be summarized, the different variables
@@ -925,6 +950,31 @@ with similar types (e.g. all numeric variables).
 		labelVars = labelVars,
 		stats = getStats("summary-default")
 	)
+
+```
+
+### Inclusion of the count per group in case of missing values
+
+It might be of interest to display the counts of all subjects per
+row/column variable in association of the summary statistic 
+of a variable of interest.
+
+For example it could be of interest to report the total number of subjects
+per group, which could differ from the total number of subjects 
+for a variable of interest if this variable contain missing values.
+
+```{r summaryTable-layout-var-empty}
+
+	dataAEInterestWC <- ddply(dataAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x){
+		x[which.max(x$AESEVN), ]
+	})
+	dataAEInterestWC[1, "AESEVN"] <- NA
+    getSummaryStatisticsTable(
+        data = dataAEInterestWC,
+        colVar = "TRTA",
+        rowVar = "AEBODSYS",
+        var = c("AESEVN", "all")
+    )
 
 ```
 

@@ -2,6 +2,8 @@
 #' @param var Character vector, variable(s) of \code{data} to compute statistics on.
 #' Missing values, if present, are filtered.
 #' If NULL (by default), counts of the \code{rowVar} are returned.
+#' To also return counts of the \code{rowVar} in case other \code{var}
+#' are specified, you can include: 'all' in the \code{var}.
 #' @param varFlag Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
 #' Only the counts for records flagged (with 'Y') are retained.
 #' @param rowOrder Specify how the rows should be ordered in the table, either a:
@@ -316,7 +318,8 @@ computeSummaryStatisticsTable <- function(
 	# ignore certain elements
 	if(!is.null(var) && !is.null(varIgnore))
 		for(varI in var){
-			data <- data[!data[, varI] %in% varIgnore, ]
+			if(varI != "all")
+				data <- data[!data[, varI] %in% varIgnore, ]
 		}
 	
 	# for flag variable:
@@ -779,6 +782,7 @@ computeSummaryStatisticsTableTotal <- function(
 	# in case total should be computed by 'var'
 	# convert wide -> long format: one column with all variables
 	formatDataTotalWithVar <- function(data){
+		if("all" %in% var)	data[, "all"] <- "all"
 		data <- melt(
 			data = data, 
 			measure.vars = var, 
@@ -876,10 +880,11 @@ computeSummaryStatisticsTableTotal <- function(
 #' if the elements should be ordered in the final table.
 #' @param varTotalInclude Should the total across all categories of \code{var} 
 #' be included for the count table?
+#' Only used for categorical variables (and \code{var} not 'all').
 #' Either:
 #' \itemize{
-#' \item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
-#' \item{a character vector containing \code{var} for which the total should be included}
+#' \item{logical of length 1, if TRUE (FALSE by default) include the total for all categorical \code{var}}
+#' \item{a character vector containing categorical \code{var} for which the total should be included}
 #' }
 #' @inheritParams convertVarToFactorWithOrder
 #' @inheritParams computeSummaryStatistics
@@ -1032,6 +1037,7 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @param data Data.frame with data.
 #' @param var String, variable of \code{data} with variable to compute statistics on.
 #' Missing values, if present, are filtered.
+#' If NULL or 'all', counts in the entire \code{data} are computed.
 #' @param subjectVar String, variable of \code{data} with subject ID,
 #' 'USUBJID' by default.
 #' @param type String with type of table: 
@@ -1048,6 +1054,7 @@ computeSummaryStatisticsByRowColVar <- function(
 #' @param varTotalInclude Logical (FALSE by default)
 #' Should the total across all categories of \code{var} 
 #' be included for the count table?
+#' Only used if \code{var} is a categorical variable.
 #' @param statsExtra (optional) Named list with functions for additional custom
 #' statistics to be computed, only available for 'summaryTable',
 #' e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
@@ -1089,7 +1096,10 @@ computeSummaryStatistics <- function(data,
 	var = NULL, varTotalInclude = FALSE,
 	statsExtra = NULL,
 	subjectVar = "USUBJID",
-	filterEmptyVar = ((type == "auto" && is.numeric(data[, var])) | type == "summaryTable"),
+	filterEmptyVar = (
+		(type == "auto" && var != "all" && is.numeric(data[, var])) | 
+		type == "summaryTable"
+	),
 	type = "auto",
 	msgLabel = NULL, msgVars = NULL){
 
@@ -1098,17 +1108,23 @@ computeSummaryStatistics <- function(data,
 	type <- match.arg(type, choices = c("auto", "summaryTable", "countTable"))
 	
 	if(type == "auto")
-		type <- ifelse(!is.null(var) && is.numeric(data[, var]), "summaryTable", "countTable")
+		type <- ifelse(
+			!is.null(var) &&  var != "all" && is.numeric(data[, var]), 
+			"summaryTable", 
+			"countTable"
+		)
 	
 	if(type == "summaryTable"){
 		if(is.null(var)){
 			stop("Variable of interest should be specified via the 'var' parameter for a summary table.")
-		}else if(!is.numeric(data[, var])){
+		}else if(var == "all"){
+			stop("The 'type' should be set to 'countTable' in case 'var' is 'all'.")
+		}else	if(!is.numeric(data[, var])){
 			stop("Variable of interest: 'var' should be numeric in case type is set to 'summaryTable'.")
 		}
 	}
 	
-	if(!is.null(var))
+	if(!is.null(var) && var != "all")	
 		data <- data[!is.na(data[, var]), ]
 	
 	getNSubjects <- function(x)	as.integer(n_distinct(x[, subjectVar]))
@@ -1209,7 +1225,7 @@ computeSummaryStatistics <- function(data,
 				
 			}else{
 				
-				if(!is.null(var)){
+				if(!is.null(var) && var != "all"){
 					
 					varLevels <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
 					resList <- lapply(varLevels, function(level){
@@ -1239,7 +1255,10 @@ computeSummaryStatistics <- function(data,
 					res <- statsExtraFct(res = res, statsExtra = statsExtra, data = data)
 				}
 				
-				if(varTotalInclude & (!(filterEmptyVar & nrow(data) == 0))){
+				includeTotal <- varTotalInclude & 
+					(!(filterEmptyVar & nrow(data) == 0)) & 
+					(is.null(var) || var != "all")
+				if(includeTotal){
 					
 					resTotal <- data.frame(
 						statN = getNSubjects(data),
@@ -1248,15 +1267,12 @@ computeSummaryStatistics <- function(data,
 					resTotal <- statsExtraFct(res = resTotal, statsExtra = statsExtra, data = data)
 					resTotal[, var] <- "Total"
 					res <- rbind.fill(res, resTotal)
-					res[, var] <- factor(res[, var], 
-						levels = c(
-							if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var]),
-							"Total"
-						)
-					)
+					elVar <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
+					res[, var] <- factor(res[, var], levels = c(elVar, "Total"))
+					
 				}
 					
-				if(is.null(var)){
+				if(is.null(var) || var == "all"){
 					res[, ".id"] <- NULL
 				}else{
 					colnames(res)[match(var, colnames(res))] <- "variableGroup"

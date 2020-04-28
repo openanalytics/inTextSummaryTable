@@ -16,6 +16,8 @@ dataVS <- ADaMDataPelican$ADVS
 
 dataAE <- ADaMDataPelican$ADAE
 
+library(plyr)
+
 ## summary statistics table
 
 for(type in c("summaryTable", "countTable")){
@@ -171,6 +173,24 @@ test_that("'getSummaryStatisticsTable' with only one statistic and statistics in
 			rowVar = c("AESOC", "AEDECOD"),
 			stats = getStats("n (%)"), 
 			statsLayout = "col"
+		)
+	)
+			
+})
+
+test_that("'getSummaryStatisticsTable' with specified variable and all counts", {
+			
+	dataAE <- ddply(dataAE, c("AESOC", "AEDECOD", "USUBJID"), function(x){
+		x$WORSTINT <- max(x$AESEVN, na.rm = TRUE)
+		x
+	})
+	expect_silent(
+		suppressMessages(
+			getSummaryStatisticsTable(
+				data = dataAE, 
+				rowVar = c("AESOC", "AEDECOD"),
+				var = c("all", "WORSTINT")
+			)
 		)
 	)
 			

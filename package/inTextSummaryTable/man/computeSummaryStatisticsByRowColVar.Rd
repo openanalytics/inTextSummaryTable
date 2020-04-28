@@ -37,10 +37,11 @@ include rows with no counts for the count \code{var} or \code{varFlag} variable(
 
 \item{varTotalInclude}{Should the total across all categories of \code{var} 
 be included for the count table?
+Only used for categorical variables (and \code{var} not 'all').
 Either:
 \itemize{
-\item{logical of length 1, if TRUE (FALSE by default) include the total for all \code{var}}
-\item{a character vector containing \code{var} for which the total should be included}
+\item{logical of length 1, if TRUE (FALSE by default) include the total for all categorical \code{var}}
+\item{a character vector containing categorical \code{var} for which the total should be included}
 }}
 
 \item{type}{String with type of table: 

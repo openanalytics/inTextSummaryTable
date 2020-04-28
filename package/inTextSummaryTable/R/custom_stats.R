@@ -28,13 +28,15 @@ getStatsData <- function(
 	type <- match.arg(type)
 	
 	getType <- function(var = NULL){
+		isNumVar <- !is.null(var) && var != "all" && is.numeric(data[, var])
 		switch(type,
-			'all' = ifelse(!is.null(var) && is.numeric(data[, var]), "summary", "count"),
-			'default' = ifelse(!is.null(var) && is.numeric(data[, var]), "summary-default", "count-default")
+			'all' = ifelse(isNumVar, "summary", "count"),
+			'default' = ifelse(isNumVar, "summary-default", "count-default")
 		)
 	}
 	
 	getExtra <- function(var = NULL){
+		if(var == "all")	var <- NULL
 		if(!is.null(extra)){
 			listExtra <- lapply(extra, function(extraEl){
 				if(is.function(extraEl))	extraEl(data[, var])	else	extraEl
@@ -49,7 +51,7 @@ getStatsData <- function(
 	}else{
 		stats <- sapply(var, function(varI){
 			typeVar <- getType(var = varI)
-			statsVar <- getStats(type = typeVar, x = data[, varI], ...)
+			statsVar <- getStats(type = typeVar, x = if(varI != "all")	data[, varI], ...)
 			c(statsVar, getExtra(var = varI))
 		}, simplify = FALSE)
 		

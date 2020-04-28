@@ -111,8 +111,13 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 		rowVarFinal <- rowVarInRow[length(rowVarInRow)] # final column = more nested row variable
 		rowVarToModify <- rowVarInRow[-length(rowVarInRow)] # variables to merge
 		
-		getTotalRow <- function(summaryTable)
-			which(rowSums(summaryTable[, rowVar, drop = FALSE] == "Total") == length(rowVar))
+		getTotalRow <- function(summaryTable){
+			# if only variableGroup is specified, no total row
+			rowVarForTotal <- setdiff(rowVar, c("variable", "variableGroup"))
+			if(length(rowVarForTotal) > 0){
+				which(rowSums(summaryTable[, rowVarForTotal, drop = FALSE] == "Total") == length(rowVarForTotal))
+			}else	integer()
+		}
 		
 		if(length(rowVarToModify) > 0){
 			
@@ -127,6 +132,8 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 			# start by the second more nested variable
 			for(i in rev(seq_along(rowVarToModify))){
 				
+				rowPadding <- rowPadding - 1
+				
 				var <- rowVarToModify[i]
 				varX <- summaryTable[, var]
 				
@@ -137,31 +144,41 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 				# fix in case value in one column is NA
 				# -> interaction is set to NA (without concatenating other columns)
 				dataVarI[is.na(dataVarI)] <- ""
-				idxRowToRepl <- which(!duplicated(interaction(dataVarI))) 
-				idxRowToRepl <- setdiff(idxRowToRepl, idxTotalRow)
+				idxRowToMove <- which(!duplicated(interaction(dataVarI))) 
+				idxRowToMove <- setdiff(idxRowToMove, idxTotalRow)
 				
-				# if the sub-total for this variable is computed and not included in separated row
+				# 1) the total should be included in the header row
+				# ( == the sub-total for this variable is computed and not included in separated row)
 				varNested <- rowVarInRow[match(var, rowVarInRow)+1]
-				if(varNested %in% rowVarTotalInclude & !varNested %in% rowVarTotalInSepRow){
+				isVarTotalNotInSepRow <- varNested %in% rowVarTotalInclude & !varNested %in% rowVarTotalInSepRow
+				if(isVarTotalNotInSepRow){
 					
 					# in case multiple records for total, add extra rows
 					idxTotalNested <- which(summaryTable[, varNested] == "Total")
 					idxTotalNested <- idxTotalNested[which(diff(idxTotalNested) == 1) + 1]
-					idxRowToRepl <- unique(c(idxRowToRepl, idxTotalNested))
+					idxRowToMove <- sort(unique(c(idxRowToMove, idxTotalNested)))
 					
-					# include the variable in the final column
-					summaryTable[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
-					check <- ifelse(
-						var == "variable" & varNested == "variableGroup",
+					if(var == "variable" & varNested == "variableGroup"){
+						
 						# if variable total is included only for certain variables
-						any(!summaryTable[idxRowToRepl, rowVarFinal] %in% c("Total", "")),
-						# otherwise, should be 'Total'
-						any(summaryTable[idxRowToRepl, rowVarFinal] != "Total")
-					)
-					if(check)	stop("Missing total sub-category")
-					summaryTable[idxRowToRepl, rowVarFinal] <- summaryTable[idxRowToRepl, var]
+						idxCorrect <- which(summaryTable[idxRowToMove, rowVarFinal] %in% c("Total", ""))
+						idxRowToFill <- idxRowToMove[idxCorrect]
+						idxRowToRepl <- setdiff(idxRowToMove[-idxCorrect], idxTotalNested)
+						
+					}else{
+						if(any(summaryTable[idxRowToMove, rowVarFinal] != "Total"))
+								stop("Missing total sub-category")
+						idxRowToFill <- idxRowToMove
+						idxRowToRepl <- integer()
+					}
+							
+					summaryTable[idxRowToFill, rowVarFinal] <- summaryTable[idxRowToFill, var]
+					summaryTable[idxRowToFill, "rowPadding"] <- rowPadding
 					
-				}else{
+				}else	idxRowToRepl <- idxRowToMove
+				
+				# 2) if total should not be included in the header: create new rows to include the header
+				if(!isVarTotalNotInSepRow || length(idxRowToRepl) > 0){
 					
 					# new element:
 					# convert to character in case is a factor
@@ -180,7 +197,7 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 					# and set to rest to NA
 					summaryTable[idxRowToRepl, !colnames(summaryTable) %in% c(rowVarFinal, rowVarToModify)] <- NA
 					# save the padding for flextable
-					summaryTable[idxRowToRepl, "rowPadding"] <- rowPadding <- rowPadding - 1
+					summaryTable[idxRowToRepl, "rowPadding"] <- rowPadding
 					
 				}
 				
@@ -198,8 +215,8 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 					dataNARVF <- summaryTable[idxNARVF, ] 
 					# for final rowVar, concatenate the different values
 					dataNARVF[, rowVarFinal] <- paste(
-							summaryTable[idxNARVF-1, rowVarFinal], 
-							summaryTable[idxNARVF, rowVarFinal]
+						summaryTable[idxNARVF-1, rowVarFinal], 
+						summaryTable[idxNARVF, rowVarFinal]
 					)
 					# get the padding value of the last row
 					dataNARVF[, "rowPadding"] <- summaryTable[idxNARVF-1, "rowPadding"]
@@ -266,7 +283,8 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 		if(length(rowVarInSepCol) > 0)
 			idxHLine <- idxHLine[idxHLine %in% cumsum(rle(summaryTable[, rowVarFinal])$lengths)]
 		
-		if(!is.null(rowVarTotalInclude)){
+		# set the label for the total row (only if total is included for one of the original row total)
+		if(!is.null(rowVarTotalInclude) && !all(rowVarTotalInclude %in% "variableGroup")){
 			idxRowTotal <- which(summaryTable[, rowVarFinal] == "Total" & summaryTable$rowPadding == 0)
 			idxHLine <- c(idxHLine, idxRowTotal[length(idxRowTotal)]) # + include horizontal line after row total
 			if(is.null(rowTotalLab)){
@@ -296,7 +314,7 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 				i <- seq_len(nrow(summaryTable))
 			}
 			formatParams <- c(formatParams, 
-					list(list(i = i, j = j, part = "body", type = unname(rowVarFormat[[var]])))
+				list(list(i = i, j = j, part = "body", type = unname(rowVarFormat[[var]])))
 			)
 		}	
 		
