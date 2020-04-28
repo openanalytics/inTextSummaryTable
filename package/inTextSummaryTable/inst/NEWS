@@ -1,8 +1,7 @@
-2.12.0
-  o include total counts per group with: 'var' set to 'all'
-  o conversion to flextable: varTotalInSepRow works for mixed table
 2.11.0
 	o modify 'formatPercentage' function to assure that percentages have the same number of decimals
+  o include total counts per group with: 'var' set to 'all'
+  o conversion to flextable: varTotalInSepRow works for mixed table
 2.10.0
 	o modify default legend in subjectProfileSummaryTable to substitute the 'a' with the point
 	o substitute 'expand_scale' with 'expansion' in subjectProfileSummaryTable only for ggplot2 >= 3.3
