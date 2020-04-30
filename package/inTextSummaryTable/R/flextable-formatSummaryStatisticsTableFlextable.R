@@ -115,7 +115,7 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 			# if only variableGroup is specified, no total row
 			rowVarForTotal <- setdiff(rowVar, c("variable", "variableGroup"))
 			if(length(rowVarForTotal) > 0){
-				which(rowSums(summaryTable[, rowVarForTotal, drop = FALSE] == "Total") == length(rowVarForTotal))
+				which(rowSums(summaryTable[, rowVar, drop = FALSE] == "Total") == length(rowVar))
 			}else	integer()
 		}
 		
@@ -154,7 +154,8 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 				if(isVarTotalNotInSepRow){
 					
 					# in case multiple records for total, add extra rows
-					idxTotalNested <- which(summaryTable[, varNested] == "Total")
+					varNestedAll <- rowVarInRow[seq(from = match(var, rowVarInRow)+1, to = length(rowVarInRow))]
+					idxTotalNested <- which(rowSums(summaryTable[, varNestedAll, drop = FALSE] == "Total") == length(varNestedAll))
 					idxTotalNested <- idxTotalNested[which(diff(idxTotalNested) == 1) + 1]
 					idxRowToMove <- sort(unique(c(idxRowToMove, idxTotalNested)))
 					
