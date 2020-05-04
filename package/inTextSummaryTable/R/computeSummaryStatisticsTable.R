@@ -1504,6 +1504,17 @@ getStatisticsSummaryStatisticsTable <- function(
 		getStatColName <- function(stats)
 			if(is.null(names(stats)))	"Statistic"	else	names(stats)
 
+		# order stats across all nested list
+		# to avoid wrong ordering in case some stats are ordered differently by variable	
+		getOrderedStats <- function(statsByVar){
+			statsByVarUnique <- unique(unlist(statsByVar))
+			statsByVarPos <- lapply(statsByVar, match, x = statsByVarUnique)
+			statsByVarPosMax <- do.call(pmax, c(statsByVarPos, list(na.rm = TRUE)))
+			# order in case multiple elements have same position
+			statsByVarOrdered <- unname(statsByVarUnique[order(statsByVarPosMax)]) 
+			return(statsByVarOrdered)
+		}
+		
 		# variable to compute the statistics by:
 		if(any(names(stats) %in% var)){
 			statsVarByUsed <- c(statsVarBy, "variableInit")
@@ -1513,13 +1524,17 @@ getStatisticsSummaryStatisticsTable <- function(
 				stop("If 'stats' is specified for each variable,",
 					"it should be specified for all variables specified in 'var'.")
 			}else stats <- stats[varsUsed]
-			statsVar <- unname(unique(unlist(lapply(stats, function(x)
-				if(!is.null(statsVarBy))	lapply(x, getStatColName)	else	getStatColName(x)))
-			))
+			statsByVar <- lapply(stats, function(x)
+				if(!is.null(statsVarBy)){
+					getOrderedStats(lapply(x, getStatColName))
+				}else	getStatColName(x)
+			)
+			statsVar <- getOrderedStats(statsByVar)
 		}else{
 			statsVarByUsed <- statsVarBy
 			statsVar <- if(!is.null(statsVarBy)){
-				unname(unique(unlist(lapply(stats, getStatColName))))
+				statsByVar <- lapply(stats, getStatColName)
+				getOrderedStats(statsByVar)
 			}else	getStatColName(stats)
 		}
 #		statsVar <- unname(unique(unlist(lapply(unlist(stats, recursive = FALSE), getStatColName))))
