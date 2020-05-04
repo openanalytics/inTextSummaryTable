@@ -3,6 +3,7 @@
   o include total counts per group with: 'var' set to 'all'
   o conversion to flextable: varTotalInSepRow works for mixed table
   o formatSummaryStatisticsTableFlextable: fix for extraction total when rowVar specified + fix extraction total rows
+  o getStatisticsSummaryStatisticsTable: fix for order stats when different stats by variable
 2.10.0
 	o modify default legend in subjectProfileSummaryTable to substitute the 'a' with the point
 	o substitute 'expand_scale' with 'expansion' in subjectProfileSummaryTable only for ggplot2 >= 3.3
