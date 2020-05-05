@@ -1,17 +1,21 @@
 #' Custom round function, rounding to the closest digits
 #' (instead of rounding to the even number in case of 0.5)
-#' @param ... Additional parameters for the 
-#' \code{\link[glpgUtilityFct]{roundCustom}} function.
-#' @param format string with format for the number: 
-#' 'text' (with trailing zeros) (by default) or 'number'.
-#' @inherit glpgUtilityFct::roundCustom return
+#' @param x Numeric vector to round.
+#' @param digits Integer with number of digits to consider, 0 by default.
+#' @param format For backward compatibility. This parameter will be deprecated in the next package release.
+#' @return A character vector with the rounded number.
+#' See the \code{glpgUtilityFct::roundCustom} for the rounding customization.
+#' @author Laure Cougnaud and Michela Pasetto
 #' @importFrom glpgUtilityFct roundCustom
 #' @export
-roundCustomText <- function(..., format = c("text", "number")) {
+roundCustomText <- function(x, digits = 0, format) {
 	
-	format <- match.arg(format)
+	#format <- match.arg(format)	
+	#res <- roundCustom(..., format = format)
+	if(! missing(format)) warning("The 'format' argument is deprecated. \n The format output is always a character vector.")
 	
-	res <- roundCustom(..., format = format)
+	z <- roundCustom(x = x, digits = digits)
+	res <- formatC(z, digits = digits, format = "f", flag = "0")
 	
 	return(res)
 	

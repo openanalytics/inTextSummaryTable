@@ -5,19 +5,23 @@
 \title{Custom round function, rounding to the closest digits
 (instead of rounding to the even number in case of 0.5)}
 \usage{
-roundCustomText(..., format = c("text", "number"))
+roundCustomText(x, digits = 0, format)
 }
 \arguments{
-\item{...}{Additional parameters for the 
-\code{\link[glpgUtilityFct]{roundCustom}} function.}
+\item{x}{Numeric vector to round.}
 
-\item{format}{string with format for the number: 
-'text' (with trailing zeros) (by default) or 'number'.}
+\item{digits}{Integer with number of digits to consider, 0 by default.}
+
+\item{format}{For backward compatibility. This parameter will be deprecated in the next package release.}
 }
 \value{
-Rounded vector.
+A character vector with the rounded number.
+See the \code{glpgUtilityFct::roundCustom} for the rounding customization.
 }
 \description{
 Custom round function, rounding to the closest digits
 (instead of rounding to the even number in case of 0.5)
+}
+\author{
+Laure Cougnaud and Michela Pasetto
 }

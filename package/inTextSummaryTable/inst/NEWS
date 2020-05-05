@@ -1,5 +1,6 @@
 2.11.0
-	o modify 'formatPercentage' function to assure that percentages have the same number of decimals
+  o deprecate 'format' argument in 'roundCustomText'
+  o modify 'formatPercentage' function to assure that percentages have the same number of decimals
   o include total counts per group with: 'var' set to 'all'
   o conversion to flextable: varTotalInSepRow works for mixed table
   o formatSummaryStatisticsTableFlextable: fix for extraction total when rowVar specified + fix extraction total rows
