@@ -1,3 +1,5 @@
+2.12.0
+  o getStatsData: extend type to any type available in getStats
 2.11.0
   o deprecate 'format' argument in 'roundCustomText'
   o modify 'formatPercentage' function to assure that percentages have the same number of decimals
