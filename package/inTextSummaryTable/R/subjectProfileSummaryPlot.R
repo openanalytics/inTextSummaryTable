@@ -578,9 +578,9 @@ subjectProfileSummaryTable <- function(
 	)
 	# arguments for geom_text
 	argsGeomText <- list(
-			mapping = do.call("aes_string", aesTablePlot),
-			size = textSize,			
-			show.legend = FALSE
+		mapping = do.call("aes_string", aesTablePlot),
+		size = textSize,			
+		show.legend = FALSE
 	)
 	# arguments for geom_point
 	# geom_point is used with size = NA to avoid the 'a' in the legend
@@ -588,15 +588,15 @@ subjectProfileSummaryTable <- function(
 	aesPoint <- aesTablePlot
 	aesPoint[["label"]] <- NULL # remove 'label' not used for geom_point
 	argsGeomPoint <- list(
-			mapping = do.call("aes_string", aesPoint),
-			size = NA
+		mapping = do.call("aes_string", aesPoint),
+		size = NA
 	)
 	
 	# base plot
 	# returns warnings because size of points = NA
 	ggTable <- ggplot(data = data) + do.call("geom_text", argsGeomText) + 
-			do.call("geom_point", argsGeomPoint) +
-			guides(colour = guide_legend(reverse = TRUE, override.aes = list(size = pointSize)))
+		do.call("geom_point", argsGeomPoint) +
+		guides(colour = guide_legend(reverse = TRUE, override.aes = list(size = pointSize)))
 	
 	# axis limits
 	if(!is.null(xLim))

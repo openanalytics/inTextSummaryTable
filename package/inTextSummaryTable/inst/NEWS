@@ -1,6 +1,7 @@
 2.12.0
   o getStatsData: extend type to any type available in getStats
   o convertSummaryStatisticsTableToFlextable: fix padding header when multiple titles are provided
+  o formatSummaryStatisticsTable: fix when no total row
 2.11.0
   o deprecate 'format' argument in 'roundCustomText'
   o modify 'formatPercentage' function to assure that percentages have the same number of decimals
