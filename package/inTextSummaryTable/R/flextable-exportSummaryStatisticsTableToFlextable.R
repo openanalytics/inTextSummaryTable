@@ -20,6 +20,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarTotalInSepRow = NULL,
 	vline = c("none", "auto"),
+	hline = c("auto", "none"),
 	rowAutoMerge = TRUE,
 	rowVarFormat = NULL,
 	rowTotalLab = NULL,
@@ -37,6 +38,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 
 	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
 	vline <- match.arg(vline)
+	hline <- match.arg(hline)
 
 	# custom formatting for flextable
 	summaryTableLong <- formatSummaryStatisticsTableFlextable(
@@ -45,6 +47,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 		statsLayout = statsLayout, statsVar = statsVar, 
 		rowVarLab = rowVarLab,
 		vline = vline,
+		hline = hline,
 		rowAutoMerge = rowAutoMerge, rowVarFormat = rowVarFormat,
 		rowVarTotalInSepRow = rowVarTotalInSepRow,
 		rowTotalLab = rowTotalLab,
