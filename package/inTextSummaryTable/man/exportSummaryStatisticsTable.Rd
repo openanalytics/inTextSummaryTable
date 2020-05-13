@@ -34,6 +34,7 @@ exportSummaryStatisticsTable(
   fontsize = switch(style, report = 8, presentation = 10),
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   vline = "none",
+  hline = "auto",
   pageDim = NULL,
   expandVar = NULL,
   noEscapeVar = NULL,
@@ -154,10 +155,18 @@ e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
 \item{fontname}{String with font name, by default:
 'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}
 
-\item{vline}{String mentioning how vertical lines should be included, either: 
+\item{vline}{String mentioning how vertical lines 
+should be included in the body of the table, either: 
 \itemize{
 \item{'none' (default): }{no vertical lines included}
 \item{'auto': }{vertical lines included between sub-groups}
+}}
+
+\item{hline}{String mentioning how horizontal lines 
+should be included in the body of the table, either: 
+\itemize{
+\item{'none': }{no horizontal lines included}
+\item{'auto' (default): }{horizontal lines included between sub-groups}
 }}
 
 \item{pageDim}{Numeric vector of length 2 with page width and height
