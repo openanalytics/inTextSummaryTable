@@ -11,7 +11,7 @@ getStatsData(data, var = NULL, type = "default", extra = NULL, ...)
 
 \item{var}{Character vector with variables of interest}
 
-\item{type}{String with type of statistics to extract, among:
+\item{type}{Character vector with type of statistics to extract, among:
 \itemize{
 \item{'default': }{default sets of statistics, 
 see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
