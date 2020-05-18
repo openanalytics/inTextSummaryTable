@@ -1233,7 +1233,7 @@ computeSummaryStatistics <- function(data,
 						# compute stats in data or if filterEmptyVar is FALSE
 						if(!(nrow(x) == 0 & filterEmptyVar)){
 							res <- setNames(
-								data.frame(level, getNSubjects(x), getNRecords(x)),
+								data.frame(level, getNSubjects(x), getNRecords(x), stringsAsFactors = TRUE),
 								c(var, "statN", "statm")
 							)
 							res <- statsExtraFct(

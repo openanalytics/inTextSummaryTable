@@ -292,6 +292,13 @@ standard number of number of decimals
 		stats = getStats("n (%)")
 	)
 	
+	# n/N (%)
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = "SEX",
+		stats = getStats("n/N (%)")
+	)
+	
 	## continuous variable
 	
 	# all summary stats

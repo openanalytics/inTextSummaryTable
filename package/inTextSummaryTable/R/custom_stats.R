@@ -77,6 +77,7 @@ getStatsData <- function(
 #' \item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
 #' excepted number of records}
 #' \item{'n (\%)': }{number of subjects (percentage)}
+#' \item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
 #' \item{'median (range)': }{median (minimum, maximum)}
 #' \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 #' \item{'mean (se)': }{mean and standard error}
@@ -194,7 +195,7 @@ getStats <- function(
 		choices = c(
 			"summary-default", "count-default", 
 			"summary", "count", 
-			"n (%)", 
+			"n (%)", "n/N (%)",
 			"median (range)", "median\n(range)",
 			"mean (se)", "mean (range)",
 			names(statsBase)
@@ -216,6 +217,14 @@ getStats <- function(
 							paste0(.(statsBase$n), " (", .(statsBase$`%`), ")")
 						)
 					)
+				)
+			),
+			`n/N (%)` = bquote(
+				ifelse(
+					is.na(statPercN), "-",
+						ifelse(statN == 0, "0",
+							paste0(.(statsBase$n), "/",  statPercTotalN, " (", .(statsBase$`%`), ")")
+						)
 				)
 			),
 			`median (range)` = list('Median (range)' = 
