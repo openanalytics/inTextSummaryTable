@@ -84,7 +84,8 @@ If NULL (by default), counts of the \code{rowVar} are returned.
 To also return counts of the \code{rowVar} in case other \code{var}
 are specified, you can include: 'all' in the \code{var}.}
 
-\item{varFlag}{Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
+\item{varFlag}{Character vector, subset of \code{var} with variable(s) 
+of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
 Only the counts for records flagged (with 'Y') are retained.}
 
 \item{varLab}{Label for the \code{var} variable.}
