@@ -329,7 +329,8 @@ in case \code{dataTotalPerc} is not specified}
 }
 }}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named character vector with variable labels (names are the variable code),
+usually extracted from \code{data}.}
 
 \item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
 format.}

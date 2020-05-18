@@ -44,7 +44,8 @@ the label of \code{var} extracted from \code{labelVars}}
 
 \item{newVar}{String with name of new variable to construct.}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named character vector with variable labels (names are the variable code),
+usually extracted from \code{data}.}
 
 \item{fctTest}{String with global default function to use to compare \code{var} and \code{value} specified
 in each sublist of \code{paramsList}.

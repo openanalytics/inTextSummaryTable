@@ -133,7 +133,8 @@ If NULL, the summary table is not exported but only returned as output.}
 in number of rows (currently only
 the height is used (e.g. \code{c(NA, 4)})}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named character vector with variable labels (names are the variable code),
+usually extracted from \code{data}.}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table
