@@ -19,7 +19,6 @@ test_that("'getStats' function returns correct statistics", {
 			
 			library(glpgUtilityFct)
 			data(ADaMDataPelican)
-			expect_error(getStatsData(data = ADaMDataPelican$ADSL, var = "WEIGHTBL", type = "count"))
 			getStatDefault <- getStatsData(data = ADaMDataPelican$ADSL, var = "WEIGHTBL", type = "default")
 			expect_output(str(getStatDefault), "List")
 			
