@@ -1361,7 +1361,7 @@ footnote or specify custom variable labels.
 
 ```
 
-### Bold
+### Bold and greek letters
 
 Specific cells of the table can be highlight in bold by using the
 syntax: `bold{}` in the `stats` or `statsExtra` function.
@@ -1370,7 +1370,9 @@ This highlighting may depend:
 
 * on a additional variable via the `statsExtra` parameter:  
 for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", paste0("bold{", toString(AVAL), "}"), toString(AVAL))`
-* on the values of computed statistics, via the `stats` parameter:
+* on the values of computed statistics, via the `stats` parameter
+
+Greek letter are included as it is in the table.
 
 ```{r summaryTable-PP-rowVarWithLabel-rowVarLab-bold}
 	
@@ -1380,7 +1382,7 @@ for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", pa
 		colVar = c("TRTP", "AVISIT"),
 		rowVar = "PARAMRF",
 		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter", 
+			'PARAMRF' = "Pharmacokinetics parameter\nMean (SE*)", 
 			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
 		),
 		labelVars = labelVars,
@@ -1393,7 +1395,10 @@ for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", pa
 				"\n(", 
 				roundCustomText(statSE, 2),")")
 			)
-		)
+		),
+		# include greek letter
+		footer = "*Standard error is computed as: SE = σ/√n.",
+		file = file.path("tables_CSR", "Table_textCustomization.docx")
 	)	
 
 ```

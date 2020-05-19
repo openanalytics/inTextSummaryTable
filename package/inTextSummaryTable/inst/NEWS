@@ -1,3 +1,5 @@
+2.13.0
+  o greek letter
 2.12.0
   o getStatsData: extend type to any type available in getStats
   o convertSummaryStatisticsTableToFlextable: fix padding header when multiple titles are provided
