@@ -1356,7 +1356,10 @@ footnote or specify custom variable labels.
 		),
 		stats = list(expression(paste0(roundCustomText(statMean, 1), "\n(", roundCustomText(statSE, 2),")"))),
 		# include the footnote
-		footer = "(1) Each compound is labelled according to its Galapagos compound ID."
+		footer = c(
+			"(1) Each compound is labelled according to its Galapagos compound ID.",
+			paste0("AUC_{0-t} represents the ", getLabelParamcd(paramcd = "AUCTAU", data = dataPP), ".")
+		)
 	)	
 
 ```

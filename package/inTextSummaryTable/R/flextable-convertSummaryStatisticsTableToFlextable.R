@@ -220,8 +220,19 @@ convertSummaryStatisticsTableToFlextable <- function(
 		dataTable = summaryTable, 
 		ft = ft, 
 		fontname = fontname,
-		fontsize = fontsize
+		fontsize = fontsize,
+		part = "body"
 	)
+	# for footnote
+	if(!is.null(footer))
+		ft <- formatCustomFlextable(
+			dataTable = data.frame(footer), 
+			ft = ft, 
+			fontname = fontname,
+			fontsize = fontsize,
+			part = "footer"
+		)
+	
 	# for title
 	if(!is.null(title))
 		ft <- formatCustomFlextable(
