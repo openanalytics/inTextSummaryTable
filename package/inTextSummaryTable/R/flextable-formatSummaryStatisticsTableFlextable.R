@@ -1,10 +1,17 @@
 #' Merge nested rows of a summary table
 #' for a format compatible with \code{flextable} 
 #' @param summaryTable summaryTable.frame with summaryTable
-#' @param vline String mentioning how vertical lines should be included, either: 
+#' @param vline String mentioning how vertical lines 
+#' should be included in the body of the table, either: 
 #' \itemize{
 #' \item{'none' (default): }{no vertical lines included}
 #' \item{'auto': }{vertical lines included between sub-groups}
+#' }
+#' @param hline String mentioning how horizontal lines 
+#' should be included in the body of the table, either: 
+#' \itemize{
+#' \item{'none': }{no horizontal lines included}
+#' \item{'auto' (default): }{horizontal lines included between sub-groups}
 #' }
 #' @param rowTotalLab label for the row with total
 #' @param rowAutoMerge Logical, if TRUE (by default) automatically merging of rows,
@@ -65,6 +72,7 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarTotalInSepRow = NULL,
 	vline = c("none", "auto"),
+	hline = c("none", "auto"),
 	rowAutoMerge = TRUE,
 	rowVarFormat = NULL,
 	rowTotalLab = NULL,
@@ -73,6 +81,7 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
 		
 	vline <- match.arg(vline)
+	hline <- match.arg(hline)
 	
 	if(is.null(summaryTable)){
 		return(invisible())
@@ -309,7 +318,7 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 					i <- seq_len(nrow(summaryTable))
 				}
 				j <- 1
-				# otherwise, extract column idx and consider all rows
+			# otherwise, extract column idx and consider all rows
 			}else{
 				j <- match(var, colnames(summaryTable))
 				i <- seq_len(nrow(summaryTable))
@@ -387,8 +396,8 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 	# attributes required when converting table to flextable:
 	attributes(summaryTable)$summaryTable$header <- headerDf
 	
-	if(!is.null(hlineParams))
-		attributes(summaryTable)$summaryTable$hlineParams <- hlineParams
+	attributes(summaryTable)$summaryTable$hlineParams <- hlineParams
+	attributes(summaryTable)$summaryTable$hline <- hline
 	
 	if(!is.null(mergeParams))
 		attributes(summaryTable)$summaryTable$mergeParams <- mergeParams

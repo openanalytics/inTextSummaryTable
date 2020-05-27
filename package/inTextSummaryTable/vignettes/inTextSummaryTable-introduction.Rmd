@@ -292,6 +292,13 @@ standard number of number of decimals
 		stats = getStats("n (%)")
 	)
 	
+	# n/N (%)
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = "SEX",
+		stats = getStats("n/N (%)")
+	)
+	
 	## continuous variable
 	
 	# all summary stats
@@ -1349,12 +1356,15 @@ footnote or specify custom variable labels.
 		),
 		stats = list(expression(paste0(roundCustomText(statMean, 1), "\n(", roundCustomText(statSE, 2),")"))),
 		# include the footnote
-		footer = "(1) Each compound is labelled according to its Galapagos compound ID."
+		footer = c(
+			"(1) Each compound is labelled according to its Galapagos compound ID.",
+			paste0("AUC_{0-t} represents the ", getLabelParamcd(paramcd = "AUCTAU", data = dataPP), ".")
+		)
 	)	
 
 ```
 
-### Bold
+### Bold and greek letters
 
 Specific cells of the table can be highlight in bold by using the
 syntax: `bold{}` in the `stats` or `statsExtra` function.
@@ -1363,7 +1373,9 @@ This highlighting may depend:
 
 * on a additional variable via the `statsExtra` parameter:  
 for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", paste0("bold{", toString(AVAL), "}"), toString(AVAL))`
-* on the values of computed statistics, via the `stats` parameter:
+* on the values of computed statistics, via the `stats` parameter
+
+Greek letter are included as it is in the table.
 
 ```{r summaryTable-PP-rowVarWithLabel-rowVarLab-bold}
 	
@@ -1373,7 +1385,7 @@ for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", pa
 		colVar = c("TRTP", "AVISIT"),
 		rowVar = "PARAMRF",
 		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter", 
+			'PARAMRF' = "Pharmacokinetics parameter\nMean (SE*)", 
 			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
 		),
 		labelVars = labelVars,
@@ -1386,7 +1398,10 @@ for example: `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", pa
 				"\n(", 
 				roundCustomText(statSE, 2),")")
 			)
-		)
+		),
+		# include greek letter
+		footer = "*Standard error is computed as: SE = σ/√n.",
+		file = file.path("tables_CSR", "Table_textCustomization.docx")
 	)	
 
 ```

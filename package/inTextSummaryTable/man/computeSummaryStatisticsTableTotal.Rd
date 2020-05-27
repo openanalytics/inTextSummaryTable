@@ -64,7 +64,8 @@ if the elements should be ordered in the final table.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named character vector with variable labels (names are the variable code),
+usually extracted from \code{data}.}
 
 \item{msgLabel}{(optional) String with label for the data ('total' by default), 
 included in the message/warning for checks.}

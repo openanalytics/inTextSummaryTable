@@ -9,7 +9,7 @@ convertVarFlag(x)
 }
 \arguments{
 \item{x}{Character or factor variable with flag variable,
-should contain elements: 'Y' and 'N'.}
+should contain elements: 'Y' and 'N', or '' (for missing value).}
 }
 \value{
 Formatted factor variable:

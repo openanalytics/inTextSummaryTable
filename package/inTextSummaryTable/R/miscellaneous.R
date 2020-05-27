@@ -93,7 +93,7 @@ interactionCustom <- function(data, var,
 #' Convert flag variable to a format such as only the flagged records are counted
 #' in the summary table.
 #' @param x Character or factor variable with flag variable,
-#' should contain elements: 'Y' and 'N'.
+#' should contain elements: 'Y' and 'N', or '' (for missing value).
 #' @return Formatted factor variable:
 #' \itemize{
 #' \item{empty string converted to NA}

@@ -17,6 +17,7 @@ formatSummaryStatisticsTableFlextable(
     labelVars = labelVars)),
   rowVarTotalInSepRow = NULL,
   vline = c("none", "auto"),
+  hline = c("none", "auto"),
   rowAutoMerge = TRUE,
   rowVarFormat = NULL,
   rowTotalLab = NULL,
@@ -61,10 +62,18 @@ statistic variables.}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
 Otherwise (by default) the total is included in the header row of each category.}
 
-\item{vline}{String mentioning how vertical lines should be included, either: 
+\item{vline}{String mentioning how vertical lines 
+should be included in the body of the table, either: 
 \itemize{
 \item{'none' (default): }{no vertical lines included}
 \item{'auto': }{vertical lines included between sub-groups}
+}}
+
+\item{hline}{String mentioning how horizontal lines 
+should be included in the body of the table, either: 
+\itemize{
+\item{'none': }{no horizontal lines included}
+\item{'auto' (default): }{horizontal lines included between sub-groups}
 }}
 
 \item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
@@ -78,7 +87,8 @@ list(var1 = "bold").
 
 \item{rowTotalLab}{label for the row with total}
 
-\item{labelVars}{named string with variable labels (names are the variable code)}
+\item{labelVars}{Named character vector with variable labels (names are the variable code),
+usually extracted from \code{data}.}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:

@@ -5,11 +5,12 @@
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
 #' @param data Data.frame with data.
 #' @param var Character vector with variables of interest
-#' @param type String with type of statistics to extract:
+#' @param type Character vector with type of statistics to extract, among:
 #' \itemize{
 #' \item{'default': }{default sets of statistics, 
 #' see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
 #' \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
+#' \item{any \code{type} available in the \code{\link{getStats}}} function
 #' }
 #' @param extra List with extra statistics to include, or function to apply on each
 #' \code{var} (e.g. depending on the class of \code{var}) to get such list.
@@ -22,17 +23,19 @@
 #' @author Laure Cougnaud
 #' @export
 getStatsData <- function(
-	data, var = NULL, type = c("default", "all"), 
+	data, var = NULL, type = "default", 
 	extra = NULL, ...){
 	
-	type <- match.arg(type)
+#	type <- match.arg(type)
 	
 	getType <- function(var = NULL){
 		isNumVar <- !is.null(var) && var != "all" && is.numeric(data[, var])
-		switch(type,
-			'all' = ifelse(isNumVar, "summary", "count"),
-			'default' = ifelse(isNumVar, "summary-default", "count-default")
-		)
+		if("all" %in% type){
+			type[match("all", type)] <- ifelse(isNumVar, "summary", "count")
+		}else	if("default" %in% type){
+			type[match("default", type)] <- ifelse(isNumVar, "summary-default", "count-default")
+		}
+		return(type)
 	}
 	
 	getExtra <- function(var = NULL){
@@ -74,6 +77,7 @@ getStatsData <- function(
 #' \item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
 #' excepted number of records}
 #' \item{'n (\%)': }{number of subjects (percentage)}
+#' \item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
 #' \item{'median (range)': }{median (minimum, maximum)}
 #' \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 #' \item{'mean (se)': }{mean and standard error}
@@ -191,7 +195,7 @@ getStats <- function(
 		choices = c(
 			"summary-default", "count-default", 
 			"summary", "count", 
-			"n (%)", 
+			"n (%)", "n/N (%)",
 			"median (range)", "median\n(range)",
 			"mean (se)", "mean (range)",
 			names(statsBase)
@@ -213,6 +217,14 @@ getStats <- function(
 							paste0(.(statsBase$n), " (", .(statsBase$`%`), ")")
 						)
 					)
+				)
+			),
+			`n/N (%)` = bquote(
+				ifelse(
+					is.na(statPercN), "-",
+						ifelse(statN == 0, "0",
+							paste0(.(statsBase$n), "/",  statPercTotalN, " (", .(statsBase$`%`), ")")
+						)
 				)
 			),
 			`median (range)` = list('Median (range)' = 
