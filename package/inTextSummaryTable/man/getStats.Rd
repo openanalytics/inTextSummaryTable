@@ -24,6 +24,7 @@ excepted percentage and number of records}
 \item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
 excepted number of records}
 \item{'n (\%)': }{number of subjects (percentage)}
+\item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
 \item{'median (range)': }{median (minimum, maximum)}
 \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 \item{'mean (se)': }{mean and standard error}

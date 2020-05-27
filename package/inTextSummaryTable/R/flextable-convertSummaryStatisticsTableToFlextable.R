@@ -178,7 +178,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 			padParams[padPars] <- sapply(padPars, function(par) padParams[[par]] * rowPadBase, simplify = FALSE)
 			# if title is specified, shift row coordinate of padding by 1
 			if(!is.null(title) && padParams$part == "header" && "i" %in% names(padParams))
-				padParams$i <- padParams$i + 1
+				padParams$i <- padParams$i + length(title)
 			ft <- do.call(padding, c(list(x = ft), padParams))
 		}
 	
@@ -187,8 +187,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	ft <- border_remove(ft)
 	# if no vertical lines, only horizontal line 
 	# between header/stub, top header and bottom stub
-	vline <- sumTableAttr$vline
-	if(!is.null(vline) && vline == "none"){
+	isVline <- sumTableAttr$vline
+	if(!is.null(isVline) && isVline == "none"){
 		ft <- ft %>% 
 #			hline_top(border = bd, part = "header") %>%
 			hline_bottom(border = bd, part = "body") %>%
@@ -198,8 +198,11 @@ convertSummaryStatisticsTableToFlextable <- function(
 		ft <- ft %>% hline(i = length(title), border = bd, part = "header")
 	
 	# horizontal lines
-	for(hlineParams in sumTableAttr$hlineParams)
-		ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
+	isHline <- sumTableAttr$hline
+	if(!(!is.null(isHline) && isHline == "none")){
+		for(hlineParams in sumTableAttr$hlineParams)
+			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
+	}
 	
 	# vertical lines
 	for(vlineParams in sumTableAttr$vlineParams){
@@ -217,8 +220,19 @@ convertSummaryStatisticsTableToFlextable <- function(
 		dataTable = summaryTable, 
 		ft = ft, 
 		fontname = fontname,
-		fontsize = fontsize
+		fontsize = fontsize,
+		part = "body"
 	)
+	# for footnote
+	if(!is.null(footer))
+		ft <- formatCustomFlextable(
+			dataTable = data.frame(footer), 
+			ft = ft, 
+			fontname = fontname,
+			fontsize = fontsize,
+			part = "footer"
+		)
+	
 	# for title
 	if(!is.null(title))
 		ft <- formatCustomFlextable(

@@ -4,18 +4,19 @@
 \alias{getStatsData}
 \title{Get default set of statistics for variables of interest and specific dataset}
 \usage{
-getStatsData(data, var = NULL, type = c("default", "all"), extra = NULL, ...)
+getStatsData(data, var = NULL, type = "default", extra = NULL, ...)
 }
 \arguments{
 \item{data}{Data.frame with data.}
 
 \item{var}{Character vector with variables of interest}
 
-\item{type}{String with type of statistics to extract:
+\item{type}{Character vector with type of statistics to extract, among:
 \itemize{
 \item{'default': }{default sets of statistics, 
 see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
 \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
+\item{any \code{type} available in the \code{\link{getStats}}} function
 }}
 
 \item{extra}{List with extra statistics to include, or function to apply on each

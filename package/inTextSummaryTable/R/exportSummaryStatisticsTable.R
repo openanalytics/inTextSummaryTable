@@ -85,7 +85,8 @@ exportSummaryStatisticsTable <- function(
 	style = "report", colorTable = getColorTable(style = style),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
-	vline = "none", pageDim = NULL,
+	vline = "none", hline = "auto", 
+	pageDim = NULL,
 	# DT-specific
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
 	...){
@@ -124,7 +125,7 @@ exportSummaryStatisticsTable <- function(
 			rowVarTotalInSepRow = rowVarTotalInSepRow,
 			rowVarTotalInclude = rowVarTotalInclude,
 			statsVar = statsVar,
-			vline = vline,
+			vline = vline, hline = hline,
 			rowAutoMerge = rowAutoMerge,
 			rowVarFormat = rowVarFormat,
 			rowTotalLab = rowTotalLab,

@@ -85,7 +85,11 @@ formatSummaryStatisticsTable <- function(
 			if(colHeaderTotalInclude && length(nTotal) > 1)
 				stop("Multiple values for the header total but",
 					" no column variables ('colVar') are specified.")
-			dataWithTotal <- summaryTable[-idxTotal, ]
+			if(length(idxTotal) > 0){
+				dataWithTotal <- summaryTable[-idxTotal, ]
+			}else{
+				dataWithTotal <- summaryTable
+			}
 		}
 		
 	}else{

@@ -4,7 +4,8 @@
 #' If NULL (by default), counts of the \code{rowVar} are returned.
 #' To also return counts of the \code{rowVar} in case other \code{var}
 #' are specified, you can include: 'all' in the \code{var}.
-#' @param varFlag Character vector, subset of \code{var} with variable(s) of type 'flag' (with 'Y' or 'N').
+#' @param varFlag Character vector, subset of \code{var} with variable(s) 
+#' of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
 #' Only the counts for records flagged (with 'Y') are retained.
 #' @param rowOrder Specify how the rows should be ordered in the table, either a:
 #' \itemize{
@@ -1233,7 +1234,7 @@ computeSummaryStatistics <- function(data,
 						# compute stats in data or if filterEmptyVar is FALSE
 						if(!(nrow(x) == 0 & filterEmptyVar)){
 							res <- setNames(
-								data.frame(level, getNSubjects(x), getNRecords(x)),
+								data.frame(level, getNSubjects(x), getNRecords(x), stringsAsFactors = TRUE),
 								c(var, "statN", "statm")
 							)
 							res <- statsExtraFct(
