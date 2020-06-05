@@ -2,6 +2,7 @@
   o roundCustomText: fix when digits is NA
   o subjectProfileSummaryPlot: yTrans
   o subjectProfileSummaryPlot: remove 'a' in legend when tableText is used
+  o computeSummaryStatisticsTable: fix order var for charac, or when not complete across colVar + unit tests
 2.13.0
   o example of greek letter in doc
   o support custom formatting (superscript, subscript) for footnote

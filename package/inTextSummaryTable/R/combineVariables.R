@@ -84,7 +84,10 @@ combineVariables <- function(data, paramsList, newVar,
 	dataRetained <- do.call(rbind, dataList)
 
 	if(includeAll){
-		dataRetained <- rbind(cbind(data, setNames(list(labelAll), newVar)), dataRetained)
+		dataRetained <- rbind(
+			cbind(data, setNames(list(labelAll), newVar), stringsAsFactors = TRUE), 
+			dataRetained, stringsAsFactors = TRUE
+		)
 		paramsLabel <- c(labelAll, paramsLabel)
 	}
 
