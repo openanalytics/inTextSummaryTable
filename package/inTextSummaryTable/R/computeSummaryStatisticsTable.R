@@ -343,7 +343,9 @@ computeSummaryStatisticsTable <- function(
 	}
 	
 	# convert row/column variables to factor
-	data <- convertRowColVarToFactor(data = data, rowVar = rowVar, colVar = colVar)
+	data <- convertVarRowVarColVarToFactor(
+		data = data, rowVar = rowVar, colVar = colVar, var = var
+	)
 		
 	# get general statistics for each combination of rowVar/colVar
 	summaryTable <- computeSummaryStatisticsByRowColVar(
@@ -380,10 +382,11 @@ computeSummaryStatisticsTable <- function(
 		}else	data
 
 		# convert row/column variables to factor
-		dataForColTotal <- convertRowColVarToFactor(
+		dataForColTotal <- convertVarRowVarColVarToFactor(
 			data = dataForColTotal, 
 			rowVar = rowVar, 
-			colVar = NULL
+			colVar = NULL,
+			var = var
 		)
 		
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
@@ -460,10 +463,11 @@ computeSummaryStatisticsTable <- function(
 			}
 			
 			# convert row/column variables to factor
-			dataForSubTotal <- convertRowColVarToFactor(
+			dataForSubTotal <- convertVarRowVarColVarToFactor(
 				data = dataForSubTotal, 
 				rowVar = rowVarOther, 
-				colVar = colVar
+				colVar = colVar,
+				var = var
 			)
 			
 			# compute statistics
@@ -493,10 +497,11 @@ computeSummaryStatisticsTable <- function(
 				}else	dataForSubTotal
 		
 				# convert row/column variables to factor
-				dataForSubTotalForColTotal <- convertRowColVarToFactor(
+				dataForSubTotalForColTotal <- convertVarRowVarColVarToFactor(
 					data = dataForSubTotalForColTotal, 
 					rowVar = rowVarOther, 
-					colVar = NULL
+					colVar = NULL,
+					var = var
 				)
 				
 				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
@@ -567,10 +572,11 @@ computeSummaryStatisticsTable <- function(
 	# get total for column headers:
 
 	# convert row/column variables to factor
-	dataTotal <- convertRowColVarToFactor(
+	dataTotal <- convertVarRowVarColVarToFactor(
 		data = dataTotal, 
 		rowVar = NULL, 
-		colVar = colVar
+		colVar = colVar,
+		var = var
 	)
 	summaryTableTotal <- computeSummaryStatisticsTableTotal(
 		data = dataTotal, 
@@ -607,10 +613,11 @@ computeSummaryStatisticsTable <- function(
 	summaryTableTotalPerc <- if(computeTotalPerc){
 				
 		# convert row/column variables to factor
-		dataTotalPerc <- convertRowColVarToFactor(
+		dataTotalPerc <- convertVarRowVarColVarToFactor(
 			data = dataTotalPerc, 
 			rowVar = NULL, 
-			colVar = colVar
+			colVar = colVar,
+			var = var
 		)
 				
 		computeSummaryStatisticsTableTotal(
@@ -1145,7 +1152,7 @@ computeSummaryStatistics <- function(data,
 					stop("No parameter 'x' or 'data' for the 'statsExtra' function.")
 				)
 			}, simplify = FALSE)	
-			res <- cbind(res, resExtra)
+			res <- cbind(res, resExtra, stringsAsFactors = TRUE)
 		}
 		return(res)
 	}
@@ -1234,7 +1241,7 @@ computeSummaryStatistics <- function(data,
 						# compute stats in data or if filterEmptyVar is FALSE
 						if(!(nrow(x) == 0 & filterEmptyVar)){
 							res <- setNames(
-								data.frame(level, getNSubjects(x), getNRecords(x), stringsAsFactors = TRUE),
+								data.frame(level, getNSubjects(x), getNRecords(x), stringsAsFactors = FALSE),
 								c(var, "statN", "statm")
 							)
 							res <- statsExtraFct(
@@ -1245,7 +1252,8 @@ computeSummaryStatistics <- function(data,
 					})
 					resList <- resList[!sapply(resList, is.null)]
 					if(length(resList) > 0){
-						res <- do.call(rbind, resList)
+						res <- do.call(rbind, c(resList, stringsAsFactors = FALSE))
+						res[, var] <- factor(res[, var], levels = varLevels)
 						rownames(res) <- NULL
 					}else{
 						res <- data.frame()

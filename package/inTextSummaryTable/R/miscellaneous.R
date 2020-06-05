@@ -115,26 +115,46 @@ convertVarFlag <- function(x){
 
 }
 
-#' Convert \code{rowVar} and \code{colVar} in \code{data} to factor
+#' Convert \code{rowVar}, \code{colVar} and character \code{var} in \code{data} to factor
 #' @param data Data.frame with data.
 #' @param rowVar Character vector with variable(s) used for the rows.
 #' @param colVar Character vector with variable(s) used for the columns.
+#' @param var Character vector with variable(s) used for the summary statistics.
 #' @return Updated \code{data}
 #' @author Laure Cougnaud
-convertRowColVarToFactor <- function(data, rowVar = NULL, colVar = NULL){
+convertVarRowVarColVarToFactor <- function(data, rowVar = NULL, colVar = NULL, var = NULL){
 	
 	# convert row and column variable to factor in the data
 	# (if character, variables pre-defined as factor in one summary tables will be lost during rbind.fill)
-	if(!is.null(rowVar))
-		data[, rowVar] <- lapply(data[, rowVar, drop = FALSE], function(x){
-			levelsX <- if(is.factor(x))	levels(x)	else	sort(unique(x))
-			factor(x, levels = levelsX)
-		})
-	if(!is.null(colVar))
-		data[, colVar] <- lapply(data[, colVar, drop = FALSE], function(x){
-			levelsX <- if(is.factor(x))	levels(x)	else	sort(unique(x))
-			factor(x, levels = levelsX)
-		})
+	if(!is.null(rowVar)){
+		rowVar <- intersect(rowVar, colnames(data))
+		if(length(rowVar) > 0)
+			data[, rowVar] <- lapply(data[, rowVar, drop = FALSE], function(x){
+				levelsX <- if(is.factor(x))	levels(x)	else	sort(unique(x))
+				factor(x, levels = levelsX)
+			})
+	}
+	
+	if(!is.null(colVar)){
+		colVar <- intersect(colVar, colnames(data))
+		if(length(colVar) > 0)
+			data[, colVar] <- lapply(data[, colVar, drop = FALSE], function(x){
+				levelsX <- if(is.factor(x))	levels(x)	else	sort(unique(x))
+				factor(x, levels = levelsX)
+			})
+	}
+
+	if(!is.null(var)){
+		var <- intersect(var, colnames(data))
+		if(length(var) > 0){
+			isVarCharac <- names(which(sapply(data[, var, drop = FALSE], is.character)))
+			if(length(isVarCharac) > 0)
+				data[, isVarCharac] <- lapply(data[, isVarCharac, drop = FALSE], function(x){
+					levelsX <- if(is.factor(x))	levels(x)	else	sort(unique(x))
+					factor(x, levels = levelsX)
+				})
+		}
+	}
 
 	return(data)
 	
