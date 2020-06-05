@@ -1,3 +1,7 @@
+2.14.0
+  o roundCustomText: fix when digits is NA
+  o subjectProfileSummaryPlot: yTrans
+  o subjectProfileSummaryPlot: remove 'a' in legend when tableText is used
 2.13.0
   o example of greek letter in doc
   o support custom formatting (superscript, subscript) for footnote
