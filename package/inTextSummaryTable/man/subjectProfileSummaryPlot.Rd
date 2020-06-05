@@ -26,6 +26,8 @@ subjectProfileSummaryPlot(
   shapePalette = NULL,
   jitter = NULL,
   title = NULL,
+  caption = NULL,
+  yTrans = NULL,
   yLim = NULL,
   xLim = NULL,
   yLimExpand = c(0.05, 0.05),
@@ -108,6 +110,13 @@ to differenciate the variable specified via \code{colorVar} in the mean line.}
 If different labels should be used for different elements of
 \code{byVar} variable, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
+
+\item{caption}{String with caption for the plot.}
+
+\item{yTrans}{(optional) String with transformation for the y-axis.
+Currently only 'log10' (or NULL, default) is available.
+In case error bars go in the negative, their values are set to a 'small enough' value for plotting:
+\code{min(data)/10} or \code{yLim[1]} if \code{yLim} is specified.}
 
 \item{yLim}{Vector of the length 2 with limits for the y-axis.}
 

@@ -15,7 +15,9 @@ roundCustomText <- function(x, digits = 0, format) {
 	if(! missing(format)) warning("The 'format' argument is deprecated. \n The format output is always a character vector.")
 	
 	z <- roundCustom(x = x, digits = digits)
-	res <- formatC(z, digits = digits, format = "f", flag = "0")
+	if(!is.na(digits)){
+		res <- formatC(z, digits = digits, format = "f", flag = "0")
+	}else	res <- NA_character_
 	
 	return(res)
 	

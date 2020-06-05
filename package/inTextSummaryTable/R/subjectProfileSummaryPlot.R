@@ -25,6 +25,7 @@
 #' If different labels should be used for different elements of
 #' \code{byVar} variable, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
+#' @param caption String with caption for the plot.
 #' @param jitter Numeric with jitter for the x-axis, only used if \code{colorVar} specified.
 #' @param label Logical or expression or list of expression.
 #' Points are labelled with \code{meanVar} if set to TRUE,
@@ -70,6 +71,10 @@
 #' @param themeIncludeVerticalGrid Logical, if TRUE (by default)
 #' include theme vertical grid lines (if present in \code{themeFct}).
 #' @param ggExtra Extra \code{ggplot} command to be added in main plot.
+#' @param yTrans (optional) String with transformation for the y-axis.
+#' Currently only 'log10' (or NULL, default) is available.
+#' In case error bars go in the negative, their values are set to a 'small enough' value for plotting:
+#' \code{min(data)/10} or \code{yLim[1]} if \code{yLim} is specified.
 #' @param ... Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
 #' \code{\link[ggplot2]{geom_text}}
 #' used for the \code{label}.
@@ -98,8 +103,8 @@ subjectProfileSummaryPlot <- function(data,
 	useShape = TRUE,
 	shapePalette = NULL,
 	jitter = NULL,
-	title = NULL,
-	yLim = NULL, xLim = NULL,
+	title = NULL, caption = NULL,
+	yTrans = NULL, yLim = NULL, xLim = NULL,
 	yLimExpand = c(0.05, 0.05),
 	xAxisLabs = NULL,
 	sizePoint = GeomPoint$default_aes$size,
@@ -157,6 +162,10 @@ subjectProfileSummaryPlot <- function(data,
 		}
 	}
 	
+	if(!is.null(yTrans) && !(is.character(yTrans) && yTrans == "log10")){
+		stop("Currently 'yTrans' can only have value: 'log10', so this parameter is ignored.")
+		yTrans <- NULL
+	}
 	
 	if(!is.null(xGap)){
 		if(!is.null(xVar)){
@@ -193,9 +202,29 @@ subjectProfileSummaryPlot <- function(data,
 
 	# compute minimum and maximum limits for the error bars
 	includeEB <- !is.null(seVar)
-	if(includeEB)
-		data[, c("ymin", "ymax")] <- data[, meanVar] + data[, seVar] %*% t(c(-1, 1))
+	if(includeEB){
 	
+		dataYMinYMax <- data[, meanVar] + data[, seVar] %*% t(c(-1, 1))
+		
+		# for log scale, set negative values (if any) to a small positive value
+		# otherwise the entire error bar is not displayed in ggplot2
+		if(!is.null(yTrans) && yTrans == "log10"){
+			idxNeg <- which(dataYMinYMax < 0, arr.ind = TRUE)
+			if(nrow(idxNeg) > 0){
+				yMin <- if(!is.null(yLim))	yLim[1]
+				if(!(!is.null(yMin) && !is.na(yMin)))
+					yMin <- min(dataYMinYMax[dataYMinYMax > 0])/10
+				warning(paste(nrow(idxNeg), "negative values in the error bars, these values",
+					"are set to:", prettyNum(yMin), "for plotting."
+				))
+				dataYMinYMax[idxNeg] <- yMin
+			}
+		}
+		
+		data[, c("ymin", "ymax")] <- dataYMinYMax
+		
+	}
+
 	# in case variable contain spaces or other character not parsed by ggplot2
 	if(!is.null(xVar))
 		data$xVar <- data[, xVar]
@@ -365,6 +394,7 @@ subjectProfileSummaryPlot <- function(data,
 				mapping = do.call(aes_string, aesArgs), 
 				data = data,
 				position = pd, size = sizeLabel,
+				show.legend = FALSE,
 				...
 			),
 			if(geomTextFct == "geom_text_repel")
@@ -408,7 +438,7 @@ subjectProfileSummaryPlot <- function(data,
 	}	
 
 	# labels for the axes/title
-	argsLab <- list(x = xLab, y = yLab, title = title)
+	argsLab <- list(x = xLab, y = yLab, title = title, caption = caption)
 	argsLab <- argsLab[!sapply(argsLab, is.null)]
 	if(length(argsLab) > 0)
 		gg <- gg + do.call(labs, argsLab)
@@ -426,8 +456,13 @@ subjectProfileSummaryPlot <- function(data,
 	)
 	gg <- gg + themeFct() + do.call(theme, argsTheme)
 	
-	if(!is.null(yLimExpand))
-		gg <- gg + scale_y_continuous(expand = yLimExpand)
+	# y-axis:
+	argsYScale <- c(
+		if(!is.null(yLimExpand))	list(expand = yLimExpand),
+		if(!is.null(yTrans))	list(trans = yTrans)
+	)
+	if(length(argsYScale) > 0)
+		gg <- gg + do.call(scale_y_continuous, argsYScale)
 	
 	# limits/clipping
 	argsCoordCart <- c(
