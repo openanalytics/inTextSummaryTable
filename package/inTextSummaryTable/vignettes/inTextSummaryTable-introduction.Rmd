@@ -1483,6 +1483,7 @@ For example, pharmacokinetic tables are created for each compound:
 
 A list of `flextable` can be included into a `rmarkdown` document with the
 `knitPrintListObjects` (see [section](#outputFormat)).
+Please note that the following chunk option should be used: **`results = 'asis'`**.
 
 ## Filter records in a table
 
