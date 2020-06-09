@@ -9,6 +9,7 @@ computeSummaryStatisticsByRowColVar(
   var = NULL,
   varLab = getLabelVar(var = var, data = data, labelVars = labelVars),
   varInclude0 = FALSE,
+  varLabInclude = length(var) > 1,
   varTotalInclude = FALSE,
   type = "auto",
   rowVar = NULL,
@@ -26,7 +27,7 @@ computeSummaryStatisticsByRowColVar(
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{String with variable of \code{data} to sort.}
+\item{var}{Character vector with summary statistics variable(s).}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
@@ -34,6 +35,12 @@ By default, extracted from the \code{labelVars}.}
 
 \item{varInclude0}{Logical, if TRUE (FALSE by default)
 include rows with no counts for the count \code{var} or \code{varFlag} variable(s).}
+
+\item{varLabInclude}{Logical, if TRUE
+the name of the summary statistic variable(s) (\code{var})
+are included in the table.
+This is automatically set to TRUE if more than one variable(s) 
+and is specified, and FALSE if only one variable is specified.}
 
 \item{varTotalInclude}{Should the total across all categories of \code{var} 
 be included for the count table?

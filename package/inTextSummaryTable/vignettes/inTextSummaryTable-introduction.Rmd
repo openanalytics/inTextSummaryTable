@@ -581,7 +581,7 @@ The statistics can also be specified in different rows, but in a separated colum
 Grouping variable can be specified in the vertical direction (across rows) or
 in the horizontal direction (across columns).
 
-If no variables are specified in \code{var}, counts across row/column variable
+If no variables are specified in `var`, counts across row/column variable
 are displayed.
 
 The adverse events dataset is used for demonstration.
@@ -931,17 +931,40 @@ These categories are specified via additional **levels in the `rowVar`/`colVar` 
 ```
 
 
-### Layout for variables with summary statistics
+### Layout for summary statistics variables
 
-The variables to summarize (`var`) are included by default in rows.
-In case multiple variables are to be summarized, the different variables
-can be included in different columns by including the specific label: 'variable'
-in `colVar`.
+#### Default
 
+The **variable(s) used for the summary statistics** 
+(`var`) are included **by default in rows**.
+
+```{r summaryTable-layout-var}
+
+	dataPFEV1 <- subset(dataAll$ADRE, FASFL == "Y" & PARAMCD == "FEV1PP" & AN01FL == "Y")
+	dataPFEV1 <- convertVarToFactor(
+		data = dataPFEV1, 
+		var = c("TRTP", "AVISIT"),
+		varNum = c("TRTPN", "AVISITN")
+	)
+	getSummaryStatisticsTable(
+		data = dataPFEV1,
+		var = c("AVAL", "CHG", "PCHG"),
+		colVar = c("TRTA"),
+		rowVar = "AVISIT",
+		labelVars = labelVars,
+		stats = getStats("summary-default")
+	)
+
+```
+
+#### Summary variable in columns
+
+In case multiple variables are to be summarized, the different variables can be included in 
+different columns by including the specific label: 'variable' in `colVar`.
 Beware that such layout only makes sense for variables
 with similar types (e.g. all numeric variables).
 
-```{r summaryTable-layout-var}
+```{r summaryTable-layout-varInColumn}
 
 	dataPFEV1 <- subset(dataAll$ADRE, FASFL == "Y" & PARAMCD == "FEV1PP" & AN01FL == "Y")
 	dataPFEV1 <- convertVarToFactor(
@@ -956,6 +979,31 @@ with similar types (e.g. all numeric variables).
 		rowVar = "AVISIT",
 		labelVars = labelVars,
 		stats = getStats("summary-default")
+	)
+
+```
+
+#### Inclusion of summary variables in case one variable is specified
+
+By default, the variable label is not included if only one summary
+statistic variable is specified.
+
+```{r summaryTable-layout-var-oneLabel-default}
+		
+	getSummaryStatisticsTable(data = dataSL, var = "AGE", colVar = "TRT01P")
+
+```
+
+To include the label in case only one summary statistic variable
+is specified, the parameter `varLabInclude` should be set to TRUE.
+
+```{r summaryTable-layout-var-oneLabel-varLabInclude}
+		
+	getSummaryStatisticsTable(
+		data = dataSL, 
+		var = "AGE", 
+		varLabInclude = TRUE,
+		colVar = "TRT01P"
 	)
 
 ```
