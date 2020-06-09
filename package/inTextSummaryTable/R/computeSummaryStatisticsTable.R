@@ -211,6 +211,7 @@ computeSummaryStatisticsTable <- function(
 	data,  
 	var = NULL, varFlag = NULL, varInclude0 = FALSE,
 	varLab = getLabelVar(var, data = data, labelVars = labelVars),
+	varLabInclude = length(var) > 1,
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIgnore = NULL,
 	varIncludeTotal = FALSE,
@@ -243,6 +244,8 @@ computeSummaryStatisticsTable <- function(
 ){
 	
 	inputParams <- as.list(environment())
+	
+	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
 	
 	if(nrow(data) == 0){
 		message("No data to report.")
@@ -291,8 +294,8 @@ computeSummaryStatisticsTable <- function(
 	# in case the variable should be in multiple columns, 'colVar' might include: 'variable'
 	colVarInit <- colVar
 	if("variable" %in% colVar){
-		if(!(!is.null(var) && length(var) > 1))
-			warning("'var' not included in columns because only one or no variable is specified.",
+		if(!(!is.null(var) && varLabInclude))
+			warning("'var' not included in columns because 'varLabInclude' is FALSE.",
 				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
 	}
 	colVar <- setdiff(colVar, "variable")
@@ -351,6 +354,7 @@ computeSummaryStatisticsTable <- function(
 	summaryTable <- computeSummaryStatisticsByRowColVar(
 		data = data, 
 		var = var, varLab = varLab, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
+		varLabInclude = varLabInclude,
 		statsExtra = statsExtra,
 		type = type,
 		rowVar = rowVar, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -392,6 +396,7 @@ computeSummaryStatisticsTable <- function(
 		summaryTableColTotal <- computeSummaryStatisticsByRowColVar(
 			data = dataForColTotal, 
 			var = var, varLab = varLab, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
+			varLabInclude = varLabInclude,
 			statsExtra = statsExtra,
 			type = type,
 			rowVar = rowVar, rowInclude0 = rowInclude0,	rowVarDataLevels = rowVarDataLevels,
@@ -474,6 +479,7 @@ computeSummaryStatisticsTable <- function(
 			summaryTableRowSubtotalVar <- computeSummaryStatisticsByRowColVar(
 				data = dataForSubTotal, 
 				var = var, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
+				varLabInclude = varLabInclude,
 				statsExtra = statsExtra,
 				type = type,
 				rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -507,6 +513,7 @@ computeSummaryStatisticsTable <- function(
 				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotalForColTotal, 
 					var = var, varTotalInclude = varTotalInclude, varInclude0 = varInclude0,
+					varLabInclude = varLabInclude,
 					statsExtra = statsExtra,
 					type = type,
 					rowVar = rowVarOther, rowInclude0 = rowInclude0, rowVarDataLevels = rowVarDataLevels,
@@ -721,13 +728,13 @@ computeSummaryStatisticsTable <- function(
 		# attributes created from this function
 		statsVar = statsVar,
 		rowVar = c(rowVar, 
-			if(length(var) > 1 & !"variable" %in% colVarInit)	"variable", 
+			if(varLabInclude & !"variable" %in% colVarInit)	"variable", 
 			# in case only one variable, but still count
 			if("variableGroup" %in% colnames(summaryTable))	"variableGroup"
 		),
 		rowVarLab = c(
 			rowVarLab, 
-			if(length(var) > 1 & !"variable" %in% colVarInit)	
+			if(varLabInclude & !"variable" %in% colVarInit)	
 				c("variable" = varGeneralLab),
 			if("variableGroup" %in% colnames(summaryTable))	c('variableGroup' = varSubgroupLab),
 			if(length(statsVar) > 1)	c("Statistic" = statsGeneralLab)
@@ -894,6 +901,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' \item{logical of length 1, if TRUE (FALSE by default) include the total for all categorical \code{var}}
 #' \item{a character vector containing categorical \code{var} for which the total should be included}
 #' }
+#' @inheritParams checkVarLabInclude
 #' @inheritParams convertVarToFactorWithOrder
 #' @inheritParams computeSummaryStatistics
 #' @inheritParams glpgUtilityFct::getLabelVar
@@ -926,6 +934,7 @@ computeSummaryStatisticsTableTotal <- function(
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
 	var = NULL, varLab = getLabelVar(var = var, data = data, labelVars = labelVars), varInclude0 = FALSE,
+	varLabInclude = length(var) > 1,
 	varTotalInclude = FALSE,
 	type = "auto",
 	rowVar = NULL, rowInclude0 = FALSE, rowVarDataLevels = NULL,
@@ -937,6 +946,8 @@ computeSummaryStatisticsByRowColVar <- function(
 
 	if(is.logical(varTotalInclude) && length(varTotalInclude) > 1)
 		stop("If 'varTotalInclude' if a logical, it should be of length 1.")
+	
+	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
 
 	computeSummaryStatisticsCustom <- function(...)
 		computeSummaryStatistics(..., 
@@ -997,7 +1008,7 @@ computeSummaryStatisticsByRowColVar <- function(
 					msgVars = groupVar
 				)
 				# only store the variable if more than one specified variable
-				if(!is.null(sumTable) && nrow(sumTable) > 0 && length(var) > 1){
+				if(!is.null(sumTable) && nrow(sumTable) > 0 && varLabInclude){
 					cbind.data.frame(variableInit = varI, sumTable, stringsAsFactors = FALSE)
 				}else sumTable
 				
@@ -1005,7 +1016,7 @@ computeSummaryStatisticsByRowColVar <- function(
 	
 			summaryTable <- do.call(rbind.fill, summaryTableVarList)
 			# if multiple variable(s), sort 'variable' in order specified in input
-			if(!is.null(summaryTable) && length(var) > 1){
+			if(!is.null(summaryTable) && varLabInclude){
 				summaryTable$variable <- factor(
 					varLab[summaryTable$variableInit],
 					levels = varLab[var]

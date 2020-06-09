@@ -10,6 +10,7 @@ computeSummaryStatisticsTable(
   varFlag = NULL,
   varInclude0 = FALSE,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
+  varLabInclude = length(var) > 1,
   varGeneralLab = "Variable",
   varSubgroupLab = NULL,
   varIgnore = NULL,
@@ -69,6 +70,12 @@ include rows with no counts for the count \code{var} or \code{varFlag} variable(
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
+
+\item{varLabInclude}{Logical, if TRUE
+the name of the summary statistic variable(s) (\code{var})
+are included in the table.
+This is automatically set to TRUE if more than one variable(s) 
+and is specified, and FALSE if only one variable is specified.}
 
 \item{varGeneralLab}{String with general label for variable specified in \code{var}.
 In case of multiple variable in \code{var}, this will be included in the table header

@@ -205,3 +205,35 @@ test_that("Order of summary statistic variable is correct", {
 	expect_identical(object = levels(tableCharacNotComplete$variableGroup), expected = sort(unique(dataSLSubset$SEX)))
 	
 })
+
+test_that("Variable name is included when needed", {
+			
+	# no variable:
+	descTableNoVar <- computeSummaryStatisticsTable(data = dataSL)
+	expect_false("variable" %in% colnames(descTableNoVar))	
+	expect_warning(
+		descTableNoVar <- computeSummaryStatisticsTable(data = dataSL, varLabInclude = TRUE),
+		regexp = "Variable label is not included"
+	)
+	
+	# one variable
+	descTableOneVar <- computeSummaryStatisticsTable(data = dataSL, var = "AGE")
+	expect_false("variable" %in% colnames(descTableOneVar))		
+	descTableOneVarWithLabel <- computeSummaryStatisticsTable(
+		data = dataSL, var = "AGE", varLabInclude = TRUE
+	)
+	expect_true("variable" %in% colnames(descTableOneVarWithLabel))		
+	
+	# > 1 variable
+	descTableMoreOneVar <- computeSummaryStatisticsTable(data = dataSL, var = c("AGE", "SEX"))
+	expect_true("variable" %in% colnames(descTableMoreOneVar))		
+	expect_warning({
+		descTableMoreOneVarWithLabel <- computeSummaryStatisticsTable(
+			data = dataSL, var = c("AGE", "SEX"), varLabInclude = FALSE
+		)
+		},
+		regexp = "Variable label is included"
+	)
+	expect_true("variable" %in% colnames(descTableMoreOneVarWithLabel))
+	
+})

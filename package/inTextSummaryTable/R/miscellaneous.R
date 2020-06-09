@@ -159,3 +159,37 @@ convertVarRowVarColVarToFactor <- function(data, rowVar = NULL, colVar = NULL, v
 	return(data)
 	
 }
+
+#' Check the \code{varLabInclude} variable.
+#' 
+#' This function ensures that:
+#' \itemize{
+#' \item{variable name is included if more than one variable
+#' are specified
+#' }
+#' \item{variable name is not included if no variable is specified}
+#' }
+#' @param var Character vector with summary statistics variable(s).
+#' @param varLabInclude Logical, if TRUE
+#' the name of the summary statistic variable(s) (\code{var})
+#' are included in the table.
+#' This is automatically set to TRUE if more than one variable(s) 
+#' and is specified, and FALSE if only one variable is specified.
+#' @return (Updated) \code{varLabInclude}
+#' @author Laure Cougnaud
+checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
+	
+	if(length(var) > 1 & !varLabInclude){
+		warning(paste("Variable label is included in the table ('varLabInclude' is set to TRUE)",
+			"because more than 1 variable is specified in the 'var' parameter."))
+		varLabInclude <- TRUE
+	}
+	if(length(var) == 0 & varLabInclude){
+		warning(paste("Variable label is not included ('varLabInclude' is set to FALSE)",
+			"because no variable is specified in the 'var' parameter."))
+		varLabInclude <- FALSE
+	}
+	
+	return(varLabInclude)
+	
+}

@@ -9,6 +9,7 @@ getSummaryStatisticsTable(
   var = NULL,
   varFlag = NULL,
   varLab = getLabelVar(var, data = data, labelVars = labelVars),
+  varLabInclude = length(var) > 1,
   varInclude0 = FALSE,
   varIgnore = NULL,
   varGeneralLab = "Variable",
@@ -89,6 +90,12 @@ of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
 Only the counts for records flagged (with 'Y') are retained.}
 
 \item{varLab}{Label for the \code{var} variable.}
+
+\item{varLabInclude}{Logical, if TRUE
+the name of the summary statistic variable(s) (\code{var})
+are included in the table.
+This is automatically set to TRUE if more than one variable(s) 
+and is specified, and FALSE if only one variable is specified.}
 
 \item{varInclude0}{Logical, if TRUE (FALSE by default)
 include rows with no counts for the count \code{var} or \code{varFlag} variable(s).}
