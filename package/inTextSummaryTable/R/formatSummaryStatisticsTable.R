@@ -8,6 +8,9 @@
 #' and if no \code{colVar} is specified.
 #' @param emptyValue Value used to fill the table for missing values, '-' by default.
 #' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
+#' @param statsLabInclude Logical, if TRUE include the statistic label
+#' in the table. By default only included if more than
+#' one statistic variables are available in the table.
 #' @inheritParams subjectProfileSummaryPlot
 #' @inheritParams formatSummaryStatisticsTableFlextable
 #' @inheritParams computeSummaryStatisticsTable
@@ -30,6 +33,7 @@ formatSummaryStatisticsTable <- function(
 	colHeaderTotalInclude = TRUE,
 	# stats
 	statsVar = getAttribute(summaryTable, "statsVar"),
+	statsLabInclude = NULL,
 	statsLayout = "row",
 	statsValueLab = "StatisticValue",
 	emptyValue = "-"){
@@ -128,7 +132,17 @@ formatSummaryStatisticsTable <- function(
 		variable.name = "Statistic"
 	)
 	
-	if(length(statsVar) == 1 && n_distinct(dataLong$Statistic) == 1)	dataLong$Statistic <- NULL
+	# Is the label for the statistic required?
+	isStatsLabRequired <- !(length(statsVar) == 1 && n_distinct(dataLong$Statistic) == 1)
+	if(is.null(statsLabInclude)){
+		statsLabInclude <- isStatsLabRequired
+	}else	if(!statsLabInclude & isStatsLabRequired){
+		warning("Statistic label is included ('statsLabInclude' set to TRUE)",
+			"because more than statistic variable is available in the table.")
+		statsLabInclude <- TRUE
+	}
+	
+	if(!statsLabInclude)	dataLong$Statistic <- NULL
 	
 	emptyStats <- which(is.na(dataLong[, statsValueNewName]))
 	if(length(emptyStats) > 0)
@@ -150,10 +164,10 @@ formatSummaryStatisticsTable <- function(
 	if(!is.null(colVar) | (statsLayout == "col" & length(statsVar) > 1)){
 		rowVarForm <- c(
 			if(!is.null(rowVar)) paste(rowVar, collapse = " + "), 
-			if(length(statsVar) > 1 & statsLayout != "col")	"Statistic"
+			if(statsLabInclude & statsLayout != "col")	"Statistic"
 		)
 		if(is.null(rowVarForm))	rowVarForm <- "."
-		colVarUsed <- c(colVar, if(length(statsVar) > 1 & statsLayout == "col")	"Statistic")
+		colVarUsed <- c(colVar, if(statsLabInclude & statsLayout == "col")	"Statistic")
 		formulaWithin <- as.formula(paste(
 			paste(rowVarForm, collapse = "+"),
 			"~", 
@@ -181,6 +195,7 @@ formatSummaryStatisticsTable <- function(
 	
 	attributes(dataLong)$summaryTable <- attributes(summaryTable)$summaryTable
 	attributes(dataLong)$summaryTable$statsLayout <- statsLayout
+	attributes(dataLong)$summaryTable$statsLabInclude <- statsLabInclude
 	
 	return(dataLong)
 	

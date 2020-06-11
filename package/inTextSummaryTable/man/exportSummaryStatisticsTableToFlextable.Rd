@@ -12,6 +12,8 @@ exportSummaryStatisticsTableToFlextable(
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
   statsLayout = getAttribute(summaryTable, "statsLayout", default = "row"),
   statsVar = getAttribute(summaryTable, "statsVar"),
+  statsLabInclude = getAttribute(summaryTable, "statsLabInclude", default =
+    length(statsVar) > 1),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar,
     labelVars = labelVars)),
   rowVarTotalInSepRow = NULL,
@@ -35,7 +37,7 @@ exportSummaryStatisticsTableToFlextable(
 )
 }
 \arguments{
-\item{summaryTable}{summary table as provided by teh \code{\link{formatSummaryStatisticsTable}}}
+\item{summaryTable}{summary table as provided by the \code{\link{formatSummaryStatisticsTable}}}
 
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
@@ -65,6 +67,10 @@ the \code{rowVar} variable(s)}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
 statistic variables.}
+
+\item{statsLabInclude}{Logical, if TRUE include the statistic label
+in the table. By default only included if more than
+one statistic variables are available in the table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 

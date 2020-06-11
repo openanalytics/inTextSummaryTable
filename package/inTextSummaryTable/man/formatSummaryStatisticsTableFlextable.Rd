@@ -13,6 +13,8 @@ formatSummaryStatisticsTableFlextable(
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
   statsLayout = "row",
   statsVar = getAttribute(summaryTable, "statsVar"),
+  statsLabInclude = getAttribute(summaryTable, "statsLabInclude", default =
+    length(statsVar) > 1),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar,
     labelVars = labelVars)),
   rowVarTotalInSepRow = NULL,
@@ -55,6 +57,10 @@ the \code{rowVar} variable(s)}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
 statistic variables.}
+
+\item{statsLabInclude}{Logical, if TRUE include the statistic label
+in the table. By default only included if more than
+one statistic variables are available in the table.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 

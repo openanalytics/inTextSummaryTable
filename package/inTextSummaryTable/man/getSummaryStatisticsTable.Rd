@@ -44,6 +44,7 @@ getSummaryStatisticsTable(
   statsVarBy = NULL,
   statsGeneralLab = "Statistic",
   statsValueLab = "StatisticValue",
+  statsLabInclude = NULL,
   subjectVar = "USUBJID",
   filterFct = NULL,
   dataTotal = NULL,
@@ -285,6 +286,10 @@ Only included if no \code{statsVar} if longer than 1.}
 'StatisticValue' by default.
 This is only used if the statistics provided in \code{stats} are not named
 and if no \code{colVar} is specified.}
+
+\item{statsLabInclude}{Logical, if TRUE include the statistic label
+in the table. By default only included if more than
+one statistic variables are available in the table.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}

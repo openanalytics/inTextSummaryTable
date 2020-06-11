@@ -1,5 +1,5 @@
 #' Convert summary table to flextable
-#' @param summaryTable summary table as provided by teh \code{\link{formatSummaryStatisticsTable}}
+#' @param summaryTable summary table as provided by the \code{\link{formatSummaryStatisticsTable}}
 #' @param pageDim Numeric vector of length 2 with page width and height,
 #' in number of rows (currently only
 #' the height is used (e.g. \code{c(NA, 4)})
@@ -15,8 +15,9 @@ exportSummaryStatisticsTableToFlextable <- function(
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarInSepCol = NULL, 
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
-	statsLayout = getAttribute(summaryTable, "statsLayout", default = "row"), 
+	statsLayout = getAttribute(summaryTable, "statsLayout", default = "row"), 	
 	statsVar = getAttribute(summaryTable, "statsVar"), 
+	statsLabInclude = getAttribute(summaryTable, "statsLabInclude", default = length(statsVar) > 1),
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarTotalInSepRow = NULL,
 	vline = c("none", "auto"),
@@ -44,7 +45,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 	summaryTableLong <- formatSummaryStatisticsTableFlextable(
 		summaryTable = summaryTable,
 		rowVar = rowVar, rowVarInSepCol = rowVarInSepCol, rowVarTotalInclude = rowVarTotalInclude,
-		statsLayout = statsLayout, statsVar = statsVar, 
+		statsLayout = statsLayout, statsVar = statsVar, statsLabInclude = statsLabInclude,
 		rowVarLab = rowVarLab,
 		vline = vline,
 		hline = hline,

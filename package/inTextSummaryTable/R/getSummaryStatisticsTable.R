@@ -56,6 +56,7 @@ getSummaryStatisticsTable <- function(
 	statsVarBy = NULL,
 	statsGeneralLab = "Statistic",
 	statsValueLab = "StatisticValue",
+	statsLabInclude = NULL,
 	## extra
 	subjectVar = "USUBJID",
 	filterFct = NULL,
@@ -132,6 +133,7 @@ getSummaryStatisticsTable <- function(
 		rowAutoMerge = rowAutoMerge,
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		statsValueLab = statsValueLab,
+		statsLabInclude = statsLabInclude,
 		title = title, footer = footer,
 		labelVars = labelVars,
 		emptyValue = emptyValue,

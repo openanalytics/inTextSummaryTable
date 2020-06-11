@@ -45,6 +45,7 @@
 #' list(var1 = "bold").
 #' (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)
 #' @inheritParams computeSummaryStatisticsTable
+#' @inheritParams formatSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
 #' \item{'header': }{data.frame with header for each column}
@@ -63,12 +64,14 @@
 #' If \code{summaryTable} is a list of summary tables,
 #' returns a list of corresponding summary tables in long format.
 #' @author Laure Cougnaud
-formatSummaryStatisticsTableFlextable <- function(summaryTable,
+formatSummaryStatisticsTableFlextable <- function(
+	summaryTable,
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarInSepCol = NULL, 
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
 	statsLayout = "row", 
 	statsVar = getAttribute(summaryTable, "statsVar"), 	
+	statsLabInclude = getAttribute(summaryTable, "statsLabInclude", default = length(statsVar) > 1),
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
 	rowVarTotalInSepRow = NULL,
 	vline = c("none", "auto"),
@@ -101,10 +104,10 @@ formatSummaryStatisticsTableFlextable <- function(summaryTable,
 	
 	hlineParams <- mergeParams <- formatParams <- NULL	
 	
-	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & length(statsVar) > 1)
+	mergeRows <- !is.null(rowVar) | (statsLayout != "rowInSepCol" & statsLabInclude)
 	if(mergeRows){
 	
-		rowVarUsed <- c(rowVar, if(statsLayout == "row" & length(statsVar) > 1)	"Statistic")
+		rowVarUsed <- c(rowVar, if(statsLayout == "row" & statsLabInclude)	"Statistic")
 		
 		# important: sort summaryTable.frame with specified row variables!
 		summaryTable <- ddply(summaryTable, rowVar)

@@ -20,6 +20,7 @@ exportSummaryStatisticsTable(
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = ifelse(outputType == "flextable", "row", "col"),
   statsValueLab = "StatisticValue",
+  statsLabInclude = NULL,
   emptyValue = "-",
   labelVars = NULL,
   file = NULL,
@@ -105,6 +106,10 @@ the \code{rowVar} variable(s)
 'StatisticValue' by default.
 This is only used if the statistics provided in \code{stats} are not named
 and if no \code{colVar} is specified.}
+
+\item{statsLabInclude}{Logical, if TRUE include the statistic label
+in the table. By default only included if more than
+one statistic variables are available in the table.}
 
 \item{emptyValue}{Value used to fill the table for missing values, '-' by default.
 See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
