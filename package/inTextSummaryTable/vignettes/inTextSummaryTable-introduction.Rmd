@@ -576,6 +576,35 @@ The statistics can also be specified in different rows, but in a separated colum
 
 ```
 
+By default, if only one statistic is available in the table,
+the name of the statistic is not included in the rows/columns,
+as the statistic is generally described in this case in the title
+of the table.
+
+```{r summaryTable-statsLayout-onlyOneStat}
+
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = c("AGE", "HEIGHT"),
+		stats = list(Mean = expression(statMean))
+	)
+
+```
+
+To include even in this case the name of the statistic, the 
+parameter `statsLabInclude` should be set to `TRUE`.
+
+```{r summaryTable-statsLayout-onlyOneStat-statsLabInclude}
+
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = c("AGE", "HEIGHT"),
+		stats = list(Mean = expression(statMean)),
+		statsLabInclude = TRUE
+	)
+
+```
+
 ## Table layout
 
 Grouping variable can be specified in the vertical direction (across rows) or

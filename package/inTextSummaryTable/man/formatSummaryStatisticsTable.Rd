@@ -11,6 +11,7 @@ formatSummaryStatisticsTable(
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
   colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
+  statsLabInclude = NULL,
   statsLayout = "row",
   statsValueLab = "StatisticValue",
   emptyValue = "-"
@@ -37,6 +38,10 @@ if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
 statistic variables.}
+
+\item{statsLabInclude}{Logical, if TRUE include the statistic label
+in the table. By default only included if more than
+one statistic variables are available in the table.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:

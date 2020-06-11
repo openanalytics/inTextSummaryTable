@@ -153,7 +153,6 @@ test_that("simple table var", {
 			
 })
 
-
 ## tests warnings/errors conditions
 
 test_that("'getSummaryStatisticsTable' contain error/warning tracking", {

@@ -73,6 +73,7 @@ exportSummaryStatisticsTable <- function(
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = ifelse(outputType == "flextable", "row", "col"),
 	statsValueLab = "StatisticValue",
+	statsLabInclude = NULL,
 	emptyValue = "-",
 	# extra
 	labelVars = NULL, 
@@ -107,6 +108,7 @@ exportSummaryStatisticsTable <- function(
 		colHeaderTotalInclude = colHeaderTotalInclude,
 		# stats
 		statsVar = statsVar,
+		statsLabInclude = statsLabInclude,
 		statsLayout = statsLayout,
 		statsValueLab = statsValueLab,
 		emptyValue = emptyValue
