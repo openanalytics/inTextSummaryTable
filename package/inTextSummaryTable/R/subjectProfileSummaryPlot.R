@@ -1,4 +1,9 @@
-#' Plot subject summary profile
+#' Plot subject summary profile.
+#' 
+#' The user can either specify a variable for the standard error
+#' (\code{seVar}),
+#' or directly the variables for the minimum and maximum values for the error
+#' bars (\code{minVar}, \code{maxVar}).
 #' @param data Data.frame with summary statistics to represent in the plot,
 #' e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.
 #' @param xLab String with label for the \code{xVar}.
@@ -11,6 +16,9 @@
 #' consecutive x elements in the data is used.
 #' @param meanVar String, variable of \code{data} with the mean variable.
 #' @param seVar String, variable of \code{data} with the standard error.
+#' @param minVar, maxVar String, variables of \code{data} with minimum and
+#' maximum value for error bar. 
+#' If both are specified, \code{seVar} is ignored.
 #' @param yLab String with label for the y-axis.
 #' If different labels should be used for different elements of
 #' \code{byVar} variable, the vector should be named
@@ -92,8 +100,16 @@ subjectProfileSummaryPlot <- function(data,
 	xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars), 
 	xGap = NULL, xGapDiffNew = NULL,
 	meanVar = "statMean", seVar = if("statSE" %in% colnames(data))	"statSE", 
-	yLab = paste(sub("^stat", "", meanVar), 
-		if(!is.null(seVar))	paste("+-", sub("^stat", "", seVar))),
+	minVar = NULL, maxVar = NULL,
+	yLab = paste(c(
+		sub("^stat", "", meanVar), 
+		if(!is.null(minVar) & !is.null(maxVar)){
+			paste0(
+				"(", sub("^stat", "", minVar), ", ", 
+				sub("^stat", "", maxVar), ")"
+			)
+		}else	if(!is.null(seVar))	paste("+-", sub("^stat", "", seVar))
+	), collapse = " "),
 	facetVar = NULL, facetScale = "free_y",
 	colorVar = NULL, colorLab = getLabelVar(colorVar, labelVars = labelVars),
 	colorPalette = NULL,
@@ -123,6 +139,8 @@ subjectProfileSummaryPlot <- function(data,
 	themeIncludeVerticalGrid = TRUE,
 	ggExtra = NULL,
 	...){
+
+	useMinMax <- !is.null(minVar) & !is.null(maxVar)
 
 	if(!is.null(facetVar) & !is.null(tableText)){
 		warning("Table cannot be used in combination with 'facetVar', no table is included.")
@@ -183,7 +201,7 @@ subjectProfileSummaryPlot <- function(data,
 		}
 	}
 		
-	varNotInData <- setdiff(c(meanVar, seVar), colnames(data))
+	varNotInData <- setdiff(c(meanVar, seVar, minVar, maxVar), colnames(data))
 	if(length(varNotInData) > 0)
 		stop("Variable(s): ", toString(varNotInData), "are not in data.")
 
@@ -201,10 +219,14 @@ subjectProfileSummaryPlot <- function(data,
 	pd <- position_dodge(jitter) # move them .05 to the left and right
 
 	# compute minimum and maximum limits for the error bars
-	includeEB <- !is.null(seVar)
+	includeEB <- !is.null(seVar) | useMinMax
 	if(includeEB){
 	
-		dataYMinYMax <- data[, meanVar] + data[, seVar] %*% t(c(-1, 1))
+		if(useMinMax){
+			dataYMinYMax <- data[, c(minVar, maxVar)]
+		}else{
+			dataYMinYMax <- data[, meanVar] + data[, seVar] %*% t(c(-1, 1))
+		}
 		
 		# for log scale, set negative values (if any) to a small positive value
 		# otherwise the entire error bar is not displayed in ggplot2
