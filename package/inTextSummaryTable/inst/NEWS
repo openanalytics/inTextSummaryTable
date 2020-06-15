@@ -1,6 +1,7 @@
 2.15.0
   o varLabInclude/statsLabInclude new parameters
   o update vignette knitPrintListObjects
+  o subjectProfileSummaryPlot: minVar/maxVar
 2.14.0
   o roundCustomText: fix when digits is NA
   o subjectProfileSummaryPlot: yTrans

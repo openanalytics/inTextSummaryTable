@@ -2,7 +2,7 @@
 % Please edit documentation in R/subjectProfileSummaryPlot.R
 \name{subjectProfileSummaryPlot}
 \alias{subjectProfileSummaryPlot}
-\title{Plot subject summary profile}
+\title{Plot subject summary profile.}
 \usage{
 subjectProfileSummaryPlot(
   data,
@@ -12,8 +12,11 @@ subjectProfileSummaryPlot(
   xGapDiffNew = NULL,
   meanVar = "statMean",
   seVar = if ("statSE" \%in\% colnames(data)) "statSE",
-  yLab = paste(sub("^stat", "", meanVar), if (!is.null(seVar)) paste("+-", sub("^stat",
-    "", seVar))),
+  minVar = NULL,
+  maxVar = NULL,
+  yLab = paste(c(sub("^stat", "", meanVar), if (!is.null(minVar) & !is.null(maxVar)) {  
+      paste0("(", sub("^stat", "", minVar), ", ", sub("^stat", "", maxVar), ")") } else if
+    (!is.null(seVar)) paste("+-", sub("^stat", "", seVar))), collapse = " "),
   facetVar = NULL,
   facetScale = "free_y",
   colorVar = NULL,
@@ -76,6 +79,10 @@ consecutive x elements in the data is used.}
 \item{meanVar}{String, variable of \code{data} with the mean variable.}
 
 \item{seVar}{String, variable of \code{data} with the standard error.}
+
+\item{minVar, }{maxVar String, variables of \code{data} with minimum and
+maximum value for error bar. 
+If both are specified, \code{seVar} is ignored.}
 
 \item{yLab}{String with label for the y-axis.
 If different labels should be used for different elements of
@@ -199,7 +206,10 @@ used for the \code{label}.}
 objects of \code{byVar} is specified.
 }
 \description{
-Plot subject summary profile
+The user can either specify a variable for the standard error
+(\code{seVar}),
+or directly the variables for the minimum and maximum values for the error
+bars (\code{minVar}, \code{maxVar}).
 }
 \author{
 Laure Cougnaud
