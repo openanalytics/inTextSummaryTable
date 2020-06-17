@@ -8,6 +8,7 @@
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct toDTGLPG
+#' @importFrom glpgStyle getColorTable
 #' @export
 exportSummaryStatisticsTableToFlextable <- function(
 	# for 'format' function

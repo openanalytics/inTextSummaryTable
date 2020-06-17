@@ -16,7 +16,7 @@
 #' consecutive x elements in the data is used.
 #' @param meanVar String, variable of \code{data} with the mean variable.
 #' @param seVar String, variable of \code{data} with the standard error.
-#' @param minVar, maxVar String, variables of \code{data} with minimum and
+#' @param minVar,maxVar String, variables of \code{data} with minimum and
 #' maximum value for error bar. 
 #' If both are specified, \code{seVar} is ignored.
 #' @param yLab String with label for the y-axis.

@@ -29,7 +29,8 @@
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
-#' @importFrom glpgStyle getColorTable getGLPGFlextable createFlextableWithHeader getDimPage
+#' @importFrom glpgStyle getColorTable getDimPage
+#' @importFrom glpgUtilityFct getGLPGFlextable createFlextableWithHeader
 #' @author Laure Cougnaud
 #' @export
 convertSummaryStatisticsTableToFlextable <- function(

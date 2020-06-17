@@ -22,7 +22,7 @@
 #' @importFrom dplyr n_distinct
 #' @importFrom stats as.formula
 #' @importFrom utils capture.output
-#' @importFrom glpgStyle convertVectToBinary
+#' @importFrom glpgUtilityFct convertVectToBinary
 formatSummaryStatisticsTable <- function(
 	summaryTable,
 	# row
