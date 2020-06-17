@@ -80,7 +80,7 @@ consecutive x elements in the data is used.}
 
 \item{seVar}{String, variable of \code{data} with the standard error.}
 
-\item{minVar, }{maxVar String, variables of \code{data} with minimum and
+\item{minVar, maxVar}{String, variables of \code{data} with minimum and
 maximum value for error bar. 
 If both are specified, \code{seVar} is ignored.}
 
