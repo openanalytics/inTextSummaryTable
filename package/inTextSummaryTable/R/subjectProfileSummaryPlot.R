@@ -90,7 +90,8 @@
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
 #' @author Laure Cougnaud
-#' @importFrom glpgUtilityFct getGLPGColorPalette getGLPGShapePalette getGLPGLinetypePalette getLabelVar
+#' @importFrom glpgStyle getGLPGColorPalette getGLPGShapePalette getGLPGLinetypePalette
+#' @importFrom glpgUtilityFct getLabelVar
 #' @import ggplot2
 #' @import cowplot
 #' @importFrom ggrepel geom_text_repel
