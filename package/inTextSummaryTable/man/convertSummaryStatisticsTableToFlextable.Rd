@@ -23,8 +23,10 @@ convertSummaryStatisticsTableToFlextable(
 \arguments{
 \item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
 
-\item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
-format.}
+\item{landscape}{Logical, if TRUE the table is presented in landscape
+format. \cr
+By default: TRUE for \code{style}: 'report',
+FALSE for \code{style}: 'presentation'.}
 
 \item{margin}{Margin in the document in inches, currently only used to specify the
 width of the table: [width page extracted from \code{dimPage} - 2* margin]}
@@ -55,8 +57,10 @@ e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
 
-\item{pageDim}{Numeric vector of length 2 with page width and height in inches
-in portrait format.}
+\item{pageDim}{(optional) Numeric vector of length 2 with 
+page width and height in inches in portrait format,
+in case page dimensions differ from the default
+implemented report/presentation.}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table

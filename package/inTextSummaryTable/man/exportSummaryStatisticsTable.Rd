@@ -120,8 +120,10 @@ usually extracted from \code{data}.}
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
 
-\item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
-format.}
+\item{landscape}{Logical, if TRUE the table is presented in landscape
+format. \cr
+By default: TRUE for \code{style}: 'report',
+FALSE for \code{style}: 'presentation'.}
 
 \item{margin}{Margin in the document in inches, currently only used to specify the
 width of the table: [width page extracted from \code{dimPage} - 2* margin]}

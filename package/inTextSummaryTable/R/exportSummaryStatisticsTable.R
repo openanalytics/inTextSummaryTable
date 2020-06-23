@@ -154,7 +154,7 @@ exportSummaryStatisticsTable <- function(
 		summaryTableDT <- exportSummaryStatisticsTableToDT(
 			summaryTable = summaryTableLong,
 			rowVar = rowVar,
-#			rowVarInSepCol = rowVarInSepCol,
+			rowVarLab = rowVarLab,
 			statsVar = statsVar, 
 			statsValueLab = statsValueLab,
 			expandVar = expandVar,
