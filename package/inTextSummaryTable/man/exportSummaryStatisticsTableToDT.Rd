@@ -9,7 +9,7 @@ exportSummaryStatisticsTableToDT(
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar,
     labelVars = labelVars)),
-  rowVarInSepCol = rowVar,
+  rowVarInSepCol = NULL,
   statsVar = getAttribute(summaryTable, "statsVar"),
   statsLayout = getAttribute(summaryTable, "statsLayout", default = "col"),
   statsValueLab = "StatisticValue",
@@ -32,8 +32,7 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
 
 \item{rowVarInSepCol}{Character vector with \code{rowVar}
-that should be included in multiple columns.
-By default, same as \code{rowVar}.}
+that should be included in multiple columns.}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
 statistic variables.}

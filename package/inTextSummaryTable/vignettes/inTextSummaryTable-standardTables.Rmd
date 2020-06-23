@@ -151,15 +151,14 @@ of the table might depends of the study and dataset
 	labelsDM[idxDMCat] <- paste0(labelsDM[idxDMCat], ", n (%)")
 	
 	## Define set of statistics of interest:
-	# 'Median (range)' for continuous variable
-	# number of subjects and percentage for categorical variable
-	statsDM <- sapply(varsDM, function(var)
-		if(is.numeric(dataDM[[var]])){
-			getStats(type = "median (range)", x = dataDM[[var]])
-		}else{
-			getStats(type = "n (%)", includeName = FALSE)
-		}
-	, simplify = FALSE)
+	statsDM <- getStatsData(
+		data = dataDM, var = varsDM,
+		# different for continuous and categorical variable
+		type = c(cont = "median (range)", cat = "n (%)"),
+		# for categorical variable, statistic name (here: 'n (%)')
+		# should not be included in the table
+		args = list(cat = list(includeName = FALSE))
+	)
 
 	## create the table:
 	

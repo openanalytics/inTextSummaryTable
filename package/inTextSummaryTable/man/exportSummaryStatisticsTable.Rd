@@ -9,6 +9,7 @@ exportSummaryStatisticsTable(
   rowVar = getAttribute(summaryTable, "rowVar"),
   rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar,
     labelVars = labelVars)),
+  rowVarInSepCol = NULL,
   rowVarFormat = NULL,
   rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
   rowTotalLab = NULL,
@@ -51,6 +52,14 @@ If multiple variables are specified, the variables should be sorted in hierarchi
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
 
 \item{rowVarLab}{Label for the \code{rowVar} variable(s).}
+
+\item{rowVarInSepCol}{Character vector with \code{rowVar}
+that should be included in multiple columns.
+NULL by default: the row variables are nested in the first column 
+of the table.
+To include the groups within a \code{var} variable in a separated column, 
+set: rowVarInSepCol == 'variableGroup'.
+This is only available if \code{rowVar} if not specified.}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:

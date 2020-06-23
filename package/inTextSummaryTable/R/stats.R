@@ -1,41 +1,80 @@
-
 #' Get default set of statistics for variables of interest and specific dataset
 #' 
 #' This set of statistics is passed directly to the \code{stats} parameter
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
 #' @param data Data.frame with data.
-#' @param var Character vector with variables of interest
+#' @param var Character vector with variable(s) of interest
 #' @param type Character vector with type of statistics to extract, among:
 #' \itemize{
 #' \item{'default': }{default sets of statistics, 
 #' see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
 #' \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
-#' \item{any \code{type} available in the \code{\link{getStats}}} function
+#' \item{any \code{type} available in the \code{\link{getStats}} function}
 #' }
+#' To specify statistics for a continuous (numeric) or categorical
+#' variable separately, this vector can be named with: 'cont' or
+#' 'cat' respectively (elements not named are used for both continuous 
+#' and categorical variables).
 #' @param extra List with extra statistics to include, or function to apply on each
 #' \code{var} (e.g. depending on the class of \code{var}) to get such list.
-#' @param ... parameters passed to the \code{\link{getStats}} function
+#' @param args (optional) Named list with extra arguments for 
+#' \code{\link{getStats}} for continuous (name: 'cont') or 
+#' categorical variable (name: 'cat') specifically. 
+#' @param ... Extra parameters passed to the \code{\link{getStats}} function
+#' (independent of the variable type).
 #' @return List with statistics to compute, named by \code{var}
 #' @examples 
 #' library(glpgUtilityFct)
 #' data(ADaMDataPelican)
-#' getStatsData(data = ADaMDataPelican$ADSL, var = "WEIGHTBL")
+#' # default set of statistics (depending if the variable is continuous or categorical)
+#' getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"))
+#' # all set of statistics (depending if the variable is continuous or categorical)
+#' getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = "all")
+#' # custom set of statistics for all variables
+#' getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = c("n", "%"))
+#' # custom set of statistics, depending on the type of the variable
+#' getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = c(cont = "median (range)", cont = "mean (se)", cat = "n (%)"), args = list(cat = list(includeName = FALSE)))
 #' @author Laure Cougnaud
 #' @export
 getStatsData <- function(
-	data, var = NULL, type = "default", 
-	extra = NULL, ...){
+	data, 
+	var = NULL, 
+	type = "default", 
+	extra = NULL, 
+	args = NULL,
+	...){
 	
-#	type <- match.arg(type)
-	
-	getType <- function(var = NULL){
+	argsGeneral <- list(...)
+	getArgsGetStats <- function(var = NULL){
+		
 		isNumVar <- !is.null(var) && var != "all" && is.numeric(data[, var])
+		
+		# get type of the variable
+		if(!is.null(names(type))){
+			if(any(!names(type) %in% c("", "cont", "cat")))
+				stop("Only: 'cont', 'cat' and '' (empty) are allowed for the names of the 'type' parameter.")
+			if(isNumVar){
+				type <- type[names(type) %in% c("", "cont")]
+			}else	type <- type[names(type) %in% c("", "cat")]
+		}
 		if("all" %in% type){
 			type[match("all", type)] <- ifelse(isNumVar, "summary", "count")
 		}else	if("default" %in% type){
 			type[match("default", type)] <- ifelse(isNumVar, "summary-default", "count-default")
 		}
-		return(type)
+		type <- unname(type)
+		
+		# get extra variable
+		argsVar <- if(isNumVar)	args[["cont"]]	else	args[["cat"]]
+		argsGetStats <- c(
+			list(type = type),
+			argsVar,
+			if(!is.null(var) &&	var != "all")	list(x = data[, var]),
+			list(...)
+		)
+		stats <- do.call(getStats, argsGetStats)
+		return(stats)
+		
 	}
 	
 	getExtra <- function(var = NULL){
@@ -47,14 +86,13 @@ getStatsData <- function(
 			listExtra <- listExtra[!sapply(listExtra, is.null)]
 		}
 	}
-	
+		
 	if(is.null(var)){
-		stats <- getStats(type = getType(), ...)
+		stats <- getArgsGetStats()
 		stats <- c(stats, getExtra())
 	}else{
 		stats <- sapply(var, function(varI){
-			typeVar <- getType(var = varI)
-			statsVar <- getStats(type = typeVar, x = if(varI != "all")	data[, varI], ...)
+			statsVar <- getArgsGetStats(var = varI)
 			c(statsVar, getExtra(var = varI))
 		}, simplify = FALSE)
 		
@@ -70,21 +108,10 @@ getStatsData <- function(
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
 #' @param type Character vector with type of statistics (multiple are possible):
 #' \itemize{
-#' \item{'summary': }{all statistics for 'summaryTable' (\code{type} parameter)}
-#' \item{'count': }{all statistics for 'countTable' (\code{type} parameter)}
-#' \item{'summary-default': }{all statistics for 'summaryTable' (\code{type} parameter), 
-#' excepted percentage and number of records}
-#' \item{'count-default': }{all statistics for 'countTable' (\code{type} parameter), 
-#' excepted number of records}
-#' \item{'n (\%)': }{number of subjects (percentage)}
-#' \item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
-#' \item{'median (range)': }{median (minimum, maximum)}
-#' \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
-#' \item{'mean (se)': }{mean and standard error}
-#' \item{'mean (range)': }{mean and (minimum, maximum)}
 #' \item{base statistics: }{
 #' \itemize{
 #' \item{'n': }{number of subjects}
+#' \item{'m': }{number of records}
 #' \item{'\%': }{percentage of subjects}
 #' \item{'Mean' (only for continuous variable): }{mean}
 #' \item{'Median' (only for continuous variable): }{median}
@@ -93,6 +120,19 @@ getStatsData <- function(
 #' \item{'Min' (only for continuous variable): }{minimum}
 #' \item{'Max' (only for continuous variable): }{maximum}
 #' }}
+#' \item{'summary': }{all statistics available for a continuous variable:
+#' n, Mean, SD, SE, Median, Min, Max, \%, m}
+#' \item{'count': }{all statistics available for a categorical variable: n, \%, m}
+#' \item{'summary-default': }{default set of statistics for a continuous variable:
+#'  n, Mean, SD, SE, Median, Min, Max}
+#' \item{'count-default': }{default set of statistics for a categorical variable:
+#'  n, \%}
+#' \item{'n (\%)': }{number of subjects (percentage)}
+#' \item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
+#' \item{'median (range)': }{median (minimum, maximum)}
+#' \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
+#' \item{'mean (se)': }{mean and standard error}
+#' \item{'mean (range)': }{mean and (minimum, maximum)}
 #' }
 #' @param includeName Logical, should the statistics name be included (TRUE by default)?
 #' This is applied for the statistic names used in each for the set defined in \code{type};
