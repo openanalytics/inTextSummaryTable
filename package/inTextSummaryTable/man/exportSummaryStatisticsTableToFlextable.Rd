@@ -103,8 +103,10 @@ list(var1 = "bold").
 
 \item{rowTotalLab}{label for the row with total}
 
-\item{landscape}{Logical, if TRUE (by defaut) the table is presented in landscape
-format.}
+\item{landscape}{Logical, if TRUE the table is presented in landscape
+format. \cr
+By default: TRUE for \code{style}: 'report',
+FALSE for \code{style}: 'presentation'.}
 
 \item{margin}{Margin in the document in inches, currently only used to specify the
 width of the table: [width page extracted from \code{dimPage} - 2* margin]}
