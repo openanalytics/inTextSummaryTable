@@ -10,7 +10,6 @@
 #' that should be represented as a bar.
 #' @param rowVarInSepCol Character vector with \code{rowVar}
 #' that should be included in multiple columns.
-#' By default, same as \code{rowVar}.
 #' @param statsLayout String with layout for the statistics names 
 #' (in case more than one statistic is included), among:
 #' \itemize{
@@ -41,7 +40,7 @@ exportSummaryStatisticsTableToDT <- function(
 	summaryTable, 
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
-	rowVarInSepCol = rowVar, 
+	rowVarInSepCol = NULL, 
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = getAttribute(summaryTable, "statsLayout", default = "col"),
 	statsValueLab = "StatisticValue",

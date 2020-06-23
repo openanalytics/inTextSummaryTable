@@ -23,6 +23,7 @@ getSummaryStatisticsTable(
   rowOrder = "auto",
   rowOrderTotalFilterFct = NULL,
   rowOrderCatLast = NULL,
+  rowVarInSepCol = NULL,
   rowVarFormat = NULL,
   rowVarTotalInclude = NULL,
   rowVarTotalByVar = NULL,
@@ -158,6 +159,14 @@ function(x) subset(x, TRTP == "treatmentX")}
 
 \item{rowOrderCatLast}{String with category to be printed in the last 
 row of each \code{rowVar} (if any, set to NULL if none).}
+
+\item{rowVarInSepCol}{Character vector with \code{rowVar}
+that should be included in multiple columns.
+NULL by default: the row variables are nested in the first column 
+of the table.
+To include the groups within a \code{var} variable in a separated column, 
+set: rowVarInSepCol == 'variableGroup'.
+This is only available if \code{rowVar} if not specified.}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:

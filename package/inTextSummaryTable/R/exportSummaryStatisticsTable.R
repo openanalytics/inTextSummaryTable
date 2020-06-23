@@ -59,7 +59,7 @@ exportSummaryStatisticsTable <- function(
 	# row
 	rowVar = getAttribute(summaryTable, "rowVar"), 
 	rowVarLab = getAttribute(summaryTable, "rowVarLab", default = getLabelVar(rowVar, labelVars = labelVars)),
-#	rowVarInSepCol = if(outputType != "flextable")	rowVar, 
+	rowVarInSepCol = NULL, 
 	rowVarFormat = NULL,
 	rowVarTotalInclude = getAttribute(summaryTable, "rowVarTotalInclude"),
 	rowTotalLab = NULL,
@@ -96,8 +96,6 @@ exportSummaryStatisticsTable <- function(
 		choices = c("flextable", "DT", "data.frame", "data.frame-base")
 	)
 	
-	extraArgs <- list(...)
-	
 	summaryTableLong <- formatSummaryStatisticsTable(
 		summaryTable,
 		# row
@@ -122,7 +120,7 @@ exportSummaryStatisticsTable <- function(
 			# for 'format' function
 			summaryTable = summaryTableLong,
 			rowVar = rowVar,
-#			rowVarInSepCol = rowVarInSepCol,
+			rowVarInSepCol = rowVarInSepCol,
 			rowVarLab = rowVarLab,
 			rowVarTotalInSepRow = rowVarTotalInSepRow,
 			rowVarTotalInclude = rowVarTotalInclude,
@@ -141,9 +139,6 @@ exportSummaryStatisticsTable <- function(
 			pageDim = pageDim,
 			labelVars = labelVars
 		)
-		
-		if("rowVarInSepCol" %in% names(extraArgs))
-			argsExport <- c(argsExport, extraArgs["rowVarInSepCol"])
 			
 		summaryTableFt <- do.call(exportSummaryStatisticsTableToFlextable, argsExport)
 		
@@ -155,6 +150,7 @@ exportSummaryStatisticsTable <- function(
 			summaryTable = summaryTableLong,
 			rowVar = rowVar,
 			rowVarLab = rowVarLab,
+			rowVarInSepCol = rowVarInSepCol,
 			statsVar = statsVar, 
 			statsValueLab = statsValueLab,
 			expandVar = expandVar,

@@ -2,6 +2,8 @@
   o change imports of color palette from 'glpgUtilityFct' to 'glpgStyle'
   o change GLPG flextable from glpgStyle to glpgUtilityFct
   o exportSummaryStatisticsTable: specify rowVarLab for DT output
+  o getStatsData: type and extra args for getStats for cat or cont variable separately
+  o same default for rowVarInSepCol (NULL) for DT and flextable output
 2.15.0
   o varLabInclude/statsLabInclude new parameters
   o update vignette knitPrintListObjects
