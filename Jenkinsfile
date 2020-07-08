@@ -65,7 +65,16 @@ pipeline {
                         }
                         stage('Check') {
                             steps {
-                                sh 'ls inTextSummaryTable_*.tar.gz && R CMD check inTextSummaryTable_*.tar.gz --no-manual'
+                                sh '''
+                                export TESTTHAT_DEFAULT_CHECK_REPORTER="junit"
+                                export TESTTHAT_OUTPUT_FILE="results.xml"
+                                ls inTextSummaryTable_*.tar.gz && R CMD check inTextSummaryTable_*.tar.gz --no-manual
+                                '''
+                            }
+                            post {
+                                always {
+                                    junit "*.Rcheck/tests/results.xml"
+                                }
                             }
                         }
                         stage('Install') {
