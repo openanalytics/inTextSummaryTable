@@ -13,7 +13,7 @@ dataLB <- ADaMDataPelican$ADLB
 
 if (Sys.getenv("TESTTHAT_OUTPUT_FILE") != "") {
 	options(testthat.output_file = Sys.getenv("TESTTHAT_OUTPUT_FILE", stdout()))
-	Sys.setenv("CI" = "testMe")
+	Sys.setenv("VDIFFR_RUN_TESTS" = "true")
 }
 test_check(
 		"inTextSummaryTable",
