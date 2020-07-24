@@ -16,8 +16,8 @@ if (Sys.getenv("TESTTHAT_OUTPUT_FILE") != "") {
 	#options(VDIFFR_RUN_TESTS = Sys.setenv("VDIFFR_RUN_TESTS" = TRUE))
 }
 test_check(
-		"inTextSummaryTable" #,
-		#reporter = Sys.getenv("TESTTHAT_DEFAULT_CHECK_REPORTER", "check")
+		"inTextSummaryTable",
+		reporter = Sys.getenv("TESTTHAT_DEFAULT_CHECK_REPORTER", "check")
 )
 
 
