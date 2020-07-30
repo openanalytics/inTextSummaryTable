@@ -608,15 +608,19 @@ computeSummaryStatisticsTable <- function(
 	## compute percentages
 	
 	# get counts (for percentage computation)
+	if(!all(colVarTotalPerc %in% colnames(summaryTable)))
+		stop("'colVarTotalPerc' are not in the computed summary statistics table.")
+	computeTotalPerc <- 
+		!setequal(colVarTotal, colVarTotalPerc) | 
+		!is.null(rowVarTotalPerc) | 
+		!is.null(dataTotalPerc)
 	if(is.null(dataTotalPerc)){
 		dataTotalPerc <- dataTotal
 		dataTotalPercTotalHeader <- dataTotalColTotalHeader
 	}else{
 		dataTotalPercTotalHeader <- dataTotalPerc
 	}
-	if(!all(colVarTotalPerc %in% colnames(summaryTable)))
-		stop("'colVarTotalPerc' are not in the computed summary statistics table.")
-	computeTotalPerc <- !setequal(colVarTotal, colVarTotalPerc) | !is.null(rowVarTotalPerc)
+
 	summaryTableTotalPerc <- if(computeTotalPerc){
 				
 		# convert row/column variables to factor
