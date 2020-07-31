@@ -77,6 +77,16 @@ pipeline {
                                 }
                             }
                         }
+                        stage('Coverage') {
+                           steps {
+                                sh 'R -q -e \'covr::to_cobertura(covr::package_coverage("package/inTextSummaryTable"))\''
+                            }
+                           post {
+                              success {
+                                  cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+                              }
+                           }
+                        }
                         stage('Install') {
                             steps {
                                 sh 'R -q -e \'install.packages(list.files(".", "inTextSummaryTable_.*.tar.gz"), repos = NULL) \''
