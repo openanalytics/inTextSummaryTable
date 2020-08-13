@@ -32,8 +32,8 @@ library(covr)
 # test coverage all functions
 pc <- package_coverage(
 	path = packagePath, 
-	type = c("tests", "vignettes"), # tests + vignettes
-	combine_types = TRUE # report coverage for each type ?
+	type = "tests", 
+	quiet = FALSE, clean = FALSE
 )
 report(
 	x = pc, 
