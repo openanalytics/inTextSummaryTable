@@ -393,18 +393,25 @@ height.
 To specify fixed amounts of digits for the statistics to be displayed in the table, 
 the statistics are formatted in the `stats` parameter.
 
-Some internal defaults (based on Mock TLFs) are available for a counts or summary table when the
-set of statistics of interest are extracted with the `getStats` function.
+The number of decimals is based by default from the rules specified by the Mock Standard SAP
+(_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020).
 
 #### `getStats` function
 
 ##### Categorical variable
 
+The number of decimals for the number of subjects and percentages
+are specified below:
+
+```{r nDecimalsSAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables (_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
+include_graphics("./images/nDecimals_catVar_SAP_phase23.png")
+```
+
 When the `getStats` function is used,
-the counts for a categorical variables are formatted as described in the Mock TLFs:
+the counts for a categorical variables are formatted as specified above:
 
 * the number of subjects is displayed with 0 digits (`nDecN` is set to 0)
-* the percentage is subjects is displayed as implemented in the `formatPercentage` function
+* the frequency percentage is implemented in the `formatPercentage` function
 
 ```{r getStats-count}
 
@@ -418,12 +425,22 @@ the counts for a categorical variables are formatted as described in the Mock TL
 
 ##### Continuous variable {#numberDecimalsContinuousVariable}
 
+The number of decimals for individual values is based on the Tables below, 
+unless the number of digits in the database is lower. In this case,  
+the resolution of the specified values is used.
+
+```{r nDecimalsSAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables (_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
+include_graphics("./images/nDecimals_numVar_SAP_phase23.png")
+```
+
+In the package: 'Very small values' are considered values below 1.
+
 When specifying the default set of available statistics with the `getStats` function,
 and **only if the variable is specified** (`x` parameter),
 the number of decimals for a continuous variable is determined by:
 
 1. Extracting the number of decimals for individual values based on:
-    + **pre-defined rules** via the `getNDecimalsRule` function, as defined in the Mock TLF
+    + **pre-defined rules** based on the number of decimals of the individual values (`getNDecimalsRule` function)
     + the number of decimals **available in the input data** via the `getNDecimalsData` function
     + taking the **minimum of these two criterias** (`getNDecimals` function), 
     such as the number of decimals according
