@@ -12,7 +12,7 @@ getNDecimalsData(x)
 }
 \value{
 Numeric vector of same length than \code{x}
-with the number of decimals
+with the number of decimals.
 }
 \description{
 Get number of decimals based on the data in a numeric vector.
@@ -20,4 +20,6 @@ Note: NA is returned if the element is missing (NA).
 }
 \author{
 Laure Cougnaud
+x <- c(12.345, -123.45, 1234.5, -12345)
+getNDecimalsData(x)
 }
