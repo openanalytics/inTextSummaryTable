@@ -81,12 +81,12 @@ exportSummaryStatisticsTableToDT <- function(
 	rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
 	if(statsLayout == "row" & "Statistic" %in% colnames(summaryTable))
 		rowVarInRow <- c(rowVarInRow, "Statistic")
-	rowGroup <- head(rowVarInRow, -1)
-	if(length(rowGroup) == 0)	rowGroup <- NULL
-	if(length(rowGroup) > 1){
-		rowGroup <- head(rowGroup, 1)
+	rowGroupVar <- head(rowVarInRow, -1)
+	if(length(rowGroupVar) == 0)	rowGroupVar <- NULL
+	if(length(rowGroupVar) > 1){
+		rowGroupVar <- head(rowGroupVar, 1)
 		warning(paste0("Currently multi-level row grouping row variable not available in the 'DT' package",
-			", so the rows are grouped by ", rowGroup, " only."))
+			", so the rows are grouped by ", rowGroupVar, " only."))
 	}
 	
 	expandIdx <- expandVarDT <- NULL
@@ -157,7 +157,7 @@ exportSummaryStatisticsTableToDT <- function(
 	argsDT <- c(
 		list(
 			data = summaryTable,
-			rowGroup = rowGroup,
+			rowGroupVar = rowGroupVar,
 			caption = title,
 			escape = escape,
 			barVar = barVar
