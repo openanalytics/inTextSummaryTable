@@ -7,6 +7,13 @@
 #' See the \code{glpgUtilityFct::roundCustom} for the rounding customization.
 #' @author Laure Cougnaud and Michela Pasetto
 #' @importFrom glpgUtilityFct roundCustom
+#' @examples 
+#' # number of digits higher than number of decimal
+#' roundCustomText(x = c(0.345, 0.567, -0.98), digits = 2)
+#' # number of digits lower than number of decimal
+#' roundCustomText(x = c(0.345, 0.567, -0.98), digits = 0)
+#' # by default, 'digits' is 0!
+#' roundCustomText(x = c(0.345, 0.567, -0.98))
 #' @export
 roundCustomText <- function(x, digits = 0, format) {
 	
@@ -97,15 +104,15 @@ interactionCustom <- function(data, var,
 #' @return Formatted factor variable:
 #' \itemize{
 #' \item{empty string converted to NA}
-#' \item{'Y' converted to empty string}
+#' \item{'Y' converted to empty string ('')}
 #' \item{'N' retained as originally}
 #' }
+#' The variable has levels: \code{c('', 'N')}.
 #' @author Laure Cougnaud
-#' @export
 convertVarFlag <- function(x){
 	
 	if(any(!x %in% c("", "Y", "N")))
-		stop("Flag variables should only contain: '', 'Y' or 'N'.")
+		stop("Flag variable should only contain: '', 'Y' or 'N'.")
 	x <- as.character(x)
 	xRF <- factor(ifelse(x == "", NA_character_, ifelse(x == "Y", "", "N")), levels = c("", "N"))
 

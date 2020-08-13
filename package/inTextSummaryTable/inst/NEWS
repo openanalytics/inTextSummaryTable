@@ -1,8 +1,10 @@
-2.17.0
-  o computeSummaryStatisticsTable: fix when dataTotalPerc is specified but not rowVarTotalPerc
+3.0.0
   o improve doc
+  o include unit tests
+  o computeSummaryStatisticsTable: fix when dataTotalPerc is specified but not rowVarTotalPerc
   o roundCustomText: remove fix if digits is NA
   o updates for glpgUtilityFct 2.0.0
+  o internal functions: convertVarFlag
 2.16.0
   o change imports of color palette from 'glpgUtilityFct' to 'glpgStyle'
   o change GLPG flextable from glpgStyle to glpgUtilityFct
