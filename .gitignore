@@ -2,7 +2,6 @@
 *.html
 *.pdf
 *.tex
-*.png
 *.tar.gz
 *.log
 *.Rcheck
@@ -24,3 +23,6 @@ test.Rmd
 
 tests
 !/package/inTextSummaryTable/tests
+
+*.png
+!/package/inTextSummaryTable/vignettes/images/*.png
