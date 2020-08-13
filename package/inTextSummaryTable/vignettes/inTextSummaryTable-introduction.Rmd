@@ -266,7 +266,7 @@ range:
 
 #### `getStats`
 
-A common default set of statistics are available via the `getStats` function
+A common default set of statistics is available via the `getStats` function
 which can be passed directly to the `stats` function.
 
 For a continuous variable, it is **recommended to pass also the
@@ -333,7 +333,7 @@ standard number of number of decimals
 
 #### `getStatsData`
 
-To get the default statistics for a set of variables of interest in a dataset, 
+To get the default statistics for a **set of variables** of interest in a dataset, 
 the function `getStatsData` is used:
 
 ```{r getStatsData}
@@ -400,10 +400,12 @@ The number of decimals is based by default from the rules specified by the Mock 
 
 ##### Categorical variable
 
-The number of decimals for the number of subjects and percentages
-are specified below:
+According to the Mock SAP, the counts of number of subjects is reported
+without decimals.
+The number of decimals for the percentages
+is specified below:
 
-```{r nDecimalsSAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables (_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
+```{r nDecimals-catVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables<br>(_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
 include_graphics("./images/nDecimals_catVar_SAP_phase23.png")
 ```
 
@@ -425,11 +427,10 @@ the counts for a categorical variables are formatted as specified above:
 
 ##### Continuous variable {#numberDecimalsContinuousVariable}
 
-The number of decimals for individual values is based on the Tables below, 
-unless the number of digits in the database is lower. In this case,  
-the resolution of the specified values is used.
+The number of decimals for individual values is based on the Mock SAP (see tables below)
+unless the number of digits in the database is lower. In this case, the resolution of the specified values is used.
 
-```{r nDecimalsSAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables (_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
+```{r nDecimals-numVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables<br>(_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
 include_graphics("./images/nDecimals_numVar_SAP_phase23.png")
 ```
 
