@@ -12,13 +12,17 @@ getNDecimals(x, useRule = TRUE, rule = "1", useData = TRUE)
 \item{useRule}{Logical (TRUE by default), should the \code{rule} be applied?}
 
 \item{rule}{Character vector with rule to use to derive 
-the number of parameters:
+the number of parameters.
+Currently only: '1' is implemented.
 \itemize{
-\item{'1': }{
+\item{'1': }{Standard rule for the number of 
+decimals for individual values for a 
+continuous variable based on the 
+\emph{Mock Standard SAP (version 1.0)} document.
 \itemize{
-\item{value < 1: }{3}
+\item{value < 1 ('very small values' in SAP): }{3}
 \item{value < 10: }{2}
-\item{value in [1, 1000[: }{1}
+\item{value in [10, 1000[: }{1}
 \item{value >= 1000: }{0}
 }
 }
@@ -29,7 +33,7 @@ be extracted based on the input data \code{x}?}
 }
 \value{
 Numeric vector of same length than \code{x}
-with the number of decimals
+with the number of decimals.
 }
 \description{
 The number of decimals is extracted from specific implemented rule

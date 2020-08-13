@@ -13,8 +13,8 @@
 getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 	
 	if(!useRule & !useData)
-		stop("The number of decimals should be extracted based on the rule and/or the data",
-			"set 'useRule' and/or 'useData' to TRUE.")
+		stop(paste("The number of decimals should be extracted based on the rule and/or the data:",
+			"'useRule' and/or 'useData' should be set to TRUE."))
 	
 	if(useRule)	nDecRule <- getNDecimalsRule(x, rule = rule)
 	if(useData)	nDecData <- getNDecimalsData(x)
@@ -42,16 +42,21 @@ getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 getMaxNDecimals <- function(x, ...)
 	max(getNDecimals(x, ...), na.rm = TRUE)
 
-#' Get number of decimals based pre-defined rule.
+#' Get number of decimals based pre-defined rule(s).
+#' 
 #' Note: NA is returned if the element is missing (NA).
 #' @param rule Character vector with rule to use to derive 
-#' the number of parameters:
+#' the number of parameters.
+#' Currently only: '1' is implemented.
 #' \itemize{
-#' \item{'1': }{
+#' \item{'1': }{Standard rule for the number of 
+#' decimals for individual values for a 
+#' continuous variable based on the 
+#' \emph{Mock Standard SAP (version 1.0)} document.
 #' \itemize{
-#' \item{value < 1: }{3}
+#' \item{value < 1 ('very small values' in SAP): }{3}
 #' \item{value < 10: }{2}
-#' \item{value in [1, 1000[: }{1}
+#' \item{value in [10, 1000[: }{1}
 #' \item{value >= 1000: }{0}
 #' }
 #' }
@@ -60,8 +65,13 @@ getMaxNDecimals <- function(x, ...)
 #' @author Laure Cougnaud
 #' @export
 getNDecimalsRule <- function(x, rule = c("1")){
+	
+	if(!is.numeric(x))
+		stop("'x' should be numeric.")
+	
 	nDecRule <- switch(rule,
-		'1' = ifelse(x < 1, 3, ifelse(x < 10, 2, ifelse(x < 1000, 1, 0)))
+		'1' = ifelse(x < 1, 3, ifelse(x < 10, 2, ifelse(x < 1000, 1, 0))),
+		stop(paste("Rule:", shQuote(rule), "not yet implemented."))
 	)
 	return(nDecRule)
 }
@@ -70,14 +80,24 @@ getNDecimalsRule <- function(x, rule = c("1")){
 #' Note: NA is returned if the element is missing (NA).
 #' @param x Numeric vector.
 #' @return Numeric vector of same length than \code{x}
-#' with the number of decimals
+#' with the number of decimals.
 #' @author Laure Cougnaud
+#' x <- c(12.345, -123.45, 1234.5, -12345)
+#' getNDecimalsData(x)
 #' @export
 getNDecimalsData <- function(x){
 	
-	xNumber <- ifelse(is.na(x), NA_character_,
+	if(!is.numeric(x))
+		stop("'x' should be numeric.")
+	
+	xNumber <- ifelse(
+		is.na(x), 
+		NA_character_,
 		sub("-*[[:digit:]]+\\.*([[:digit:]]+)*", 
-			"\\1", as.character(sapply(x, format, scientific = FALSE)))
+			"\\1", 
+			as.character(sapply(x, format, scientific = FALSE)
+			)
+		)
 	)
 	nDec <- nchar(xNumber)
 	return(nDec)
