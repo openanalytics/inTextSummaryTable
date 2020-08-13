@@ -15,9 +15,10 @@ should contain elements: 'Y' and 'N', or '' (for missing value).}
 Formatted factor variable:
 \itemize{
 \item{empty string converted to NA}
-\item{'Y' converted to empty string}
+\item{'Y' converted to empty string ('')}
 \item{'N' retained as originally}
 }
+The variable has levels: \code{c('', 'N')}.
 }
 \description{
 Convert flag variable to a format such as only the flagged records are counted

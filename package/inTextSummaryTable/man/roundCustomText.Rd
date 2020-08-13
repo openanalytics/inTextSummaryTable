@@ -22,6 +22,14 @@ See the \code{glpgUtilityFct::roundCustom} for the rounding customization.
 Custom round function, rounding to the closest digits
 (instead of rounding to the even number in case of 0.5)
 }
+\examples{
+# number of digits higher than number of decimal
+roundCustomText(x = c(0.345, 0.567, -0.98), digits = 2)
+# number of digits lower than number of decimal
+roundCustomText(x = c(0.345, 0.567, -0.98), digits = 0)
+# by default, 'digits' is 0!
+roundCustomText(x = c(0.345, 0.567, -0.98))
+}
 \author{
 Laure Cougnaud and Michela Pasetto
 }
