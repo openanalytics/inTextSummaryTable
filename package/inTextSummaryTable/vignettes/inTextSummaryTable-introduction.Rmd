@@ -185,7 +185,7 @@ are displayed in the table.
 
 ```
 
-### Summary statistics table
+### Summary statistics table {#stats-default}
 
 **A summary statistics table** indicates **standard distribution statistics** of a continuous
  variable: mean, median, minimum, maximum, standard error, standard deviation, and count
@@ -220,7 +220,7 @@ Summary statistics are extracted for a combined set of discrete and numeric vari
 
 ```
 
-## Format statistics
+## Statistics of interest
 
 The set of summary statistics can be combined and the format customized via the `stats` 
 parameter. 
@@ -229,40 +229,7 @@ This parameter is an list of `expression` of the statistics (columns) computed b
 If an unique statistic expression is specified, the 'Statistic' column doesn't appear 
 in the table. In case multiple statistics are specified, these are included as separated row.
 
-### User-custom set of statistics
-
-For example, the following count table is restricted to the number of subjects
-per categories:
-
-```{r stats-N}
-
-	getSummaryStatisticsTable(
-		data = dataSL,
-		var = c("RACE", "SEX"),
-		stats = list(N = expression(statN))
-	)
-
-```
-
-The summary statistics table is restricted to the median and
-range:
-
-```{r stats-meanSE}
-
-	getSummaryStatisticsTable(
-		data = dataSL,
-		var = c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL"),
-		varGeneralLab = "Parameter", statsGeneralLab = "",
-		colVar = "ACTARM",
-		stats = list(
-			`median` = expression(statMedian),
-			`(min, max)` = expression(paste0("(", statMin, ",", statMax, ")"))
-		)
-	)
-
-```
-
-### Default sets of available statistics
+### Default sets of statistics
 
 #### `getStats`
 
@@ -342,7 +309,44 @@ data(ADaMDataPelican)
 getStatsData(data = ADaMDataPelican$ADSL, var = c("SEX", "WEIGHTBL"))
 ```
 
-### By variable/group
+### Change formatting of the statistics
+
+To change the formatting of the statistics,
+the `stats` parameter should contain an expression
+of the default set of statistics (see [section](#stats-default) for numeric variable).
+
+#### For the entire table
+
+For example, the following count table is restricted to the number of subjects per categories:
+
+```{r stats-N}
+
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = c("RACE", "SEX"),
+		stats = list(N = expression(statN))
+	)
+
+```
+
+The summary statistics table is restricted to the median and range:
+
+```{r stats-meanSE}
+
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL"),
+		varGeneralLab = "Parameter", statsGeneralLab = "",
+		colVar = "ACTARM",
+		stats = list(
+			`median` = expression(statMedian),
+			`(min, max)` = expression(paste0("(", statMin, ",", statMax, ")"))
+		)
+	)
+
+```
+
+#### By variable/group
 
 The statistics can also be provided for each variable separately:
 
@@ -364,10 +368,33 @@ The statistics can also be provided for each variable separately:
 Extra statistics (not available in the default set of statistics) should 
 be specified via the `statsExtra` parameter.
 
-These statistics are then available for customization via the `stats` parameter.
+A set of extra utility functions to compute common extra statistics are 
+also available in the package:
 
-For example, the Coefficient of Variation (as a percentage) is computed for the
-height.
+* coefficient of variation with the `cv` function
+* geometric mean with the `geomMean` function
+* geometric standard deviation with the `geomSD` function
+* geometric coefficient of variation with the `geomCV` function
+
+```{r statsUtilityFct}
+
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = "HEIGHT",
+		# specify extra stats to compute
+		statsExtra = list(
+			statCV = cv,
+			statGeomMean = geomMean,
+			statGeomSD = geomSD,
+			statsGeomCV = geomCV
+		)
+	)
+
+```
+
+Full customized statistics can also be provided.
+For example, if you would like to specify your own formula
+for the coefficient of variation:
 
 ```{r statsExtra}
 
@@ -377,7 +404,13 @@ height.
 		var = "HEIGHT",
 		statsExtra = list(statCVPerc = function(x) sd(x)/mean(x)*100)
 	)
-	
+
+```
+
+These statistics are then available for customization via the `stats` parameter.
+
+```{r statsExtra-stats}
+
 	# format the statistics with the 'stats' parameter
 	getSummaryStatisticsTable(
 		data = dataSL,

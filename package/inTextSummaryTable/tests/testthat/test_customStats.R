@@ -1,9 +1,44 @@
 context("Test 'getStats'")
 
-test_that("'getStats' function returns correct statistics", {
+set.seed(123)
+
+test_that("Compute SE", {
+	
+	x <- rnorm(10)		
+	expect_equal(se(x = x), sd(x)/sqrt(length(x)))
+	expect_equal(se(x = c(x, NA), na.rm = FALSE), NA_real_)
+	expect_equal(se(x = c(x, NA), na.rm = TRUE), se(x = x, na.rm = TRUE))
 			
-			expect_silent(getStats("n (%)"))
-			expect_length(getStats("n (%)"), 1)
+})
+
+test_that("Compute geometric mean", {
+			
+	x <- rbinom(10, size = 20, prob = 0.5)
+	expect_equal(geomMean(x = x), exp(mean(log(x))))
+	expect_equal(geomMean(x = c(x, NA), na.rm = FALSE), NA_real_)
+	expect_equal(geomMean(x = c(x, NA), na.rm = TRUE), geomMean(x = x))
+	
+	expect_equal(geomMean(c(-3, -4)), NA_real_)
+			
+})
+
+test_that("Compute geometric standard deviation", {
+			
+	x <- rbinom(10, size = 20, prob = 0.5)
+	expect_equal(geomSD(x = x), exp(sd(log(x))))
+	
+	expect_equal(geomSD(x = c(x, NA), na.rm = FALSE), NA_real_)
+	expect_equal(geomSD(x = c(x, NA), na.rm = TRUE), geomSD(x = x))
+	expect_equal(geomSD(c(-3, -4)), NA_real_)
+			
+})
+
+test_that("Get statistics with 'getStats'", {
+			
+	statsNPerc <- getStats("n (%)")
+	expect_is(stats, "list")
+	expect_length(stats, 1)
+	expect_named(stats)
 			
 			expect_output(str(getStats(type = "summary")), "List of 9")
 			
