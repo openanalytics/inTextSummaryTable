@@ -5,6 +5,7 @@
   o roundCustomText: remove fix if digits is NA
   o updates for glpgUtilityFct 2.0.0
   o internal functions: convertVarFlag
+  o fix error colVar -> colVarTotal in dataTotal
 2.16.0
   o change imports of color palette from 'glpgUtilityFct' to 'glpgStyle'
   o change GLPG flextable from glpgStyle to glpgUtilityFct
