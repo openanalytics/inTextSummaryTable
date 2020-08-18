@@ -286,9 +286,9 @@ computeSummaryStatisticsTable <- function(
 		varTotalInclude <- varIncludeTotal
 	}
 	
-	if(!is.null(dataTotal) && !all(colVar %in% colnames(dataTotal)))
-		stop("The variable(s) specified in 'colVar': ",
-				toString(paste0("'", colVar, "'")), 
+	if(!is.null(dataTotal) && !all(colVarTotal %in% colnames(dataTotal)))
+		stop("The variable(s) specified in 'colVarTotal': ",
+				toString(paste0("'", colVarTotal, "'")), 
 				" are not available in 'dataTotal'.")
 	
 	# in case the variable should be in multiple columns, 'colVar' might include: 'variable'
