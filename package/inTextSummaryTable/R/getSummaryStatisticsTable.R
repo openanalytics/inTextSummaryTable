@@ -68,7 +68,7 @@ getSummaryStatisticsTable <- function(
 	title = NULL, footer = NULL,
 	file = NULL,
 	outputType = "flextable",
-	statsLayout = ifelse(outputType == "flextable", "row", "col"),
+	statsLayout = ifelse("DT" %in% outputType, "col", "row"),
 	style = "report", 
 	colorTable = getColorTable(style = style),
 	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),

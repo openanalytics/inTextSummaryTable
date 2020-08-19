@@ -35,6 +35,7 @@
 #' @author Laure Cougnaud
 #' @importFrom utils head
 #' @importFrom glpgUtilityFct toDTGLPG
+#' @importFrom tools file_path_sans_ext file_ext
 #' @export
 exportSummaryStatisticsTableToDT <- function(
 	summaryTable, 
@@ -48,6 +49,7 @@ exportSummaryStatisticsTableToDT <- function(
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
 	pageDim = NULL,
 	labelVars = NULL,
+	file = NULL,
 	...){
 
 	statsLayout <- match.arg(statsLayout, choices = c("row", "col", "rowInSepCol"))
@@ -59,11 +61,16 @@ exportSummaryStatisticsTableToDT <- function(
 			summaryTableI <- summaryTable[[i]]
 			inputParamsBy <- inputParams
 			inputParamsBy$summaryTable <- summaryTableI
-			inputParamsBy$title <- if(length(title) > 1)
-				inputParams$title[i]	else	c(
+			inputParamsBy$title <- if(length(title) > 1){
+				inputParams$title[i]	
+			}else{c(
 					inputParams$title, 
 					strsplit(names(summaryTable)[i], split = "\n")[[1]]
 				)
+			}
+			inputParamsBy$file <- if(!is.null(file)){
+				paste0(file_path_sans_ext(file), "_", i, file_ext(file))
+			}
 			do.call(exportSummaryStatisticsTableToDT, inputParamsBy)		
 		}, simplify = FALSE)	
 		if(!is.null(names(summaryTable)))
@@ -160,7 +167,8 @@ exportSummaryStatisticsTableToDT <- function(
 			rowGroupVar = rowGroupVar,
 			caption = title,
 			escape = escape,
-			barVar = barVar
+			barVar = barVar,
+			file = file
 		),
 		if(!is.null(pageLength))	list(pageLength = pageLength),
 		if(length(expandIdx) > 0)	list(expandIdx = expandIdx),

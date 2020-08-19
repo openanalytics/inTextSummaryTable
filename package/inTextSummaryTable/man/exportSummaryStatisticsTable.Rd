@@ -19,7 +19,8 @@ exportSummaryStatisticsTable(
   colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
   colHeaderTotalInclude = TRUE,
   statsVar = getAttribute(summaryTable, "statsVar"),
-  statsLayout = ifelse(outputType == "flextable", "row", "col"),
+  statsLayout = getAttribute(summaryTable, "statsLayout", default = ifelse("DT" \%in\%
+    outputType, "col", "row")),
   statsValueLab = "StatisticValue",
   statsLabInclude = NULL,
   emptyValue = "-",
@@ -126,8 +127,24 @@ See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}
 
-\item{file}{String with path of the file where the table should be exported.
-If NULL, the summary table is not exported but only returned as output.}
+\item{file}{(Optional) Filename to which to which the table should be exported, 
+either:
+\itemize{
+\item{string (of length 1). In this case, depending on the
+file extension, the following is exported: }{
+\itemize{
+\item{'txt': summary table in long format ('data.frame-base' \code{outputType})}
+\item{'docx': summary table in final format is exported ('flextable' \code{outputType})}
+\item{'html': interactive summary table is exported ('DT' \code{outputType})}
+}}
+\item{named character vector in case of multiple exports.
+The names should correspond to the options in \code{outputType}:}{
+\itemize{
+\item{for 'data.frame-base' and 'data.frame': }{filename with 'txt' extension}
+\item{for 'flextable': }{filename with 'docx' extension}
+\item{for 'DT': }{filename with 'html' extension}
+}}
+}}
 
 \item{landscape}{Logical, if TRUE the table is presented in landscape
 format. \cr

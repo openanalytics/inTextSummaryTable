@@ -19,6 +19,7 @@ exportSummaryStatisticsTableToDT(
   barVar = NULL,
   pageDim = NULL,
   labelVars = NULL,
+  file = NULL,
   ...
 )
 }
@@ -78,6 +79,9 @@ the height is used (e.g. \code{c(NA, 4)})}
 
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}
+
+\item{file}{String with path of the file where the table should be exported.
+If NULL, the summary table is not exported but only returned as output.}
 
 \item{...}{Extra parameters passed to the 
 \code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}

@@ -33,6 +33,24 @@
 #' the \code{rowVar} variable(s)
 #' }
 #' }
+#' @param file (Optional) Filename to which to which the table should be exported, 
+#' either:
+#' \itemize{
+#' \item{string (of length 1). In this case, depending on the
+#' file extension, the following is exported: }{
+#' \itemize{
+#' \item{'txt': summary table in long format ('data.frame-base' \code{outputType})}
+#' \item{'docx': summary table in final format is exported ('flextable' \code{outputType})}
+#' \item{'html': interactive summary table is exported ('DT' \code{outputType})}
+#' }}
+#' \item{named character vector in case of multiple exports.
+#' The names should correspond to the options in \code{outputType}:}{
+#' \itemize{
+#' \item{for 'data.frame-base' and 'data.frame': }{filename with 'txt' extension}
+#' \item{for 'flextable': }{filename with 'docx' extension}
+#' \item{for 'DT': }{filename with 'html' extension}
+#' }}
+#' }
 #' @inheritParams formatSummaryStatisticsTable
 #' @inheritParams exportSummaryStatisticsTableToFlextable
 #' @inheritParams exportSummaryStatisticsTableToDT
@@ -71,7 +89,10 @@ exportSummaryStatisticsTable <- function(
 	colHeaderTotalInclude = TRUE,
 	# stats
 	statsVar = getAttribute(summaryTable, "statsVar"),
-	statsLayout = ifelse(outputType == "flextable", "row", "col"),
+	statsLayout = getAttribute(
+		summaryTable, "statsLayout", 
+		default = ifelse("DT" %in% outputType, "col", "row")
+	),
 	statsValueLab = "StatisticValue",
 	statsLabInclude = NULL,
 	emptyValue = "-",
@@ -93,9 +114,29 @@ exportSummaryStatisticsTable <- function(
 	...){
 
 	outputType  <- match.arg(outputType, 
-		choices = c("flextable", "DT", "data.frame", "data.frame-base")
+		choices = c("flextable", "DT", "data.frame", "data.frame-base"),
+		several.ok = TRUE
 	)
 	
+	# check if table should be exported for a specified output type
+	getFileForOutputType <- function(outputType, fileExt = NULL){
+		fileOutputType <- if(is.null(names(file)) & !is.null(fileExt)){
+			idxFile <- which(file_ext(file) == fileExt)
+			if(length(idxFile) > 0){
+				file[idxFile[1]]
+			}
+		}else	if(!is.null(names(file)) & outputType %in% names(file)){
+			file[outputType]
+		}
+		return(fileOutputType)
+	}
+	
+	# export input summary table (if required)
+	summaryTableFile <- getFileForOutputType("data.frame-base", fileExt = "txt")
+	if(!is.null(summaryTableFile))
+		writeTable(summaryTable, file = summaryTableFile)
+	
+	# convert to long format
 	summaryTableLong <- formatSummaryStatisticsTable(
 		summaryTable,
 		# row
@@ -111,8 +152,13 @@ exportSummaryStatisticsTable <- function(
 		statsValueLab = statsValueLab,
 		emptyValue = emptyValue
 	)
+	# export summary table in long format (if required)
+	summaryTableLongFile <- getFileForOutputType("data.frame")
+	if(!is.null(summaryTableLongFile))
+		writeTable(summaryTableLong, file = summaryTableLongFile)
 	
-	createFt <- "flextable" %in% outputType | (!is.null(file) && file_ext(file) == "docx")
+	summaryTableFtFile <- getFileForOutputType("flextable", fileExt = "docx")
+	createFt <- "flextable" %in% outputType | !is.null(summaryTableFtFile)
 	if(createFt){
 		
 		# create flextable only with header to extract dimensions header
@@ -133,7 +179,7 @@ exportSummaryStatisticsTable <- function(
 			landscape = landscape, margin = margin, rowPadBase = rowPadBase,
 			title = title, footer = footer,
 			style = style, fontsize = fontsize,
-			file = file,
+			file = summaryTableFtFile,
 			fontname = fontname,
 			colorTable = colorTable,
 			pageDim = pageDim,
@@ -144,7 +190,9 @@ exportSummaryStatisticsTable <- function(
 		
 	}
 	
-	if("DT" %in% outputType){
+	summaryTableDTFile <- getFileForOutputType("DT", fileExt = "html")
+	createDT <- "DT" %in% outputType | !is.null(summaryTableDTFile)
+	if(createDT){
 		
 		summaryTableDT <- exportSummaryStatisticsTableToDT(
 			summaryTable = summaryTableLong,
@@ -158,6 +206,7 @@ exportSummaryStatisticsTable <- function(
 			barVar = barVar,
 			pageDim = pageDim,
 			title = title,
+			file = summaryTableDTFile,
 			labelVars = labelVars,
 			...
 		)

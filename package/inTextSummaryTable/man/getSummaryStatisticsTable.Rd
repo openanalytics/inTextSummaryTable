@@ -61,7 +61,7 @@ getSummaryStatisticsTable(
   footer = NULL,
   file = NULL,
   outputType = "flextable",
-  statsLayout = ifelse(outputType == "flextable", "row", "col"),
+  statsLayout = ifelse("DT" \%in\% outputType, "col", "row"),
   style = "report",
   colorTable = getColorTable(style = style),
   byVar = NULL,
@@ -371,8 +371,24 @@ If vector > 1, specified for each element of \code{byVar} (in order of the level
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
 
-\item{file}{String with path of the file where the table should be exported.
-If NULL, the summary table is not exported but only returned as output.}
+\item{file}{(Optional) Filename to which to which the table should be exported, 
+either:
+\itemize{
+\item{string (of length 1). In this case, depending on the
+file extension, the following is exported: }{
+\itemize{
+\item{'txt': summary table in long format ('data.frame-base' \code{outputType})}
+\item{'docx': summary table in final format is exported ('flextable' \code{outputType})}
+\item{'html': interactive summary table is exported ('DT' \code{outputType})}
+}}
+\item{named character vector in case of multiple exports.
+The names should correspond to the options in \code{outputType}:}{
+\itemize{
+\item{for 'data.frame-base' and 'data.frame': }{filename with 'txt' extension}
+\item{for 'flextable': }{filename with 'docx' extension}
+\item{for 'DT': }{filename with 'html' extension}
+}}
+}}
 
 \item{outputType}{String with output type:
 \itemize{
