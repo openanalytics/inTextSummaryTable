@@ -1689,11 +1689,69 @@ A `rmarkdown` chunk can contains only one `flextable` object.
 To include a list of `flextable` in a `rmarkdown` document, 
 the function `knitPrintListObjects` of the `glpgUtilityFct` package can be used.
 
-#### Export table to a Word file
+#### Export table to a separated file
 
-The table is **exported to a Word document** (_docx_) by specifying a file name
-in the **`file`** parameter.
-A summary table is **shared with medical writers** via this format.
+The table can be exported to a separated file by specifying a file name in
+the **`file`** parameter. 
+
+If the format is:
+
+* _txt_: the raw base table is exported to a text file.
+This format can be used e.g. to QC with TLFs.
+* _docx_: the formatted table is exported to a Word document.
+Such format is typically of interest to share the tables to the medical
+writers, to be imported directly into a SAP (if `style = 'report'`).
+* _html_: an interactive table is exported to the specified html file
+
+```{r file}
+
+	# export table to a Word document
+	summaryTableFt <- getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars,
+		file = file.path("tables_CSR", "summaryTable-AEs.docx")
+	)
+	
+	# export interactive table to a html document
+	summaryTableFt <- getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars,
+		file = file.path("tables_CSR", "summaryTable-AEs.html")
+	)
+	
+	# export table in raw format to a text file
+	summaryTableFt <- getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars,
+		file = file.path("tables_CSR", "summaryTable-AEs.txt")
+	)
+	
+	# export to multiple formats at once
+	summaryTableFt <- getSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars,
+		file = file.path("tables_CSR",
+			c("summaryTable.txt", "summaryTable.docx", "summaryTable.html")
+		)
+	)
+
+```
 
 #### Report or presentation
 

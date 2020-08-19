@@ -198,3 +198,27 @@ checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
 	return(varLabInclude)
 	
 }
+
+#' Custom function to write table to a text file
+#' 
+#' This function is mainly a wrapper on \code{\link[utils]{write.table}},
+#' with the specific options:
+#' \itemize{
+#' \item{no rownames}
+#' \item{no quoting}
+#' \item{tab separator}
+#' }
+#' @param x Data.frame to export to the table.
+#' @param file String with text file to export to.
+#' @param ... Any parameters passed to the \code{\link[utils]{write.table}} function.
+#' @return No returned value, the object \code{x} is exported to the specified \code{file}.
+#' @importFrom utils write.table
+#' @importFrom tools file_ext
+#' @author Laure Cougnaud
+writeTable <- function(x, file, ...){
+	if(length(file) > 1)
+		stop("'file' should be of length 1.")
+	if(file_ext(file) != "txt")
+		stop("'file' should be of 'txt' extension.")
+	write.table(x, file, quote = FALSE, sep = "\t", row.names = FALSE, ...)
+}
