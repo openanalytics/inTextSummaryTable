@@ -1155,7 +1155,9 @@ computeSummaryStatistics <- function(data,
 
 	# wrapper to add extra statistics
 	statsExtraFct <- function(res, statsExtra, val = NULL, data){
-		if(!is.null(statsExtra)){
+		# Note: error with: 'cbind' if res is empty
+		# so only add stats if some results are available
+		if(!is.null(statsExtra) & nrow(res) > 0){
 			statsExtraCommon <- intersect(names(statsExtra), colnames(res))
 			if(length(statsExtraCommon) > 0)
 				stop("Please specify names for 'statsExtra' different than default statistics.")
@@ -1167,6 +1169,7 @@ computeSummaryStatistics <- function(data,
 					stop("No parameter 'x' or 'data' for the 'statsExtra' function.")
 				)
 			}, simplify = FALSE)	
+			
 			res <- cbind(res, resExtra, stringsAsFactors = TRUE)
 		}
 		return(res)
@@ -1241,7 +1244,7 @@ computeSummaryStatistics <- function(data,
 				}else{
 					res <- data.frame(statN = 0, statm = 0)
 				}
-				statsExtraFct(
+				res <- statsExtraFct(
 					res = res, statsExtra = statsExtra,
 					data = data
 				)
