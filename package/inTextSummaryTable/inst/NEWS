@@ -7,6 +7,7 @@
   o internal functions: convertVarFlag
   o fix error colVar -> colVarTotal in dataTotal
   o extend 'file' parameter to export to all outputType
+  o computeSummaryStatistics: fix when no cat group is empty and statsExtra is specified
 2.16.0
   o change imports of color palette from 'glpgUtilityFct' to 'glpgStyle'
   o change GLPG flextable from glpgStyle to glpgUtilityFct
