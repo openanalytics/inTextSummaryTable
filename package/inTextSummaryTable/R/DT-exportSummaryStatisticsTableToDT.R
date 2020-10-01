@@ -88,6 +88,7 @@ exportSummaryStatisticsTableToDT <- function(
 	rowVarInRow <- setdiff(rowVar, rowVarInSepCol)
 	if(statsLayout == "row" & "Statistic" %in% colnames(summaryTable))
 		rowVarInRow <- c(rowVarInRow, "Statistic")
+	# consider all row variables, excepted the last one as row group
 	rowGroupVar <- head(rowVarInRow, -1)
 	if(length(rowGroupVar) == 0)	rowGroupVar <- NULL
 	if(length(rowGroupVar) > 1){
@@ -96,6 +97,18 @@ exportSummaryStatisticsTableToDT <- function(
 			", so the rows are grouped by ", rowGroupVar, " only."))
 	}
 	
+	## extract column(s) containing statistics (for expand or escape)
+
+	# if no colVar is specified, results are stored in the column: statsValueLab
+	colStat <- colnames(summaryTable)[match(statsValueLab, 
+		sub("(.+)(\n\\(N=\\d{1,}\\))", "\\1", colnames(summaryTable)))
+	]
+	# otherwise we should extract the groups of colVar
+	if(is.na(colStat)){
+		colStat <- setdiff(colnames(summaryTable), c(rowVar, statsVar, "Statistic"))
+	}
+		
+	## format expandVar
 	expandIdx <- expandVarDT <- NULL
 	if(!is.null(expandVar)){
 		
@@ -106,20 +119,31 @@ exportSummaryStatisticsTableToDT <- function(
 		# extract indices if statistics are in rows
 		expandVarStats <- intersect(statsVar, expandVar)
 		if(length(expandVarStats) > 0){
-			if(statsLayout == "row" & "Statistic" %in% colnames(summaryTable)){
+			specifyExpand <- 
+				statsLayout %in% c("row", "rowInSepCol") & 
+				"Statistic" %in% colnames(summaryTable)
+		
+			if(specifyExpand){
+			
 				idxRow <- which(summaryTable$Statistic %in% expandVarStats)
-				colsInit <- sub("(.+)(\n\\(N=\\d{1,}\\))", "\\1", colnames(summaryTable))
-				idxCol <- which(colsInit == statsValueLab)
-				if(length(idxCol) != 1)	stop("Issue with extraction statistic value column during the formatting 'expandVar'.")
-				expandIdx <- cbind(row = idxRow, col = idxCol)
+				idxColStat <- which(colnames(summaryTable) %in% colStat)
+				if(length(idxColStat) == 0)	
+					stop("Issue with extraction statistic value column during the formatting 'expandVar'.")
+				expandIdx <- as.matrix(expand.grid(idxRow, idxColStat))
+				colnames(expandIdx) <- c("row", "col")
 			}
 		}
 		
 	}
 	
+	## format escape
 	escape <- if(!is.null(noEscapeVar)){
 		
 		if(is.character(noEscapeVar)){
+			
+			if(statsLayout %in% c("row", "rowInSepCol") && noEscapeVar %in% statsVar){
+				noEscapeVar <- colStat
+			}
 		
 			escape <- which(!colnames(summaryTable) %in% noEscapeVar)
 			if(length(escape) == 0)	{
