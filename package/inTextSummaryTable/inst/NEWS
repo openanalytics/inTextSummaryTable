@@ -1,5 +1,6 @@
 2.18.0
   o exportSummaryStatisticsTableToDT: extend for expandVar/rowVarInSepCol/colVar
+  o subjectProfileSummaryPlot: xAxisExpand
 2.17.0
   o improve doc
   o include unit tests

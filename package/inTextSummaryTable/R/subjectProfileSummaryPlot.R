@@ -99,6 +99,7 @@
 #' @export
 subjectProfileSummaryPlot <- function(data,
 	xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars), 
+	xAxisExpand = waiver(),
 	xGap = NULL, xGapDiffNew = NULL,
 	meanVar = "statMean", seVar = if("statSE" %in% colnames(data))	"statSE", 
 	minVar = NULL, maxVar = NULL,
@@ -512,7 +513,8 @@ subjectProfileSummaryPlot <- function(data,
 			list(
 				breaks = unname(xAxisLabs), 
 				limits = range(xAxisLabs) + c(-1, 1)*scaleXLim, 
-				labels = names(xAxisLabs)	
+				labels = names(xAxisLabs),
+				expand = xAxisExpand
 			),
 			if(!is.null(xTrans))	list(trans = xTrans)
 		)

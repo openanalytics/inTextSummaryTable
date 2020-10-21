@@ -8,6 +8,7 @@ subjectProfileSummaryPlot(
   data,
   xVar = NULL,
   xLab = getLabelVar(xVar, labelVars = labelVars),
+  xAxisExpand = waiver(),
   xGap = NULL,
   xGapDiffNew = NULL,
   meanVar = "statMean",
