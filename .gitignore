@@ -16,6 +16,7 @@ data/
 *.md
 *.zip
 *.txt
+*.xlsx
 testCreationPowerPoint.R
 *.pydevproject
 *.RData
