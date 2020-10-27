@@ -49,6 +49,9 @@
 #' @param sizeLine Size for the line linking means and error bars.
 #' @param sizeLabel Size for the label, only used if \code{label} is not NULL.
 #' @param xAxisLabs (optional) Named character vector with labels for the x-axis.
+#' @param xAxisExpand Object passed to the 'expand' parameter of:
+#' \code{\link[ggplot2]{scale_x_continuous}},
+#' (\code{\link[ggplot2]{waiver}} by default).
 #' @param yLim Vector of the length 2 with limits for the y-axis.
 #' @param yLimExpand Expansion constants for the limits for the y-axis.
 #' See the documentation of the \code{expand} parameter of the 
@@ -519,7 +522,14 @@ subjectProfileSummaryPlot <- function(data,
 			if(!is.null(xTrans))	list(trans = xTrans)
 		)
 		do.call(scale_x_continuous, argsScaleXCont)
-	}else	scale_x_discrete(breaks = unname(xAxisLabs), labels = names(xAxisLabs), drop = FALSE)
+	}else{
+		scale_x_discrete(
+			breaks = unname(xAxisLabs), 
+			labels = names(xAxisLabs), 
+			drop = FALSE,
+			expand = xAxisExpand
+		)
+	}
 	gg <- gg + fctScaleX
 	
 	if(!is.null(ggExtra))	gg <- gg + ggExtra
