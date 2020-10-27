@@ -68,6 +68,10 @@ e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.}
 
 \item{xLab}{String with label for the \code{xVar}.}
 
+\item{xAxisExpand}{Object passed to the 'expand' parameter of:
+\code{\link[ggplot2]{scale_x_continuous}},
+(\code{\link[ggplot2]{waiver}} by default).}
+
 \item{xGap}{(optional) Numeric vector of length 2 for which
 a gap should be created in the x-axis.
 Only available if \code{xVar} is specified and a numeric variable.
