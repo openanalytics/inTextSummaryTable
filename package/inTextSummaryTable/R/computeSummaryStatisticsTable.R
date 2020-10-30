@@ -1093,11 +1093,11 @@ computeSummaryStatisticsByRowColVar <- function(
 #' \itemize{
 #' \item{'summary': }{
 #' \itemize{
-#' \item{'statN': }{number of subjects }
+#' \item{'statN': }{number of subjects}
 #' \item{'statm': }{number of records}
 #' \item{'statMean': }{mean of \code{var}}
 #' \item{'statSD': }{standard deviation of \code{var}}
-#' \item{'statSE': }{standard error of \code{var}}
+#' \item{'statSE': }{standard error the mean of \code{var}}
 #' \item{'statMedian': }{median of \code{var}}
 #' \item{'statMin': }{minimum of \code{var}}
 #' \item{'statMax': }{maximum of \code{var}}
@@ -1105,6 +1105,7 @@ computeSummaryStatisticsByRowColVar <- function(
 #' }
 #' \item{'count': }{
 #' \itemize{
+#' \item{'variableGroup': }{factor with groups of \code{var} for which counts are reported}
 #' \item{'statN': }{number of subjects}
 #' \item{'statm': }{number of records}
 #' }
@@ -1130,6 +1131,13 @@ computeSummaryStatistics <- function(data,
 
 	type <- match.arg(type, choices = c("auto", "summaryTable", "countTable"))
 	
+	if(!is.null(var) && !var %in% colnames(data))
+		stop(paste("Variable to summarize:", shQuote(var), "is not available in data."))
+	
+	if(!subjectVar %in% colnames(data))
+		stop(paste("Subject variable:", shQuote(subjectVar), 
+			"is not available for the computation of the number of subjects."))
+	
 	if(type == "auto")
 		type <- ifelse(
 			!is.null(var) &&  var != "all" && is.numeric(data[, var]), 
@@ -1147,10 +1155,12 @@ computeSummaryStatistics <- function(data,
 		}
 	}
 	
-	if(!is.null(var) && var != "all")	
-		data <- data[!is.na(data[, var]), ]
+	if(!is.null(var) && var != "all")
+		data <- data[!is.na(data[, var]), , drop = FALSE]
 	
-	getNSubjects <- function(x)	as.integer(n_distinct(x[, subjectVar]))
+	getNSubjects <- function(x){
+		as.integer(n_distinct(x[, subjectVar]))
+	}
 	getNRecords <- function(x) nrow(x)
 
 	# wrapper to add extra statistics
