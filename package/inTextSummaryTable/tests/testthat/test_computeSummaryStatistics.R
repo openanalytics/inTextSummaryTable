@@ -91,7 +91,7 @@ test_that("total included if requested", {
 	dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = sample(10, 5))
 	statsCatWithTotal <- computeSummaryStatistics(data = dataCat, var = "x", varTotalInclude = TRUE)
 	
-	statsCat <- computeSummaryStatistics(data = dataCat, var = "x", varTotalInclude = FALSE)
+	statsCatWthtTotal <- computeSummaryStatistics(data = dataCat, var = "x", varTotalInclude = FALSE)
 	statsCatIncludeTotal <- rbind(statsCatWthtTotal, data.frame(variableGroup = "Total", statN = 4, statm = 4))
 	
 	expect_equal(object = statsCatWithTotal, expected = statsCatIncludeTotal)
