@@ -1,101 +1,81 @@
-context("Test 'computeSummaryStatisticsTable' error/warning tracking")
+context("Creation of summary statistics table")
 
-dataLB <- ADaMDataPelican$ADLB
-
-# dataset used for the computation of the total (in one of the scenario)
-dataSL <- ADaMDataPelican$ADSL
-dataSL$TRTP <- dataSL$TRT01P 
-
-dataAE <- ADaMDataPelican$ADAE
-
-## tests different error/warning tracking mechanisms
-
-# in case of a summaryTable, 'var' should be specified ...
-expect_error(
-	computeSummaryStatistics(
-		var = NULL,
-		data = subset(dataLB, PARAMCD == "ALB"),
-		type = "summaryTable"
-	)	
-)
-# ... and numeric
-expect_error(
-	computeSummaryStatistics(
-		var = "PARAM",
-		data = subset(dataLB, PARAMCD == "ALB"),
-		type = "summaryTable"
-	)
-)
-
-test_that("No different values of a continuous variable for the same subject ID", {
+test_that("summary statistics table is created with only data specified", {
 			
-	dataSLDupl <- dataSL[1, ]
-	dataSLDupl$AGE <- dataSLDupl$AGE-1
-	dataTable <- rbind(dataSLDupl, dataSL)
-	vars <- "AGE"
-	stats <- getStatsData(
-		data = dataTable,
-		type = 'all',
-		var = vars
-	)$AGE
-	expect_error(
-		summaryTable <- computeSummaryStatisticsTable(
-			data = dataTable, 
-			var = vars,
-			colVar = "TRTP",
-			stats = stats
-		),
-		pattern = "multiple records are available"
+	dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
+			
+	# no variable specified: a count table is created
+	sumNoVar <- computeSummaryStatisticsTable(dataCont)
+	expect_s3_class(sumNoVar, "data.frame")
+	expect_named(sumNoVar, c("isTotal", "statN", "statm", "statPercTotalN", "statPercN"), ignore.order = TRUE)
+	expect_equal(
+		unname(unlist(subset(sumNoVar, isTotal)[1, c("statN", "statm", "statPercTotalN", "statPercN")])),
+		c(5, 5, 5, 100)
 	)
+	expect_equal(subset(sumNoVar, isTotal)[, -1], subset(sumNoVar, !isTotal)[, -1], check.attributes = FALSE)
+			
+})
+
+test_that("summary statistics table is created with only data/continuous var specification", {
+			
+	dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
+			
+	sumTableCont <- computeSummaryStatisticsTable(data = dataCont, var = "x")
+	expect_s3_class(sumTableCont, "data.frame")
+	varsCont <- c(
+		"statN", "statm", "statMean", "statSD", "statSE", "statMedian",
+		"statMin", "statMax", "statPercTotalN", "statPercN"
+	)
+	expect_named(sumTableCont, c("isTotal", varsCont), ignore.order = TRUE)
+	expect_equal(sumTableCont$isTotal, c(FALSE, TRUE))
+
+	# stats computed via 'computeSummaryStatistics':
+	sumTableContVar <- subset(sumTableCont, !isTotal)
+	statsVar <- computeSummaryStatistics(dataCont, var = "x")
+	expect_equal(sumTableContVar[, colnames(statsVar)], statsVar)
+	
+	# extra total statistics are added
+	expect_equal(sumTableContVar$statPercTotalN, 5)
+	expect_equal(sumTableContVar$statPercN, 4/5*100)
 	
 })
 
-test_that("Filtering of duplicated records for the same subject ID for continuous variable", {
+test_that("summary statistics table is created with only data/categorical var specification", {
 			
-	treats <- unique(dataSL$TRTP)
-	if(length(treats) > 1){
-		
-		dataTreat1 <- subset(dataSL, TRTP == treats[1])
-		
-		dataDupl <- subset(dataTreat1, USUBJID == dataTreat1[1, "USUBJID"])
-		dataDupl$TRTP <- treats[2]
-		
-		dataTable <- rbind(dataDupl, dataSL)
-		
-		vars <- "AGE"
-		stats <- getStatsData(
-			data = dataTable,
-			type = 'all',
-			var = vars
-		)$AGE
-
-		expect_message(
-			summaryTableDupl <- computeSummaryStatisticsTable(
-				data = dataTable, 
-				var = vars,
-				colVar = "TRTP",
-				stats = stats,
-				colTotalInclude = TRUE
-			),
-			regexp = "duplicated values for AGE are filtered"
-		)
-
-		summaryTableInit <- computeSummaryStatisticsTable(
-			data = dataSL, 
-			var = vars,
-			colVar = "TRTP",
-			stats = stats,
-			colTotalInclude = TRUE
-		)
-		
-		expect_identical(
-			object = subset(summaryTableDupl, TRTP == "Total" & !isTotal),
-			expected = subset(summaryTableInit, TRTP == "Total" & !isTotal)
-		)
-
-	}
+	dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = seq.int(5))
+			
+	sumTableCat <- computeSummaryStatisticsTable(data = dataCat, var = "x")
+	expect_s3_class(sumTableCat, "data.frame")
+	varsCat <- c("statN", "statm", "statPercTotalN", "statPercN")
+	expect_named(sumTableCat, c("variableGroup", "isTotal", varsCat), ignore.order = TRUE)
+	expect_equal(sumTableCat$isTotal, c(FALSE, TRUE))
+			
+	# stats computed via 'computeSummaryStatistics':
+	sumTableCatVar <- subset(sumTableCat, !isTotal)
+	statsVar <- computeSummaryStatistics(dataCat, var = "x")
+	expect_equal(sumTableCatVar[, colnames(statsVar)], statsVar)
+			
+	# extra total statistics are added
+	expect_equal(sumTableCatVar$statPercTotalN, c(5, 5))
+	expect_equal(sumTableCatVar$statPercN, with(sumTableCatVar, statN/statPercTotalN*100))
 	
 })
+
+#TODO:
+#test_that("summary statistics table is created with row variables specification", {
+#	
+#	data <- data.frame(
+#		parent = c("A", "A", "A", "A", "B", "B"), 
+#		child = c("a", "a", "a", "b", "c", "c"),
+#		x = rnorm(n = 6),
+#		USUBJID = seq.int(6)
+#	)
+#	sumTableRowVar <- computeSummaryStatisticsTable(data, rowVar = c("parent", "child"), var = "x")
+#	
+#	expect_named()
+#	
+#})
+
 
 test_that("More columns in dataTotalRow than in data to summarize", {
 		
