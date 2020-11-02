@@ -1,6 +1,8 @@
 library(testthat)
 library(inTextSummaryTable)
 
+# Note: tests are run in alphabetical order of the scripts in the R folder of the package
+
 # load data required for tests in the package
 library(glpgUtilityFct)
 data(ADaMDataPelican)

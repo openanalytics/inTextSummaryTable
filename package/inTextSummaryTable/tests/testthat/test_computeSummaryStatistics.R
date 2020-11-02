@@ -9,12 +9,23 @@ test_that("stats for continuous variable (including missing) is correctly comput
 	
 	expect_s3_class(statsCont, "data.frame")
 	
+	statsContNameInt <- c("statN", "statm")
+	statsContNameNum <- c("statMean", "statSD", "statSE", "statMedian", "statMin", "statMax")
 	expect_named(
 		object = statsCont, 
-		expected = c("statN", "statm", "statMean", "statSD", "statSE", "statMedian", "statMin", "statMax"),
+		expected = c(statsContNameInt, statsContNameNum),
 		ignore.order = TRUE
 	)
 	
+	# check variable type
+	for(col in statsContNameInt){
+		expect_type(statsCont[, !!col], type = "integer")
+	}
+	for(col in statsContNameNum){
+		expect_type(statsCont[, !!col], type = "double")
+	}
+	
+	# check if computations are correct
 	expect_equal(statsCont[, "statN"], 4)
 	expect_equal(statsCont[, "statm"], 4)	
 	expect_equal(statsCont[, "statMean"], 5)
