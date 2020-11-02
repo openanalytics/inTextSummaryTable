@@ -1,6 +1,6 @@
 2.19.0
   o add unit tests
-  o computeSummaryStatistics: fix for data with one column
+  o computeSummaryStatistics: fix for data with one column, extra error msg
 2.18.0
   o exportSummaryStatisticsTableToDT: extend for expandVar/rowVarInSepCol/colVar
   o subjectProfileSummaryPlot: xAxisExpand
