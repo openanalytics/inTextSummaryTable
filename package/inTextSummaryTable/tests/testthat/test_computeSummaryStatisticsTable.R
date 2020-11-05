@@ -2,6 +2,16 @@ context("Creation of summary statistics table")
 
 library(plyr)
 
+test_that("No data to report", {
+      
+      data <- data.frame()
+      expect_errror(
+          computeSummaryStatisticsTable(data),
+          "No data to report."
+      )
+      
+    })
+
 test_that("summary statistics table is created with only data specified", {
       
       dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
