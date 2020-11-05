@@ -195,38 +195,45 @@ test_that("Custom set of statistics per variable", {
 
 test_that("Order of summary statistic variable is correct", {
       
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          SEX = rep(c("M", "F"), times = 3),
+          stringsAsFactors = FALSE
+      )
+      
       # If variable is a character, levels should be sorted in alphabetical order
-      dataSL$SEX <- as.character(dataSL$SEX)
-      tableCharac <- computeSummaryStatisticsTable(data = dataSL, var = "SEX")
-      expect_identical(object = levels(tableCharac$variableGroup), expected = sort(unique(dataSL$SEX)))
+      tableCharac <- computeSummaryStatisticsTable(data = data, var = "SEX")
+      expect_identical(
+          levels(tableCharac$variableGroup),
+          sort(unique(data$SEX))
+      )
       
       # If variable is a factor, levels order should be retained
-      dataSL$SEX <- factor(dataSL$SEX, levels = rev(sort(unique(dataSL$SEX))))
-      tableFactor <- computeSummaryStatisticsTable(data = dataSL, var = "SEX")
-      expect_identical(object = levels(tableFactor$variableGroup), expected = levels(dataSL$SEX))
+      data$SEX <- factor(data$SEX, levels = rev(sort(unique(data$SEX))))
+      tableFactor <- computeSummaryStatisticsTable(data = data, var = "SEX")
+      expect_identical(levels(tableFactor$variableGroup), levels(data$SEX))
       
       # even if not present for all colVar
-      dataSL$TRT01P <- factor(dataSL$TRT01P)
-      dataSL$SEX <- factor(dataSL$SEX, levels = rev(sort(unique(dataSL$SEX))))
+      data$TRT <- factor(rep(c("A", "B"), each = 3))
+      data$SEX <- factor(data$SEX, levels = rev(sort(unique(data$SEX))))
       # subset to retain:
       # only last element of SEX for first TRT01P (will be computed first)
       # the first element of SEX for the other TRT01P
       # to check that order of SEX is computed upfront grouping by TRT01P
-      dataSLSubset <- subset(dataSL, (
-                TRT01P == head(levels(dataSL$TRT01P), 1) &
-                SEX %in% tail(levels(dataSL$SEX), 1)
+      dataSubset <- subset(data, (
+                TRT == head(levels(data$TRT), 1) &
+                SEX %in% tail(levels(data$SEX), 1)
                 ) | 
-              !TRT01P == head(levels(dataSL$TRT01P), 1) &
-              !SEX %in% tail(levels(dataSL$SEX), 1)
+              !TRT == head(levels(data$TRT), 1) &
+              !SEX %in% tail(levels(data$SEX), 1)
       )
-#	with(dataSLSubset, table(TRT01P, SEX))
-      tableFactorNotComplete <- computeSummaryStatisticsTable(data = dataSLSubset, var = "SEX")
-      expect_identical(object = levels(tableFactorNotComplete$variableGroup), expected = levels(dataSLSubset$SEX))
+      tableFactorNotComplete <- computeSummaryStatisticsTable(data = dataSubset, var = "SEX")
+      expect_identical(levels(tableFactorNotComplete$variableGroup), levels(dataSubset$SEX))
       
       # even if the var is character
-      dataSLSubset$SEX <- as.character(dataSLSubset$SEX)
-      tableCharacNotComplete <- computeSummaryStatisticsTable(data = dataSLSubset, var = "SEX")
-      expect_identical(object = levels(tableCharacNotComplete$variableGroup), expected = sort(unique(dataSLSubset$SEX)))
+      dataSubset$SEX <- as.character(dataSubset$SEX)
+      tableCharacNotComplete <- computeSummaryStatisticsTable(data = dataSubset, var = "SEX")
+      expect_identical(levels(tableCharacNotComplete$variableGroup), sort(unique(dataSubset$SEX)))
       
     })
 
