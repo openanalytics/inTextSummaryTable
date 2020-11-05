@@ -12,6 +12,16 @@ test_that("No data to report", {
       
     })
 
+test_that("Parameter 'varIncludeTotal' is deprecated", {
+      
+      dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
+      expect_warning(
+          computeSummaryStatisticsTable(dataCont, varIncludeTotal = TRUE),
+          "Argument: 'varIncludeTotal' is deprecated, please use 'varTotalInclude' instead."
+      )
+      
+    })
+
 test_that("summary statistics table is created with only data specified", {
       
       dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
@@ -73,6 +83,43 @@ test_that("summary statistics table is created with only data/categorical var sp
       
     })
 
+test_that("Summary statistics is created with flagged variables", {
+      
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          x = rep(c("A", "B"), times = 3),
+          xFlag = rep(c("Y", ""), times = 3),
+          stringsAsFactors = FALSE
+      )
+      
+      expect_error(
+          computeSummaryStatisticsTable(data = data, var = "x", varFlag = "xFlag"),
+          "All flag variables in 'varFlag' should be specified in the 'var' parameter."
+      )
+      
+      res <- computeSummaryStatisticsTable(data = data, var = c("x", "xFlag"), varFlag = "xFlag")
+      expect_s3_class(res, "data.frame")
+      expect_true("variable" %in% colnames(res))
+      expect_true("variableGroup" %in% colnames(res))
+      
+    })
+
+test_that("Summary statistics with 'varIgnore' argument", {
+      
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          x = rep(c("A", "B"), times = 3),
+          xFlag = rep(c("Y", ""), times = 3),
+          stringsAsFactors = FALSE
+      )
+      res <- computeSummaryStatisticsTable(
+          data = data, var = "x", varIgnore = "A"
+      )
+      expect_s3_class(res, "data.frame")
+      expect_identical(levels(res$variableGroup), "B")
+      
+    })
+
 test_that("Summary statistics table is created with row variables specification", {
       
       data <- data.frame(
@@ -104,6 +151,55 @@ test_that("Summary statistics table is created with row variables specification"
       expect_identical(
           sumTableRowVar$statPercN[lastRowIdx],
           100
+      )
+      
+    })
+
+test_that("Summary statistics table is created with col variable specification", {
+      
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          SEX = rep(c("M", "F"), times = 3),
+          AGE = seq(20, 62, length.out = 6),
+          TRT = rep(c("A", "B"), each = 3),
+          stringsAsFactors = FALSE
+      )
+      expect_silent(
+          res <- computeSummaryStatisticsTable(
+              data,
+              var = "AGE",
+              colVar = "TRT"
+          )
+      )
+      expect_s3_class(res, "data.frame")
+      expect_identical(res$isTotal, c(FALSE, TRUE, FALSE, TRUE))
+      expect_identical(levels(res$TRT), unique(data$TRT))
+      expect_true("TRT" %in% colnames(res))      
+      
+    })
+
+test_that("Summary statistics table is created with col variable and total", {
+      
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          SEX = rep(c("M", "F"), times = 3),
+          AGE = seq(20, 62, length.out = 6),
+          TRT = rep(c("A", "B"), each = 3),
+          stringsAsFactors = FALSE
+      )
+      expect_silent(
+          res <- computeSummaryStatisticsTable(
+              data,
+              var = "AGE",
+              colVar = "TRT",
+              colTotalInclude = TRUE
+          )
+      )
+      expect_s3_class(res, "data.frame")
+      expect_true("TRT" %in% colnames(res))
+      expect_identical(
+          levels(res$TRT),
+          c(unique(data$TRT), "Total")
       )
       
     })
