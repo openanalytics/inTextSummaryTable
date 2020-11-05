@@ -48,7 +48,7 @@ test_that("summary statistics table is created with only data/categorical var sp
 	expect_s3_class(sumTableCat, "data.frame")
 	varsCat <- c("statN", "statm", "statPercTotalN", "statPercN")
 	expect_named(sumTableCat, c("variableGroup", "isTotal", varsCat), ignore.order = TRUE)
-	expect_equal(sumTableCat$isTotal, c(FALSE, TRUE))
+	expect_equal(sumTableCat$isTotal, c(FALSE, FALSE, TRUE))
 			
 	# stats computed via 'computeSummaryStatistics':
 	sumTableCatVar <- subset(sumTableCat, !isTotal)
