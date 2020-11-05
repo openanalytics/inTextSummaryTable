@@ -161,7 +161,6 @@ test_that("Summary statistics with automatic order of row variables", {
       data <- data.frame(
           USUBJID = seq.int(6),
           SEX = rep(c("M", "F"), times = 3),
-          TRT = rep(c("A", "B", "C"), each = 2),
           stringsAsFactors = FALSE
       )
       
@@ -172,13 +171,71 @@ test_that("Summary statistics with automatic order of row variables", {
               rowOrder = "auto"
           )
       )
-      
+      expect_identical(
+          levels(resAuto$SEX),
+          c("F", "M")
+      )
+           
       expect_silent(
           resAlphabet <- computeSummaryStatisticsTable(
               data,
               rowVar = "SEX",
               rowOrder = "auto"
           )
+      )
+      expect_identical(resAuto, resAlphabet)
+      
+    })
+
+test_that("Summary statistics with custom order of row variables", {
+      
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          SEX = c("F", "F", "M", "M", "M", "M"),
+          TRT = c("A", "A", "B", "B", "B", "B"),
+          stringsAsFactors = FALSE
+      )
+      # Alphabetical
+      expect_silent(
+          resAlphabet <- computeSummaryStatisticsTable(
+              data,
+              rowVar = "TRT",
+              rowOrder = "alphabetical"
+          )
+      )
+      expect_identical(
+          levels(resAlphabet$TRT),
+          c("A", "B")
+      )
+      
+      # Total
+      expect_silent(
+          resTotal <- computeSummaryStatisticsTable(
+              data,
+              rowVar = "TRT",
+              rowOrder = "total"
+          )
+      )
+      expect_identical(
+          levels(resTotal$TRT),
+          c("B", "A")
+      )
+      
+      # Function
+      expect_silent(
+          resDoubleOrder <- computeSummaryStatisticsTable(
+              data,
+              rowVar = c("SEX", "TRT"),
+              rowOrder = c(SEX = "auto", TRT = "total")
+          )
+      )      
+      expect_identical(
+          levels(resDoubleOrder$TRT),
+          c("B", "A")
+      )
+      expect_identical(
+          levels(resDoubleOrder$SEX),
+          c("F", "M")
       )
       
     })
