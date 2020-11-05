@@ -1,5 +1,7 @@
 context("Creation of summary statistics table")
 
+library(plyr)
+
 test_that("summary statistics table is created with only data specified", {
       
       dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
@@ -99,27 +101,49 @@ test_that("Summary statistics table is created with row variables specification"
 
 test_that("More columns in dataTotalRow than in data to summarize", {
       
-      treats <- unique(dataAE$TRTA)
-      dataTable <- subset(dataAE, !TRTA %in% treats[1])
-      
-      dataTotalRow <- list(AEDECOD = {
-            ddply(dataAE, c("USUBJID", "TRTA"), function(x){
-                  x[which.max(x$AESEVN), ]
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          TRT = rep(c("A", "B"), each = 3),
+          SEV = rep(c("MILD", "SEVERE"), times = 3),
+          SEVN = rep(c(1, 2), times = 3),
+          COD = rep(c("Term1", "Term2", "Term3"), times = 2)
+      )
+      dataTotalRow <- list(COD = {
+            ddply(data, c("USUBJID", "TRT"), function(x){
+                  x[which.max(x$SEVN), ]
                 })
           })
       
       expect_silent(
-          computeSummaryStatisticsTable(
-              data = dataTable,
-              colVar = "TRTA",
-              rowVar = c("AEDECOD", "AESEV"),
-              rowVarInSepCol = "AESEV",
-              rowVarTotalInclude = "AEDECOD",
+          res <- computeSummaryStatisticsTable(
+              data = data,
+              colVar = "TRT",
+              rowVar = c("COD", "SEV"),
+              rowVarTotalInclude = "COD",
               stats = getStats("n (%)"),
               dataTotalRow = dataTotalRow,
-              rowVarTotalByVar = "AESEV"
+              rowVarTotalByVar = "SEV"
           )
       )
+      expect_s3_class(res, "data.frame")
+      expect_true(inherits(res$statPercN, "numeric"))
+      expect_true(inherits(res$statN, "numeric"))
+      expect_identical(
+          levels(res$COD),
+          c(
+              "Total", "Term1",
+              "Term2", "Term3"
+          )
+      )
+      
+      idxTotalA <- max(which(res$TRT == "A"))
+      idxTotalB <- max(which(res$TRT == "B"))
+      expect_true(is.na(res$COD[idxTotalA]))
+      expect_true(res$isTotal[idxTotalA])
+      expect_identical(res$statPercN[idxTotalA], 100)
+      expect_true(is.na(res$COD[idxTotalB]))
+      expect_true(res$isTotal[idxTotalB])
+      expect_identical(res$statPercN[idxTotalB], 100)    
       
     })
 
