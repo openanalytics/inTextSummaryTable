@@ -5,7 +5,7 @@ library(plyr)
 test_that("No data to report", {
       
       data <- data.frame()
-      expect_errror(
+      expect_error(
           computeSummaryStatisticsTable(data),
           "No data to report."
       )
