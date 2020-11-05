@@ -237,30 +237,46 @@ test_that("Order of summary statistic variable is correct", {
       
     })
 
-test_that("Variable name is included when needed", {
+test_that("Label of variable name is included when needed", {
+      
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          SEX = rep(c("M", "F"), times = 3),
+          AGE = seq(20, 62, length.out = 6),
+          stringsAsFactors = FALSE
+      )
+      labels <- c(
+          USUBJID = "Subject ID",
+          SEX = "Sex",
+          AGE = "Age, years"
+      )
       
       # no variable:
-      descTableNoVar <- computeSummaryStatisticsTable(data = dataSL)
+      descTableNoVar <- computeSummaryStatisticsTable(data = data)
       expect_false("variable" %in% colnames(descTableNoVar))	
       expect_warning(
-          descTableNoVar <- computeSummaryStatisticsTable(data = dataSL, varLabInclude = TRUE),
+          descTableNoVar <- computeSummaryStatisticsTable(data = data, varLabInclude = TRUE),
           regexp = "Variable label is not included"
       )
       
       # one variable
-      descTableOneVar <- computeSummaryStatisticsTable(data = dataSL, var = "AGE")
+      descTableOneVar <- computeSummaryStatisticsTable(
+          data = data, var = "AGE"
+      )
       expect_false("variable" %in% colnames(descTableOneVar))		
       descTableOneVarWithLabel <- computeSummaryStatisticsTable(
-          data = dataSL, var = "AGE", varLabInclude = TRUE
+          data = data, var = "AGE", varLabInclude = TRUE
       )
       expect_true("variable" %in% colnames(descTableOneVarWithLabel))		
       
       # > 1 variable
-      descTableMoreOneVar <- computeSummaryStatisticsTable(data = dataSL, var = c("AGE", "SEX"))
+      descTableMoreOneVar <- computeSummaryStatisticsTable(
+          data = data, var = c("AGE", "SEX")
+      )
       expect_true("variable" %in% colnames(descTableMoreOneVar))		
       expect_warning({
             descTableMoreOneVarWithLabel <- computeSummaryStatisticsTable(
-                data = dataSL, var = c("AGE", "SEX"), varLabInclude = FALSE
+                data = data, var = c("AGE", "SEX"), varLabInclude = FALSE
             )
           },
           regexp = "Variable label is included"
