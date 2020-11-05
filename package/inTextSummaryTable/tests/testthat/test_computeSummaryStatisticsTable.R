@@ -5,10 +5,11 @@ library(plyr)
 test_that("No data to report", {
       
       data <- data.frame()
-      expect_error(
-          computeSummaryStatisticsTable(data),
+      expect_message(
+          res <- computeSummaryStatisticsTable(data),
           "No data to report."
       )
+      expect_null(res)
       
     })
 
@@ -151,6 +152,33 @@ test_that("Summary statistics table is created with row variables specification"
       expect_identical(
           sumTableRowVar$statPercN[lastRowIdx],
           100
+      )
+      
+    })
+
+test_that("Summary statistics with automatic order of row variables", {
+      
+      data <- data.frame(
+          USUBJID = seq.int(6),
+          SEX = rep(c("M", "F"), times = 3),
+          TRT = rep(c("A", "B", "C"), each = 2),
+          stringsAsFactors = FALSE
+      )
+      
+      expect_silent(
+          resAuto <- computeSummaryStatisticsTable(
+              data,
+              rowVar = "SEX",
+              rowOrder = "auto"
+          )
+      )
+      
+      expect_silent(
+          resAlphabet <- computeSummaryStatisticsTable(
+              data,
+              rowVar = "SEX",
+              rowOrder = "auto"
+          )
       )
       
     })
