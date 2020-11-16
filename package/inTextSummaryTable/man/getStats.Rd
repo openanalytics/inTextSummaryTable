@@ -22,6 +22,10 @@ getStats(
 \item{'n': }{number of subjects}
 \item{'m': }{number of records}
 \item{'\%': }{percentage of subjects}
+\item{'\%m': }{percentage of records.
+Note: this is only available if \code{statsPerc} is set to 'statm'
+in \code{\link{getSummaryStatisticsTable}} or \code{\link{computeSummaryStatisticsTable}}.
+}
 \item{'Mean' (only for continuous variable): }{mean}
 \item{'Median' (only for continuous variable): }{median}
 \item{'SE' (only for continuous variable): }{standard error}
@@ -36,8 +40,12 @@ n, Mean, SD, SE, Median, Min, Max, \%, m}
  n, Mean, SD, SE, Median, Min, Max}
 \item{'count-default': }{default set of statistics for a categorical variable:
  n, \%}
-\item{'n (\%)': }{number of subjects (percentage)}
+\item{'n (\%)': }{number of subjects (and associated percentage)}
 \item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
+\item{'m (\%)': }{number of records (and associated percentage).
+Note: this is only available if \code{statsPerc} is set to 'statm'
+in \code{\link{getSummaryStatisticsTable}} or \code{\link{computeSummaryStatisticsTable}}.
+}
 \item{'median (range)': }{median (minimum, maximum)}
 \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 \item{'mean (se)': }{mean and standard error}
@@ -81,6 +89,9 @@ getStats("count")
 getStats("n (\%)")
 getStats("n")
 getStats("\%")
+getStats("m")
+getStats("\%m")
+getStats("m (\%)")
 # for continuous variable:
 getStats("summary")
 getStats("mean (se)")

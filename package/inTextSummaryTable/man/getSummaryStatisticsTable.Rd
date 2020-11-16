@@ -43,6 +43,7 @@ getSummaryStatisticsTable(
   stats = NULL,
   statsExtra = NULL,
   statsVarBy = NULL,
+  statsPerc = c("statN", "statm"),
   statsGeneralLab = "Statistic",
   statsValueLab = "StatisticValue",
   statsLabInclude = NULL,
@@ -244,9 +245,9 @@ see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
 }}
 \item{Named list of expressions or call objects of summary statistics of interest: }{
 The names are reported in the header.
-The following variables are recognized, if the variable is: 
+The following \strong{'base statistical variables'} are recognized, depending if the variable is: 
 \itemize{
-\item{continuous (or \code{type} is 'summaryTable': }{
+\item{continuous (or \code{type} is 'summaryTable'): }{
 \itemize{
 \item{'statN': }{number of subjects}
 \item{'statMean': }{mean of \code{var}}
@@ -255,16 +256,18 @@ The following variables are recognized, if the variable is:
 \item{'statMedian': }{median of \code{var}}
 \item{'statMin': }{minimum of \code{var}}
 \item{'statMax': }{maximum of \code{var}}
-\item{'statPerc': }{percentage of subjects}
+\item{'statPercN' (or 'statPercm'): }{percentage of subjects
+(or records depending on \code{statsPerc})}
 \item{'statm': }{number of records}
 }
 If multiple and different values are available for a specific \code{var}
-and subject ID, by \code{rowVar}/\code{colVar}: an error is available.
+and subject ID, by \code{rowVar}/\code{colVar}: an error is triggered.
 }
 \item{categorical (or \code{type} is 'countTable': }{
 \itemize{
 \item{'statN': }{number of subjects}
-\item{'statPercN': }{percentage of subjects}
+\item{'statPercN' (or 'statPercm'): }{percentage of subjects
+(or records depending on \code{statsPerc})}
 \item{'statm': }{number of records}
 }
 }
@@ -273,7 +276,7 @@ If \code{stats} if of length 1, the name of the summary statistic is not include
 in the table.
 The statistics can be specified for each \code{var} (if multiple), 
 by naming each element of the list:
-list(varName1 = list(...), varName2 = list()) and/or for each element in:
+\code{list(varName1 = list(...), varName2 = list())} and/or for each element in:
 \code{statsVarBy}, by naming each sublist.
 }}}
 
@@ -287,6 +290,13 @@ and return the corresponding summary statistic.}
 which the statistics should be computed by.
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}
+
+\item{statsPerc}{String with 'base statistical variable' used to compute the 
+percentage, either: 
+\itemize{
+\item{'statN' (by default): }{the number of subjects}
+\item{'statm': }{the number of records}
+}}
 
 \item{statsGeneralLab}{String with general label for statistics, 'Statistic' by default.
 Only included if no \code{statsVar} if longer than 1.}
@@ -303,18 +313,18 @@ one statistic variables are available in the table.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{filterFct}{(optional) Function based on computed statistics of
-\code{rowVar}/code{colVar} which returns a subset of the summary table 
-(after statistics computation).
+\item{filterFct}{(optional) Function taking as input
+the summary table with computed statistics and returning a subset 
+of the summary table.\cr
 Note: The filtering function should also handle records with :
 \itemize{
-\item{\code{rowVar}/\code{codeVar} set to 'Total'/\code{colTotalLab} 
-if \code{rowVarTotalInclude}/\code{colTotalInclude} is TRUE}
 \item{total for the column header: \code{isTotal} set to TRUE,
-and \code{colVar}/\code{rowVar} is NA}
+and \code{colVar}/\code{rowVar} is NA.\cr
+For example: \code{filterFct = function(data) subset(data, isTotal & myColVar == "group 1")}
 }
-Note: the total count per category of the row variables is included
-in a row with this variable set to 'Total'.}
+\item{\code{rowVar}/\code{colVar} set to 'Total'/\code{colTotalLab} 
+if \code{rowVarTotalInclude}/\code{colTotalInclude} is specified}
+}}
 
 \item{dataTotal}{Data.frame used to extract the Total number of subject
 per column in column header ('N = [X]').
@@ -322,7 +332,7 @@ It should contain the variables specified by \code{colVarTotal}.
 If not specified, the total number of subjects is extracted from the \code{data}.}
 
 \item{dataTotalPerc}{Data.frame used to extract the Total count per column 
-for the computation of the percentage ('statPercN' statistic).
+for the computation of the percentage.
 By default same as \code{dataTotal} .
 It should contain the variables specified by \code{colVarTotalPerc}.}
 
