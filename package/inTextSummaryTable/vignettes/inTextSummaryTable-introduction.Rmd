@@ -245,7 +245,7 @@ standard number of number of decimals
 
 	## count table:
 
-	# count: N, '%' and m
+	# count: n, '%' and m
 	getSummaryStatisticsTable(
 		data = dataSL,
 		var = "SEX",
@@ -1165,6 +1165,8 @@ subject-level (`ADSL`) dataset.
 
 ### Computation of the percentage
 
+#### Dataset
+
 A different dataset used for the computation of the percentage can be specified
 via the `dataTotalPerc` (by default set as `dataTotal`).
 If the total number of subjects differ between the components of the table, 
@@ -1210,6 +1212,28 @@ with available post-dose measurements **per laboratory parameter**.
 		rowVarTotalPerc = "PARAM"
 	)
 	
+```
+
+#### Percentage of the number of records
+
+If the percentage should be computed based on the number of records, instead 
+of the number of subjects, the parameter: `statsPerc`
+should be set to `statm` (`statN` by default).
+
+For example, to extract the percentage of laboratory
+measurements by reference range and parameter:
+
+```{r statsPerc}
+getSummaryStatisticsTable(
+	data = dataLBWC,
+	colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
+	stats = getStats("m (%)"), statsPerc = "statm",
+	emptyValue = 0, rowAutoMerge = FALSE,
+	rowVarTotalPerc = "PARAM",
+	# total for column header
+	dataTotal = dataLBPostBaseline, 
+	dataTotalPerc = dataLBPostBaseline
+)
 ```
 
 ### Total number of subjects across columns {#colTotal}
