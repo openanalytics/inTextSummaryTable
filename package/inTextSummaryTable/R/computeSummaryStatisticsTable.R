@@ -46,7 +46,7 @@
 #' It should contain the variables specified by \code{colVarTotal}.
 #' If not specified, the total number of subjects is extracted from the \code{data}.
 #' @param dataTotalPerc Data.frame used to extract the Total count per column 
-#' for the computation of the percentage ('statPercN' statistic).
+#' for the computation of the percentage.
 #' By default same as \code{dataTotal} .
 #' It should contain the variables specified by \code{colVarTotalPerc}.
 #' @param dataTotalRow Data.frame used to extract the total count across all
@@ -63,18 +63,18 @@
 #' \item{the denominator of the percentages in the total column
 #' in case \code{dataTotalPerc} is not specified}
 #' }
-#' @param filterFct (optional) Function based on computed statistics of
-#' \code{rowVar}/code{colVar} which returns a subset of the summary table 
-#' (after statistics computation).
+#' @param filterFct (optional) Function taking as input
+#' the summary table with computed statistics and returning a subset 
+#' of the summary table.\cr
 #' Note: The filtering function should also handle records with :
 #' \itemize{
-#' \item{\code{rowVar}/\code{codeVar} set to 'Total'/\code{colTotalLab} 
-#' if \code{rowVarTotalInclude}/\code{colTotalInclude} is TRUE}
 #' \item{total for the column header: \code{isTotal} set to TRUE,
-#' and \code{colVar}/\code{rowVar} is NA}
+#' and \code{colVar}/\code{rowVar} is NA.\cr
+#' For example: \code{filterFct = function(data) subset(data, isTotal & myColVar == "group 1")}
 #' }
-#' Note: the total count per category of the row variables is included
-#' in a row with this variable set to 'Total'.
+#' \item{\code{rowVar}/\code{colVar} set to 'Total'/\code{colTotalLab} 
+#' if \code{rowVarTotalInclude}/\code{colTotalInclude} is specified}
+#' }
 #' @param colVarTotal String with column(s) considered to compute the total by,
 #' reported in the header of the table, by default same as \code{colVar}.
 #' Use: 'variable' to compute total by \code{var} (if multiple).
@@ -90,6 +90,12 @@
 #' should be created.
 #' @param byVarLab String with label for \code{byVar}, used to set the names
 #' of the output list of table(s).
+#' @param statsPerc String with 'base statistical variable' used to compute the 
+#' percentage, either: 
+#' \itemize{
+#' \item{'statN' (by default): }{the number of subjects}
+#' \item{'statm': }{the number of records}
+#' }
 #' @param stats (Optionally) Either:
 #' \itemize{
 #' \item{string with: }{
@@ -100,9 +106,9 @@
 #' }}
 #' \item{Named list of expressions or call objects of summary statistics of interest: }{
 #' The names are reported in the header.
-#' The following variables are recognized, if the variable is: 
+#' The following \strong{'base statistical variables'} are recognized, depending if the variable is: 
 #' \itemize{
-#' \item{continuous (or \code{type} is 'summaryTable': }{
+#' \item{continuous (or \code{type} is 'summaryTable'): }{
 #' \itemize{
 #' \item{'statN': }{number of subjects}
 #' \item{'statMean': }{mean of \code{var}}
@@ -111,16 +117,18 @@
 #' \item{'statMedian': }{median of \code{var}}
 #' \item{'statMin': }{minimum of \code{var}}
 #' \item{'statMax': }{maximum of \code{var}}
-#' \item{'statPerc': }{percentage of subjects}
+#' \item{'statPercN' (or 'statPercm'): }{percentage of subjects
+#' (or records depending on \code{statsPerc})}
 #' \item{'statm': }{number of records}
 #' }
 #' If multiple and different values are available for a specific \code{var}
-#' and subject ID, by \code{rowVar}/\code{colVar}: an error is available.
+#' and subject ID, by \code{rowVar}/\code{colVar}: an error is triggered.
 #' }
 #' \item{categorical (or \code{type} is 'countTable': }{
 #' \itemize{
 #' \item{'statN': }{number of subjects}
-#' \item{'statPercN': }{percentage of subjects}
+#' \item{'statPercN' (or 'statPercm'): }{percentage of subjects
+#' (or records depending on \code{statsPerc})}
 #' \item{'statm': }{number of records}
 #' }
 #' }
@@ -129,7 +137,7 @@
 #' in the table.
 #' The statistics can be specified for each \code{var} (if multiple), 
 #' by naming each element of the list:
-#' list(varName1 = list(...), varName2 = list()) and/or for each element in:
+#' \code{list(varName1 = list(...), varName2 = list())} and/or for each element in:
 #' \code{statsVarBy}, by naming each sublist.
 #' }}
 #' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
@@ -170,9 +178,11 @@
 #' \item{'countTable': }{
 #' \itemize{
 #' \item{'statN': }{number of subjects}
-#' \item{'statPercN': }{percentage of subjects}
-#' \item{'statPercTotalN': }{total number of subjects based on \code{dataTotalPerc},
-#' denominator of \code{statPerc}}
+#' \item{'statPercN' (or 'statPercm'): }{percentage of subjects
+#' (or records depending on \code{statsPerc})}
+#' \item{'statPercTotalN' (or 'statPercTotalm'): }{total number of 
+#' subjects (or records) based on \code{dataTotalPerc}, and used as
+#' denominator of \code{statPercN} (or 'statPercm')}
 #' \item{'statm': }{number of records}
 #' }}}
 #' }
@@ -237,6 +247,7 @@ computeSummaryStatisticsTable <- function(
 	statsVarBy = NULL,
 	statsExtra = NULL,
 	statsGeneralLab = "Statistic",
+	statsPerc = c("statN", "statm"),
 	filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
 	labelVars = NULL,
@@ -244,6 +255,8 @@ computeSummaryStatisticsTable <- function(
 ){
 	
 	inputParams <- as.list(environment())
+	
+	statsPerc <- match.arg(statsPerc)
 	
 	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
 	
@@ -649,15 +662,27 @@ computeSummaryStatisticsTable <- function(
 	)
 	
 	# compute percentages
+	statPercCols <- c(
+		total = sub("stat(.+)", "statPercTotal\\1", statsPerc),
+		perc = sub("stat(.+)", "statPerc\\1", statsPerc)
+	)
 	summaryTable <- ddply(summaryTable, c(rowVarTotalPerc, colVarTotalPerc), function(x){
 		idxTotalPerc <- which(x$isTotalPerc)
 		if(length(idxTotalPerc) > 0){
 			if(length(idxTotalPerc) != 1)
 				stop("Multiple total records for the percentage computation.")
-			statPercTotalN <- x[idxTotalPerc, "statN"]
-			res <- cbind(x, statPercTotalN = statPercTotalN, statPercN = x$statN/statPercTotalN*100)
+			statPercTotal <- x[idxTotalPerc, statsPerc]
+			dataPercTotal <- list(statPercTotal, x[, statsPerc]/statPercTotal*100)
+			names(dataPercTotal) <- c(statPercCols["total"], statPercCols["perc"])
+			res <- cbind(x, dataPercTotal)
 			res[-idxTotalPerc, ]
-		}else cbind(x, statPercTotalN = NA, statPercN = NA)
+		}else{
+			dataPercTotal <- setNames(
+				list(NA_integer_, NA_real_), 
+				statPercCols[c("total", "perc")]
+			)
+			cbind(x, dataPercTotal)
+		}
 	})
 	summaryTable$isTotalPerc <- NULL
 
