@@ -1,6 +1,7 @@
 2.19.0
   o add unit tests
   o computeSummaryStatistics: fix for data with one column, extra error msg
+  o extension to percentage for records: computeSummaryStatisticsTable: 'statsPerc'; getStats: '%m','m (%)'
 2.18.0
   o exportSummaryStatisticsTableToDT: extend for expandVar/rowVarInSepCol/colVar
   o subjectProfileSummaryPlot: xAxisExpand
