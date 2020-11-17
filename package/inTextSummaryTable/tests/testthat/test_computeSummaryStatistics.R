@@ -219,7 +219,6 @@ test_that("filtering of empty categorical variable correctly done", {
 	expect_true("C" %in% statsCatNoFilter$variableGroup)
 	expect_equal(subset(statsCatNoFilter, variableGroup == "C")$statN, 0)
 	expect_equal(subset(statsCatNoFilter, variableGroup == "C")$statm, 0)
-	expect_identical(computeSummaryStatistics(data = dataCat, var = "x"), statsCatNoFilter)
 	
 })
 
