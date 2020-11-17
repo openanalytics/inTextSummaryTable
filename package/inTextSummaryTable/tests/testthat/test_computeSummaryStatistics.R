@@ -223,6 +223,39 @@ test_that("filtering of empty categorical variable correctly done", {
 	
 })
 
+test_that("summary statistics for empty dataset with categorical variable", {
+		
+	emptyData <- do.call(
+		data.frame,
+		list(
+			x = factor(character(), levels = c("a", "b")),
+			USUBJID = character()
+		)
+	)
+	
+	# by default, nothing is returned
+	expect_equal(nrow(computeSummaryStatistics(data = emptyData, var = "x")), 0)
+	
+	# if variable should not be filtered, 0 counts are returned
+	expect_equal(
+		computeSummaryStatistics(data = emptyData, var = "x", filterEmptyVar = FALSE), 
+		data.frame(variableGroup = c("a", "b"), statN = c(0, 0), statm = c(0, 0))
+	)
+	
+	# if variable should not be filtered & total should be included, 0 counts are returned
+	expect_equal(
+		computeSummaryStatistics(data = emptyData, var = "x", filterEmptyVar = FALSE, varTotalInclude = TRUE), 
+		data.frame(variableGroup = c("a", "b", "Total"), statN = c(0, 0, 0), statm = c(0, 0, 0))
+	)
+	
+	# if only total should be included
+	expect_equal(
+		computeSummaryStatistics(data = emptyData, var = "x", varTotalInclude = TRUE), 
+		data.frame(variableGroup = factor("Total", c("a", "b", "Total")),statN = 0, statm = 0)
+	)
+			
+})
+
 test_that("check for duplicates in continuous variable correctly done", {
 			
 	dataCont <- data.frame(
@@ -258,6 +291,18 @@ test_that("check for multiple values in continuous variable correctly done", {
 		computeSummaryStatistics(data = dataCont, var = "x"),
 		"duplicated values for x"
 	)
+	
+})
+
+test_that("Summary statistics when variable is NULL or 'all' is correctly extracted", {
+			
+	data <- data.frame(USUBJID = c(NA_character_, "a", "a", "b", "c"))
+	
+	summaryTableNoVarSpec <- computeSummaryStatistics(data, var = NULL)	
+	expect_equal(summaryTableNoVarSpec, data.frame(statN = 3, statm = 5))
+			
+	summaryTableAllVar <- computeSummaryStatistics(data, var = "all")
+	expect_equal(summaryTableAllVar, summaryTableNoVarSpec)
 	
 })
 

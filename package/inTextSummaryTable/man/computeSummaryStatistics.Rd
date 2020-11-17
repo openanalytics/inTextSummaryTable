@@ -10,8 +10,7 @@ computeSummaryStatistics(
   varTotalInclude = FALSE,
   statsExtra = NULL,
   subjectVar = "USUBJID",
-  filterEmptyVar = ((type == "auto" && var != "all" && is.numeric(data[, var])) | type
-    == "summaryTable"),
+  filterEmptyVar = TRUE,
   type = "auto",
   msgLabel = NULL,
   msgVars = NULL
@@ -47,9 +46,7 @@ Criterias to consider a variable empty are:
 \item{for a categorical variable: }{all missing or **category is included in the 
 factor levels but not available in \code{data}**}
 }
-By default: an empty variable is filtered for a continuous variable
-(\code{type} is 'summaryTable' or [\code{type} is 'auto' and 'var' is a numeric variable],
-and retained (including all levels) for a categorical variable.}
+By default, an empty variable are filtered.}
 
 \item{type}{String with type of table: 
 \itemize{
