@@ -290,53 +290,37 @@ test_that("Summary statistics table is created with col variable and total", {
     })
 
 
-test_that("More columns in dataTotalRow than in data to summarize", {
+test_that("More groups in colVar in dataTotalRow than in data to summarize", {
       
-      data <- data.frame(
-          USUBJID = seq.int(6),
-          TRT = rep(c("A", "B"), each = 3),
-          SEV = rep(c("MILD", "SEVERE"), times = 3),
-          SEVN = rep(c(1, 2), times = 3),
-          COD = rep(c("Term1", "Term2", "Term3"), times = 2)
+      dataAll <- data.frame(
+          USUBJID = rep(c(1:6), each = 2),
+          TRT = rep(c("A", "B"), each = 6),
+          COD = rep(c("Term1", "Term2", "Term3"), each = 4),
+		  stringsAsFactors = FALSE
       )
-      dataTotalRow <- list(COD = {
-            ddply(data, c("USUBJID", "TRT"), function(x){
-                  x[which.max(x$SEVN), ]
-                })
-          })
+	  data <- subset(dataAll, TRT == "A")
+      dataTotalRow <- list(COD = dataAll)
       
       expect_silent(
-          res <- computeSummaryStatisticsTable(
+          summaryTable <- computeSummaryStatisticsTable(
               data = data,
               colVar = "TRT",
-              rowVar = c("COD", "SEV"),
+              rowVar = "COD",
               rowVarTotalInclude = "COD",
               stats = getStats("n (%)"),
-              dataTotalRow = dataTotalRow,
-              rowVarTotalByVar = "SEV"
+              dataTotalRow = dataTotalRow
           )
       )
-      expect_s3_class(res, "data.frame")
-      expect_true(inherits(res$statPercN, "numeric"))
-      expect_true(inherits(res$statN, "integer"))
-      expect_identical(
-          levels(res$COD),
-          c(
-              "Total", "Term1",
-              "Term2", "Term3"
-          )
-      )
+      expect_s3_class(summaryTable, "data.frame")
+      expect_identical(levels(summaryTable$TRT), c("A", "B"))
       
-      idxTotalA <- max(which(res$TRT == "A"))
-      idxTotalB <- max(which(res$TRT == "B"))
-      expect_true(is.na(res$COD[idxTotalA]))
-      expect_true(res$isTotal[idxTotalA])
-      expect_identical(res$statPercN[idxTotalA], 100)
-      expect_true(is.na(res$COD[idxTotalB]))
-      expect_true(res$isTotal[idxTotalB])
-      expect_identical(res$statPercN[idxTotalB], 100)    
-      
-    })
+	  summaryTableGroupOnlyInTotal <- subset(summaryTable, TRT == "B")
+	  expect_equal(nrow(summaryTableGroupOnlyInTotal), 1)
+	  expect_equal(as.character(summaryTableGroupOnlyInTotal$COD), "Total")
+	  expect_equal(summaryTableGroupOnlyInTotal$statN, 3)
+	  expect_equal(summaryTableGroupOnlyInTotal$statm, 6)
+	
+})
 
 test_that("Custom set of statistics per variable", {
       
