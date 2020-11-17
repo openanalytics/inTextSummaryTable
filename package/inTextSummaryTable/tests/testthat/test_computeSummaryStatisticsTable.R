@@ -318,7 +318,7 @@ test_that("More columns in dataTotalRow than in data to summarize", {
       )
       expect_s3_class(res, "data.frame")
       expect_true(inherits(res$statPercN, "numeric"))
-      expect_true(inherits(res$statN, "numeric"))
+      expect_true(inherits(res$statN, "integer"))
       expect_identical(
           levels(res$COD),
           c(
