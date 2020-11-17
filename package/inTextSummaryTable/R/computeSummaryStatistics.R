@@ -31,9 +31,7 @@
 #' \item{for a categorical variable: }{all missing or **category is included in the 
 #' factor levels but not available in \code{data}**}
 #' }
-#' By default: an empty variable is filtered for a continuous variable
-#' (\code{type} is 'summaryTable' or [\code{type} is 'auto' and 'var' is a numeric variable],
-#' and retained (including all levels) for a categorical variable.
+#' By default, an empty variable are filtered.
 #' @param varTotalInclude Logical (FALSE by default)
 #' Should the total across all categories of \code{var} 
 #' be included for the count table?
@@ -80,10 +78,7 @@ computeSummaryStatistics <- function(data,
 	var = NULL, varTotalInclude = FALSE,
 	statsExtra = NULL,
 	subjectVar = "USUBJID",
-	filterEmptyVar = (
-		(type == "auto" && var != "all" && is.numeric(data[, var])) | 
-		type == "summaryTable"
-	),
+	filterEmptyVar = TRUE,
 	type = "auto",
 	msgLabel = NULL, msgVars = NULL){
 	
@@ -119,7 +114,7 @@ computeSummaryStatistics <- function(data,
 		data <- data[!is.na(data[, var]), , drop = FALSE]
 	
 	getNSubjects <- function(x){
-		as.integer(n_distinct(x[, subjectVar]))
+		as.integer(n_distinct(x[, subjectVar], na.rm = TRUE))
 	}
 	getNRecords <- function(x) nrow(x)
 	
@@ -213,76 +208,60 @@ computeSummaryStatistics <- function(data,
 		},
 		
 		'countTable' = {
-			
-			# to avoid that ddply with empty data returns entire data.frame
-			if(nrow(data) == 0){
 				
-				if(!is.null(var)){
-					res <- data.frame()
+			if(!is.null(var) && var != "all"){
+				
+				varLevels <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
+				resList <- lapply(varLevels, function(level){
+					x <- data[which(data[, var] == level), ]	
+					# compute stats in data or if filterEmptyVar is FALSE
+					if(!(nrow(x) == 0 & filterEmptyVar)){
+						res <- setNames(
+							data.frame(level, getNSubjects(x), getNRecords(x), stringsAsFactors = FALSE),
+							c(var, "statN", "statm")
+						)
+						res <- statsExtraFct(
+							res = res, 
+							statsExtra = statsExtra,
+							data = x
+						)
+					}
+				})
+				resList <- resList[!sapply(resList, is.null)]
+				if(length(resList) > 0){
+					res <- do.call(rbind, c(resList, stringsAsFactors = FALSE))
+					res[, var] <- factor(res[, var], levels = varLevels)
+					rownames(res) <- NULL
 				}else{
-					res <- data.frame(statN = 0, statm = 0)
+					res <- data.frame()
 				}
-				res <- statsExtraFct(
-					res = res, statsExtra = statsExtra,
-					data = data
-				)
 				
 			}else{
+				res <- data.frame(statN = getNSubjects(data), statm = getNRecords(data))
+				res <- statsExtraFct(res = res, statsExtra = statsExtra, data = data)
+			}
 				
-				if(!is.null(var) && var != "all"){
-					
-					varLevels <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
-					resList <- lapply(varLevels, function(level){
-						x <- data[which(data[, var] == level), ]	
-						# compute stats in data or if filterEmptyVar is FALSE
-						if(!(nrow(x) == 0 & filterEmptyVar)){
-							res <- setNames(
-									data.frame(level, getNSubjects(x), getNRecords(x), stringsAsFactors = FALSE),
-									c(var, "statN", "statm")
-							)
-							res <- statsExtraFct(
-									res = res, statsExtra = statsExtra,
-									data = x
-							)
-						}
-					})
-					resList <- resList[!sapply(resList, is.null)]
-					if(length(resList) > 0){
-						res <- do.call(rbind, c(resList, stringsAsFactors = FALSE))
-						res[, var] <- factor(res[, var], levels = varLevels)
-						rownames(res) <- NULL
-					}else{
-						res <- data.frame()
-					}
-					
-				}else{
-					res <- data.frame(statN = getNSubjects(data), statm = getNRecords(data))
-					res <- statsExtraFct(res = res, statsExtra = statsExtra, data = data)
-				}
+			includeTotal <- varTotalInclude & 
+				(is.null(var) || var != "all")
+			if(includeTotal){
 				
-				includeTotal <- varTotalInclude & 
-					(!(filterEmptyVar & nrow(data) == 0)) & 
-					(is.null(var) || var != "all")
-				if(includeTotal){
-					
-					resTotal <- data.frame(
+				listTotal <- c(
+					setNames(list("Total"), var),
+					list(
 						statN = getNSubjects(data),
 						statm = getNRecords(data)
 					)
-					resTotal <- statsExtraFct(res = resTotal, statsExtra = statsExtra, data = data)
-					resTotal[, var] <- "Total"
-					res <- rbind.fill(res, resTotal)
-					elVar <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
-					res[, var] <- factor(res[, var], levels = c(elVar, "Total"))
-					
-				}
+				)
+				resTotal <- do.call(data.frame, listTotal)
+				resTotal <- statsExtraFct(res = resTotal, statsExtra = statsExtra, data = data)
+				res <- rbind.fill(res, resTotal)
+				elVar <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
+				res[, var] <- factor(res[, var], levels = c(elVar, "Total"))
 				
-				if(is.null(var) || var == "all"){
-					res[, ".id"] <- NULL
-				}else{
-					colnames(res)[match(var, colnames(res))] <- "variableGroup"
-				}
 			}
+			
+			if(!is.null(var) && var != "all" && var %in% colnames(res))
+				colnames(res)[match(var, colnames(res))] <- "variableGroup"
 			
 		}
 	
