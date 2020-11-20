@@ -33,8 +33,17 @@ computeSummaryStatisticsByRowColVar(
 specified in \code{var}.
 By default, extracted from the \code{labelVars}.}
 
-\item{varInclude0}{Logical, if TRUE (FALSE by default)
-include rows with no counts for the count \code{var} or \code{varFlag} variable(s).}
+\item{varInclude0}{Logical, should rows with no counts 
+for the count \code{var} or \code{varFlag} variable(s)
+be included in the table?
+Either:
+\itemize{
+\item{logical of length 1, if TRUE (FALSE by default) 
+rows with no count are included for all \code{var}
+}
+\item{a character vector containing categorical \code{var} 
+for which zero counts rows should be included}
+}}
 
 \item{varLabInclude}{Logical, if TRUE
 the name of the summary statistic variable(s) (\code{var})
