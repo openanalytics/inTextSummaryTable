@@ -65,8 +65,17 @@ are specified, you can include: 'all' in the \code{var}.}
 of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
 Only the counts for records flagged (with 'Y') are retained.}
 
-\item{varInclude0}{Logical, if TRUE (FALSE by default)
-include rows with no counts for the count \code{var} or \code{varFlag} variable(s).}
+\item{varInclude0}{Logical, should rows with no counts 
+for the count \code{var} or \code{varFlag} variable(s)
+be included in the table?
+Either:
+\itemize{
+\item{logical of length 1, if TRUE (FALSE by default) 
+rows with no count are included for all \code{var}
+}
+\item{a character vector containing categorical \code{var} 
+for which zero counts rows should be included}
+}}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
