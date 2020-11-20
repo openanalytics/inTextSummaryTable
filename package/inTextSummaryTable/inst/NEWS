@@ -5,6 +5,7 @@
   o computeSummaryStatisticsTable: fix for varFlag & [varInclude0 or varTotalInclude]
   o computeSummaryStatistics: remove missing values in subjectVar (warning if this occur when var is specified)
   o computeSummaryStatistics: simplify impl for empty data & cat var + filterEmptyVar TRUE by default for cat variable
+  o computeSummaryStatisticsTable: varInclude0 extended for subset of var
 2.18.0
   o exportSummaryStatisticsTableToDT: extend for expandVar/rowVarInSepCol/colVar
   o subjectProfileSummaryPlot: xAxisExpand

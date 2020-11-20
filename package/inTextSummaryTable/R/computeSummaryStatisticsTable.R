@@ -904,8 +904,17 @@ computeSummaryStatisticsTableTotal <- function(
 #' @param rowInclude0 Logical, if TRUE (FALSE by default),
 #' include rows with no records, based on all combinations 
 #' of the \code{rowVar} (assuming nested variable(s)).
-#' @param varInclude0 Logical, if TRUE (FALSE by default)
-#' include rows with no counts for the count \code{var} or \code{varFlag} variable(s).
+#' @param varInclude0 Logical, should rows with no counts 
+#' for the count \code{var} or \code{varFlag} variable(s)
+#' be included in the table?
+#' Either:
+#' \itemize{
+#' \item{logical of length 1, if TRUE (FALSE by default) 
+#' rows with no count are included for all \code{var}
+#' }
+#' \item{a character vector containing categorical \code{var} 
+#' for which zero counts rows should be included}
+#' }
 #' @param colInclude0 Logical, if TRUE (FALSE by default),
 #' include columns with no records, based on all combinations 
 #' of the \code{columnVar} (assuming nested variable(s)).
@@ -1028,12 +1037,15 @@ computeSummaryStatisticsByRowColVar <- function(
 				varITotalInclude <- 
 					(is.logical(varTotalInclude) && varTotalInclude) || 
 					varI %in% varTotalInclude
+				varIInclude0 <- 
+					(is.logical(varInclude0) && varInclude0) || 
+					varI %in% varInclude0
 				sumTable <- computeSummaryStatisticsCustom(
 					data = x, 
 					var = varI, 
 					type = type,
 					varTotalInclude = varITotalInclude,
-					filterEmptyVar = !varInclude0,
+					filterEmptyVar = !varIInclude0,
 					msgVars = groupVar
 				)
 				# only store the variable if more than one specified variable

@@ -135,7 +135,8 @@ To include categories which are not present in the data:
 
 * all categories to include should be specified within the levels of the `var`
 factor variable
-* the `varInclude0` should be set to `TRUE`
+* the `varInclude0` should be set to `TRUE` or to the specific variable: `var`
+(in case categories not present in the data should only be included for a subset of the variables)
 
 ```{r count-categories-empty}
 
@@ -149,6 +150,8 @@ factor variable
 	# (even if not available in the data)
 	dataSLExample$SEX <- factor("M", levels = c("F", "M"))
 	getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = TRUE)
+	# or:
+ 	getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = "SEX")
 
 ```
 
