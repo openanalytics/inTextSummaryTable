@@ -305,4 +305,12 @@ test_that("Summary statistics when variable is NULL or 'all' is correctly extrac
 	
 })
 
-	
+test_that("Missing subject IDs are reported if 'var' is specified", {
+
+	data <- data.frame(USUBJID = c(NA_character_, 1), x = 1:2)
+	expect_warning(
+		summaryTable <- computeSummaryStatistics(data = data, var = "x"), 
+		regexp = "Missing records.*are not considered for subject counts"
+	)
+			
+})
