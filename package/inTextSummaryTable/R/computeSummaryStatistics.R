@@ -110,10 +110,20 @@ computeSummaryStatistics <- function(data,
 		}
 	}
 	
-	if(!is.null(var) && var != "all")
+	isVarSpec <- (!is.null(var) && var != "all")
+	
+	if(isVarSpec)
 		data <- data[!is.na(data[, var]), , drop = FALSE]
 	
 	getNSubjects <- function(x){
+		if(isVarSpec && any(is.na(x[, subjectVar])))
+			warning(paste(
+				"Missing records (NA) in:", shQuote(subjectVar),
+				"are not considered for subject counts,",
+				"please note that this can results in discrepancies",
+				"between summary statistics of", shQuote(var),
+				"and subject counts."
+			))
 		as.integer(n_distinct(x[, subjectVar], na.rm = TRUE))
 	}
 	getNRecords <- function(x) nrow(x)
@@ -209,7 +219,7 @@ computeSummaryStatistics <- function(data,
 		
 		'countTable' = {
 				
-			if(!is.null(var) && var != "all"){
+			if(isVarSpec){
 				
 				varLevels <- if(is.factor(data[, var]))	levels(data[, var])	else	unique(data[, var])
 				resList <- lapply(varLevels, function(level){
@@ -260,7 +270,7 @@ computeSummaryStatistics <- function(data,
 				
 			}
 			
-			if(!is.null(var) && var != "all" && var %in% colnames(res))
+			if(isVarSpec && var %in% colnames(res))
 				colnames(res)[match(var, colnames(res))] <- "variableGroup"
 			
 		}
