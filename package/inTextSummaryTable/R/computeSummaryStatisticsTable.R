@@ -7,7 +7,7 @@
 #' @param varFlag Character vector, subset of \code{var} with variable(s) 
 #' of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
 #' Only the counts for records flagged (with 'Y') are retained.
-#' @param rowOrder Specify how the rows should be ordered in the table, either a:
+#' @param rowOrder Specify how the rows should be ordered in the final table, either a:
 #' \itemize{
 #' \item{String among:}{
 #' \itemize{
@@ -20,6 +20,8 @@
 #' }
 #' To specify different ordering methods for different \code{rowVar}, specify a list
 #' of such elements, named with the \code{rowVar} variable.
+#' For the table output of \code{\link{computeSummaryStatisticsTable}} (long format),
+#' this order is also reflected in the \strong{\code{levels}} of the row factor variable.
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
 #' based on total counts (in case \code{rowOrder} is 'total'),
@@ -258,8 +260,6 @@ computeSummaryStatisticsTable <- function(
 	
 	statsPerc <- match.arg(statsPerc)
 	
-	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
-	
 	if(nrow(data) == 0){
 		message("No data to report.")
 		return(invisible())
@@ -289,6 +289,8 @@ computeSummaryStatisticsTable <- function(
 		}
 	}
 	
+	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
+	
 	# get default set of statistics
 	if(is.character(stats) && length(stats) == 1)
 		stats <- getStatsData(data = data, var = var, type = stats)
@@ -299,10 +301,21 @@ computeSummaryStatisticsTable <- function(
 		varTotalInclude <- varIncludeTotal
 	}
 	
-	if(!is.null(dataTotal) && !all(colVarTotal %in% colnames(dataTotal)))
-		stop("The variable(s) specified in 'colVarTotal': ",
-				toString(paste0("'", colVarTotal, "'")), 
-				" are not available in 'dataTotal'.")
+	if(!is.null(dataTotal)){
+		colVarTotal <- checkVar(
+			var = colVarTotal, varLabel = "colVarTotal",
+			data = dataTotal, refLabel = "total dataset"
+		)
+	}
+	
+	# check var
+	var <- checkVar(var = var, varLabel = "var", data = data)
+	varFlag <- checkVar(var = varFlag, varLabel = "varFlag", varRef = var, refLabel = "var")
+	
+	# check row var parameters:
+	rowVar <- checkVar(var = rowVar, varLabel = "rowVar", data = data)
+	rowVarTotalInclude <- checkVar(var = rowVarTotalInclude, varLabel = "rowVarTotalInclude", varRef = rowVar, refLabel = "rowVar")
+	rowVarTotalInSepRow <- checkVar(var = rowVarTotalInSepRow, varLabel = "rowVarTotalInSepRow", varRef = rowVarTotalInclude, refLabel = "rowVarTotalInclude")
 	
 	# in case the variable should be in multiple columns, 'colVar' might include: 'variable'
 	colVarInit <- colVar
@@ -312,7 +325,7 @@ computeSummaryStatisticsTable <- function(
 				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
 	}
 	colVar <- setdiff(colVar, "variable")
-	if(length(colVar) == 0)	colVar <- NULL
+	colVar <- checkVar(var = colVar, varLabel = "colVar", data = data)
 
 	# Compute the column total if the rows could be asked to be ordered 
 	# based on the total category or total can be extracted within a function specified in rowOrder
@@ -341,8 +354,6 @@ computeSummaryStatisticsTable <- function(
 	
 	# for flag variable:
 	if(!is.null(varFlag)){
-		if(!all(varFlag %in% var))
-			stop("All flag variables in 'varFlag' should be specified in the 'var' parameter.")
 		# convert them to a format to only retain flagged records
 		data[, varFlag] <- colwise(convertVarFlag)(data[, varFlag, drop = FALSE])
 		# filter the 'non' flagged counts:
@@ -430,11 +441,11 @@ computeSummaryStatisticsTable <- function(
 	if(!is.null(rowVarTotalInclude)){
 		
 		# order specified variables as in rowVar
-		rowVarSubTotal <- intersect(rowVar, rowVarTotalInclude)
+		rowVarTotalInclude <- intersect(rowVar, rowVarTotalInclude)
 		
 		# compute sub-total for each specified rowVar (excepted the last one)
 		summaryTableRowSubtotal <- data.frame()
-		for(rVST in rowVarSubTotal){
+		for(rVST in rowVarTotalInclude){
 			
 			dataForSubTotal <- if(!is.null(dataTotalRow)){
 				if(is.data.frame(dataTotalRow)){

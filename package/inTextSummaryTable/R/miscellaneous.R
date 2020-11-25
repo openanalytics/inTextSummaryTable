@@ -199,6 +199,55 @@ checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
 	
 }
 
+#' Check if variable(s) are present in reference: either in columns in 
+#' a dataset or in reference set.
+#' 
+#' Filter variables not present in the data or in reference set with a warning,
+#' and only returned filtered vector, or NULL if empty.
+#' @param var Character vector with variables of interest.
+#' @param varLabel String with label for \code{var}, e.g.
+#' name of associated parameter.
+#' @param varRef Character vector with set of reference variables.
+#' @param data Data.frame with data.
+#' @param refLabel String with label for the reference
+#' @return \code{var} filtered with element not in \code{data}
+#' or in \code{refSet}.
+#' If filtered \code{var} is empty, NULL is returned
+#' @author Laure Cougnaud
+checkVar <- function(
+	var, varLabel,
+	varRef, 
+	refLabel = ifelse(!missing(varRef), "reference variable", "data"),
+	data){
+	
+	if(!missing(varRef) & !missing(data))
+		stop("Either 'data' or 'varRef' should be specified.")
+	
+	varToFilter <- NULL
+	if(!missing(varRef)){
+		varToFilter <- setdiff(var, varRef)
+	}else	if(!missing(data)){
+		varToFilter <- setdiff(var, colnames(data))
+	}else	stop("'data' or 'varRef' should be specified.")
+	
+	if(length(varToFilter) > 0){
+		warning(paste0(
+			"Variable(s): ",
+			toString(shQuote(varToFilter)),
+			" in ", varLabel, 
+			" are ignored because they are not available in: ", 
+			refLabel, "."
+		))
+	}
+	
+	varFiltered <- setdiff(var, varToFilter)
+	if(length(varFiltered) == 0)
+		varFiltered <- NULL
+	
+	return(varFiltered)
+	
+}
+
 #' Custom function to write table to a text file
 #' 
 #' This function is mainly a wrapper on \code{\link[utils]{write.table}},

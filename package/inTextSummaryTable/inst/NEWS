@@ -1,3 +1,6 @@
+2.20.0
+  o add unit tests
+  o computeSummaryStatisticsTable: more formal checks + warning for var/[row|col]Var...
 2.19.0
   o add unit tests
   o computeSummaryStatistics: fix for data with one column, extra error msg
