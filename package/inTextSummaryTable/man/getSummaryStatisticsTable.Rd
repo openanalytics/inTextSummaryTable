@@ -147,7 +147,7 @@ to be included in columns.
 Each column should correspond to \code{colVar} and as factor
 if the elements should be ordered in the final table.}
 
-\item{rowOrder}{Specify how the rows should be ordered in the table, either a:
+\item{rowOrder}{Specify how the rows should be ordered in the final table, either a:
 \itemize{
 \item{String among:}{
 \itemize{
@@ -159,7 +159,9 @@ across all columns for this specific category.}
 \item{Function with input the summary table and output the ordered elements of the \code{rowVar}}
 }
 To specify different ordering methods for different \code{rowVar}, specify a list
-of such elements, named with the \code{rowVar} variable.}
+of such elements, named with the \code{rowVar} variable.
+For the table output of \code{\link{computeSummaryStatisticsTable}} (long format),
+this order is also reflected in the \strong{\code{levels}} of the row factor variable.}
 
 \item{rowOrderTotalFilterFct}{Function used to filter the data used to order the rows
 based on total counts (in case \code{rowOrder} is 'total'),
