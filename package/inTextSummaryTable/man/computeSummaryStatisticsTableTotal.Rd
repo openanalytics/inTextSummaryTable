@@ -42,7 +42,8 @@ within \code{rowVarTotal}.}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
-By default, extracted from the \code{labelVars}.}
+By default, extracted from the \code{labelVars}.
+if not available, \code{var} is used.}
 
 \item{colInclude0}{Logical, if TRUE (FALSE by default),
 include columns with no records, based on all combinations 

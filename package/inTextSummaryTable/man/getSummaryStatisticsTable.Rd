@@ -112,7 +112,9 @@ rows with no count are included for all \code{var}
 for which zero counts rows should be included}
 }}
 
-\item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
+\item{varIgnore}{Vector with elements to ignore in the \code{var} variable(s).
+The \code{data} records with such elements in \code{var} are \strong{filtered} from the data 
+at the start of the workflow.}
 
 \item{varGeneralLab}{String with general label for variable specified in \code{var}.
 In case of multiple variable in \code{var}, this will be included in the table header
