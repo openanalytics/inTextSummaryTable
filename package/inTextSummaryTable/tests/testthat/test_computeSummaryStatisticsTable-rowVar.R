@@ -450,7 +450,7 @@ test_that("row total is computed by var", {
 	sumTableTotalRowVar2 <- subset(sumTableRVBVSpec, ABODSYS == "X" & AEDECOD == "Total")
 	# should match stats based on table on ADECOD
 	expect_equal(
-		select(sumTableTotalRowVar2, -ABODSYS), 
+		subset(sumTableTotalRowVar2, select = -ABODSYS), 
 		sumTableRVBVRowTotal,
 		check.attributes = FALSE # row names might differ
 	)
