@@ -308,6 +308,7 @@ computeSummaryStatisticsTable <- function(
 		varUncheck = c(TRUE, FALSE)
 	)
 	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
+	varTotalInclude <- checkVar(var = varTotalInclude, varLabel = "varTotalInclude", varRef = var, refLabel = "var", varUncheck = c(TRUE, FALSE))
 	
 	# check row var parameters:
 	rowVar <- checkVar(var = rowVar, varLabel = "rowVar", data = data)

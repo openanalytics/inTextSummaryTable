@@ -30,7 +30,7 @@ test_that("continuous var specification is successful", {
       
 })
 
-test_that("continuous var specification is successful", {
+test_that("categorical var specification is successful", {
       
       dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = seq.int(5))
       
@@ -151,7 +151,56 @@ test_that("a variable is properly ignored", {
       
 })
 
-test_that("Parameter 'varIncludeTotal' is deprecated", {
+
+test_that("total for a variable is included", {
+			
+	data <- data.frame(
+		x = c("A", "B", "A", "B"), 
+		y = c("a", "d", "g", "t"), 
+		USUBJID = c(1, 2, 3, 1)
+	)
+	
+	## no total
+	expect_identical(
+		computeSummaryStatisticsTable(data = data, var = "x", varTotalInclude = FALSE),
+		computeSummaryStatisticsTable(data = data, var = "x")
+	)
+	
+	## with total
+			
+	# logical
+	expect_silent(sumTableVarTotal <- computeSummaryStatisticsTable(data = data, var = "x", varTotalInclude = TRUE))
+	expect_equal(
+		as.character(na.omit(sumTableVarTotal$variableGroup)),
+		c("A", "B", "Total")
+	)
+	sumTableVarTotalRows <- subset(sumTableVarTotal, variableGroup == "Total")
+	expect_equal(sumTableVarTotalRows$statN, 3)
+	expect_equal(sumTableVarTotalRows$statm, 4)
+	expect_equal(sumTableVarTotalRows$statPercTotalN, 3)
+	expect_equal(sumTableVarTotalRows$statPercN, 100)
+	
+	# character
+	expect_silent(
+		sumTableVarTotalChar <- computeSummaryStatisticsTable(data = data, var = c("x", "y"), varTotalInclude = "y")
+	)
+	sumTableVarTotalCharRows <- subset(sumTableVarTotalChar, variableGroup == "Total")
+	expect_identical(as.character(sumTableVarTotalCharRows$variable), "y")
+
+	expect_identical(
+		computeSummaryStatisticsTable(data = data, var = "x", varTotalInclude = "x"),
+		computeSummaryStatisticsTable(data = data, var = "x", varTotalInclude = TRUE)
+	)
+	
+	# wrong spec
+	expect_warning(
+		computeSummaryStatisticsTable(data = data, var = "x", varTotalInclude = "blabla"),
+		".* in varTotalInclude.*ignored"
+	)
+	
+})
+
+test_that("parameter 'varIncludeTotal' is deprecated", {
 			
 	dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
 	expect_warning(
