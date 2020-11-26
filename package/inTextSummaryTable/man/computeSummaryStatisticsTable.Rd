@@ -12,7 +12,7 @@ computeSummaryStatisticsTable(
   varLab = NULL,
   varLabInclude = length(var) > 1,
   varGeneralLab = "Variable",
-  varSubgroupLab = NULL,
+  varSubgroupLab = "Variable group",
   varIgnore = NULL,
   varIncludeTotal = FALSE,
   varTotalInclude = FALSE,

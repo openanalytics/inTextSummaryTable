@@ -38,10 +38,9 @@
 #' @param varGeneralLab String with general label for variable specified in \code{var}.
 #' In case of multiple variable in \code{var}, this will be included in the table header
 #' (see 'rowVarLab' attribute of the output).
-#' @param varSubgroupLab String with general label for sub-group, in case
-#' \code{var} is specified for a count table.
-#' This will be included in the table header (see 'rowVarLab' attribute of the output).
-#' Empty by default.
+#' @param varSubgroupLab String with general label for sub-group of
+#' categorical variable(s) for count table, 'Variable group' by default.
+#' This will be included in the final table header (see 'rowVarLab' attribute of the output).
 #' @param varIgnore Vector with elements to ignore in the \code{var} variable(s).
 #' The \code{data} records with such elements in \code{var} are \strong{filtered} from the data 
 #' at the start of the workflow.
@@ -226,7 +225,7 @@ computeSummaryStatisticsTable <- function(
 	var = NULL, varFlag = NULL, varInclude0 = FALSE,
 	varLab = NULL,
 	varLabInclude = length(var) > 1,
-	varGeneralLab = "Variable", varSubgroupLab = NULL,
+	varGeneralLab = "Variable", varSubgroupLab = "Variable group",
 	varIgnore = NULL,
 	varIncludeTotal = FALSE,
 	varTotalInclude = FALSE,
@@ -330,6 +329,10 @@ computeSummaryStatisticsTable <- function(
 	if(is.null(varGeneralLab) || !is.character(varGeneralLab) ||length(varGeneralLab) > 1){
 		warning("'varGeneralLab' should be a character of length 1, it is set to 'Variable' by default.")
 		varGeneralLab <- "Variable"
+	}
+	if(is.null(varSubgroupLab) || !is.character(varSubgroupLab) ||length(varSubgroupLab) > 1){
+		warning("'varSubgroupLab' should be a character of length 1, it is set to 'Variable group' by default.")
+		varSubgroupLab <- "Variable group"
 	}
 	
 	# Compute the column total if the rows could be asked to be ordered 

@@ -2,6 +2,7 @@
   o add unit tests
   o computeSummaryStatisticsTable: more formal checks + warning for var/[row|col]Var...
   o computeSummaryStatisticsTable: fix in case varLab/rowVarLab/byVarLab not specified for all vars
+  o varSubgroupLab: change default 'variableGroup' -> 'Variable group'
 2.19.0
   o add unit tests
   o computeSummaryStatistics: fix for data with one column, extra error msg

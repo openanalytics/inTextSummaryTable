@@ -13,7 +13,7 @@ getSummaryStatisticsTable(
   varInclude0 = FALSE,
   varIgnore = NULL,
   varGeneralLab = "Variable",
-  varSubgroupLab = NULL,
+  varSubgroupLab = "Variable group",
   varIncludeTotal = FALSE,
   varTotalInclude = FALSE,
   varTotalInSepRow = FALSE,
