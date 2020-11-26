@@ -327,6 +327,10 @@ computeSummaryStatisticsTable <- function(
 	# check variable(s) label
 	varLab <- getLabelVar(var, data = data, labelVars = labelVars, label = varLab)
 	rowVarLab <- getLabelVar(rowVar,  data = data, labelVars = labelVars, label = rowVarLab)
+	if(is.null(varGeneralLab) || !is.character(varGeneralLab) ||length(varGeneralLab) > 1){
+		warning("'varGeneralLab' should be a character of length 1, it is set to 'Variable' by default.")
+		varGeneralLab <- "Variable"
+	}
 	
 	# Compute the column total if the rows could be asked to be ordered 
 	# based on the total category or total can be extracted within a function specified in rowOrder

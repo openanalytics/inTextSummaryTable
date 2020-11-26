@@ -289,3 +289,43 @@ test_that("specified var label is used", {
 	)
 	
 })
+
+test_that("general var label is specified", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = rep(c("M", "F"), times = 3),
+		AGE = seq(20, 62, length.out = 6),
+		stringsAsFactors = FALSE
+	)
+	
+	# by default:
+	expect_equal(
+		attr(
+			computeSummaryStatisticsTable(data, var = c("SEX", "AGE")),
+			"summaryTable"
+		)$rowVarLab["variable"],
+		c(variable = "Variable")
+	)
+	
+	# custom specification
+	expect_equal(
+		attr(
+			computeSummaryStatisticsTable(data, var = c("SEX", "AGE"), varGeneralLab = "test"),
+			"summaryTable"
+		)$rowVarLab["variable"],
+		c(variable = "test")
+	)
+	
+	# wrong specification
+	expect_warning(
+		sumTableVarGenLabEmpty <- computeSummaryStatisticsTable(data, 
+			var = c("SEX", "AGE"), varGeneralLab = NULL),
+		".*varGeneralLab.* set to .*Variable.*"
+	)
+	expect_equal(
+		attr(sumTableVarGenLabEmpty, "summaryTable")$rowVarLab["variable"],
+		c(variable = "Variable")
+	)
+			
+})

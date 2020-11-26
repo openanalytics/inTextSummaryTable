@@ -22,7 +22,7 @@
 getSummaryStatisticsTable <- function(
 	data, 
 	## parameters for summary statistics
-	var = NULL, varFlag = NULL, varLab = getLabelVar(var, data = data, labelVars = labelVars), 
+	var = NULL, varFlag = NULL, varLab = NULL, 
 	varLabInclude = length(var) > 1,
 	varInclude0 = FALSE,
 	varIgnore = NULL,
@@ -30,7 +30,7 @@ getSummaryStatisticsTable <- function(
 	varIncludeTotal = FALSE, varTotalInclude = FALSE,
 	varTotalInSepRow = FALSE,
 	## row variables
-	rowVar = NULL, rowVarLab = getLabelVar(rowVar, labelVars = labelVars),
+	rowVar = NULL, rowVarLab = NULL,
 	rowVarDataLevels = NULL, 
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = NULL,
 	rowVarInSepCol = NULL,
@@ -72,7 +72,7 @@ getSummaryStatisticsTable <- function(
 	statsLayout = ifelse("DT" %in% outputType, "col", "row"),
 	style = "report", 
 	colorTable = getColorTable(style = style),
-	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars),
+	byVar = NULL, byVarLab = NULL,
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
