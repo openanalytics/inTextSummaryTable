@@ -197,7 +197,7 @@ test_that("label is specified", {
 		paramsList = list(list(var = "AFL", value = "Y", label = "test")),
 		newVar = "variable"
 	)
-	expect_identical(unique(as.character(sumTable$variable)), "test")
+	expect_identical(unique(as.character(sumTableLabel$variable)), "test")
 	
 	# label extracted from labelVars
 	expect_identical(

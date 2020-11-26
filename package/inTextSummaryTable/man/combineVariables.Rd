@@ -17,38 +17,12 @@ combineVariables(
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{paramsList}{nested list of parameters.
-There are two ways to select a subset of interest:
-\itemize{
-\item{by specifying one unique variable of interest with: }{
-\itemize{
-\item{'var': }{string with column of \code{data} of interest}
-\item{'value': }{value of \code{var} of interest (only used if \code{var} is specified).
-\code{If not specified only the values different than NA and '' are considered.}}
-\item{'fctTest': }{string with function to apply on \code{var} to select subset of interest 
-versus 'value'.
-If not specified, the records with \code{var} equal to \code{value} are retained (\code{fctTest} set to '==')
-} 
-\item{label specification: }{
-\itemize{
-\item{'label': }{string with complete label for the group}
-\item{'labelExtra': }{string with extra label, will be concatenated with 
-the label of \code{var} extracted from \code{labelVars}}
-}
-}
-}}
-\item{by specifying a combination of variable of interest with: }{
-\itemize{
-\item{'exprs': }{string with expression of columns of \code{data} to select subset of interest}
-\item{'label': }{string with complete label for the group}
-}}}}
-
 \item{newVar}{String with name of new variable to construct.}
 
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}
 
-\item{fctTest}{String with global default function to use to compare \code{var} and \code{value} specified
+\item{fctTest}{Global default function to use to compare \code{var} and \code{value} specified
 in each sublist of \code{paramsList}.
 This is only used if \code{fctTest} is not specified in each sublist.}
 
