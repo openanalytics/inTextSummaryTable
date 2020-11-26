@@ -217,7 +217,7 @@ See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
 
 \item{rowVarTotalPerc}{Character vector with row variables by which the total
 should be computed for the denominator for the percentage computation.
-By default the total is only computed by column (NULL by default).
+By default the total is only computed only by column (NULL by default).
 If the total should be based on the total number of records per variable,
 \code{rowVarTotalPerc} should be set to 'variable'.}
 

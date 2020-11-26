@@ -192,7 +192,7 @@ for row adverse event term in a typical adverse event count table
 
 \item{rowVarTotalPerc}{Character vector with row variables by which the total
 should be computed for the denominator for the percentage computation.
-By default the total is only computed by column (NULL by default).
+By default the total is only computed only by column (NULL by default).
 If the total should be based on the total number of records per variable,
 \code{rowVarTotalPerc} should be set to 'variable'.}
 

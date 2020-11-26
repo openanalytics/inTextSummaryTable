@@ -91,7 +91,7 @@
 #' Use: 'variable' to compute total by \code{var} (if multiple).
 #' @param rowVarTotalPerc Character vector with row variables by which the total
 #' should be computed for the denominator for the percentage computation.
-#' By default the total is only computed by column (NULL by default).
+#' By default the total is only computed only by column (NULL by default).
 #' If the total should be based on the total number of records per variable,
 #' \code{rowVarTotalPerc} should be set to 'variable'.
 #' @param byVar Variable(s) of \code{data} for which separated table(s)
@@ -320,6 +320,11 @@ computeSummaryStatisticsTable <- function(
 	rowVar <- checkVar(var = rowVar, varLabel = "rowVar", data = data)
 	rowVarTotalInclude <- checkVar(var = rowVarTotalInclude, varLabel = "rowVarTotalInclude", varRef = rowVar, refLabel = "rowVar")
 	rowVarTotalInSepRow <- checkVar(var = rowVarTotalInSepRow, varLabel = "rowVarTotalInSepRow", varRef = rowVarTotalInclude, refLabel = "rowVarTotalInclude")
+	if(!varLabInclude & "variable" %in% rowVarTotalPerc){
+		warning("Percentages cannot be computed by 'variable' because variable not included in the table (varLabInclude is FALSE).")
+		rowVarTotalPerc <- setdiff(rowVarTotalPerc, "variable")
+	}
+	rowVarTotalPerc <- checkVar(var = rowVarTotalPerc, varLabel = "rowVarTotalPerc", varRef = rowVar, refLabel = "rowVar", varUncheck = "variable")
 	
 	# in case the variable should be in multiple columns, 'colVar' might include: 'variable'
 	colVarInit <- colVar <- checkVar(var = colVar, varLabel = "colVar", data = data, varUncheck = "variable")
