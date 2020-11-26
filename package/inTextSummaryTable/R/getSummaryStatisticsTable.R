@@ -26,7 +26,7 @@ getSummaryStatisticsTable <- function(
 	varLabInclude = length(var) > 1,
 	varInclude0 = FALSE,
 	varIgnore = NULL,
-	varGeneralLab = "Variable", varSubgroupLab = NULL,
+	varGeneralLab = "Variable", varSubgroupLab = "Variable group",
 	varIncludeTotal = FALSE, varTotalInclude = FALSE,
 	varTotalInSepRow = FALSE,
 	## row variables

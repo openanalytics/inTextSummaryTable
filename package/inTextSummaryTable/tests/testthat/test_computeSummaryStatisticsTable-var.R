@@ -300,32 +300,58 @@ test_that("general var label is specified", {
 	)
 	
 	# by default:
-	expect_equal(
-		attr(
-			computeSummaryStatisticsTable(data, var = c("SEX", "AGE")),
-			"summaryTable"
-		)$rowVarLab["variable"],
-		c(variable = "Variable")
-	)
+	expect_equal({
+		sumTable <- computeSummaryStatisticsTable(data, var = c("SEX", "AGE"))
+		unname(attr(sumTable, "summaryTable")$rowVarLab["variable"])
+	}, "Variable")
 	
 	# custom specification
-	expect_equal(
-		attr(
-			computeSummaryStatisticsTable(data, var = c("SEX", "AGE"), varGeneralLab = "test"),
-			"summaryTable"
-		)$rowVarLab["variable"],
-		c(variable = "test")
-	)
+	expect_equal({
+		sumTable <- computeSummaryStatisticsTable(data, var = c("SEX", "AGE"), varGeneralLab = "test")
+		unname(attr(sumTable, "summaryTable")$rowVarLab["variable"])
+	}, "test")
 	
 	# wrong specification
 	expect_warning(
 		sumTableVarGenLabEmpty <- computeSummaryStatisticsTable(data, 
 			var = c("SEX", "AGE"), varGeneralLab = NULL),
-		".*varGeneralLab.* set to .*Variable.*"
+		".*varGeneralLab.* set to .* by default"
 	)
 	expect_equal(
-		attr(sumTableVarGenLabEmpty, "summaryTable")$rowVarLab["variable"],
-		c(variable = "Variable")
+		unname(attr(sumTableVarGenLabEmpty, "summaryTable")$rowVarLab["variable"]),
+		"Variable"
+	)
+			
+})
+
+test_that("var label for subgroup is specified", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = rep(c("M", "F"), times = 3),
+		stringsAsFactors = FALSE
+	)
+			
+	# by default:
+	expect_equal({
+		sumTable <- computeSummaryStatisticsTable(data, var = "SEX")
+		unname(attr(sumTable, "summaryTable")$rowVarLab["variableGroup"])
+	}, "Variable group")
+
+	# custom specification
+	expect_equal({
+		sumTable <- computeSummaryStatisticsTable(data, var = "SEX", varSubgroupLab = "test")
+		unname(attr(sumTable, "summaryTable")$rowVarLab["variableGroup"])
+	}, "test")
+			
+	# wrong specification
+	expect_warning(
+		sumTableVarSubgroupLabEmpty <- computeSummaryStatisticsTable(data, var = "SEX", varSubgroupLab = NULL),
+		".*'varSubgroupLab.* set to .* by default"
+	)
+	expect_equal(
+		unname(attr(sumTableVarSubgroupLabEmpty, "summaryTable")$rowVarLab["variableGroup"]),
+		"Variable group"
 	)
 			
 })
