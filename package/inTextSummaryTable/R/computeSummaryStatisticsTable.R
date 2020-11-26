@@ -289,8 +289,6 @@ computeSummaryStatisticsTable <- function(
 		}
 	}
 	
-	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
-	
 	# get default set of statistics
 	if(is.character(stats) && length(stats) == 1)
 		stats <- getStatsData(data = data, var = var, type = stats)
@@ -301,16 +299,15 @@ computeSummaryStatisticsTable <- function(
 		varTotalInclude <- varIncludeTotal
 	}
 	
-	if(!is.null(dataTotal)){
-		colVarTotal <- checkVar(
-			var = colVarTotal, varLabel = "colVarTotal",
-			data = dataTotal, refLabel = "total dataset"
-		)
-	}
-	
 	# check var
 	var <- checkVar(var = var, varLabel = "var", data = data)
 	varFlag <- checkVar(var = varFlag, varLabel = "varFlag", varRef = var, refLabel = "var")
+	varInclude0 <- checkVar(
+		var = varInclude0, varLabel = "varInclude0", 
+		varRef = var, refLabel = "var",
+		varUncheck = c(TRUE, FALSE)
+	)
+	varLabInclude <- checkVarLabInclude(var = var, varLabInclude = varLabInclude)
 	
 	# check row var parameters:
 	rowVar <- checkVar(var = rowVar, varLabel = "rowVar", data = data)
@@ -654,7 +651,7 @@ computeSummaryStatisticsTable <- function(
 			colVar = colVar,
 			var = var
 		)
-				
+
 		computeSummaryStatisticsTableTotal(
 			data = dataTotalPerc, dataTotalCol = dataTotalPercTotalHeader,
 			colVar = colVar, colVarTotal = colVarTotalPerc,
@@ -806,7 +803,9 @@ computeSummaryStatisticsTable <- function(
 
 #' Compute summary statistics total table.
 #' @param colVarTotal Character vector with column(s) considered to compute the total.
+#' This could also contain 'variable'.
 #' @param rowVarTotal Character vector with row(s) considered to compute the total.
+#' This could also contain 'variable'.
 #' @param var Character vector with variable, used if 'variable' is specified
 #' within \code{rowVarTotal}.
 #' @param colVarLevels list with levels of each \code{colVar}

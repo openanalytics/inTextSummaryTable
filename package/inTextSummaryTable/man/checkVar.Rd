@@ -8,6 +8,7 @@ a dataset or in reference set.}
 checkVar(
   var,
   varLabel,
+  varUncheck = NULL,
   varRef,
   refLabel = ifelse(!missing(varRef), "reference variable", "data"),
   data
@@ -18,6 +19,9 @@ checkVar(
 
 \item{varLabel}{String with label for \code{var}, e.g.
 name of associated parameter.}
+
+\item{varUncheck}{Character vector with extra variables 
+in \code{var} which shouldn't be checked.}
 
 \item{varRef}{Character vector with set of reference variables.}
 
