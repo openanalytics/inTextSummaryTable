@@ -23,7 +23,8 @@ There are two ways to select a subset of interest:
 \item{by specifying one unique variable of interest with: }{
 \itemize{
 \item{'var': }{string with column of \code{data} of interest}
-\item{'value': }{value of \code{var} of interest (only used if \code{var} is specified)}
+\item{'value': }{value of \code{var} of interest (only used if \code{var} is specified).
+\code{If not specified only the values different than NA and '' are considered.}}
 \item{'fctTest': }{string with function to apply on \code{var} to select subset of interest 
 versus 'value'.
 If not specified, the records with \code{var} equal to \code{value} are retained (\code{fctTest} set to '==')
