@@ -395,3 +395,65 @@ test_that("total in separated row stored in output", {
 			)
 			
 		})
+
+test_that("row total is computed by var", {
+			
+	# example where a subject: 'a' has same severity for 2 adverse events
+	# so should be counted only once for the 'Mild' category
+	data <- data.frame(
+		USUBJID = c("a", "a", "b", "c", "c", "a"),
+		ABODSYS = rep("X", 6),
+		AEDECOD = c("A", "A", "A", "A", "B", "B"),
+		AESEV = c("Mild", "Moderate", "Mild", "Severe", "Moderate", "Mild"),
+		stringsAsFactors = FALSE
+	)
+	
+	# wrong spec
+	expect_warning(
+		sumTable <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "AEDECOD",
+			rowVarTotalInclude = "AEDECOD",
+			rowVarTotalByVar = "a"
+		),
+		".*rowVarTotalByVar.*ignored"
+	)
+	
+	# correct spec
+	sumTableRVBV <- computeSummaryStatisticsTable(
+		data = data, 
+		rowVar = c("AEDECOD", "AESEV"),
+		rowVarTotalInclude = "AEDECOD",
+		rowVarTotalByVar = "AESEV"
+	)
+	expect_true("Total" %in% sumTableRVBV$AEDECOD)
+	sumTableRVBVRowTotal <- subset(sumTableRVBV, AEDECOD == "Total")
+	expect_equal(as.character(sumTableRVBVRowTotal$AESEV), c("Mild", "Moderate", "Severe"))
+	# subject 'a' is only counted once in the 'Mild' category
+	expect_equal(subset(sumTableRVBVRowTotal, AESEV == "Mild")$statN, 2)
+	# but 3 records are reported
+	expect_equal(subset(sumTableRVBVRowTotal, AESEV == "Mild")$statm, 3)
+	
+	# specification for specific rowVar
+	expect_silent(
+		sumTableRVBVSpec <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = c("ABODSYS", "AEDECOD", "AESEV"),
+			rowVarTotalInclude = c("ABODSYS", "AEDECOD"),
+			rowVarTotalByVar = c(AEDECOD = "AESEV")
+		)
+	)
+	# if rowVarTotalByVar is not specified, only one total row is included
+	sumTableTotalRowVar1 <- subset(sumTableRVBVSpec, ABODSYS == "Total")
+	expect_length(nrow(sumTableTotalRowVar1), 1)
+	# otherwise, total row(s) for each element in rowVarTotalByVar
+	sumTableTotalRowVar2 <- subset(sumTableRVBVSpec, ABODSYS == "X" & AEDECOD == "Total")
+	# should match stats based on table on ADECOD
+	expect_equal(
+		select(sumTableTotalRowVar2, -ABODSYS), 
+		sumTableRVBVRowTotal,
+		check.attributes = FALSE # row names might differ
+	)
+
+})
+

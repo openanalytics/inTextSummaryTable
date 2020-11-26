@@ -204,15 +204,15 @@ checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
 #' 
 #' Filter variables not present in the data or in reference set with a warning,
 #' and only returned filtered vector, or NULL if empty.
-#' @param var Character vector with variables of interest.
+#' @param var (Named) character vector with variables of interest.
 #' @param varLabel String with label for \code{var}, e.g.
 #' name of associated parameter.
-#' @param varRef Character vector with set of reference variables.
+#' @param varRef (Named) character vector with set of reference variables.
 #' @param data Data.frame with data.
 #' @param refLabel String with label for the reference
-#' @param varUncheck Character vector with extra variables 
+#' @param varUncheck (Named) character vector with extra variables 
 #' in \code{var} which shouldn't be checked.
-#' @return \code{var} filtered with element not in \code{data}
+#' @return (Named) \code{var} filtered with element not in \code{data}
 #' or in \code{refSet}.
 #' If filtered \code{var} is empty, NULL is returned
 #' @author Laure Cougnaud
@@ -227,13 +227,13 @@ checkVar <- function(
 	
 	varToFilter <- NULL
 	if(!missing(varRef)){
-		varToFilter <- setdiff(var, varRef)
+		varToFilter <- var[!var %in% varRef]
 	}else	if(!missing(data)){
-		varToFilter <- setdiff(var, colnames(data))
+		varToFilter <- var[!var %in% colnames(data)]
 	}else	stop("'data' or 'varRef' should be specified.")
 	
 	# remove extra variables that shouldn't be checked
-	varToFilter <- setdiff(varToFilter, varUncheck)
+	varToFilter <- varToFilter[!varToFilter %in% varUncheck]
 	
 	if(length(varToFilter) > 0){
 		warning(paste0(
@@ -245,7 +245,7 @@ checkVar <- function(
 		))
 	}
 	
-	varFiltered <- setdiff(var, varToFilter)
+	varFiltered <- var[!var %in% varToFilter]
 	if(length(varFiltered) == 0)
 		varFiltered <- NULL
 	
