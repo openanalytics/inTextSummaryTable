@@ -200,6 +200,22 @@ test_that("total for a variable is included", {
 	
 })
 
+test_that("total in separated row correctly stored", {
+			
+	# inclusion in separated row during export step
+	# currently only stored in the output
+	data <- data.frame(x = c("A", "B", "A", "B"), USUBJID = c(1, 2, 3, 1))
+	expect_true({
+		sumTable <- computeSummaryStatisticsTable(data = data, varTotalInSepRow = TRUE)
+		"variableGroup" %in% attr(sumTable, "summaryTable")$rowVarTotalInSepRow
+	})
+	expect_false({
+		sumTable <- computeSummaryStatisticsTable(data = data, varTotalInSepRow = FALSE	)
+		"variableGroup" %in% attr(sumTable, "summaryTable")$rowVarTotalInSepRow
+	})	
+			
+})
+
 test_that("parameter 'varIncludeTotal' is deprecated", {
 			
 	dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
@@ -340,6 +356,9 @@ test_that("specified var label is used", {
 })
 
 test_that("general var label is specified", {
+		
+	# general label for var set during export step
+	# currently only stored in the output			
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -373,8 +392,11 @@ test_that("general var label is specified", {
 			
 })
 
-test_that("var label for subgroup is specified", {
+test_that("label for variable subgroup is specified", {
 			
+	# label for var subgroup set during export step
+	# currently only stored in the output			
+	
 	data <- data.frame(
 		USUBJID = seq.int(6),
 		SEX = rep(c("M", "F"), times = 3),
