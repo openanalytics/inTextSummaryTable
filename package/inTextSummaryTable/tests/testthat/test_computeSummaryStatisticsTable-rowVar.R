@@ -1,99 +1,157 @@
 context("Compute summary statistics table: row var specification")
 
+test_that("table is created with row variables", {
+			
+	data <- data.frame(
+		parent = c("A", "A", "A", "A", "B", "B"), 
+		child = c("a", "a", "a", "b", "c", "c"),
+		x = rnorm(n = 6),
+		USUBJID = seq.int(6)
+	)
+	
+	# wrong specification
+	expect_warning(
+		computeSummaryStatisticsTable(data, rowVar = "Y"),
+		"Y.* in rowVar.*ignored"
+	)
+	
+	# correct specification
+	sumTableRowVar <- computeSummaryStatisticsTable(
+		data,
+		rowVar = c("parent", "child"),
+		var = "x"
+	)    
+	expect_s3_class(sumTableRowVar, "data.frame")
+	stats <- c(
+		"statN", "statm",
+		"statMean",
+		"statSD", "statSE",
+		"statMedian", "statMin",
+		"statMax",
+		"statPercTotalN", "statPercN"
+	)
+	expect_identical(
+		names(sumTableRowVar),
+		c("parent", "child", "isTotal", stats)
+	)
+	lastRowIdx <- nrow(sumTableRowVar)
+	expect_true(sumTableRowVar$isTotal[lastRowIdx])
+	expect_identical(
+		sumTableRowVar$statPercN[lastRowIdx],
+		100
+	)
+	
+	# check if summary statistics table with rowVar specification
+	# corresponds to summary statistics computed for each unique rowVar
+	rowVarUnique <- unique(data[, c("parent", "child")])
+	statsToCompare <- setdiff(stats , c("statPercTotalN", "statPercN"))
+	for(iRow in seq_len(nrow(rowVarUnique))){
+		expect_identical(
+			object = {
+				dataIRow <- merge(rowVarUnique[!!iRow, ], data)
+				sumTableIRow <- computeSummaryStatisticsTable(dataIRow, var = "x")
+				subset(sumTableIRow, !isTotal)[, statsToCompare]
+			}, 
+			expected = merge(rowVarUnique[!!iRow, ], sumTableRowVar)[, statsToCompare]
+		)
+	}
+	
+})
 
-test_that("row variables is successful", {
+test_that("row var label is specified", {
 			
-			data <- data.frame(
-					parent = c("A", "A", "A", "A", "B", "B"), 
-					child = c("a", "a", "a", "b", "c", "c"),
-					x = rnorm(n = 6),
-					USUBJID = seq.int(6)
-			)
+	data <- data.frame(
+		parent = c("A", "A", "A", "A", "B", "B"), 
+		child = c("a", "a", "a", "b", "c", "c"),
+		x = rnorm(n = 6),
+		USUBJID = seq.int(6)
+	)
+	rowVar <- c("parent", "child")
+	rowVarLab <- c(parent = "Parent variable", child = "Child variable")
 			
-			expect_warning(
-					computeSummaryStatisticsTable(data, rowVar = "Y"),
-					"Y.* in rowVar.*ignored"
-			)
+	# by default, variable name is used as label:
+	expect_identical(
+		object = {
+			sumTable <- computeSummaryStatisticsTable(data, rowVar = rowVar)
+			attr(sumTable, "summaryTable")$rowVarLab[rowVar]
+		},
+		expected = setNames(rowVar, rowVar)
+	)
 			
-			sumTableRowVar <- computeSummaryStatisticsTable(
-					data,
-					rowVar = c("parent", "child"),
-					var = "x"
-			)    
-			expect_s3_class(sumTableRowVar, "data.frame")
-			varsCat <- c(
-					"statN", "statm",
-					"statMean",
-					"statSD", "statSE",
-					"statMedian", "statMin",
-					"statMax",
-					"statPercTotalN", "statPercN"
-			)
-			expect_identical(
-					names(sumTableRowVar),
-					c("parent", "child", "isTotal", varsCat)
-			)
-			lastRowIdx <- nrow(sumTableRowVar)
-			expect_true(sumTableRowVar$isTotal[lastRowIdx])
-			expect_identical(
-					sumTableRowVar$statPercN[lastRowIdx],
-					100
-			)
+	# specify variable labels with 'row varLab'
+	sumTableRowVarLab <- computeSummaryStatisticsTable(data, rowVar = rowVar, rowVarLab = rowVarLab)
+	expect_identical(
+		object = attr(sumTableRowVarLab, "summaryTable")$rowVarLab[rowVar], 
+		expected = rowVarLab
+	)
+
+	# specify variable names in 'labelVars'
+	expect_identical(computeSummaryStatisticsTable(data, rowVar = rowVar, labelVars = rowVarLab), sumTableRowVarLab)
 			
-		})
+	# no errors if labels are not specified for all row variables
+	expect_identical(
+		object = {
+			sumTable <- computeSummaryStatisticsTable(data, rowVar = rowVar, 
+				rowVarLab = c(child = "Child variable"))
+			attr(sumTable, "summaryTable")$rowVarLab[rowVar]
+		}, 
+		expected = c(parent = "parent", child = "Child variable")
+	)
+
+})
 
 test_that("row variables are automatically ordered", {
 			
-			# from character
-			data <- data.frame(
-					USUBJID = seq.int(6),
-					SEX = rep(c("M", "F"), times = 3),
-					stringsAsFactors = FALSE
-			)
+	# from character
+	data <- data.frame(
+			USUBJID = seq.int(6),
+			SEX = rep(c("M", "F"), times = 3),
+			stringsAsFactors = FALSE
+	)
 			
-			# wrong param
-			expect_error(
-					resAuto <- computeSummaryStatisticsTable(
-							data,
-							rowVar = "SEX",
-							rowOrder = "test"
-					),
-					'.*should be one of.*auto.*alphabetical.*total.*'
+	# wrong param
+	expect_error(
+			resAuto <- computeSummaryStatisticsTable(
+					data,
+					rowVar = "SEX",
+					rowOrder = "test"
+			),
+			'.*should be one of.*auto.*alphabetical.*total.*'
+	)
+	
+	expect_silent(
+			resAuto <- computeSummaryStatisticsTable(
+					data,
+					rowVar = "SEX",
+					rowOrder = "auto"
 			)
-			
-			expect_silent(
-					resAuto <- computeSummaryStatisticsTable(
-							data,
-							rowVar = "SEX",
-							rowOrder = "auto"
-					)
+	)
+	expect_identical(
+			levels(resAuto$SEX),
+			c("F", "M")
+	)
+	
+	expect_silent(
+			resAlphabet <- computeSummaryStatisticsTable(
+					data,
+					rowVar = "SEX",
+					rowOrder = "auto"
 			)
-			expect_identical(
-					levels(resAuto$SEX),
-					c("F", "M")
+	)
+	expect_identical(resAuto, resAlphabet)
+	
+	# from factor:
+	data$SEX <- factor(data$SEX, levels = c("M", "F"))
+	expect_silent(
+			resAuto <- computeSummaryStatisticsTable(
+					data,
+					rowVar = "SEX",
+					rowOrder = "auto"
 			)
-			
-			expect_silent(
-					resAlphabet <- computeSummaryStatisticsTable(
-							data,
-							rowVar = "SEX",
-							rowOrder = "auto"
-					)
-			)
-			expect_identical(resAuto, resAlphabet)
-			
-			# from factor:
-			data$SEX <- factor(data$SEX, levels = c("M", "F"))
-			expect_silent(
-					resAuto <- computeSummaryStatisticsTable(
-							data,
-							rowVar = "SEX",
-							rowOrder = "auto"
-					)
-			)
-			expect_identical(levels(resAuto$SEX), c("M", "F"))
-			
-		})
+	)
+	expect_identical(levels(resAuto$SEX), c("M", "F"))
+	
+})
 
 test_that("row variables are correctly ordered based on alphabetical order", {
 			
