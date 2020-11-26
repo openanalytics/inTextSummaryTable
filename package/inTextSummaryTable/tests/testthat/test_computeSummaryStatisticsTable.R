@@ -13,16 +13,6 @@ test_that("No data to report", {
       
     })
 
-test_that("Parameter 'varIncludeTotal' is deprecated", {
-      
-      dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
-      expect_warning(
-          computeSummaryStatisticsTable(dataCont, varIncludeTotal = TRUE),
-          "Argument: 'varIncludeTotal' is deprecated, please use 'varTotalInclude' instead."
-      )
-      
-    })
-
 test_that("summary statistics table is created with only data specified", {
       
       dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
@@ -111,6 +101,69 @@ test_that("summary statistics table is created with flagged variables", {
       
     })
 
+test_that("summary statistics is created with 'varInclude0'", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6), 
+		x = factor(c("A", "B", "A"), levels = c("A", "B", "C")),
+		xFlag = factor("N", c("N", "Y"))
+	)
+	
+	### specification as a boolean
+	
+	## for variable
+	
+	# include 0 counts
+	expect_silent(sumTable0 <- computeSummaryStatisticsTable(data = data, var = "x", varInclude0 = TRUE))
+	expect_identical(as.character(na.omit(sumTable0$variableGroup)), c("A", "B", "C"))
+	sumTable0Rows <- subset(sumTable0, variableGroup == "C")
+	expect_equal(sumTable0Rows$statN, 0)
+	expect_equal(sumTable0Rows$statm, 0)
+	
+	# varInclude0 set to 'FALSE'
+	expect_identical(
+		computeSummaryStatisticsTable(data = data, var = "x"),
+		computeSummaryStatisticsTable(data = data, var = "x", varInclude0 = FALSE)
+	)
+	computeSummaryStatisticsTable(
+		data = data,
+		var = "x",
+		varInclude0 = FALSE
+	)
+	
+	## for variable flag
+	expect_identical(
+		computeSummaryStatisticsTable(data = data, var = "xFlag", varFlag = "xFlag", varInclude0 = FALSE),
+		computeSummaryStatisticsTable(data = data, var = "xFlag", varFlag = "xFlag")
+	)
+	sumTableVarFlag0 <- computeSummaryStatisticsTable(
+		data = data,
+		var = c("x", "xFlag"), varFlag = "xFlag",
+		varInclude0 = TRUE
+	)
+	expect_true("xFlag" %in% sumTableVarFlag0$variable)
+	sumTableVarFlag0Rows <- subset(sumTableVarFlag0, variable == "xFlag")
+	expect_equal(sumTableVarFlag0Rows$statN, 0)
+	expect_equal(sumTableVarFlag0Rows$statm, 0)
+	
+	## specification as a character
+	
+	# correct specification
+	sumTableVarFlag0 <- computeSummaryStatisticsTable(
+		data = data,
+		var = c("x", "xFlag"), varFlag = "xFlag",
+		varInclude0 = "x"
+	)
+	expect_identical(as.character(na.omit(sumTableVarFlag0$variableGroup)), c("A", "B", "C"))
+			
+	# wrong variable
+	expect_warning(
+		computeSummaryStatisticsTable(data = data, var = "x", varInclude0 = "y"),
+		".*y.* in varInclude0 are ignored.*"
+	)
+	
+})
+
 test_that("summary statistics is created with with 'varIgnore' argument", {
       
       data <- data.frame(
@@ -125,7 +178,17 @@ test_that("summary statistics is created with with 'varIgnore' argument", {
       expect_s3_class(res, "data.frame")
       expect_identical(levels(res$variableGroup), "B")
       
-    })
+})
+
+test_that("Parameter 'varIncludeTotal' is deprecated", {
+			
+	dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
+	expect_warning(
+		computeSummaryStatisticsTable(dataCont, varIncludeTotal = TRUE),
+		"Argument: 'varIncludeTotal' is deprecated, please use 'varTotalInclude' instead."
+	)
+	
+})
 
 test_that("summary statistics table is created with row variables specification", {
       

@@ -210,12 +210,14 @@ checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
 #' @param varRef Character vector with set of reference variables.
 #' @param data Data.frame with data.
 #' @param refLabel String with label for the reference
+#' @param varUncheck Character vector with extra variables 
+#' in \code{var} which shouldn't be checked.
 #' @return \code{var} filtered with element not in \code{data}
 #' or in \code{refSet}.
 #' If filtered \code{var} is empty, NULL is returned
 #' @author Laure Cougnaud
 checkVar <- function(
-	var, varLabel,
+	var, varLabel, varUncheck = NULL,
 	varRef, 
 	refLabel = ifelse(!missing(varRef), "reference variable", "data"),
 	data){
@@ -229,6 +231,9 @@ checkVar <- function(
 	}else	if(!missing(data)){
 		varToFilter <- setdiff(var, colnames(data))
 	}else	stop("'data' or 'varRef' should be specified.")
+	
+	# remove extra variables that shouldn't be checked
+	varToFilter <- setdiff(varToFilter, varUncheck)
 	
 	if(length(varToFilter) > 0){
 		warning(paste0(

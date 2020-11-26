@@ -31,9 +31,11 @@ and are included in multi-columns layout.
 Use: 'variable' to include the variables to summarize: \code{var}
  (if multiple) in different columns.}
 
-\item{colVarTotal}{Character vector with column(s) considered to compute the total.}
+\item{colVarTotal}{Character vector with column(s) considered to compute the total.
+This could also contain 'variable'.}
 
-\item{rowVarTotal}{Character vector with row(s) considered to compute the total.}
+\item{rowVarTotal}{Character vector with row(s) considered to compute the total.
+This could also contain 'variable'.}
 
 \item{var}{Character vector with variable, used if 'variable' is specified
 within \code{rowVarTotal}.}
