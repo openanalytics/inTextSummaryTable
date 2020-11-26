@@ -457,3 +457,76 @@ test_that("row total is computed by var", {
 
 })
 
+test_that("percentage is computed by row variable", {
+	
+	data <- data.frame(
+		USUBJID = c("a", "b", "c", "d", "a", "b"),
+		AEDECOD = c("A", "A", "A", "A", "B", "B"),
+		AESEV = c("Mild", "Moderate", "Moderate", "Severe", "Moderate", "Mild"),
+		AESEV2 = c("Mild", "Moderate", NA_character_, NA_character_, "Moderate", "Mild"),
+		stringsAsFactors = FALSE
+	)
+	
+	### correct spec
+			
+	## row Var
+	sumTableRVTPerc <- computeSummaryStatisticsTable(
+		data = data, 
+		rowVar = "AEDECOD", 
+		rowVarTotalPerc = "AEDECOD"
+	)
+	# sum percentage by rowVar == 100
+	expect_equal(subset(sumTableRVTPerc, AEDECOD == "A")$statPercTotalN, 4)
+	expect_equal(subset(sumTableRVTPerc, AEDECOD == "A")$statPercTotalN, 2)
+	subset(sumTableRVTPerc, AEDECOD == "A")$statPercN
+	expect_equal(
+		unique(as.numeric(na.omit(sumTableRVTPerc$statPercN))),
+		100
+	)
+	
+	## variable
+
+	expect_silent(
+		sumTableRVTPerc <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "AEDECOD",
+			var = c("AESEV", "AESEV2"), 
+			rowVarTotalPerc = "variable",
+			varLabInclude = TRUE # because 'variable' not included if only one variable
+		)
+	)
+	expect_equal(
+		unique(subset(sumTableRVTPerc, variable == "AESEV")$statPercTotalN), 
+		4
+	)
+	expect_equal(
+		unique(subset(sumTableRVTPerc, variable == "AESEV2")$statPercTotalN), 
+		2
+	)
+	
+	### wrong spec
+	
+	# variable not in rowVar
+	expect_warning(
+		sumTable <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "AEDECOD",
+			var = "AESEV", 
+			rowVarTotalPerc = "a"
+		),
+		"rowVarTotalPerc.*ignored.*not available in: rowVar"
+	)
+	
+	# variable not included in summary table:
+	expect_warning(
+		computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "AEDECOD",
+			var = "AESEV", 
+			rowVarTotalPerc = "variable"
+		),
+		"Percentages cannot be computed by.*variable.* because variable not included"
+	)
+			
+})
+
