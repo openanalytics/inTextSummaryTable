@@ -92,10 +92,9 @@ and is specified, and FALSE if only one variable is specified.}
 In case of multiple variable in \code{var}, this will be included in the table header
 (see 'rowVarLab' attribute of the output).}
 
-\item{varSubgroupLab}{String with general label for sub-group, in case
-\code{var} is specified for a count table.
-This will be included in the table header (see 'rowVarLab' attribute of the output).
-Empty by default.}
+\item{varSubgroupLab}{String with general label for sub-group of
+categorical variable(s) for count table, 'Variable group' by default.
+This will be included in the final table header (see 'rowVarLab' attribute of the output).}
 
 \item{varIgnore}{Vector with elements to ignore in the \code{var} variable(s).
 The \code{data} records with such elements in \code{var} are \strong{filtered} from the data 

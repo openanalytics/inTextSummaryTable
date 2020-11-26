@@ -120,10 +120,9 @@ at the start of the workflow.}
 In case of multiple variable in \code{var}, this will be included in the table header
 (see 'rowVarLab' attribute of the output).}
 
-\item{varSubgroupLab}{String with general label for sub-group, in case
-\code{var} is specified for a count table.
-This will be included in the table header (see 'rowVarLab' attribute of the output).
-Empty by default.}
+\item{varSubgroupLab}{String with general label for sub-group of
+categorical variable(s) for count table, 'Variable group' by default.
+This will be included in the final table header (see 'rowVarLab' attribute of the output).}
 
 \item{varIncludeTotal}{This argument is deprecated, please use: 'varTotalInclude' instead.}
 
