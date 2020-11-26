@@ -224,7 +224,7 @@
 computeSummaryStatisticsTable <- function(
 	data,  
 	var = NULL, varFlag = NULL, varInclude0 = FALSE,
-	varLab = getLabelVar(var, data = data, labelVars = labelVars),
+	varLab = NULL,
 	varLabInclude = length(var) > 1,
 	varGeneralLab = "Variable", varSubgroupLab = NULL,
 	varIgnore = NULL,
@@ -236,7 +236,7 @@ computeSummaryStatisticsTable <- function(
 	colVarTotalPerc = colVarTotal,
 	colTotalInclude = FALSE, colTotalLab = "Total",
 	rowVar = NULL, rowVarDataLevels = NULL, 
-	rowVarLab = getLabelVar(rowVar,  data = data, labelVars = labelVars),
+	rowVarLab = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = NULL,
 	rowVarTotalInclude = NULL,
 	rowVarTotalInSepRow = NULL,
@@ -255,7 +255,7 @@ computeSummaryStatisticsTable <- function(
 	filterFct = NULL,
 	rowInclude0 = FALSE, colInclude0 = FALSE,
 	labelVars = NULL,
-	byVar = NULL, byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars)
+	byVar = NULL, byVarLab = NULL
 ){
 	
 	inputParams <- as.list(environment())
@@ -267,28 +267,27 @@ computeSummaryStatisticsTable <- function(
 		return(invisible())
 	}
 
+	byVar <- checkVar(var = byVar, varLabel = "byVar", data = data)
 	if(!is.null(byVar)){
-		if(!all(byVar %in% colnames(data))){
-			warning("'byVar' is not available in the 'data' so is not used.")
-			byVar <- FALSE
-		}else{
-			res <- dlply(data, byVar, function(dataBy){
-				inputParamsBy <- inputParams
-				inputParamsBy$data <- dataBy
-				inputParamsBy$byVar <- NULL
-				do.call(computeSummaryStatisticsTable, inputParamsBy)		
-			})	
-			if(!is.null(byVarLab)){
-				uniqueNameDf <- unique(data[, byVar, drop = FALSE])
-				newName <- do.call(paste, 
-					c(mapply(paste, byVarLab[byVar], uniqueNameDf, sep = ": ", SIMPLIFY = FALSE),
-					sep = "\n")
-				)
-				initName <- do.call(paste, c(uniqueNameDf, sep = "."))
-				names(res) <- newName[match(names(res), initName)]
-			}
-			return(res)
-		}
+		
+		byVarLab <- getLabelVar(byVar, data = data, labelVars = labelVars, label = byVarLab)
+		
+		res <- dlply(data, byVar, function(dataBy){
+			inputParamsBy <- inputParams
+			inputParamsBy$data <- dataBy
+			inputParamsBy$byVar <- NULL
+			do.call(computeSummaryStatisticsTable, inputParamsBy)		
+		})	
+		uniqueNameDf <- unique(data[, byVar, drop = FALSE])
+		newName <- do.call(paste, 
+			c(mapply(paste, byVarLab[byVar], uniqueNameDf, sep = ": ", SIMPLIFY = FALSE),
+			sep = "\n")
+		)
+		initName <- do.call(paste, c(uniqueNameDf, sep = "."))
+		names(res) <- newName[match(names(res), initName)]
+			
+		return(res)
+			
 	}
 	
 	# get default set of statistics
@@ -317,15 +316,18 @@ computeSummaryStatisticsTable <- function(
 	rowVarTotalInSepRow <- checkVar(var = rowVarTotalInSepRow, varLabel = "rowVarTotalInSepRow", varRef = rowVarTotalInclude, refLabel = "rowVarTotalInclude")
 	
 	# in case the variable should be in multiple columns, 'colVar' might include: 'variable'
-	colVarInit <- colVar
+	colVarInit <- colVar <- checkVar(var = colVar, varLabel = "colVar", data = data, varUncheck = "variable")
 	if("variable" %in% colVar){
 		if(!(!is.null(var) && varLabInclude))
 			warning("'var' not included in columns because 'varLabInclude' is FALSE.",
 				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
 	}
 	colVar <- setdiff(colVar, "variable")
-	colVar <- checkVar(var = colVar, varLabel = "colVar", data = data)
 
+	# check variable(s) label
+	varLab <- getLabelVar(var, data = data, labelVars = labelVars, label = varLab)
+	rowVarLab <- getLabelVar(rowVar,  data = data, labelVars = labelVars, label = rowVarLab)
+	
 	# Compute the column total if the rows could be asked to be ordered 
 	# based on the total category or total can be extracted within a function specified in rowOrder
 	# excepted when no column variable is specified
@@ -935,6 +937,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' @param varLab Named character vector with label for each variable 
 #' specified in \code{var}.
 #' By default, extracted from the \code{labelVars}.
+#' if not available, \code{var} is used.
 #' @param rowVarDataLevels Data.frame with unique combinations of \code{rowVar}
 #' to be included in columns.
 #' Each column should correspond to \code{colVar} and as factor

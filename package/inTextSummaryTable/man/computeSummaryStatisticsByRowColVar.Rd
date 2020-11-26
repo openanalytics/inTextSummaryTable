@@ -31,7 +31,8 @@ computeSummaryStatisticsByRowColVar(
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
-By default, extracted from the \code{labelVars}.}
+By default, extracted from the \code{labelVars}.
+if not available, \code{var} is used.}
 
 \item{varInclude0}{Logical, should rows with no counts 
 for the count \code{var} or \code{varFlag} variable(s)

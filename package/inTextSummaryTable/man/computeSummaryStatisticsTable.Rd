@@ -9,7 +9,7 @@ computeSummaryStatisticsTable(
   var = NULL,
   varFlag = NULL,
   varInclude0 = FALSE,
-  varLab = getLabelVar(var, data = data, labelVars = labelVars),
+  varLab = NULL,
   varLabInclude = length(var) > 1,
   varGeneralLab = "Variable",
   varSubgroupLab = NULL,
@@ -25,7 +25,7 @@ computeSummaryStatisticsTable(
   colTotalLab = "Total",
   rowVar = NULL,
   rowVarDataLevels = NULL,
-  rowVarLab = getLabelVar(rowVar, data = data, labelVars = labelVars),
+  rowVarLab = NULL,
   rowOrder = "auto",
   rowOrderTotalFilterFct = NULL,
   rowOrderCatLast = NULL,
@@ -49,7 +49,7 @@ computeSummaryStatisticsTable(
   colInclude0 = FALSE,
   labelVars = NULL,
   byVar = NULL,
-  byVarLab = getLabelVar(byVar, data = data, labelVars = labelVars)
+  byVarLab = NULL
 )
 }
 \arguments{
@@ -79,7 +79,8 @@ for which zero counts rows should be included}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
-By default, extracted from the \code{labelVars}.}
+By default, extracted from the \code{labelVars}.
+if not available, \code{var} is used.}
 
 \item{varLabInclude}{Logical, if TRUE
 the name of the summary statistic variable(s) (\code{var})
@@ -96,7 +97,9 @@ In case of multiple variable in \code{var}, this will be included in the table h
 This will be included in the table header (see 'rowVarLab' attribute of the output).
 Empty by default.}
 
-\item{varIgnore}{Vector with elements to ignore in the \code{var} variable}
+\item{varIgnore}{Vector with elements to ignore in the \code{var} variable(s).
+The \code{data} records with such elements in \code{var} are \strong{filtered} from the data 
+at the start of the workflow.}
 
 \item{varIncludeTotal}{This argument is deprecated, please use: 'varTotalInclude' instead.}
 

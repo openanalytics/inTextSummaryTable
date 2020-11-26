@@ -207,18 +207,13 @@ test_that("Order of variable group is correct", {
       
     })
 
-test_that("Label of variable name is included when needed", {
+test_that("label of variable name is included when needed", {
       
       data <- data.frame(
           USUBJID = seq.int(6),
           SEX = rep(c("M", "F"), times = 3),
           AGE = seq(20, 62, length.out = 6),
           stringsAsFactors = FALSE
-      )
-      labels <- c(
-          USUBJID = "Subject ID",
-          SEX = "Sex",
-          AGE = "Age, years"
       )
       
       # no variable:
@@ -253,4 +248,44 @@ test_that("Label of variable name is included when needed", {
       )
       expect_true("variable" %in% colnames(descTableMoreOneVarWithLabel))
       
-    })
+})
+	
+test_that("specified var label is used", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = rep(c("M", "F"), times = 3),
+		AGE = seq(20, 62, length.out = 6),
+		stringsAsFactors = FALSE
+	)
+	var <- c("SEX", "AGE")
+	varLab <- c(SEX = "Gender", AGE = "Age in years")
+	
+	# by default, variable name is used as label:
+	expect_silent(sumTable <- computeSummaryStatisticsTable(data, var = var))
+	expect_true(all(c("SEX", "AGE") %in% sumTable$variable))
+	
+	# specify variable labels with 'varLab'
+	expect_silent(sumTableVarLab <- computeSummaryStatisticsTable(data, var = var, varLab = varLab))
+	for(varI in var){
+		expect_identical(
+			subset(sumTableVarLab, variable == varLab[!!varI], select = -variable),
+			subset(sumTable, variable == !!varI, select = -variable)
+		)
+	}
+	
+	# specify variable names in 'labelVars'
+	expect_identical(computeSummaryStatisticsTable(data, var = var, labelVars = varLab), sumTableVarLab)
+	
+	# no errors if labels are not specified for all variables
+	expect_silent(sumTableVarLabNotFull <- computeSummaryStatisticsTable(data, var = var, varLab = c(SEX = "Gender")))
+	expect_identical(
+		subset(sumTableVarLabNotFull, variable == "Gender", select = -variable),
+		subset(sumTable, variable == "SEX", select = -variable)
+	)
+	expect_identical(
+		subset(sumTableVarLabNotFull, variable == "AGE", select = -variable),
+		subset(sumTable, variable == "AGE", select = -variable)
+	)
+	
+})
