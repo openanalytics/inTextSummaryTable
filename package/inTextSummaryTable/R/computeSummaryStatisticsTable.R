@@ -42,7 +42,9 @@
 #' \code{var} is specified for a count table.
 #' This will be included in the table header (see 'rowVarLab' attribute of the output).
 #' Empty by default.
-#' @param varIgnore Vector with elements to ignore in the \code{var} variable
+#' @param varIgnore Vector with elements to ignore in the \code{var} variable(s).
+#' The \code{data} records with such elements in \code{var} are \strong{filtered} from the data 
+#' at the start of the workflow.
 #' @param dataTotal Data.frame used to extract the Total number of subject
 #' per column in column header ('N = [X]').
 #' It should contain the variables specified by \code{colVarTotal}.
