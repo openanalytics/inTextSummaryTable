@@ -20,6 +20,11 @@ library(plyr)
 
 ## summary statistics table
 
+# more extensive test suite, testing multiple combinations of 
+# parameters
+# TODO: this should be replaced by simple tests or included with 'skip'
+skip(
+
 for(type in c("summaryTable", "countTable")){
 	
 	for(colInclude0 in c(FALSE, TRUE)){
@@ -36,7 +41,7 @@ for(type in c("summaryTable", "countTable")){
 				)
 #				print(label)
 				
-				test_that(label, expect_silent(object = {
+				test_that(label, expect_error(object = {
 									
 									getSummaryStatisticsTableCustom <- function(
 											data = dataLB, 
@@ -123,7 +128,7 @@ for(type in c("summaryTable", "countTable")){
 										
 									}
 									
-								}))
+								}, NA))
 				
 			}
 			
@@ -132,6 +137,8 @@ for(type in c("summaryTable", "countTable")){
 	}
 	
 }
+
+)
 
 ## test simple table
 

@@ -217,7 +217,7 @@ test_that("row variables are automatically ordered correctly", {
 			 rowOrder = "auto"
 		)
 	  )
-	  expect_identical(levels(resAuto$SEX), c("M1", "F"))
+	  expect_identical(levels(resAuto$SEX), c("M", "F"))
       
 })
 
@@ -429,7 +429,7 @@ test_that("total per row variables included when requested", {
 	)
 	expect_true("Total" %in% sumTableRowTotal$SEX)
 	sumTableTotal <- subset(sumTableRowTotal, SEX == "Total")
-	expect_equal(sumTableTotal$statN, 5)
+	expect_equal(sumTableTotal$statN, 6)
 	expect_equal(sumTableTotal$statm, 7)
 			
 })
