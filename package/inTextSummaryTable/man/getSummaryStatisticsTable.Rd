@@ -187,11 +187,16 @@ list(var1 = "bold").
 (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which to include the total for each group.}
+for which the total should be reported.}
 
-\item{rowVarTotalByVar}{Character vector with extra \code{rowVar}
-for which to compute the row total by.
-Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.}
+\item{rowVarTotalByVar}{Character vector with a row variable
+used to categorize the row total.\cr
+Note that this is only used if row total(s) is/are requested via \code{rowVarTotalInclude},
+and this variable should also be included in \code{rowVar}.
+This can be specified also for a specific row variable if the vector is named.\cr
+For example: \code{c(ADECOD = "AESEV")} to compute total by severity 
+for row adverse event term in a typical adverse event count table 
+(by System Organ Class and Adverse Event Term).}
 
 \item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.

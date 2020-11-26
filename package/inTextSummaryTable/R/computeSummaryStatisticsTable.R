@@ -31,10 +31,15 @@
 #' @param rowOrderCatLast String with category to be printed in the last 
 #' row of each \code{rowVar} (if any, set to NULL if none). 
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
-#' for which to include the total for each group.
-#' @param rowVarTotalByVar Character vector with extra \code{rowVar}
-#' for which to compute the row total by.
-#' Can be specified for each \code{rowVarTotalInclude} if named by the corresponding variable.
+#' for which the total should be reported.
+#' @param rowVarTotalByVar Character vector with a row variable
+#' used to categorize the row total.\cr
+#' Note that this is only used if row total(s) is/are requested via \code{rowVarTotalInclude},
+#' and this variable should also be included in \code{rowVar}.
+#' This can be specified also for a specific row variable if the vector is named.\cr
+#' For example: \code{c(ADECOD = "AESEV")} to compute total by severity 
+#' for row adverse event term in a typical adverse event count table 
+#' (by System Organ Class and Adverse Event Term).
 #' @param varGeneralLab String with general label for variable specified in \code{var}.
 #' In case of multiple variable in \code{var}, this will be included in the table header
 #' (see 'rowVarLab' attribute of the output).
@@ -266,6 +271,7 @@ computeSummaryStatisticsTable <- function(
 		return(invisible())
 	}
 
+	## compute multiple statistics table based on 'byVar'
 	byVar <- checkVar(var = byVar, varLabel = "byVar", data = data)
 	if(!is.null(byVar)){
 		
@@ -488,17 +494,19 @@ computeSummaryStatisticsTable <- function(
 			if(length(rowVarOther) == 0) rowVarOther <- NULL
 			
 			# extra variable used to compute the total by
-			rowVarOtherExtra <- if(!is.null(rowVarTotalByVar)){
+			rowVarTotalByVarI <- if(!is.null(rowVarTotalByVar)){
 				if(!is.null(names(rowVarTotalByVar))){
-					if(!is.null(rowVarTotalByVar[rVST]))
+					if(rVST %in% names(rowVarTotalByVar))
 						rowVarTotalByVar[rVST]
 				}else	rowVarTotalByVar
 			}
-			if(!is.null(rowVarOtherExtra)){
-				if(!rowVarOtherExtra %in% rowVar)
-					stop("'rowVarTotalByVar' not in 'rowVar'.")
-				rowVarOther <- c(rowVarOther, rowVarOtherExtra)
-			}
+			rowVarTotalByVarI <- checkVar(
+				var = rowVarTotalByVarI, 
+				varLabel = "rowVarTotalByVar",
+				varRef = rowVar,
+				refLabel = "rowVar"
+			)
+			rowVarOther <- c(rowVarOther, rowVarTotalByVarI)
 			
 			# convert row/column variables to factor
 			dataForSubTotal <- convertVarRowVarColVarToFactor(

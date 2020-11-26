@@ -52,7 +52,7 @@ set: rowVarInSepCol == 'variableGroup'.
 This is only available if \code{rowVar} if not specified.}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which to include the total for each group.}
+for which the total should be reported.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:

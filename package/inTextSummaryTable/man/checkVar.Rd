@@ -15,22 +15,22 @@ checkVar(
 )
 }
 \arguments{
-\item{var}{Character vector with variables of interest.}
+\item{var}{(Named) character vector with variables of interest.}
 
 \item{varLabel}{String with label for \code{var}, e.g.
 name of associated parameter.}
 
-\item{varUncheck}{Character vector with extra variables 
+\item{varUncheck}{(Named) character vector with extra variables 
 in \code{var} which shouldn't be checked.}
 
-\item{varRef}{Character vector with set of reference variables.}
+\item{varRef}{(Named) character vector with set of reference variables.}
 
 \item{refLabel}{String with label for the reference}
 
 \item{data}{Data.frame with data.}
 }
 \value{
-\code{var} filtered with element not in \code{data}
+(Named) \code{var} filtered with element not in \code{data}
 or in \code{refSet}.
 If filtered \code{var} is empty, NULL is returned
 }
