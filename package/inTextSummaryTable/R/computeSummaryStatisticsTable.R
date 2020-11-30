@@ -306,7 +306,7 @@ computeSummaryStatisticsTable <- function(
 	}
 	
 	# check var
-	var <- checkVar(var = var, varLabel = "var", data = data)
+	var <- checkVar(var = var, varLabel = "var", data = data, varUncheck = "all")
 	varFlag <- checkVar(var = varFlag, varLabel = "varFlag", varRef = var, refLabel = "var")
 	varInclude0 <- checkVar(
 		var = varInclude0, varLabel = "varInclude0", 
