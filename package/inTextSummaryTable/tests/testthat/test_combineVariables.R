@@ -41,14 +41,17 @@ test_that("data is extracted based on var only", {
 		)
 	)
 	expect_s3_class(sumTable, "data.frame")
+	# default is to consider elements not missing and not empty
 	expect_equal(sumTable$ID, subset(data, !is.na(AFL) & AFL != "")$ID)
 	expect_true("variable" %in% names(sumTable))
+	expect_s3_class(sumTable$variable, "factor")
+	expect_equal(levels(sumTable$variable), "AFL")
 	expect_equal(unique(as.character(sumTable$variable)), "AFL")
 	expect_equal(unique(as.character(sumTable$AFL)), "N")
 			
 })
 
-test_that("data is extracted based on var and value is extracted", {
+test_that("data is extracted based on var and value", {
 	
 	data <- data.frame(
 		ID = seq.int(4),
@@ -163,6 +166,44 @@ test_that("data is extracted based on expression", {
 			
 })
 
+test_that("data is extracted based on multiple filters", {
+		
+	data <- data.frame(
+		ID = seq.int(4),
+		AVAL = c(1, 2, 3, 4)
+	)
+	data$CHG <- data$AVAL-2
+	
+	sumTable <- combineVariables(
+		data = data,
+		paramsList = list(
+			list(var = "CHG", value = 0, label = "Change from baseline positive"),
+			list(var = "AVAL", value = 2, label = "Actual value >= 2")
+		),
+		fctTest = ">=",
+		newVar = "variable"
+	)
+	
+	expect_s3_class(sumTable, "data.frame")
+	expect_equal(
+		subset(sumTable, variable == "Actual value >= 2", select = -variable), 
+		subset(data, AVAL >= 2),
+		check.attributes = FALSE # rownames differ
+	)
+	expect_equal(
+		subset(sumTable, variable == "Change from baseline positive", select = -variable), 
+		subset(data, CHG >= 0),
+		check.attributes = FALSE # rownames differ
+	)
+	expect_s3_class(sumTable$variable, "factor")
+	# levels are in the order specified in 'paramsList':
+	expect_equal(
+		levels(sumTable$variable),
+		c("Change from baseline positive", "Actual value >= 2")
+	)
+			
+})
+
 test_that("label is specified", {
 			
 	data <- data.frame(
@@ -209,6 +250,19 @@ test_that("label is specified", {
 		),
 		sumTableLabel
 	)
+	
+	# duplicated labels
+	expect_error(
+		combineVariables(
+			data = data,
+			paramsList = list(
+				list(var = "AFL", value = "Y", label = "test 1"),
+				list(var = "AFL", value = "N", label = "test 1")
+			),
+			newVar = "variable"
+		),
+		"Duplicated labels in the specified parameter list."
+	)
 			
 })
 
@@ -228,3 +282,57 @@ test_that("label extra is specified", {
 	expect_identical(unique(as.character(sumTableLabelExtra$variable)), "test blabla")
 			
 })
+
+test_that("all records are included", {
+				
+	data <- data.frame(
+		ID = seq.int(4),
+		AFL = c("Y", "N", "Y", "N")
+	)		
+	sumTableIncludeAll <- combineVariables(
+		data = data,
+		paramsList = list(
+			list(var = "AFL", value = "Y")
+		),
+		includeAll = TRUE, newVar = "variable"
+	)
+	
+	# entire dataset is returned with 'variable' set to: 'Any'
+	expect_equal(
+		object = subset(sumTableIncludeAll, variable == "Any", select = -variable), 
+		expected = data,
+		check.attributes = FALSE
+	)
+	
+	# the rest of the dataset is based on specified condition in 'paramsList':
+	expect_equal(
+		object = subset(sumTableIncludeAll, variable != "Any", select = -variable), 
+		expected = subset(data, AFL == "Y"),
+		check.attributes = FALSE
+	)
+			
+})
+
+test_that("all records are included with custom label", {
+
+	data <- data.frame(
+		ID = seq.int(4),
+		AFL = c("Y", "N", "Y", "N")
+	)		
+	sumTableLabelAll <- combineVariables(
+		data = data,
+		paramsList = list(
+			list(var = "AFL", value = "Y")
+		),
+		newVar = "variable",
+		includeAll = TRUE, labelAll = "Entire dataset"
+	)
+	
+	expect_equal(
+		object = subset(sumTableLabelAll, variable == "Entire dataset", select = -variable), 
+		expected = data,
+		check.attributes = FALSE
+	)
+			
+})
+			

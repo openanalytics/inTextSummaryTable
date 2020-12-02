@@ -2098,7 +2098,7 @@ or related to the treatment and with high severity.
 			list(var = "COMPLFL", value = "Y"),
 			# for high severity
 			list(var = "AESEVN", value = 2, fctTest = ">=", labelExtra = "higher than 2"),
-			# treatment-emergent and with higher severity
+			# related and with higher severity
 			list(
 				exprs = 'AREL == "Related" & AESEVN >= 2',
 				label = paste(
