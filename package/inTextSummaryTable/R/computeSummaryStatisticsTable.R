@@ -239,6 +239,7 @@ computeSummaryStatisticsTable <- function(
 	colVarTotal = colVar, 
 	colVarTotalPerc = colVarTotal,
 	colTotalInclude = FALSE, colTotalLab = "Total",
+	colInclude0 = FALSE,
 	rowVar = NULL, rowVarDataLevels = NULL, 
 	rowVarLab = NULL,
 	rowOrder = "auto", rowOrderTotalFilterFct = NULL, rowOrderCatLast = NULL,
@@ -246,6 +247,7 @@ computeSummaryStatisticsTable <- function(
 	rowVarTotalInSepRow = NULL,
 	rowVarTotalByVar = NULL,
 	rowVarTotalPerc = NULL,
+	rowInclude0 = FALSE, 
 	type = "auto",
 	subjectVar = "USUBJID",	
 	dataTotal = NULL, dataTotalPerc = dataTotal,
@@ -257,7 +259,6 @@ computeSummaryStatisticsTable <- function(
 	statsGeneralLab = "Statistic",
 	statsPerc = c("statN", "statm"),
 	filterFct = NULL,
-	rowInclude0 = FALSE, colInclude0 = FALSE,
 	labelVars = NULL,
 	byVar = NULL, byVarLab = NULL
 ){
@@ -334,6 +335,8 @@ computeSummaryStatisticsTable <- function(
 				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
 	}
 	colVar <- setdiff(colVar, "variable")
+	colVarTotal <- checkVar(var = colVarTotal, varLabel = "colVarTotal", varRef = "colVar", refLabel = "colVar", varUncheck = "variable")
+	colVarTotalPerc <- checkVar(var = colVarTotalPerc, varLabel = "colVarTotalPerc", varRef = "colVar", refLabel = "colVar", varUncheck = "variable")
 
 	# check variable(s) label
 	varLab <- getLabelVar(var, data = data, labelVars = labelVars, label = varLab)

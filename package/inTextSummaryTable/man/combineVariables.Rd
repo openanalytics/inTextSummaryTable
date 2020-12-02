@@ -69,7 +69,14 @@ This is only used if \code{fctTest} is not specified in each sublist.}
 \item{labelAll}{String of group label for the entire data in case \code{includeAll} is TRUE.}
 }
 \value{
-Data.frame with data and additional variable \code{newVar}.
+Data.frame with records from \code{data} extracted based on
+the different conditions specified in \code{paramsList}.\cr
+This data.frame contains an additional variable 
+(labelled based on \code{newVar}) mentioning the
+specific condition for which the record was extracted
+(based \code{label}, \code{labelExtra}, \code{labelVars}).\cr
+This variable is a factor whose levels are ordered based on the order
+of the condition specified in \code{paramsList}.
 }
 \description{
 This typically converts the data from a wide to a long format,
