@@ -2,7 +2,7 @@
 % Please edit documentation in R/combineVariables.R
 \name{combineVariables}
 \alias{combineVariables}
-\title{Create a data.frame combining set of records from same or multiple variables.}
+\title{Create a data.frame combining a set of records from same or multiple variables.}
 \usage{
 combineVariables(
   data,
@@ -17,13 +17,51 @@ combineVariables(
 \arguments{
 \item{data}{Data.frame with data.}
 
+\item{paramsList}{nested list of parameters, 
+specifying how the records of interest should be selected.\cr
+There are two ways to select a subset of interest:
+\itemize{
+\item{by specifying one unique variable of interest with: }{
+\itemize{
+\item{\code{var}: }{string with column of \code{data} of interest}
+\item{\code{value}: }{value of \code{var} of interest (only used if \code{var} is specified).\cr
+If not specified only the values different than NA and '' are considered.}
+\item{\code{fctTest}: }{string with name or directly comparison function
+to apply on \code{var} to select subset of interest versus \code{value}.\cr
+The function should take \code{var} as first parameter and \code{value} to compare to
+as second parameter and returns a logical vector with TRUE or FALSE (of length \code{var})
+if the condition is fullfilled.\cr
+If not specified, the records with \code{var} equal to \code{value} are retained 
+(\code{fctTest} is set to '==').} 
+\item{label specification: }{
+\itemize{
+\item{\code{label}: }{string with label for the condition,
+includde in the new 'variable' column.\cr
+If not specified and:
+\itemize{
+\item{\code{var} is specified: }{label is extracted from 
+\code{labelVars} if available or set to \code{var} otherwise.}
+\item{\code{var} is not specified: }{label should be specified.}
+}}
+\item{\code{labelExtra}: }{string with extra label, will be concatenated with \code{label}}
+}}
+}}
+
+\item{by specifying a combination of variable of interest with: }{
+\itemize{
+\item{\code{exprs}: }{string with expression of columns of \code{data} to select subset of interest}
+\item{\code{label}: }{string with complete label for the group}
+}}
+
+}}
+
 \item{newVar}{String with name of new variable to construct.}
 
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}
 
-\item{fctTest}{Global default function to use to compare \code{var} and \code{value} specified
-in each sublist of \code{paramsList}.
+\item{fctTest}{Default function to use to compare \code{var} and \code{value} specified
+in each sublist of \code{paramsList}.\cr
 This is only used if \code{fctTest} is not specified in each sublist.}
 
 \item{includeAll}{Logical, if TRUE (FALSE by default) include also the entire data as an additional subgroup.}
@@ -34,7 +72,10 @@ This is only used if \code{fctTest} is not specified in each sublist.}
 Data.frame with data and additional variable \code{newVar}.
 }
 \description{
-For each variable, subset of interest can be specified.
+This typically converts the data from a wide to a long format,
+a.k.a multiple variables available in multiple columns of the data
+are included into one single column.
+For each variable, a subset of interest based on a condition can be specified.
 }
 \author{
 Laure Cougnaud

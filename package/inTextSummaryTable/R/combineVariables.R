@@ -1,52 +1,66 @@
-#' Create a data.frame combining set of records from same or multiple variables.
+#' Create a data.frame combining a set of records from same or multiple variables.
 #' 
-#' For each variable, subset of interest can be specified.
+#' This typically converts the data from a wide to a long format,
+#' a.k.a multiple variables available in multiple columns of the data
+#' are included into one single column.
+#' For each variable, a subset of interest based on a condition can be specified.
 #' @param data Data.frame with data.
-#' @param paramsList nested list of parameters.
+#' @param paramsList nested list of parameters, 
+#' specifying how the records of interest should be selected.\cr
 #' There are two ways to select a subset of interest:
 #' \itemize{
 #' \item{by specifying one unique variable of interest with: }{
 #' \itemize{
-#' \item{'var': }{string with column of \code{data} of interest}
-#' \item{'value': }{value of \code{var} of interest (only used if \code{var} is specified).
-#' \code{If not specified only the values different than NA and '' are considered.}}
-#' \item{'fctTest': }{string with function name or directly function
-#' to apply on \code{var} to select subset of interest versus 'value',
-#' The function should take  \code{var} parameter and \code{value} to compare to
+#' \item{\code{var}: }{string with column of \code{data} of interest}
+#' \item{\code{value}: }{value of \code{var} of interest (only used if \code{var} is specified).\cr
+#' If not specified only the values different than NA and '' are considered.}
+#' \item{\code{fctTest}: }{string with name or directly comparison function
+#' to apply on \code{var} to select subset of interest versus \code{value}.\cr
+#' The function should take \code{var} as first parameter and \code{value} to compare to
 #' as second parameter and returns a logical vector with TRUE or FALSE (of length \code{var})
-#' if the condition is fullfilled.
-#' If not specified, the records with \code{var} equal to \code{value} are retained (\code{fctTest} set to '==')
-#' } 
+#' if the condition is fullfilled.\cr
+#' If not specified, the records with \code{var} equal to \code{value} are retained 
+#' (\code{fctTest} is set to '==').} 
 #' \item{label specification: }{
 #' \itemize{
-#' \item{'label': }{string with label for the condition,
-#' include in the new variable column.
-#' If the label is not specified and:
+#' \item{\code{label}: }{string with label for the condition,
+#' includde in the new 'variable' column.\cr
+#' If not specified and:
 #' \itemize{
 #' \item{\code{var} is specified: }{label is extracted from 
 #' \code{labelVars} if available or set to \code{var} otherwise.}
 #' \item{\code{var} is not specified: }{label should be specified.}
-#' }
-#' \item{'labelExtra': }{string with extra label, will be concatenated with label}
-#' }
-#' }
 #' }}
+#' \item{\code{labelExtra}: }{string with extra label, will be concatenated with \code{label}}
+#' }}
+#' }}
+#' 
 #' \item{by specifying a combination of variable of interest with: }{
 #' \itemize{
-#' \item{'exprs': }{string with expression of columns of \code{data} to select subset of interest}
-#' \item{'label': }{string with complete label for the group}
-#' }}}
+#' \item{\code{exprs}: }{string with expression of columns of \code{data} to select subset of interest}
+#' \item{\code{label}: }{string with complete label for the group}
+#' }}
+#' 
+#' }
 #' @param newVar String with name of new variable to construct.
-#' @param fctTest Global default function to use to compare \code{var} and \code{value} specified
-#' in each sublist of \code{paramsList}.
+#' @param fctTest Default function to use to compare \code{var} and \code{value} specified
+#' in each sublist of \code{paramsList}.\cr
 #' This is only used if \code{fctTest} is not specified in each sublist.
 #' @param includeAll Logical, if TRUE (FALSE by default) include also the entire data as an additional subgroup.
 #' @param labelAll String of group label for the entire data in case \code{includeAll} is TRUE.
 #' @inheritParams glpgUtilityFct::getLabelVar
-#' @return Data.frame with data and additional variable \code{newVar}.
+#' @return Data.frame with records from \code{data} extracted based on
+#' the different conditions specified in \code{paramsList}.\cr
+#' This data.frame contains an additional variable 
+#' (labelled based on \code{newVar}) mentioning the
+#' specific condition for which the record was extracted
+#' (based \code{label}, \code{labelExtra}, \code{labelVars}).\cr
+#' This variable is a factor whose levels are ordered based on the order
+#' of the condition specified in \code{paramsList}.
 #' @author Laure Cougnaud
 #' @export
-combineVariables <- function(data, paramsList, newVar, 
+combineVariables <- function(
+	data, paramsList, newVar, 
 	labelVars = NULL, fctTest = "==",
 	includeAll = FALSE, labelAll = "Any"){
 	
