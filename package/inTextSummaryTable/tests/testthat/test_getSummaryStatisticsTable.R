@@ -186,7 +186,7 @@ test_that("'getSummaryStatisticsTable' with only one statistic and statistics in
 
 test_that("'getSummaryStatisticsTable' with specified variable and all counts", {
 			
-			dataAE <- ddply(dataAE, c("AESOC", "AEDECOD", "USUBJID"), function(x){
+			dataAE <- plyr::ddply(dataAE, c("AESOC", "AEDECOD", "USUBJID"), function(x){
 						x$WORSTINT <- max(x$AESEVN, na.rm = TRUE)
 						x
 					})
