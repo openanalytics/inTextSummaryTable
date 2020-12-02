@@ -91,7 +91,7 @@ test_that("column total is extracted", {
 	
 })
 
-test_that("Levels are specified for col var", {
+test_that("columns with 0 counts are included", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -117,7 +117,62 @@ test_that("Levels are specified for col var", {
 		),
 		check.attributes = FALSE
 	)
-		
+	
+	# if colInclude0 is specified, all combinations of columns are included based on levels
+	expect_silent(
+		sumTableInclude0 <- computeSummaryStatisticsTable(
+			data,
+			var = "AGE",
+			colVar = c("TRT", "DOSE"),
+			colInclude0 = TRUE
+		)
+	)
+	
+	# all combinations are used for the 'total', in correct order:
+	colAllComb <- expand.grid(unique(data[, c("TRT", "DOSE")]))
+	colAllComb <- colAllComb[with(colAllComb, order(TRT, DOSE)), ]
+	sumTableInclude0Total <- subset(sumTableInclude0, isTotal)
+	expect_equal(
+		sumTableInclude0Total[, c("TRT", "DOSE")],
+		colAllComb,
+		check.attributes = FALSE
+	)
+	
+	# statistics for combinations appearing in the data are identical
+	# than when 'include0' is set to FALSE:
+	colVarInData <- unique(data[, c("DOSE", "TRT")])
+	expect_equal(
+		merge(colVarInData, sumTableInclude0)[, colnames(sumTableBase)],
+		sumTableBase,
+		check.attributes = FALSE
+	)
+	
+	# statistics for combinations NOT appearing in the data are empty
+	sumTableNotInData <- dplyr::anti_join(sumTableInclude0, colVarInData)
+	statsCont <- c("statMean", "statSD", "statSE", "statMedian", "statMin", "statMax")
+	expect_true(all(is.na(sumTableNotInData[, statsCont])))
+	expect_true(all(sumTableNotInData[, c("statN", "statm", "statPercTotalN")] == 0))
+	expect_true(all(is.nan(sumTableNotInData[, c("statPercN")])))
+			
+})
+
+test_that("Levels are specified for col var", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		AGE = seq(20, 62, length.out = 6),
+		TRT = factor(rep(c("A", "B"), each = 3)),
+		DOSE = factor(rep(c("100", "200"), each = 3)),
+		stringsAsFactors = FALSE
+	)
+	
+	# sum table with combinations appearing in data
+	sumTableBase <- computeSummaryStatisticsTable(
+		data,
+		var = "AGE",
+		colVar = c("TRT", "DOSE")
+	)
+	
 	## if other groups should be included, 'colVarDataLevels' can be used
 			
 	# different doses for all treatment and non alphabetical order:
