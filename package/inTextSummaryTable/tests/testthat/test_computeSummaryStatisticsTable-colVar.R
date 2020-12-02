@@ -6,9 +6,9 @@ library(dplyr)
 test_that("summary table is computed with column variable", {
 			
 	data <- data.frame(
-		USUBJID = seq.int(6),
-		AGE = seq(20, 62, length.out = 6),
-		TRT = rep(c("A", "B"), each = 3),
+		USUBJID = seq.int(7),
+		AGE = seq(20, 62, length.out = 7),
+		TRT = rep(c("A", "B"), times = c(3, 4)),
 		stringsAsFactors = FALSE
 	)
 	expect_silent(
@@ -31,6 +31,13 @@ test_that("summary table is computed with column variable", {
 			check.attributes = FALSE
 		)
 	}
+	
+	# counts:
+	expect_true(all(sumTable$statPercN %in% 100))
+	expect_equal(subset(sumTable, TRT == "A" & isTotal)$statN, 3)
+	expect_equal(subset(sumTable, TRT == "A")$statPercTotalN, c(3, 3))
+	expect_equal(subset(sumTable, TRT == "B" & isTotal)$statN, 4)
+	expect_equal(subset(sumTable, TRT == "B")$statPercTotalN, c(4, 4))	
 
 })
 
@@ -264,4 +271,47 @@ test_that("more groups in colVar in dataTotalRow than in data to summarize", {
 	expect_equal(summaryTableGroupOnlyInTotal$statN, 3)
 	expect_equal(summaryTableGroupOnlyInTotal$statm, 6)
 	
+})
+
+test_that("total per column is computed for different column var", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AGE = seq(20, 62, length.out = 5),
+		TRT = c("A", "A", "A", "B", "B"),
+		DOSE = c("100", "100", "200", "300", "400"),
+		stringsAsFactors = FALSE
+	)
+			
+	# correct specification
+	expect_silent(
+		sumTable <- computeSummaryStatisticsTable(
+			data,
+			var = "AGE",
+			colVar = c("TRT", "DOSE"),
+			colVarTotal = "TRT"
+		)
+	)
+	
+	expect_equal(sum(sumTable$isTotal), 2)
+	
+	expect_equal(subset(sumTableTotal, isTotal & TRT == "A")$statN, 3)
+	expect_true(all(subset(sumTable, TRT == "A")$statPercTotalN %in% 3))
+	
+	expect_equal(subset(sumTableTotal, isTotal & TRT == "B")$statN, 2)
+	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN %in% 2))
+	
+	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
+	
+	# wrong specification
+	expect_warning(
+		computeSummaryStatisticsTable(
+			data,
+			var = "AGE",
+			colVar = c("TRT", "DOSE"),
+			colVarTotal = "TRT2"
+		),
+		"Variable.* in colVarTotal.* ignored because.*not available"
+	)
+
 })

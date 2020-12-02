@@ -23,6 +23,7 @@ computeSummaryStatisticsTable(
   colVarTotalPerc = colVarTotal,
   colTotalInclude = FALSE,
   colTotalLab = "Total",
+  colInclude0 = FALSE,
   rowVar = NULL,
   rowVarDataLevels = NULL,
   rowVarLab = NULL,
@@ -33,6 +34,7 @@ computeSummaryStatisticsTable(
   rowVarTotalInSepRow = NULL,
   rowVarTotalByVar = NULL,
   rowVarTotalPerc = NULL,
+  rowInclude0 = FALSE,
   type = "auto",
   subjectVar = "USUBJID",
   dataTotal = NULL,
@@ -45,8 +47,6 @@ computeSummaryStatisticsTable(
   statsGeneralLab = "Statistic",
   statsPerc = c("statN", "statm"),
   filterFct = NULL,
-  rowInclude0 = FALSE,
-  colInclude0 = FALSE,
   labelVars = NULL,
   byVar = NULL,
   byVarLab = NULL
@@ -139,6 +139,12 @@ statistics across columns in a separated column.}
 \item{colTotalLab}{String, label for the total column included 
 if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
+\item{colInclude0}{Logical, if TRUE (FALSE by default),
+include columns with no records, based on all combinations 
+of the \code{columnVar} (assuming nested variable(s)).
+If variable(s) are not nested, possible combinations
+can be specified via \code{colVarDataLevels}.}
+
 \item{rowVar}{Variable(s) of \code{data} used for
 grouping in row in the final table.}
 
@@ -195,6 +201,10 @@ should be computed for the denominator for the percentage computation.
 By default the total is only computed only by column (NULL by default).
 If the total should be based on the total number of records per variable,
 \code{rowVarTotalPerc} should be set to 'variable'.}
+
+\item{rowInclude0}{Logical, if TRUE (FALSE by default),
+include rows with no records, based on all combinations 
+of the \code{rowVar} (assuming nested variable(s)).}
 
 \item{type}{String with type of table: 
 \itemize{
@@ -312,16 +322,6 @@ For example: \code{filterFct = function(data) subset(data, isTotal & myColVar ==
 \item{\code{rowVar}/\code{colVar} set to 'Total'/\code{colTotalLab} 
 if \code{rowVarTotalInclude}/\code{colTotalInclude} is specified}
 }}
-
-\item{rowInclude0}{Logical, if TRUE (FALSE by default),
-include rows with no records, based on all combinations 
-of the \code{rowVar} (assuming nested variable(s)).}
-
-\item{colInclude0}{Logical, if TRUE (FALSE by default),
-include columns with no records, based on all combinations 
-of the \code{columnVar} (assuming nested variable(s)).
-If variable(s) are not nested, possible combinations
-can be specified via \code{colVarDataLevels}.}
 
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}
