@@ -1,7 +1,5 @@
 context("Compute summary statistics table")
 
-library(plyr)
-
 test_that("no data to report", {
 			
 	data <- data.frame()
