@@ -66,7 +66,7 @@ test_that("correct order of columns", {
 			
 })
 
-test_that("column total is extracted", {
+test_that("column total and label is extracted", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -76,27 +76,53 @@ test_that("column total is extracted", {
 	)
 	
 	expect_silent(
-		sumTable <- computeSummaryStatisticsTable(
+		sumTableColTotal <- computeSummaryStatisticsTable(
 			data,
 			var = "AGE",
 			colVar = "TRT",
 			colTotalInclude = TRUE
 		)
 	)
-	expect_s3_class(sumTable, "data.frame")
-	expect_true("TRT" %in% colnames(sumTable))
 	expect_identical(
-		levels(sumTable$TRT),
+		levels(sumTableColTotal$TRT),
 		c(unique(data$TRT), "Total")
 	)
 	
 	# total should be the same as stats computed on entire dataset:
 	expect_equal(
-		subset(sumTable, TRT == "Total", select = -TRT),	
+		subset(sumTableColTotal, TRT == "Total", select = -TRT),	
 		computeSummaryStatisticsTable(data, var = "AGE"),
 		check.attributes = FALSE # row.names diff
 	)
 	
+	# label specification
+	expect_equal(
+		object = {
+			sumTableColTotalLab <- computeSummaryStatisticsTable(
+				data,
+				var = "AGE",
+				colVar = "TRT",
+				colTotalInclude = TRUE, colTotalLab = "All treatments"
+			)	
+			subset(sumTableColTotalLab, TRT == "All treatments", select = -TRT)
+		},
+		expected = subset(sumTableColTotal, TRT == "Total", select = -TRT)
+	)
+	
+})
+
+test_that("label for column total is specified", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		AGE = seq(20, 62, length.out = 6),
+		TRT = rep(c("A", "B"), each = 3),
+		stringsAsFactors = FALSE
+	)
+		
+	
+
+			
 })
 
 test_that("columns with 0 counts are included", {
