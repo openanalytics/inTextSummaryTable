@@ -611,7 +611,21 @@ computeSummaryStatisticsTable <- function(
 	## get counts for the entire dataset
 	
 	# data considered to compute the total
-	if(!is.null(dataTotal)){
+
+	isDataTotalSpec <- !is.null(dataTotal)
+	
+	# by default, if not specified, data is used
+	if(!isDataTotalSpec){
+		dataTotal <- data
+		# in case no 'dataTotal' is included, consider 'dataTotalCol' for the header across columns
+		dataTotalColTotalHeader <- if(colTotalInclude)	dataForColTotal
+	}
+	# check if colVarTotal is in dataTotal:
+	colVarTotal <- checkVar(var = colVarTotal, varLabel = "colVarTotal", 
+		data = dataTotal, refLabel = "total dataset", varUncheck = "variable")
+
+	# format columns as factor in correct order
+	if(isDataTotalSpec){
 		# to have specified order for colVar in case different order 'dataTotal'
 		colVarTotalUsed <- setdiff(colVarTotal, "variable")
 		if(!is.null(colVarTotalUsed)){
@@ -622,10 +636,6 @@ computeSummaryStatisticsTable <- function(
 			)
 		}
 		dataTotalColTotalHeader <- dataTotal
-	}else{
-		dataTotal <- data
-		# in case no 'dataTotal' is included, consider 'dataTotalCol' for the header across columns
-		dataTotalColTotalHeader <- if(colTotalInclude)	dataForColTotal
 	}
 	
 	# get total for column headers:
@@ -672,6 +682,9 @@ computeSummaryStatisticsTable <- function(
 	}else{
 		dataTotalPercTotalHeader <- dataTotalPerc
 	}
+	# check if colVarTotal is in dataTotal:
+	colVarTotalPerc <- checkVar(var = colVarTotalPerc, varLabel = "colVarTotalPerc", 
+		data = dataTotalPerc, refLabel = "total dataset for percentage", varUncheck = "variable")
 
 	summaryTableTotalPerc <- if(computeTotalPerc){
 				
