@@ -335,8 +335,8 @@ computeSummaryStatisticsTable <- function(
 				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
 	}
 	colVar <- setdiff(colVar, "variable")
-	colVarTotal <- checkVar(var = colVarTotal, varLabel = "colVarTotal", varRef = "colVar", refLabel = "colVar", varUncheck = "variable")
-	colVarTotalPerc <- checkVar(var = colVarTotalPerc, varLabel = "colVarTotalPerc", varRef = "colVar", refLabel = "colVar", varUncheck = "variable")
+	colVarTotal <- checkVar(var = colVarTotal, varLabel = "colVarTotal", varRef = colVar, refLabel = "colVar", varUncheck = "variable")
+	colVarTotalPerc <- checkVar(var = colVarTotalPerc, varLabel = "colVarTotalPerc", varRef = colVar, refLabel = "colVar", varUncheck = "variable")
 
 	# check variable(s) label
 	varLab <- getLabelVar(var, data = data, labelVars = labelVars, label = varLab)
