@@ -74,6 +74,7 @@ test_that("column total is extracted", {
 		TRT = rep(c("A", "B"), each = 3),
 		stringsAsFactors = FALSE
 	)
+	
 	expect_silent(
 		sumTable <- computeSummaryStatisticsTable(
 			data,
@@ -163,7 +164,7 @@ test_that("columns with 0 counts are included", {
 			
 })
 
-test_that("Levels are specified for col var", {
+test_that("Levels are specified for columns", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -278,12 +279,15 @@ test_that("total per column is computed for different column var", {
 	data <- data.frame(
 		USUBJID = seq.int(5),
 		AGE = seq(20, 62, length.out = 5),
+		SEX = c(NA_character_, c("F", "M", "F", "M")),
 		TRT = c("A", "A", "A", "B", "B"),
 		DOSE = c("100", "100", "200", "300", "400"),
 		stringsAsFactors = FALSE
 	)
 			
-	# correct specification
+	## correct specification
+	
+	# with column variable
 	expect_silent(
 		sumTable <- computeSummaryStatisticsTable(
 			data,
@@ -295,11 +299,30 @@ test_that("total per column is computed for different column var", {
 	
 	expect_equal(sum(sumTable$isTotal), 2)
 	
-	expect_equal(subset(sumTableTotal, isTotal & TRT == "A")$statN, 3)
+	expect_equal(subset(sumTable, isTotal & TRT == "A")$statN, 3)
 	expect_true(all(subset(sumTable, TRT == "A")$statPercTotalN %in% 3))
 	
-	expect_equal(subset(sumTableTotal, isTotal & TRT == "B")$statN, 2)
+	expect_equal(subset(sumTable, isTotal & TRT == "B")$statN, 2)
 	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN %in% 2))
+	
+	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
+	
+	# by variable
+	expect_silent(
+		sumTable <- computeSummaryStatisticsTable(
+			data,
+			var = c("AGE", "SEX"),
+			colVar = c("TRT", "DOSE"),
+			colVarTotal = "variable"
+		)
+	)
+	expect_equal(sum(sumTable$isTotal), 2)
+	
+	expect_equal(subset(sumTable, isTotal & variable == "AGE")$statN, 5)
+	expect_true(all(subset(sumTable, variable == "AGE")$statPercTotalN %in% 5))
+	
+	expect_equal(subset(sumTable, isTotal & variable == "SEX")$statN, 4)
+	expect_true(all(subset(sumTable, variable == "SEX")$statPercTotalN %in% 4))
 	
 	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
 	
