@@ -867,7 +867,15 @@ computeSummaryStatisticsTableTotal <- function(
 	# in case total should be computed by 'var'
 	# convert wide -> long format: one column with all variables
 	formatDataTotalWithVar <- function(data){
+		
 		if("all" %in% var)	data[, "all"] <- "all"
+		
+		# to avoid warnings in 'melt': 
+		# - 'attributes are not identical across measure variables; they will be dropped'
+		# - cannot avoid coercion of factors when measure attributes not identical
+		if(!is.null(var))
+			data[, var] <- lapply(data[, var], as.character)
+		
 		data <- melt(
 			data = data, 
 			measure.vars = var, 
@@ -881,6 +889,7 @@ computeSummaryStatisticsTableTotal <- function(
 			levels = varLab[var]
 		)
 		return(data)
+		
 	}
 
 	# total is computed based on number of elements available in each 'var'

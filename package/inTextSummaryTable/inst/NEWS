@@ -4,6 +4,7 @@
   o computeSummaryStatisticsTable: fix in case varLab/rowVarLab/byVarLab not specified for all vars
   o varSubgroupLab: change default 'variableGroup' -> 'Variable group'
   o computeSummaryStatisticsTable: rowVarTotalByVar wrong spec: error -> warning, fix in case named charac
+  o computeSummaryStatisticsTableTotal: fix for warnings: 'attributes are not identical across measure variables...', 'cannot avoid coercion of factors...'
 2.19.0
   o add unit tests
   o computeSummaryStatistics: fix for data with one column, extra error msg
