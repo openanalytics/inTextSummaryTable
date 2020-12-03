@@ -11,7 +11,8 @@ checkVar(
   varUncheck = NULL,
   varRef,
   refLabel = ifelse(!missing(varRef), "reference variable", "data"),
-  data
+  data,
+  msgType = c("warning", "error")
 )
 }
 \arguments{
@@ -28,11 +29,19 @@ in \code{var} which shouldn't be checked.}
 \item{refLabel}{String with label for the reference}
 
 \item{data}{Data.frame with data.}
+
+\item{msgType}{String with type of message returned, either a 'warning' (default)
+or an error.}
 }
 \value{
-(Named) \code{var} filtered with element not in \code{data}
-or in \code{refSet}.
-If filtered \code{var} is empty, NULL is returned
+Depending on \code{msgType}:
+\itemize{
+\item{\code{warning}: }{warning is printed in the console, and a 
+\code{var} filtered with element not in \code{data}
+or in \code{refSet} is returned.
+If filtered \code{var} is empty, NULL is returned.}
+\item{\code{error}: }{an error is triggered.}
+}
 }
 \description{
 Filter variables not present in the data or in reference set with a warning,

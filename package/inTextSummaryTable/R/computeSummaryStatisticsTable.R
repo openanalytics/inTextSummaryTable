@@ -479,7 +479,7 @@ computeSummaryStatisticsTable <- function(
 				}else{
 					if(rVST %in% names(dataTotalRow)){
 						dataTotalRow[[rVST]]
-					}else	stop(paste0("'dataTotalRow' missing for: ", rVST, "."))
+					}else	stop(paste0("Dataset for row total missing for: ", shQuote(rVST), "."))
 				}
 			}else	data
 	
@@ -490,6 +490,10 @@ computeSummaryStatisticsTable <- function(
 			]
 			filterRowNestedVar <- function(data){
 				if(length(rowVarSubTotalOther) > 0){
+					
+					checkVar(var = rowVarSubTotalOther, "rowVar", data = data, 
+						refLabel = "dataset for row total", msgType = "error")
+					
 					idxMissingSubVar <- which(
 						rowSums(is.na(data[, rowVarSubTotalOther, drop = FALSE])) == length(rowVarSubTotalOther)
 					)
@@ -518,6 +522,9 @@ computeSummaryStatisticsTable <- function(
 				refLabel = "rowVar"
 			)
 			rowVarOther <- c(rowVarOther, rowVarTotalByVarI)
+			
+			checkVar(var = c(rowVarOther, colVar, var), "variables", data = dataForSubTotal, 
+				refLabel = "dataset for row total", msgType = "error")
 			
 			# convert row/column variables to factor
 			dataForSubTotal <- convertVarRowVarColVarToFactor(
@@ -561,6 +568,9 @@ computeSummaryStatisticsTable <- function(
 					colVar = NULL,
 					var = var
 				)
+				
+				checkVar(var = c(rowVarOther, var), "variables", data = dataForSubTotalForColTotal, 
+					refLabel = "dataset for row total across columns", msgType = "error")
 				
 				summaryTableRowSubtotalVarColTotal <- computeSummaryStatisticsByRowColVar(
 					data = dataForSubTotalForColTotal, 

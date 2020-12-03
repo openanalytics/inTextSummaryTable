@@ -212,15 +212,26 @@ checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
 #' @param refLabel String with label for the reference
 #' @param varUncheck (Named) character vector with extra variables 
 #' in \code{var} which shouldn't be checked.
-#' @return (Named) \code{var} filtered with element not in \code{data}
-#' or in \code{refSet}.
-#' If filtered \code{var} is empty, NULL is returned
+#' @param msgType String with type of message returned, either a 'warning' (default)
+#' or an error.
+#' @return Depending on \code{msgType}:
+#' \itemize{
+#' \item{\code{warning}: }{warning is printed in the console, and a 
+#' \code{var} filtered with element not in \code{data}
+#' or in \code{refSet} is returned.
+#' If filtered \code{var} is empty, NULL is returned.}
+#' \item{\code{error}: }{an error is triggered.}
+#' }
 #' @author Laure Cougnaud
 checkVar <- function(
 	var, varLabel, varUncheck = NULL,
 	varRef, 
 	refLabel = ifelse(!missing(varRef), "reference variable", "data"),
-	data){
+	data,
+	msgType = c("warning", "error")
+){
+	
+	msgType <- match.arg(msgType)
 	
 	if(!missing(varRef) & !missing(data))
 		stop("Either 'data' or 'varRef' should be specified.")
@@ -236,13 +247,15 @@ checkVar <- function(
 	varToFilter <- varToFilter[!varToFilter %in% varUncheck]
 	
 	if(length(varToFilter) > 0){
-		warning(paste0(
+		msg <- paste0(
 			"Variable(s): ",
 			toString(shQuote(varToFilter)),
 			" in ", varLabel, 
-			" are ignored because they are not available in: ", 
+			if(msgType == "warning")	" are ignored because they",
+			" are not available in: ", 
 			refLabel, "."
-		))
+		)
+		switch(msgType, warning = warning(msg), error = stop(msg))
 	}
 	
 	varFiltered <- var[!var %in% varToFilter]
