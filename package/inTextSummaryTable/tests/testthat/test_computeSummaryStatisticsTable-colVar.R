@@ -300,10 +300,10 @@ test_that("total per column is computed for different column var", {
 	expect_equal(sum(sumTable$isTotal), 2)
 	
 	expect_equal(subset(sumTable, isTotal & TRT == "A")$statN, 3)
-	expect_true(all(subset(sumTable, TRT == "A")$statPercTotalN %in% 3))
+	expect_true(all(subset(sumTable, TRT == "A")$statPercTotalN == 3))
 	
 	expect_equal(subset(sumTable, isTotal & TRT == "B")$statN, 2)
-	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN %in% 2))
+	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN == 2))
 	
 	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
 	
@@ -319,10 +319,10 @@ test_that("total per column is computed for different column var", {
 	expect_equal(sum(sumTable$isTotal), 2)
 	
 	expect_equal(subset(sumTable, isTotal & variable == "AGE")$statN, 5)
-	expect_true(all(subset(sumTable, variable == "AGE")$statPercTotalN %in% 5))
+	expect_true(all(subset(sumTable, variable == "AGE")$statPercTotalN == 5))
 	
 	expect_equal(subset(sumTable, isTotal & variable == "SEX")$statN, 4)
-	expect_true(all(subset(sumTable, variable == "SEX")$statPercTotalN %in% 4))
+	expect_true(all(subset(sumTable, variable == "SEX")$statPercTotalN == 4))
 	
 	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
 	
@@ -338,3 +338,71 @@ test_that("total per column is computed for different column var", {
 	)
 
 })
+
+test_that("percentage per column is computed for different column var", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AGE = seq(20, 62, length.out = 5),
+		SEX = c(NA_character_, c("F", "M", "F", "M")),
+		TRT = c("A", "A", "A", "B", "B"),
+		DOSE = c("100", "100", "200", "300", "400"),
+		stringsAsFactors = FALSE
+	)
+			
+	## correct specification
+	
+	# with column variable
+	expect_silent(
+		sumTable <- computeSummaryStatisticsTable(
+			data,
+			var = "AGE",
+			colVar = c("TRT", "DOSE"),
+			colVarTotalPerc = "TRT"
+		)
+	)
+	
+	# column total still computed per TRT and DOSE
+	expect_equal(sum(sumTable$isTotal), 4)
+	sumTableTotal <- subset(sumTable, isTotal)
+	expect_equal(
+		sumTableTotal[match(c("100", "200", "300", "400"), sumTableTotal$DOSE), "statN"], 
+		c(2, 1, 1, 1)
+	)
+	
+	# but percentage are computed by treatment
+	expect_true(all(subset(sumTable, TRT == "A")$statPercTotalN == 3))
+	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN == 2))
+	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
+	
+	# by variable
+	expect_silent(
+		sumTable <- computeSummaryStatisticsTable(
+			data,
+			var = c("AGE", "SEX"),
+			colVar = c("TRT", "DOSE"),
+			colVarTotalPerc = "variable"
+		)
+	)
+	
+	# column total still computed per TRT and DOSE
+	expect_equal(sum(sumTable$isTotal), 4)
+	
+	# but percentage are computed by treatment
+	expect_true(all(subset(sumTable, variable == "AGE")$statPercTotalN == 5))
+	expect_true(all(subset(sumTable, variable == "SEX")$statPercTotalN == 4))
+	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
+		
+	# wrong specification
+	expect_warning(
+		sumTable <- computeSummaryStatisticsTable(
+			data,
+			var = c("AGE", "SEX"),
+			colVar = c("TRT", "DOSE"),
+			colVarTotalPerc = "TRT2"
+		),
+		"Variable.* in colVarTotalPerc.* ignored because.*not available"
+	)
+	
+})
+
