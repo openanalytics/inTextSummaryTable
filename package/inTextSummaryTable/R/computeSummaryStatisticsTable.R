@@ -267,6 +267,9 @@ computeSummaryStatisticsTable <- function(
 	
 	statsPerc <- match.arg(statsPerc)
 	
+	if(!inherits(data, "data.frame"))
+		stop("A data.frame should be specified in 'data'.")
+	
 	if(nrow(data) == 0){
 		message("No data to report.")
 		return(invisible())

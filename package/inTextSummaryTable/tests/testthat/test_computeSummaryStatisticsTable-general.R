@@ -1,5 +1,15 @@
 context("Compute summary statistics table")
 
+test_that("data is not a data.frame", {
+			
+	# e.g. if we forget to create the 'data' object, 'data()' function is used instead:
+	expect_error(
+		computeSummaryStatisticsTable(data),
+		"A data.frame should be specified in.*data.*."
+	)
+	
+})
+
 test_that("no data to report", {
 			
 	data <- data.frame()
