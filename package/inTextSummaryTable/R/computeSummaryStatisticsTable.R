@@ -523,8 +523,11 @@ computeSummaryStatisticsTable <- function(
 			)
 			rowVarOther <- c(rowVarOther, rowVarTotalByVarI)
 			
-			checkVar(var = c(rowVarOther, colVar, var), "variables", data = dataForSubTotal, 
-				refLabel = "dataset for row total", msgType = "error")
+			checkVar(
+				var = c(rowVarOther, colVar, var), "variables", data = dataForSubTotal, 
+				refLabel = "dataset for row total", msgType = "error",
+				varUncheck = "all"
+			)
 			
 			# convert row/column variables to factor
 			dataForSubTotal <- convertVarRowVarColVarToFactor(
