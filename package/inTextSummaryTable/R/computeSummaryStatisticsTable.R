@@ -104,14 +104,10 @@
 #' \item{'statN' (by default): }{the number of subjects}
 #' \item{'statm': }{the number of records}
 #' }
-#' @param stats (Optionally) Either:
+#' @param stats (Optionally) Statistic(s) of interest to compute, either:
 #' \itemize{
-#' \item{string with: }{
-#' \itemize{
-#' \item{'default': }{default sets of statistics, 
-#' see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
-#' \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
-#' }}
+#' \item{string with a default set of statistics, as implemented
+#' via the \code{type} parameter of the \code{\link{getStatsData}} function.}
 #' \item{Named list of expressions or call objects of summary statistics of interest: }{
 #' The names are reported in the header.
 #' The following \strong{'base statistical variables'} are recognized, depending if the variable is: 
@@ -150,6 +146,10 @@
 #' }}
 #' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
 #' Only included if no \code{statsVar} if longer than 1.
+#' @param statsVarBy String with variable in \code{rowVar}/code{colVar}
+#' which the statistics should be computed by.
+#' In this case, \code{stats} (nested list or not) should be additionally nested
+#' to specify the statistics for each element in \code{statsVarBy}.
 #' @param varIncludeTotal This argument is deprecated, please use: 'varTotalInclude' instead.
 #' @param varTotalInSepRow Logical, should the total per variable be included in
 #' a separated row (by default) or in the row containing the header of the variable?
@@ -300,8 +300,11 @@ computeSummaryStatisticsTable <- function(
 	}
 	
 	# get default set of statistics
-	if(is.character(stats) && length(stats) == 1)
+	if(is.character(stats) && length(stats) == 1){
 		stats <- getStatsData(data = data, var = var, type = stats)
+		# if only one variable is specified, 'stats' should not be named:
+		if(!is.null(var) && length(var) == 1)	stats <- stats[[var]]
+	}
 	
 	# check if 'varIncludeTotal' is not default
 	if(!(is.logical(varIncludeTotal) && length(varIncludeTotal) == 1 && !varIncludeTotal)){
@@ -353,9 +356,17 @@ computeSummaryStatisticsTable <- function(
 		varSubgroupLab <- "Variable group"
 	}
 	
-	# Compute the column total if the rows could be asked to be ordered 
-	# based on the total category or total can be extracted within a function specified in rowOrder
-	# excepted when no column variable is specified
+	# check stats params:
+	statsVarBy <- checkVar(
+		var = statsVarBy , varLabel = "statsVarBy",
+		varRef = c(colVar, rowVar), refLabel = "row or column variables",
+		msgType = "error"
+	)
+	
+	# Compute the column total in case:
+	# - the rows should be ordered based on the total category
+	# - total should be extracted within a function specified in rowOrder
+	# - excepted when no column variable is specified
 	colTotalIncludeInit <- colTotalInclude
 	if(is.null(colVar)){
 		if(colTotalIncludeInit)	
@@ -1331,8 +1342,8 @@ convertVarToFactorWithOrder <- function(
 #' by naming each element of the list:
 #' list(varName1 = list(...), varName2 = list()) and/or for each element in:
 #' \code{statsVarBy}, by naming each sublist.
-#' @param statsVarBy String with variable in \code{rowVar}/code{colVar}
-#' which the statistics should be computed by.
+#' @param statsVarBy Character vector with colnames of
+#' \code{data} by which the statistics should be computed.
 #' In this case, \code{stats} (nested list or not) should be additionally nested
 #' to specify the statistics for each element in \code{statsVarBy}.
 #' @return List with two elements:
@@ -1375,7 +1386,7 @@ getStatisticsSummaryStatisticsTable <- function(
 				if(is.expression(expr) | is.call(expr) | is.name(expr)){
 					eval(expr = expr, envir = sumTable)
 				}else{
-					stop(paste("Statistics specified in 'stats' should be an expression, call or name object,",
+					stop(paste("Statistics specified in 'stats' should be an expression or name object,",
 						"or a list named with variable, statistic name or statsVarBy elements."))
 				}
 			}
@@ -1407,9 +1418,15 @@ getStatisticsSummaryStatisticsTable <- function(
 		
 		# variable to compute the statistics by:
 		if(any(names(stats) %in% var)){
+			
 			statsVarByUsed <- c(statsVarBy, "variableInit")
+			
+			if(!"variableInit" %in% colnames(summaryTable))
+				stop("'stats' should not be named by variable if only one variable is specified.")
+			
 			# in case more stats are specified than specified var
 			varsUsed <- setdiff(unique(as.character(summaryTable$variableInit)), NA)
+			
 			if(!all(varsUsed %in% names(stats))){
 				stop(paste("If 'stats' is specified for each variable,",
 					"it should be specified for all variables specified in 'var'."))
