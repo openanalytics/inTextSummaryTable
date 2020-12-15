@@ -60,15 +60,15 @@ NULL by default: the row variables are nested in the first column
 of the table.
 To include the groups within a \code{var} variable in a separated column, 
 set: rowVarInSepCol == 'variableGroup'.
-This is only available if \code{rowVar} if not specified.}
+This is only available if \code{rowVar} is not specified.}
 
 \item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:
 list(var1 = "bold").
 (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
-\item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which the total should be reported.}
+\item{rowVarTotalInclude}{Character vector with \code{rowVar} for which the total
+is included. These variables should be formatted as a factor with 'Total' as the first level.}
 
 \item{rowTotalLab}{label for the row with total}
 
@@ -76,9 +76,9 @@ for which the total should be reported.}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
 Otherwise (by default) the total is included in the header row of each category.}
 
-\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merging of rows,
+\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merge rows,
 e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
-or only one statistic per category}
+or only one statistic per category.}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
