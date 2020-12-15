@@ -124,3 +124,57 @@ test_that("the summary table is filtered and a flag variable is specified", {
 	)
 			
 })
+
+test_that("summary table is computed by a grouping variable", {
+		
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AEDECOD = factor(c("A", "A", "B", "B", "B"), levels = c("B", "A"))
+	)	
+	
+	summaryTableByVar <- computeSummaryStatisticsTable(
+		data = data,
+		byVar = "AEDECOD"
+	)
+	
+	expect_type(summaryTableByVar, "list")
+	expect_length(summaryTableByVar, 2)
+	expect_named(summaryTableByVar, paste("AEDECOD:", c("B", "A")))
+	
+	for(group in unique(data$AEDECOD)){
+		expect_equal(
+			object = summaryTableByVar[[paste("AEDECOD:", !!group)]],
+			expected = computeSummaryStatisticsTable(data = subset(data, AEDECOD == !!group)),
+			check.attributes = FALSE
+		)
+	}
+			
+})
+
+test_that("summary table is computed by a grouping variable with specified label", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AEDECOD = factor(c("A", "A", "B", "B", "B"), levels = c("B", "A"))
+	)	
+	
+	# correct spec
+	summaryTableByVar <- computeSummaryStatisticsTable(
+		data = data,
+		byVar = "AEDECOD",
+		byVarLab = c("AEDECOD" = "Adverse event")
+	)
+	expect_named(summaryTableByVar, paste("Adverse event:", c("B", "A")))
+	
+	# in case byVarLab specified for other variables
+	# var code is used:
+	summaryTableByVar <- computeSummaryStatisticsTable(
+		data = data,
+		byVar = "AEDECOD",
+		byVarLab = c("blabla" = "Adverse event")
+	)
+	expect_named(summaryTableByVar, paste("AEDECOD:", c("B", "A")))
+			
+})
+			
+			
