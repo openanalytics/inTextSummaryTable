@@ -329,9 +329,3 @@ test_that("percentage is computed on a different statistic", {
 	)
 			
 })
-
-
-			
-
-
-
