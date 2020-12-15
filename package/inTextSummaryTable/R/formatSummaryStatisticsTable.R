@@ -6,8 +6,9 @@
 #' 'StatisticValue' by default.
 #' This is only used if the statistics provided in \code{stats} are not named
 #' and if no \code{colVar} is specified.
-#' @param emptyValue Value used to fill the table for missing values, '-' by default.
-#' See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.
+#' @param emptyValue String with placeholder used to fill the table for missing values, '-' by default.
+#' This value is typically used e.g. if not all statistics are computed for all specified
+#' row/col/var variables.
 #' @param statsLabInclude Logical, if TRUE include the statistic label
 #' in the table. By default only included if more than
 #' one statistic variables are available in the table.
@@ -137,8 +138,8 @@ formatSummaryStatisticsTable <- function(
 	if(is.null(statsLabInclude)){
 		statsLabInclude <- isStatsLabRequired
 	}else	if(!statsLabInclude & isStatsLabRequired){
-		warning("Statistic label is included ('statsLabInclude' set to TRUE)",
-			"because more than statistic variable is available in the table.")
+		warning(paste("Statistic label is included ('statsLabInclude' set to TRUE)",
+			"because more than one statistic variable is available in the table."))
 		statsLabInclude <- TRUE
 	}
 	
