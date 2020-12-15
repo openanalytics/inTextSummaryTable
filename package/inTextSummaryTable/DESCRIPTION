@@ -7,7 +7,7 @@ Author: Laure Cougnaud
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
 Description: Functions to create table of summary statistics or count tables are created
   to be included as in-text table in a Word document.
-Imports: glpgUtilityFct (>= 2.0.0), dplyr, plyr, reshape2 (>= 1.4), 
+Imports: glpgUtilityFct (>= 3.0.1), dplyr, plyr, reshape2 (>= 1.4), 
   ggplot2, flextable, officer, magrittr, glpgStyle (>= 1.0.0),
   ggrepel, cowplot, methods, scales
 Suggests: testthat, pander, vdiffr, knitr

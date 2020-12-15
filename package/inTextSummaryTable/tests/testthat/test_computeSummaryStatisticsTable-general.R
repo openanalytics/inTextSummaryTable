@@ -168,6 +168,7 @@ test_that("summary table is computed by a grouping variable with specified label
 	
 	# in case byVarLab specified for other variables
 	# var code is used:
+	# Note: require glpgUtilityFct >= 3.0.1
 	summaryTableByVar <- computeSummaryStatisticsTable(
 		data = data,
 		byVar = "AEDECOD",
