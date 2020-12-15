@@ -1371,11 +1371,17 @@ getStatisticsSummaryStatisticsTable <- function(
 				}
 			}
 			
-			statsDf <- if(is.list(stats)){
-				sapply(stats, function(expr)
+			runStats <- function(expr){
+				if(is.expression(expr) | is.call(expr) | is.name(expr)){
 					eval(expr = expr, envir = sumTable)
-				, simplify = FALSE)
-			}else	list(eval(expr = stats, envir = sumTable))
+				}else{
+					stop(paste("Statistics specified in 'stats' should be an expression, call or name object,",
+						"or a list named with variable, statistic name or statsVarBy elements."))
+				}
+			}
+			statsDf <- if(is.list(stats)){
+				sapply(stats, runStats, simplify = FALSE)
+			}else	list(runStats(expr = stats))
 			if(is.null(statsName))	names(statsDf) <- "Statistic"
 			
 			# save in summaryTable
@@ -1405,8 +1411,8 @@ getStatisticsSummaryStatisticsTable <- function(
 			# in case more stats are specified than specified var
 			varsUsed <- setdiff(unique(as.character(summaryTable$variableInit)), NA)
 			if(!all(varsUsed %in% names(stats))){
-				stop("If 'stats' is specified for each variable,",
-					"it should be specified for all variables specified in 'var'.")
+				stop(paste("If 'stats' is specified for each variable,",
+					"it should be specified for all variables specified in 'var'."))
 			}else stats <- stats[varsUsed]
 			statsByVar <- lapply(stats, function(x)
 				if(!is.null(statsVarBy)){

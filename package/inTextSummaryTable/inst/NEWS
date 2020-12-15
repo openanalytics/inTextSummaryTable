@@ -1,3 +1,6 @@
+2.20.1
+  o add unit tests
+  o error if stats if not in correct format
 2.20.0
   o add unit tests
   o computeSummaryStatisticsTable: more formal checks + warning for var/[row|col]Var...
