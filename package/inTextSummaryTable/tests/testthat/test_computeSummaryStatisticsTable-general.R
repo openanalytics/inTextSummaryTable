@@ -62,3 +62,65 @@ test_that("subject ID variable is specified", {
 	expect_equal(sumTable$statPercN, c(100, 100))
 			
 })
+
+test_that("the summary table is filtered", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AEDECOD = rep(c("A", "B"), length.out = 5)
+	)
+
+	summaryTableFiltered <- computeSummaryStatisticsTable(
+		data = data, var = "AEDECOD",
+		filterFct = function(x) subset(x, variableGroup == "A")
+	)
+	expect_equal(
+		summaryTableFiltered,
+		subset(computeSummaryStatisticsTable(data = data, var = "AEDECOD"), variableGroup == "A"),
+		check.attributes = FALSE
+	)			
+	
+	# wrong filtering fct:
+	expect_error(
+		computeSummaryStatisticsTable(
+			data = data, var = "AEDECOD",
+			filterFct = function(x) subset(x, variableGroup2 == "A")
+		)
+	)
+			
+})
+
+test_that("the summary table is filtered and a flag variable is specified", {
+	
+	# internally, a filterFct is set when varFlag is specified
+	# this test checks that if the user specifies additionally 
+	# a filterFct, this one is also used.
+			
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AEDECOD = c("A", "A", "B", "B", "B"),
+		ANFL = c("Y", "N", "Y", "N", "Y")
+	)
+	
+	summaryTableAll <- computeSummaryStatisticsTable(
+		data = data, 
+		var = "ANFL", varFlag = "ANFL",
+		rowVar = "AEDECOD",
+		stats = "n"
+	)
+			
+	summaryTableFiltered <- computeSummaryStatisticsTable(
+		data = data, 
+		var = "ANFL", varFlag = "ANFL",
+		rowVar = "AEDECOD",
+		stats = "n",
+		filterFct = function(x) subset(x, AEDECOD == "A")
+	)
+	
+	expect_equal(
+		summaryTableFiltered,
+		subset(summaryTableAll, AEDECOD == "A"),
+		check.attributes = FALSE
+	)
+			
+})
