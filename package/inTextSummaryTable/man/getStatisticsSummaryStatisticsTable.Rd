@@ -52,8 +52,8 @@ by naming each element of the list:
 list(varName1 = list(...), varName2 = list()) and/or for each element in:
 \code{statsVarBy}, by naming each sublist.}
 
-\item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
-which the statistics should be computed by.
+\item{statsVarBy}{Character vector with colnames of
+\code{data} by which the statistics should be computed.
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}
 }

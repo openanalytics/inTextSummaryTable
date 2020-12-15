@@ -252,14 +252,10 @@ statistics across columns in a separated column.}
 \item{colTotalLab}{String, label for the total column included 
 if \code{colTotalInclude} is TRUE, 'Total' by default.}
 
-\item{stats}{(Optionally) Either:
+\item{stats}{(Optionally) Statistic(s) of interest to compute, either:
 \itemize{
-\item{string with: }{
-\itemize{
-\item{'default': }{default sets of statistics, 
-see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
-\item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
-}}
+\item{string with a default set of statistics, as implemented
+via the \code{type} parameter of the \code{\link{getStatsData}} function.}
 \item{Named list of expressions or call objects of summary statistics of interest: }{
 The names are reported in the header.
 The following \strong{'base statistical variables'} are recognized, depending if the variable is: 
