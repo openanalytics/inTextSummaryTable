@@ -10,7 +10,9 @@
 #' @param xGap (optional) Numeric vector of length 2 for which
 #' a gap should be created in the x-axis.
 #' Only available if \code{xVar} is specified and a numeric variable.
-#' Records with \code{xVar} within \code{xGap} are filtered from the plot.
+#' Records with \code{xVar} within \code{xGap} are filtered from the plot,
+#' vertical lines are included at the min/max of the gap,
+#' and the gap is represented as '//' in the x-axis of the plot.
 #' @param xGapDiffNew Numeric vector of length 2 with new range
 #' of the \code{xGap}. If not specified, the minimum difference between
 #' consecutive x elements in the data is used.
@@ -208,7 +210,7 @@ subjectProfileSummaryPlot <- function(data,
 		
 	varNotInData <- setdiff(c(meanVar, seVar, minVar, maxVar), colnames(data))
 	if(length(varNotInData) > 0)
-		stop("Variable(s): ", toString(varNotInData), "are not in data.")
+		stop(paste("Variable(s):", toString(varNotInData), "are not in data."))
 
 	if(!is.null(xVar) & is.null(jitter))
 		jitter <- if(is.numeric(data[, xVar])){

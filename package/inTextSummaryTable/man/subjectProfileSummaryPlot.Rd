@@ -75,7 +75,9 @@ e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.}
 \item{xGap}{(optional) Numeric vector of length 2 for which
 a gap should be created in the x-axis.
 Only available if \code{xVar} is specified and a numeric variable.
-Records with \code{xVar} within \code{xGap} are filtered from the plot.}
+Records with \code{xVar} within \code{xGap} are filtered from the plot,
+vertical lines are included at the min/max of the gap,
+and the gap is represented as '//' in the x-axis of the plot.}
 
 \item{xGapDiffNew}{Numeric vector of length 2 with new range
 of the \code{xGap}. If not specified, the minimum difference between
