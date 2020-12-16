@@ -626,7 +626,7 @@ test_that("color is specified for flextable export", {
 	expect_setequal(ft$header$styles$cells$background.color$data, colorTable["headerBackground"])
 	expect_setequal(ft$footer$styles$text$color$data, colorTable["footer"])
 	expect_setequal(ft$footer$styles$cells$background.color$data, colorTable["footerBackground"])
-	expect_setequal(ft$body$styles$cells$border.color.bottom$data[c(3, 6)], colorTable["line"])
+	expect_setequal(ft$body$styles$cells$border.color.bottom$data, colorTable["line"])
 	
 })
 
