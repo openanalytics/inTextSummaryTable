@@ -212,8 +212,9 @@ of the \code{rowVar} (assuming nested variable(s)).}
 e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
 or only one statistic per category.}
 
-\item{emptyValue}{Value used to fill the table for missing values, '-' by default.
-See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
+\item{emptyValue}{String with placeholder used to fill the table for missing values, '-' by default.
+This value is typically used e.g. if not all statistics are computed for all specified
+row/col/var variables.}
 
 \item{rowVarTotalPerc}{Character vector with row variables by which the total
 should be computed for the denominator for the percentage computation.
