@@ -496,6 +496,23 @@ test_that("page dimension is specified when the table is exported to DT", {
 	
 })
 
+test_that("table is exported to DT with non escapable variable", {
+			
+	summaryTable <- data.frame(
+		patientProfileLink = "www.google.com",
+		n = 1,
+		stringsAsFactors = FALSE
+	)
+	
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		noEscapeVar = "patientProfileLink",
+		outputType = "DT"
+	)
+	expect_match(attr(dt$x$options, "escapeIdx"), regexp = "2")
+			
+})
+
 test_that("parameters are passed to datatable for DT export", {
 	
 	summaryTable <- data.frame(
