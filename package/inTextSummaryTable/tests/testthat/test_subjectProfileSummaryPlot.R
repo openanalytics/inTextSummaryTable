@@ -2,7 +2,7 @@ context("Create a subject profile summary plot")
 
 library(ggplot2)
 
-test_that("subject profile fails if variable is not available", {
+test_that("plot fails if variable is not available", {
 			
 	expect_error(
 		subjectProfileSummaryPlot(data = data.frame()),
@@ -11,14 +11,19 @@ test_that("subject profile fails if variable is not available", {
 			
 })
 
-test_that("basic plot with x and y variable is created", {
+test_that("x and meanVar variables are specified", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
-		statMean = rnorm(2)
+		statMean1 = rnorm(2)
 	)	
+	
 	expect_silent(
-		gg <- subjectProfileSummaryPlot(data = summaryTable, xVar = "visit")
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			meanVar = "statMean1"
+		)
 	)
 	
 	expect_s3_class(gg, "ggplot")
@@ -31,6 +36,106 @@ test_that("basic plot with x and y variable is created", {
 		expected = setNames(summaryTable, c("x", "y"))
 	)
 
+})
+
+test_that("variable for standard error is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2),
+		statSE = c(1, 2)
+	)
+	
+	expect_silent(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			meanVar = "statMean",
+			seVar = "statSE"
+		)
+	)
+	
+	expect_s3_class(gg, "ggplot")
+	
+	# check data is correctly retained
+	ggData <- ggplot_build(gg)$data
+	idxErrorBar <- which(
+		sapply(ggData, function(x)
+			all(c("ymin", "ymax") %in% colnames(x))
+		)
+	)
+	expect_length(idxErrorBar, 1)
+	expect_identical(
+		ggData[[idxErrorBar]][, c("ymin", "ymax")],
+		setNames(
+			with(summaryTable, cbind.data.frame(statMean-statSE, statMean+statSE)),
+			c("ymin", "ymax")
+		)
+	)
+
+})
+
+test_that("variables for min/max are specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(1, 2),
+		statMin = c(0, 1),
+		statMax = c(2, 3)
+	)
+			
+	# warnings if min/max are not both specified
+	expect_warning(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			minVar = "statMin"
+		),
+		"'minVar' is not used because 'maxVar' is not specified."
+	)
+	expect_true(!
+		any(sapply(ggplot_build(gg)$data, function(x)
+			any(c("statMin", "statMax") %in% colnames(x))
+		))
+	)
+	
+	expect_warning(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			maxVar = "statMax"
+		),
+		"'maxVar' is not used because 'minVar' is not specified."
+	)
+	expect_true(!
+		any(sapply(ggplot_build(gg)$data, function(x)
+			any(c("statMin", "statMax") %in% colnames(x))
+		))
+	)
+	
+	## correct specification:
+	expect_silent(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			minVar = "statMin", maxVar = "statMax"
+		)
+	)
+	ggData <- ggplot_build(gg)$data
+	idxErrorBar <- which(
+		sapply(ggData, function(x)
+			all(c("ymin", "ymax") %in% colnames(x))
+		)
+	)
+	expect_length(idxErrorBar, 1)
+	expect_identical(
+		ggData[[idxErrorBar]][, c("ymin", "ymax")],
+		setNames(
+			summaryTable[, c("statMin", "statMax")],
+			c("ymin", "ymax")
+		)
+	)
+			
 })
 
 test_that("label is specified for x variable", {
@@ -121,7 +226,7 @@ test_that("gap is specified in the x-axis ", {
 	
 })
 
-test_that("new gap is specified in the x-axis ", {
+test_that("new gap is specified in the x-axis", {
 
 	summaryTable <- data.frame(
 		visit = c(1, 2, 3), 
@@ -154,5 +259,42 @@ test_that("new gap is specified in the x-axis ", {
 		object = ggDataX,
 		expected = c(1, 1.5)
 	)
+			
+})
+
+test_that("plot is facetted", {
+			
+	summaryTable <- data.frame(
+		PARAM = factor(
+			c("AAA", "AAA", "ZZZ", "ZZZ"), 
+			levels = c("ZZZ", "AAA")
+		),
+		visit = c(1, 2, 1, 2), 
+		statMean = rnorm(4)
+	)
+	
+	expect_silent(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit", 
+			facetVar = "PARAM"
+		)
+	)
+	
+	# check that the plots is facetted
+	# and that facetted are ordered according to levels of factor
+	ggData <- lapply(ggplot_build(gg)$data, `[`, c("x", "y", "PANEL"))
+	ggData <- unique(do.call(rbind, ggData))
+	facets <- levels(summaryTable$PARAM)
+	for(i in seq_along(facets)){
+		expect_equal(
+			object = subset(ggData, PANEL == !!i)[, c("x", "y")],
+			expected = setNames(
+				subset(summaryTable, PARAM == facets[[!!i]])[, c("visit", "statMean")],
+				c("x", "y")
+			),
+			check.attributes = FALSE
+		)
+	}
 			
 })
