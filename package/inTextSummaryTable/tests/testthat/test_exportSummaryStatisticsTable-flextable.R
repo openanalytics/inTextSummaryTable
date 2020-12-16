@@ -507,7 +507,7 @@ test_that("page dimension is specified when the table is exported to flextable",
 		object = {
 			ft <- exportSummaryStatisticsTable(
 				summaryTable = summaryTable,
-				pageDim = 10,
+				pageDim = c(10, 3),
 				margin = 0
 			)
 			ft$body$colwidths
@@ -525,7 +525,7 @@ test_that("margins are specified when the table is exported to flextable", {
 		object = {
 			ft <- exportSummaryStatisticsTable(
 				summaryTable = summaryTable,
-				pageDim = 10,
+				pageDim = c(10, 3),
 				margin = 1
 			)
 			ft$body$colwidths
