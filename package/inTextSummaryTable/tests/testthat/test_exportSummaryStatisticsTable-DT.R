@@ -420,7 +420,7 @@ test_that("export DT to a file", {
 test_that("table is exported to DT with row variables with expand variables", {
 			
 	summaryTable <- data.frame(
-		patientProfileLink = "www.google.com",
+		patientProfileLink = "/path/to/patientProfile1.pdf",
 		stringsAsFactors = FALSE
 	)
 			
@@ -450,7 +450,7 @@ test_that("table is exported to DT with row variables with expand variables", {
 test_that("table is exported to DT with row variables with expand one statistic", {
 			
 	summaryTable <- data.frame(
-		patientProfileLink = "www.google.com",
+		patientProfileLink = "/path/to/patientProfile1.pdf",
 		n = 1,
 		stringsAsFactors = FALSE
 	)
@@ -471,10 +471,10 @@ test_that("table is exported to DT with row variables with expand one statistic"
 	isControlPresent <- which(sapply(cDefs, function(x) "className" %in% names(x)))
 	expect_length(isControlPresent, 1)
 	expect_equal(cDefs[[isControlPresent]]$className, "details-control")
-	expect_equal(cDefs[[isControlPresent]]$targets, 0)
+	expect_equal(cDefs[[isControlPresent]]$targets, 1)
 	
 	# there is a JS callback defined for this variable:
-	expect_match(dt$x$callback, regexp = "patientProfileLink")
+	expect_length(dt$x$callback, 1)
 			
 })
 
