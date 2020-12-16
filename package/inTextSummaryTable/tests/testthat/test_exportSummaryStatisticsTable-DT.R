@@ -2,7 +2,6 @@ context("Export summary statistics table to DT")
 
 test_that("table is exported to DT with row variables", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -24,7 +23,6 @@ test_that("table is exported to DT with row variables", {
 
 test_that("table is exported to DT with label for row variables", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -46,7 +44,6 @@ test_that("table is exported to DT with label for row variables", {
 
 test_that("table is exported to DT with label for row variables extracted from label vars", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -69,7 +66,6 @@ test_that("table is exported to DT with label for row variables extracted from l
 
 test_that("table is exported to DT with row variables in a separated column", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = c("a", "b", "a", "b"),
@@ -92,7 +88,6 @@ test_that("table is exported to DT with row variables in a separated column", {
 
 test_that("table is exported to DT with column variables", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -114,7 +109,6 @@ test_that("table is exported to DT with column variables", {
 
 test_that("table is exported to DT with total in header", {
 	
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
 		statN = c(1, 4, 2, 5),
@@ -153,7 +147,6 @@ test_that("table is exported to DT with total in header", {
 
 test_that("different stat layout when table is exported to DT", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
 		n = c("1", "2"),
@@ -223,7 +216,6 @@ test_that("different stat layout when table is exported to DT", {
 
 test_that("stat value label is specified when table is exported to DT", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
 		Statistic = c("1", "2"),
@@ -255,7 +247,6 @@ test_that("stat value label is specified when table is exported to DT", {
 
 test_that("stat value label is specified when table is exported to DT", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		variable = c("a", "b", "a", "b"),
@@ -314,7 +305,6 @@ test_that("stat value label is specified when table is exported to DT", {
 
 test_that("a placeholder is specified for empty value when table is exported to DT", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = c("a", "b", "a", "b"),
@@ -409,4 +399,6 @@ test_that("total header should unique in DT export", {
 	)
 			
 })
+
+
 			
