@@ -1,6 +1,7 @@
 2.20.1
   o add unit tests
   o error if stats if not in correct format
+  o export to DT: title can be of length > 1
 2.20.0
   o add unit tests
   o computeSummaryStatisticsTable: more formal checks + warning for var/[row|col]Var...
