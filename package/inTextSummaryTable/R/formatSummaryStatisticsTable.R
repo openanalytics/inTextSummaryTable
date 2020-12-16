@@ -106,7 +106,7 @@ formatSummaryStatisticsTable <- function(
 	# empty data.frame but dcast returns: 
 	# 'Error in dim(ordered) <- ns : dims [product 1] do not match the length of object [0]'
 	if(nrow(dataWithTotal) == 0){
-		message("No data remain after filtering of total rows.")
+		warning("No data remain after filtering of total rows.")
 		return(invisible())
 	}
 

@@ -396,6 +396,14 @@ test_that("stat value label is specified when table is exported to flextable", {
 		},
 		regexp = "Number of subjects.*" # + (N = )
 	)
+	
+	# error is label is set to 'Statistic' (used as default naming)
+	expect_error(
+		exportSummaryStatisticsTable(summaryTable, rowVar = "variable", 
+			statsVar = "Statistic", statsValueLab = "Statistic"
+		),
+		"'statsValueLab' should be different than 'Statistic'."
+	)
 			
 })
 
@@ -744,5 +752,31 @@ test_that("horizontal lines are automatically set in flextable export", {
 		expected = 1
 	)
 	
+})
+
+test_that("no data remains besides total row in export flextable", {
+			
+	data <- data.frame(
+		isTotal = rep(TRUE, 2),
+		n = c(1, 2)
+	)
+	expect_warning(
+		exportSummaryStatisticsTable(data),
+		regexp = "No data remain after filtering of total rows."
+	)
+			
+})
+
+test_that("total header should unique in flextable export", {
+			
+	data <- data.frame(
+		isTotal = c(FALSE, TRUE, TRUE),
+		statN = c(1, 2, 3)
+	)
+	expect_error(
+		exportSummaryStatisticsTable(data),
+		regexp = "Multiple values for the header total .*"
+	)
+			
 })
 			

@@ -59,8 +59,9 @@ the \code{rowVar} variable(s)}
 This is only used if the statistics provided in \code{stats} are not named
 and if no \code{colVar} is specified.}
 
-\item{emptyValue}{Value used to fill the table for missing values, '-' by default.
-See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
+\item{emptyValue}{String with placeholder used to fill the table for missing values, '-' by default.
+This value is typically used e.g. if not all statistics are computed for all specified
+row/col/var variables.}
 }
 \value{
 summaryTable reformatted to wide format

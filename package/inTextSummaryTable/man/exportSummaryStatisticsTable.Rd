@@ -121,8 +121,9 @@ and if no \code{colVar} is specified.}
 in the table. By default only included if more than
 one statistic variables are available in the table.}
 
-\item{emptyValue}{Value used to fill the table for missing values, '-' by default.
-See the \code{fill} parameter of the \code{\link[reshape2]{dcast}} function.}
+\item{emptyValue}{String with placeholder used to fill the table for missing values, '-' by default.
+This value is typically used e.g. if not all statistics are computed for all specified
+row/col/var variables.}
 
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}
