@@ -148,6 +148,10 @@ subjectProfileSummaryPlot <- function(data,
 	...){
 
 	useMinMax <- !is.null(minVar) & !is.null(maxVar)
+	if(!is.null(minVar) & is.null(maxVar))
+		warning("'minVar' is not used because 'maxVar' is not specified.")
+	if(!is.null(maxVar) & is.null(minVar))
+		warning("'maxVar' is not used because 'minVar' is not specified.")
 
 	if(!is.null(facetVar) & !is.null(tableText)){
 		warning("Table cannot be used in combination with 'facetVar', no table is included.")
