@@ -401,4 +401,99 @@ test_that("total header should unique in DT export", {
 })
 
 
+test_that("export DT to a file", {
+			
+	summaryTable <- data.frame(n = 10)
+	
+	fileTable <- "table.html" 
+	if(file.exists(fileTable))	tmp <- file.remove(fileTable)
+	
+	expect_silent(
+		exportSummaryStatisticsTable(
+			summaryTable, outputType = "DT", file = fileTable
+		)
+	)
+	expect_true(file.exists(fileTable))
+
+})
+
+test_that("table is exported to DT with row variables with expand variables", {
+			
+	summaryTable <- data.frame(
+		patientProfileLink = "www.google.com",
+		stringsAsFactors = FALSE
+	)
+			
+	## stat in the row direction, but in a separated column
+	expect_silent(
+		dt <- exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			statsVar = "patientProfileLink",
+			expandVar = "patientProfileLink",
+			outputType = "DT",
+			colHeaderTotalInclude = FALSE
+		)
+	)
+	
+	# there is a button available:
+	cDefs <- dt$x$options$columnDefs
+	isControlPresent <- which(sapply(cDefs, function(x) "className" %in% names(x)))
+	expect_length(isControlPresent, 1)
+	expect_equal(cDefs[[isControlPresent]]$className, "details-control")
+	expect_equal(cDefs[[isControlPresent]]$targets, 0)
+	
+	# there is a JS callback defined for this variable:
+	expect_match(dt$x$callback, regexp = "patientProfileLink")
+	
+})
+
+test_that("table is exported to DT with row variables with expand one statistic", {
+			
+	summaryTable <- data.frame(
+		patientProfileLink = "www.google.com",
+		n = 1,
+		stringsAsFactors = FALSE
+	)
+			
+	# creation of expand for only one statistic works without error:
+	expect_silent(
+		dt <- exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			statsVar = c("n", "patientProfileLink"),
+			expandVar = "patientProfileLink",
+			statsLayout = "row",
+			outputType = "DT"
+		)
+	)
+	
+	# there is a button available:
+	cDefs <- dt$x$options$columnDefs
+	isControlPresent <- which(sapply(cDefs, function(x) "className" %in% names(x)))
+	expect_length(isControlPresent, 1)
+	expect_equal(cDefs[[isControlPresent]]$className, "details-control")
+	expect_equal(cDefs[[isControlPresent]]$targets, 0)
+	
+	# there is a JS callback defined for this variable:
+	expect_match(dt$x$callback, regexp = "patientProfileLink")
+			
+})
+
+test_that("page dimension is specified when the table is exported to DT", {
+			
+	summaryTable <- data.frame(n = 10)
+	
+	expect_equal(
+		object = {
+			dt <- exportSummaryStatisticsTable(
+				summaryTable = summaryTable,
+				pageDim = c(NA, 3),
+				outputType = "DT"
+			)
+			dt$x$options$pageLength
+		},
+		expected = 3
+	)
+	
+})
+
 			

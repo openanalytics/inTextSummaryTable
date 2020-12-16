@@ -177,7 +177,9 @@ exportSummaryStatisticsTableToDT <- function(
 		setNames(names(rowVarLabs), rowVarLabs)
 	
 	# page length
-	pageLength <- if(!is.null(pageDim) && !is.na(pageDim[2])){
+	pageLength <- if(!is.null(pageDim)){
+		if(length(pageDim) != 2)
+			stop("'pageDim' should be of length 2.") 
 		pageDim[2]
 	}
 	
