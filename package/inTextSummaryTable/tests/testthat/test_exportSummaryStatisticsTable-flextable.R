@@ -2,7 +2,6 @@ context("Export summary statistics table to flextable")
 
 test_that("table is exported to flextable with row variables", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -23,7 +22,6 @@ test_that("table is exported to flextable with row variables", {
 
 test_that("table is exported to flextable with label for row variables", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -44,7 +42,6 @@ test_that("table is exported to flextable with label for row variables", {
 
 test_that("table is exported to flextable with label for row variables extracted from label vars", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -66,7 +63,6 @@ test_that("table is exported to flextable with label for row variables extracted
 
 test_that("table is exported to flextable with row variables in a separated column", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = c("a", "b", "a", "b"),
@@ -88,7 +84,6 @@ test_that("table is exported to flextable with row variables in a separated colu
 
 test_that("table is exported to flextable with specified row formatting", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = c("a", "b", "a", "b"),
@@ -110,7 +105,6 @@ test_that("table is exported to flextable with specified row formatting", {
 
 test_that("table is exported to flextable with total included in the header row", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = factor(c("a", "Total", "b", "Total"), levels = c("Total", "a", "b")),
@@ -138,7 +132,6 @@ test_that("table is exported to flextable with total included in the header row"
 
 test_that("table is exported to flextable with row total included in a separated row", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = factor(c("a", "Total", "b", "Total"), levels = c("Total", "a", "b")),
@@ -167,7 +160,6 @@ test_that("table is exported to flextable with row total included in a separated
 
 test_that("row are merged in case of unique variable group in flextable", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		variable = c("A", "B", "B"),
 		variableGroup = c("a", "b1", "b2"),
@@ -206,7 +198,6 @@ test_that("row are merged in case of unique variable group in flextable", {
 
 test_that("rows are merged in case of unique stat in flextable", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
 		n = c("1", "2"),
@@ -248,7 +239,6 @@ test_that("rows are merged in case of unique stat in flextable", {
 
 test_that("table is exported to flextable with column variables", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
@@ -269,7 +259,6 @@ test_that("table is exported to flextable with column variables", {
 
 test_that("table is exported to flextable with total in header", {
 	
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
 		statN = c(1, 4, 2, 5),
@@ -306,7 +295,6 @@ test_that("table is exported to flextable with total in header", {
 
 test_that("different stat layout when table is exported to flextable", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
 		n = c("1", "2"),
@@ -381,7 +369,6 @@ test_that("different stat layout when table is exported to flextable", {
 
 test_that("stat value label is specified when table is exported to flextable", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
 		Statistic = c("1", "2"),
@@ -409,7 +396,6 @@ test_that("stat value label is specified when table is exported to flextable", {
 
 test_that("stat value label is specified when table is exported to flextable", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		variable = c("a", "b", "a", "b"),
@@ -465,7 +451,6 @@ test_that("stat value label is specified when table is exported to flextable", {
 
 test_that("a placeholder is specified for empty value when table is exported to flextable", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = c("a", "b", "a", "b"),
@@ -610,7 +595,6 @@ test_that("footer is specified for flextable export", {
 
 test_that("color is specified for flextable export", {
 	
-	set.seed(123)
 	summaryTable <- data.frame(n = 10)
 	
 	colorTable <- c(
@@ -640,7 +624,6 @@ test_that("color is specified for flextable export", {
 
 test_that("fontsize is specified for flextable export", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(n = 10)
 	
 	expect_identical(
@@ -658,7 +641,6 @@ test_that("fontsize is specified for flextable export", {
 
 test_that("fontname is specified for flextable export", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(n = 10)
 	
 	expect_identical(
@@ -674,9 +656,8 @@ test_that("fontname is specified for flextable export", {
 	
 })
 
-test_that("vertical lines are automatically set in flextable export", {
+test_that("vertical lines are set in flextable export", {
 				
-	set.seed(123)
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		AVISIT = c("a", "b", "a", "b"),
@@ -714,9 +695,8 @@ test_that("vertical lines are automatically set in flextable export", {
 			
 })
 
-test_that("horizontal lines are automatically set in flextable export", {
+test_that("horizontal lines are set in flextable export", {
 			
-	set.seed(123)
 	summaryTable <- data.frame(
 		PARAM = c("a", "b"),
 		n = c("1", "2"),
