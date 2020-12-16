@@ -496,4 +496,50 @@ test_that("page dimension is specified when the table is exported to DT", {
 	
 })
 
+test_that("parameters are passed to datatable for DT export", {
+	
+	summaryTable <- data.frame(
+		patientProfileLink = "www.google.com",
+		n = 1,
+		stringsAsFactors = FALSE
+	)
+	
+	# pass parameter to data.table
+	expect_equal(
+		object = {
+			dt <- exportSummaryStatisticsTable(
+				summaryTable = summaryTable,
+				outputType = "DT",
+				width = 200
+			)
+			dt$width
+		},
+		expected = 200
+	)
+			
+	# warning in case a parameter is already set
+	# via the in-text table wrapper
+	# e.g. 'noEscapeVar' is passed to datatable 'escape' parameter
+	expect_warning(
+		exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			noEscapeVar = "patientProfileLink",
+			escape = 1,
+			outputType = "DT"
+		),
+		"Parameter.+escape.+ are already specified internally"
+	)
+	
+	# error if parameter not available
+	expect_error(
+		exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			blabla = "test",
+			outputType = "DT"
+		),
+		"unused argument"
+	)
+			
+})
+
 			
