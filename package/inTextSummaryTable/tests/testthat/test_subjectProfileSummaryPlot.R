@@ -557,5 +557,27 @@ test_that("shape palette is specified", {
 	
 })
 
+test_that("jitter for the x-axis is specified", {
+		
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2), 
+		TRT = c("A", "B", "A", "B"),
+		statMean = rnorm(4)
+	)
+	
+	jitter <- 1
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		jitter = jitter
+	)
+	
+	ggDataAll <- do.call(plyr::rbind.fill, ggplot_build(gg)$data)
+	ggXJitter <- unique(with(ggDataAll, xmax-xmin)*2)
+	expect_equal(ggXJitter, jitter)
+	
+})
+
 			
 			
