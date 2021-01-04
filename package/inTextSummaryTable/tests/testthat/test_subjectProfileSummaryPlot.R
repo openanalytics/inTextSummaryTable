@@ -691,5 +691,49 @@ test_that("limit is specified for the y-axis", {
 	
 })
 
+test_that("y-axis is transformed", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rlnorm(2)
+	)
+		
+	# transformation should be specified as a character
+	expect_error(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yTrans = log
+		)
+	)
+	
+	# only 'log10' transformation is supported currently
+	expect_error(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yTrans = 'sqrt'
+		)
+	)
+	
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		yTrans = "log10"
+	)
+	ggDataAll <- do.call(rbind.fill, ggplot_build(gg)$data)
+	ggDataAll <- unique(ggDataAll[, c("x", "y")])
+		
+	ggDataWithInput <- merge(
+		x = summaryTable, y = ggDataAll, 
+		by.x = "visit",
+		by.y = "x",
+		all = TRUE
+	)	
+	
+	with(ggDataWithInput, expect_equal(y, log10(statMean)))		
+			
+})
+
 			
 			
