@@ -173,23 +173,23 @@ specifying horizontal and vertical adjustment of the label.}
 \item{byVar}{Variable(s) of \code{data} for which separated plot(s)
 should be created.}
 
-\item{hLine}{(optional) numeric with y-intercept of dashed line to be added.
+\item{hLine}{(optional) numeric with y-intercept of line(s) to be added.
 If different thresholds should be used for different elements of the 
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
 
-\item{hLineColor}{String with color for \code{hLine}.}
+\item{hLineColor}{String with color for \code{hLine}, 'black' by default.}
 
-\item{hLineLty}{String with linetype for \code{hLine}.}
+\item{hLineLty}{String with linetype for \code{hLine}, 'solid' by default.}
 
-\item{vLine}{(optional) numeric with x-intercept of dashed line to be added.
+\item{vLine}{(optional) numeric with x-intercept of line(s) to be added.
 If different thresholds should be used for different elements of the 
 \code{byVar} or \code{facetVar} variables, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
 
-\item{vLineColor}{String with color for \code{vLine}.}
+\item{vLineColor}{String with color for \code{vLine}, 'black' by default.}
 
-\item{vLineLty}{String with linetype for \code{vLine}.}
+\item{vLineLty}{String with linetype for \code{vLine}, 'solid' by defaul}
 
 \item{style}{String with subject profile style, either 'report' or 'presentation'.}
 
