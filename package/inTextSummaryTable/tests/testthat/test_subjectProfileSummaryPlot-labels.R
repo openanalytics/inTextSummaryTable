@@ -1,5 +1,7 @@
 context("Create a subject profile summary plot: specify labels")
 
+library(ggplot2)
+
 test_that("label is specified for x variable", {
 			
 	summaryTable <- data.frame(

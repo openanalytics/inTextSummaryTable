@@ -1,5 +1,8 @@
 context("Create a subject profile summary plot: x variable")
 
+library(ggplot2)
+library(plyr)
+
 test_that("labels are specified for the x-axis elements ", {
 			
 	summaryTable <- data.frame(
