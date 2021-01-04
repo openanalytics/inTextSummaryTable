@@ -108,7 +108,7 @@
 #' \itemize{
 #' \item{string with a default set of statistics, as implemented
 #' via the \code{type} parameter of the \code{\link{getStatsData}} function.}
-#' \item{Named list of expressions or call objects of summary statistics of interest: }{
+#' \item{Named list of expressions or call objects (see \code{\link{is.language}}) of summary statistics of interest: }{
 #' The names are reported in the header.
 #' The following \strong{'base statistical variables'} are recognized, depending if the variable is: 
 #' \itemize{
@@ -1383,7 +1383,7 @@ getStatisticsSummaryStatisticsTable <- function(
 			}
 			
 			runStats <- function(expr){
-				if(is.expression(expr) | is.call(expr) | is.name(expr)){
+				if(is.language(expr)){
 					eval(expr = expr, envir = sumTable)
 				}else{
 					stop(paste("Statistics specified in 'stats' should be an expression or name object,",

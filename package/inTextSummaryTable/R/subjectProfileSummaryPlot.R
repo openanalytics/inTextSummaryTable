@@ -268,7 +268,7 @@ subjectProfileSummaryPlot <- function(data,
 	
 	if(!(is.logical(label) && !label)){
 		if(is.list(label)){
-			if(!all(sapply(label, is.expression))){
+			if(!all(sapply(label, is.language))){
 				stop("If 'label' is a list, should be a list of expressions.")
 			}else{
 				if(!"textLabel" %in% names(label))
@@ -276,7 +276,7 @@ subjectProfileSummaryPlot <- function(data,
 				for(labelI in names(label))
 					data[, labelI] <- eval(expr = label[[labelI]], envir = data)
 			}
-		}else	if(is.expression(label)){
+		}else	if(is.language(label)){
 			data$textLabel <- eval(expr = label, envir = data)
 		}else	if(is.logical(label)){
 				data$textLabel <- data[, meanVar]
@@ -413,7 +413,9 @@ subjectProfileSummaryPlot <- function(data,
 	if(!(is.logical(label) && !label)){
 		
 		# aes parameters
-		aesJust <- setNames(c("textHjust", "textVjust"), c("hjust", "vjust"))[c("textHjust", "textVjust") %in% names(label)]
+		aesJust <- setNames(c("textHjust", "textVjust"), c("hjust", "vjust"))[
+			c("textHjust", "textVjust") %in% names(label)
+		]
 		aesArgs <- c(aesBase, list(label = "textLabel", y = "meanVar"))
 		geomTextFct <- "geom_text_repel"
 		if(length(aesJust) > 0){
@@ -421,7 +423,7 @@ subjectProfileSummaryPlot <- function(data,
 			aesArgs <- c(aesArgs, aesJust)
 		}
 		
-		# geom_text(_repel) paremeters
+		# geom_text(_repel) parameters
 		geomTextArgs <- c(
 			list(
 				mapping = do.call(aes_string, aesArgs), 
