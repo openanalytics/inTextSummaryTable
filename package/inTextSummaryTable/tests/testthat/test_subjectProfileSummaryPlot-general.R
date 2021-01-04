@@ -73,5 +73,45 @@ test_that("facet scale is specified", {
 	})
 			
 })
+
+test_that("plot is created by a variable", {
+
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = factor(
+			c("A", "A", "B", "B"), 
+			levels = c("B", "A")
+		),
+		statMean = rnorm(4)
+	)
+
+	res <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		byVar = "TRT"
+	)
+	
+	groups <- levels(summaryTable$TRT)
+	expect_named(res, groups)
+	
+	# compare the data behind the plot
+	for(group in groups){
+		
+		expect_identical(
+				
+			object = ggplot_build(res[[!!group]])$data, 
 			
-			
+			expected = {
+				ggGroup <- subjectProfileSummaryPlot(
+					data = subset(summaryTable, TRT == !!group),
+					xVar = "visit",
+					yLab = paste("Mean", !!group)
+				)
+				ggplot_build(ggGroup)$data
+			}
+	
+		)
+		
+	}
+	
+})
