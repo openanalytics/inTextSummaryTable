@@ -649,5 +649,47 @@ test_that("variable labels specified with 'labelVars'", {
 	
 })
 
+test_that("limit is specified for the x-axis", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+			
+	xLim <- c(1, 10)
+	expect_equal({
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			xLim = xLim
+		)
+		ggplot_build(gg)$layout$coord$limits$x
+		}, 
+		xLim
+	)		
+			
+})
+
+test_that("limit is specified for the y-axis", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+	
+	yLim <- c(-1, 1)
+	expect_equal({
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yLim = yLim
+		)
+		ggplot_build(gg)$layout$coord$limits$y
+		}, 
+		yLim
+	)		
+	
+})
+
 			
 			
