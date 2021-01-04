@@ -79,7 +79,13 @@ pipeline {
                         }
                         stage('Coverage') {
                            steps {
-                                sh 'R -q -e \'covr::to_cobertura(covr::package_coverage("package/inTextSummaryTable"))\''
+                                sh '''
+                                R -q -e \'
+                                pc <- covr::package_coverage("package/inTextSummaryTable");
+                                report(x = pc, file = paste0("testCoverage-inTextSummaryTable", packageVersion("inTextSummaryTable"), ".html"))
+                                covr::to_cobertura(pc)
+                                \'
+                                '''
                             }
                            post {
                               success {
@@ -96,7 +102,7 @@ pipeline {
                 }
                 stage('Archive artifacts') {
                     steps {
-                        archiveArtifacts artifacts: '*.tar.gz, *.pdf, **/00check.log, **/testthat.Rout', fingerprint: true
+                        archiveArtifacts artifacts: '*.tar.gz, *.pdf, **/00check.log, **/testthat.Rout, **/testCoverage*.html', fingerprint: true
                     }
                 }
             }
