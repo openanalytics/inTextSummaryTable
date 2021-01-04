@@ -1,6 +1,7 @@
 context("Create a subject profile summary plot")
 
 library(ggplot2)
+libary(plyr)
 
 test_that("plot fails if variable is not available", {
 			
@@ -342,22 +343,19 @@ test_that("color variable is specified", {
 	ggData <- ggplot_build(gg)$data
 	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
 	
-	for(layer in seq_along(ggData)){
+	# combine across layers
+	ggDataAll <- do.call(plyr::rbind.fill, ggData)
 		
-		ggDataWithInput <- merge(
-			x = summaryTable, y = ggData[[layer]], 
-			by.x = c("statMean", "TRTN"),
-			by.y = c("y", "group"),
-			all = TRUE
-		)
-		expect_equal(nrow(ggDataWithInput), nrow(summaryTable))
-		
-		colors <- with(ggDataWithInput, tapply(colour, TRT, unique))
-		expect_type(colors, "character")
-		expect_length(colors, 2)
-		expect_length(unique(colors), 2)
-		
-	}
+	ggDataWithInput <- merge(
+		x = summaryTable, y = ggDataAll, 
+		by.x = c("statMean", "TRTN"),
+		by.y = c("y", "group"),
+		all = TRUE
+	)		
+	colors <- with(ggDataWithInput, tapply(colour, TRT, unique))
+	expect_type(colors, "character")
+	expect_length(colors, 2)
+	expect_length(unique(colors), 2)
 			
 })
 
@@ -379,21 +377,19 @@ test_that("color palette is specified", {
 	ggData <- ggplot_build(gg)$data
 	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
 	
-	for(layer in seq_along(ggData)){
-		
-		ggDataWithInput <- merge(
-			x = summaryTable, y = ggData[[!!layer]], 
-			by.x = c("statMean", "TRTN"),
-			by.y = c("y", "group"),
-			all = TRUE
-		)
-		expect_equal(nrow(ggDataWithInput), nrow(summaryTable))
-		
-		colors <- with(ggDataWithInput, tapply(colour, TRT, unique))
-		expect_type(colors, "character")
-		expect_equal(as.character(colors[names(colorPalette)]), unname(colorPalette))
-		
-	}
+	# combine across layers
+	ggDataAll <- do.call(plyr::rbind.fill, ggData)
+	
+	ggDataWithInput <- merge(
+		x = summaryTable, y = ggDataAll, 
+		by.x = c("statMean", "TRTN"),
+		by.y = c("y", "group"),
+		all = TRUE
+	)
+	
+	colors <- with(ggDataWithInput, tapply(colour, TRT, unique))
+	expect_type(colors, "character")
+	expect_equal(as.character(colors[names(colorPalette)]), unname(colorPalette))
 	
 })
 
@@ -422,4 +418,144 @@ test_that("color label is specified", {
 	expect_equal(ggScales[[which(isColorAes)]]$name, colorLab)
 
 })
+
+test_that("linetype is used", {
+
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = c("A", "A", "B", "B"),
+		statMean = rnorm(4)
+	)	
+			
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		useLinetype = TRUE
+	)
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	
+	# extract data behind the lines
+	isGeomLine <- sapply(gg$layers, function(l) inherits(l$geom, "GeomLine"))
+	ggDataLine <- layer_data(gg, which(isGeomLine))
+	
+	ggDataLineWithInput <- merge(
+		x = summaryTable, y = ggDataLine, 
+		by.x = c("statMean", "TRTN"),
+		by.y = c("y", "group"),
+		all = TRUE
+	)		
+
+	ltys <- with(ggDataLineWithInput, tapply(linetype, TRT, unique, incomparable = NA_character_))
+	expect_type(ltys, "character")
+	expect_length(ltys, 2)
+	expect_length(unique(ltys), 2)
+			
+})
+
+test_that("linetype palette is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
+		statMean = rnorm(4)
+	)	
+			
+	linetypePalette <- c(A = "dotted", B = "dashed")
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		useLinetype = TRUE,
+		linetypePalette = linetypePalette
+	)
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	
+	# extract data behind the lines
+	isGeomLine <- sapply(gg$layers, function(l) inherits(l$geom, "GeomLine"))
+	ggDataLine <- layer_data(gg, which(isGeomLine))
+	
+	ggDataLineWithInput <- merge(
+		x = summaryTable, y = ggDataLine, 
+		by.x = c("statMean", "TRTN"),
+		by.y = c("y", "group"),
+		all = TRUE
+	)			
+	
+	ltys <- with(ggDataLineWithInput, tapply(linetype, TRT, unique))
+	expect_type(ltys, "character")
+	expect_equal(as.character(ltys[names(linetypePalette)]), unname(linetypePalette))
+	
+})
+
+test_that("shape is used", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = c("A", "A", "B", "B"),
+		statMean = rnorm(4)
+	)	
+		
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		useShape = TRUE
+	)
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+		
+	# extract data behind the points
+	isGeomPoint <- sapply(gg$layers, function(l) inherits(l$geom, "GeomPoint"))
+	ggDataPoint <- layer_data(gg, which(isGeomPoint))
+		
+	ggDataPointWithInput <- merge(
+		x = summaryTable, y = ggDataPoint, 
+		by.x = c("statMean", "TRTN"),
+		by.y = c("y", "group"),
+		all = TRUE
+	)		
+		
+	shapes <- with(ggDataPointWithInput, tapply(shape, TRT, unique, incomparable = NA_character_))
+	expect_type(shapes, "double")
+	expect_length(shapes, 2)
+	expect_length(unique(shapes), 2)
+		
+})
+
+test_that("shape palette is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
+		statMean = rnorm(4)
+	)
+	
+	shapePalette <- c(A = 5, B = 9)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		useShape = TRUE,
+		shapePalette = shapePalette
+	)
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	
+	# extract data behind the points
+	isGeomPoint <- sapply(gg$layers, function(l) inherits(l$geom, "GeomPoint"))
+	ggDataPoint <- layer_data(gg, which(isGeomPoint))
+	
+	ggDataPointWithInput <- merge(
+		x = summaryTable, y = ggDataPoint, 
+		by.x = c("statMean", "TRTN"),
+		by.y = c("y", "group"),
+		all = TRUE
+	)		
+	
+	shapes <- with(ggDataPointWithInput, tapply(shape, TRT, unique, incomparable = NA_character_))
+	expect_type(shapes, "double")
+	expect_equal(as.numeric(shapes[names(shapePalette)]), unname(shapePalette))
+	
+})
+
+			
 			
