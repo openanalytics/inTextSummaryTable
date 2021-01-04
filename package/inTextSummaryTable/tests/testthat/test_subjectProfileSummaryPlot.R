@@ -579,5 +579,75 @@ test_that("jitter for the x-axis is specified", {
 	
 })
 
+test_that("title is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)	
+			
+	title <- "Example of summary plot"
+	expect_equal({
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			title = title
+		)
+		gg$labels$title
+		}, title
+	)
+			
+})
+
+test_that("caption is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)	
+	
+	caption <- "This plot has been created by the in-text package."
+	expect_equal({
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			caption = caption
+		)
+		gg$labels$caption
+		}, caption
+	)
+	
+})
+
+test_that("variable labels specified with 'labelVars'", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2), 
+		TRT = c("A", "B", "A", "B"),
+		statMean = rnorm(4)
+	)
+			
+	labelVars <- c(visit = "Study visit", TRT = "Study treatment")
+	
+	expect_silent({
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			colorVar = "TRT",
+			labelVars = labelVars
+		)
+	})
+						
+	expect_equal(gg$labels$x, labelVars["visit"])
+	
+	ggScales <- gg$scales$scales
+	isColorAes <- sapply(ggScales, function(x) 
+		all(x[["aesthetics"]] == "colour")
+	)
+	expect_equal(sum(isColorAes), 1)
+	expect_equal(ggScales[[which(isColorAes)]]$name, labelVars["TRT"])
+	
+})
+
 			
 			
