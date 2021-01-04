@@ -786,5 +786,142 @@ test_that("y-axis is transformed", {
 			
 })
 
+test_that("points are labelled with the y-variable", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)	
+			
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		label = TRUE
+	)
+		
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomTextRepel"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+	
+	ggDataTextWithInput <- merge(
+		x = summaryTable, y = ggDataText, 
+		by.x = c("visit", "statMean"),
+		by.y = c("x", "y"),
+		all = TRUE
+	)		
+	# labels are set to 'statMean' by default
+	with(ggDataTextWithInput, 
+		expect_equal(object = label, expected = statMean)
+	)
+			
+})
+
+test_that("points are labelled with an expression", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)	
+		
+	labelExpr <- bquote(paste(
+		"Visit:", visit, "\n", "Mean:", 
+		round(statMean, 2)
+	))
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		label = labelExpr
+	)
+			
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) 
+		inherits(l$geom, "GeomTextRepel"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+			
+	ggDataTextWithInput <- merge(
+		x = summaryTable, y = ggDataText, 
+		by.x = c("visit", "statMean"),
+		by.y = c("x", "y"),
+		all = TRUE
+	)		
+
+	with(ggDataTextWithInput, expect_equal(
+		object = label, 
+		expected = eval(labelExpr)
+	))
+			
+})
+
+test_that("points are labelled with specified justification", {
+	
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(4, 5)
+	)	
+			
+	# label should be specified as a list with 'textLabel'
+	expect_error(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			label = list(a = bquote(statMean))
+		),
+		"label.*should contain at least 'textLabel'"
+	)
+	
+	# and expressions
+	expect_error(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			label = list(textLabel = "blabla")
+		),
+		"label.*should be a list of expressions"
+	)
+	
+	labelExpr <- list(
+		textLabel = bquote(paste("Mean:", round(statMean, 2))),
+		textHjust = bquote(ifelse(visit == 1, -1, 1)),
+		textVjust = bquote(ifelse(statMean == 4, 1, -1))
+	)
+	expect_silent(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			label = labelExpr
+		)
+	)
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) 
+		inherits(l$geom, "GeomText"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+	
+	ggDataTextWithInput <- merge(
+		x = summaryTable, y = ggDataText, 
+		by.x = c("visit", "statMean"),
+		by.y = c("x", "y"),
+		all = TRUE
+	)		
+	
+	# labels are correctly extracted
+	with(ggDataTextWithInput, expect_equal(
+		object = label, 
+		expected = eval(labelExpr[["textLabel"]])
+	))
+
+	# horizontal justification is correct
+	with(ggDataTextWithInput, expect_equal(
+		object = hjust, 
+		expected = eval(labelExpr[["textHjust"]])
+	))
+
+	# vertical justification is correct
+	with(ggDataTextWithInput, expect_equal(
+		object = vjust, 
+		expected = eval(labelExpr[["textVjust"]])
+	))
+			
+})
+
 			
 			

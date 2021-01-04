@@ -248,7 +248,7 @@ in case \code{dataTotalPerc} is not specified}
 \itemize{
 \item{string with a default set of statistics, as implemented
 via the \code{type} parameter of the \code{\link{getStatsData}} function.}
-\item{Named list of expressions or call objects of summary statistics of interest: }{
+\item{Named list of expressions or call objects (see \code{\link{is.language}}) of summary statistics of interest: }{
 The names are reported in the header.
 The following \strong{'base statistical variables'} are recognized, depending if the variable is: 
 \itemize{
