@@ -184,11 +184,29 @@ test_that("label is specified for y variable", {
 			
 })
 
-test_that("gap is wrongly specified in the x-axis ", {
+test_that("labels for the x-axis elements are specified", {
 			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+	xAxisLabs <- c("Visit 1" = 2, "Baseline" = 1)
 	
-			
-			
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		xAxisLabs = xAxisLabs
+	)
+	
+	# extract labels from the ggplot object
+	ggScales <- gg$scales$scales
+	isScaleX <- sapply(ggScales, function(x) 
+		"x" %in% x[["aesthetics"]]
+	)
+	ggScaleX <- gg$scales$scales[[which(isScaleX)]]
+	ggXAxisLabs <- setNames(ggScaleX$breaks, ggScaleX$labels)
+	expect_equal(ggXAxisLabs, xAxisLabs)
+	
 })
 
 test_that("gap is specified in the x-axis ", {
