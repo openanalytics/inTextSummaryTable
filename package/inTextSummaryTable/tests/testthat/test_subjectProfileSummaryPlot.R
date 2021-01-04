@@ -11,7 +11,7 @@ test_that("plot fails if variable is not available", {
 			
 })
 
-test_that("x and meanVar variables are specified", {
+test_that("x and mean variables are specified", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -262,6 +262,7 @@ test_that("new gap is specified in the x-axis", {
 			
 })
 
+
 test_that("plot is facetted", {
 			
 	summaryTable <- data.frame(
@@ -296,5 +297,31 @@ test_that("plot is facetted", {
 			check.attributes = FALSE
 		)
 	}
+			
+})
+
+test_that("facet scale is specified", {
+			
+	summaryTable <- data.frame(
+		PARAM = c("AAA", "AAA", "ZZZ", "ZZZ"),
+		visit = c(1, 2, 1, 2), 
+		statMean = rnorm(4)
+	)
+			
+	expect_true({
+				
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit", 
+			facetVar = "PARAM",
+			facetScale = "free_y"
+		)
+		expect_true(
+			with(ggplot_build(gg)$layout$facet$params, 
+				free$y & !free$x
+			)
+		)
+		
+	})
 			
 })
