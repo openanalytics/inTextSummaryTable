@@ -1,0 +1,174 @@
+context("Create a subject profile summary plot: x variable")
+
+test_that("labels are specified for the x-axis elements ", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+	xAxisLabs <- c("Visit 1" = 2, "Baseline" = 1)
+	
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		xAxisLabs = xAxisLabs
+	)
+	
+	# extract labels from the ggplot object
+	ggScales <- gg$scales$scales
+	isScaleX <- sapply(ggScales, function(x) 
+		"x" %in% x[["aesthetics"]]
+	)
+	ggScaleX <- gg$scales$scales[[which(isScaleX)]]
+	ggXAxisLabs <- setNames(ggScaleX$breaks, ggScaleX$labels)
+	expect_equal(ggXAxisLabs, xAxisLabs)
+	
+})
+
+test_that("gap is specified in the x-axis ", {
+			
+	# uncorrect specifications:
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = data.frame(
+				visit = c("1", "2"), 
+				statMean = rnorm(2)
+			),
+			xVar = "visit",
+			xGap = c(1, 2)
+		),
+		"'xGap' should only be specified for continuous x-variable"
+	)
+	
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = data.frame(
+				visit = c(1, 2), 
+				statMean = rnorm(2)
+			),
+			xVar = "visit",
+			xGap = 1
+		),
+		"'xGap' should be of length 2"
+	)	
+	
+	# correct specification:
+	summaryTable <- data.frame(
+		visit = c(1, 2, 3), 
+		statMean = rnorm(3)
+	)
+	xGap <- c(1, 3)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", xGap = xGap
+	)
+	ggData <- ggplot_build(gg)$data
+	
+	# a '//' symbol is included in the x-axis
+	idxLabel <- which(
+		sapply(ggData, function(x) 
+			"label" %in% colnames(x) && x$label == "//")
+	)
+	expect_length(idxLabel, 1)
+	expect_equal(ggData[[idxLabel]]$x, 2)
+	expect_equal(ggData[[idxLabel]]$y, -Inf)
+	
+	# vertical lines are included
+	idxVLine <- which(
+		sapply(ggData, function(x) 
+			"xintercept" %in% colnames(x)
+		)
+	)
+	expect_length(idxVLine, 1)
+	expect_equal(ggData[[idxVLine]]$xintercept, xGap)
+	
+	# check that data is correctly filtered:
+	ggDataPlot <- ggData[-c(idxVLine, idxLabel)]
+	ggDataPlot <- lapply(ggDataPlot, `[`, c("x", "y"))
+	ggDataPlot <- unique(do.call(rbind, ggDataPlot))
+	expect_equal(
+		object = ggDataPlot,
+		expected = setNames(summaryTable[-2, ], c("x", "y")),
+		check.attributes = FALSE
+	)
+	
+})
+
+test_that("new gap is specified in the x-axis", {
+	
+	summaryTable <- data.frame(
+		visit = c(1, 2, 3), 
+		statMean = rnorm(3)
+	)
+	xGap <- c(1, 3)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		xGap = xGap, xGapDiffNew = 0.5
+	)
+	ggData <- ggplot_build(gg)$data
+	
+	# a '//' symbol is included in the x-axis
+	idxLabel <- which(
+		sapply(ggData, function(x) 
+			"label" %in% colnames(x) && x$label == "//")
+	)
+	expect_length(idxLabel, 1)
+	expect_equal(ggData[[idxLabel]]$x, 1.25)
+	
+	# check that data is correctly filtered:
+	ggDataPlot <- ggData[-c(idxLabel)]
+	ggDataX <- lapply(ggDataPlot, function(x){
+		if("x" %in% colnames(x))
+			x[, c("x")]
+	})
+	ggDataX <- unique(unlist(ggDataX))
+	expect_equal(
+		object = ggDataX,
+		expected = c(1, 1.5)
+	)
+	
+})
+		
+test_that("jitter is specified for the x-axis ", {
+		
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2), 
+		TRT = c("A", "B", "A", "B"),
+		statMean = rnorm(4)
+	)
+		
+	jitter <- 1
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		jitter = jitter
+	)
+		
+	ggDataAll <- do.call(plyr::rbind.fill, ggplot_build(gg)$data)
+	ggXJitter <- unique(with(ggDataAll, xmax-xmin)*2)
+	expect_equal(ggXJitter, jitter)
+		
+})
+		
+test_that("limit is specified for the x-axis", {
+	
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+	
+	xLim <- c(1, 10)
+	expect_equal({
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			xLim = xLim
+		)
+		ggplot_build(gg)$layout$coord$limits$x
+		}, 
+		xLim
+	)		
+	
+})
