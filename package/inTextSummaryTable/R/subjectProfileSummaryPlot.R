@@ -201,15 +201,15 @@ subjectProfileSummaryPlot <- function(data,
 			if(!is.numeric(data[, xVar])){
 				warning("'xGap' should only be specified for continuous x-variable, 'xGap' is ignored.")
 				xGap <- NULL
+			}else	if(length(xGap) != 2){
+				warning("'xGap' should be of length 2, 'xGap' is ignored.")
+				xGap <- NULL
 			}
 		}else{
 			warning("'xGap' should only be specified if 'xVar' is specified, 'xGap' is ignored.")
 			xGap <- NULL
 		}
-		if(length(xGap) != 2){
-			warning("'xGap' should be of length 2, 'xGap' is ignored.")
-			xGap <- NULL
-		}
+	
 	}
 		
 	varNotInData <- setdiff(c(meanVar, seVar, minVar, maxVar), colnames(data))
