@@ -66,18 +66,18 @@
 #' @param tableHeight Numeric of length 1 with height for the table.
 #' @param byVar Variable(s) of \code{data} for which separated plot(s)
 #' should be created.
-#' @param hLine (optional) numeric with y-intercept of dashed line to be added.
+#' @param hLine (optional) numeric with y-intercept of line(s) to be added.
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
-#' @param hLineColor String with color for \code{hLine}.
-#' @param hLineLty String with linetype for \code{hLine}.
-#' @param vLine (optional) numeric with x-intercept of dashed line to be added.
+#' @param hLineColor String with color for \code{hLine}, 'black' by default.
+#' @param hLineLty String with linetype for \code{hLine}, 'solid' by default.
+#' @param vLine (optional) numeric with x-intercept of line(s) to be added.
 #' If different thresholds should be used for different elements of the 
 #' \code{byVar} or \code{facetVar} variables, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
-#' @param vLineColor String with color for \code{vLine}.
-#' @param vLineLty String with linetype for \code{vLine}.
+#' @param vLineColor String with color for \code{vLine}, 'black' by default.
+#' @param vLineLty String with linetype for \code{vLine}, 'solid' by defaul
 #' @param useShape Logical, if TRUE (by default) \code{colorVar} is also used for the shape.
 #' @param widthErrorBar Numeric vector of length 1 with width of error bar.
 #' @param shapePalette Named vector with shape palette for \code{colorVar}.

@@ -126,3 +126,55 @@ test_that("plot is created by a variable", {
 	}
 	
 })
+
+test_that("horizontal lines are specified", {
+			
+	hLine <- c(1, 3)
+	hLineColor <- c("blue", "red")
+	hLineLty <- c("dotted", "dashed")
+	gg <- subjectProfileSummaryPlot(
+		data = data.frame(
+			visit = c(1, 2), 
+			statMean = rnorm(2)
+		),
+		xVar = "visit", 
+		hLine = hLine,
+		hLineColor = hLineColor,
+		hLineLty = hLineLty
+	)
+	
+	# extract data behind the lines
+	isGeomLine <- sapply(gg$layers, function(l) inherits(l$geom, "GeomHline"))
+	ggDataLine <- do.call(rbind, ggplot_build(gg)$data[isGeomLine])
+	
+	expect_equal(ggDataLine$yintercept, hLine)
+	expect_equal(ggDataLine$colour, hLineColor)
+	expect_equal(ggDataLine$linetype, hLineLty)
+	
+})
+
+test_that("vertical lines are specified", {
+			
+	vLine <- c(1, 2)
+	vLineColor <- c("green", "yellow")
+	vLineLty <- c("dashed", "solid")
+	gg <- subjectProfileSummaryPlot(
+		data = data.frame(
+			visit = c(1, 2), 
+			statMean = rnorm(2)
+		),
+		xVar = "visit", 
+		vLine = vLine,
+		vLineColor = vLineColor,
+		vLineLty = vLineLty
+	)
+	
+	# extract data behind the lines
+	isGeomLine <- sapply(gg$layers, function(l) inherits(l$geom, "GeomVline"))
+	ggDataLine <- do.call(rbind, ggplot_build(gg)$data[isGeomLine])
+	
+	expect_equal(ggDataLine$xintercept, vLine)
+	expect_equal(ggDataLine$colour, vLineColor)
+	expect_equal(ggDataLine$linetype, vLineLty)
+	
+})
