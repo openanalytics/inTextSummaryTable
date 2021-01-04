@@ -184,8 +184,41 @@ test_that("label is specified for y variable", {
 			
 })
 
-test_that("gap is specified in the x-axis ", {
+test_that("gap is wrongly specified in the x-axis ", {
 			
+	
+			
+			
+})
+
+test_that("gap is specified in the x-axis ", {
+		
+	# uncorrect specifications:
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = data.frame(
+				visit = c("1", "2"), 
+				statMean = rnorm(2)
+			),
+			xVar = "visit",
+			xGap = c(1, 2)
+		),
+		"'xGap' should only be specified for continuous x-variable"
+	)
+	
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = data.frame(
+				visit = c(1, 2), 
+				statMean = rnorm(2)
+			),
+			xVar = "visit",
+			xGap = 1
+		),
+		"'xGap' should be of length 2"
+	)	
+			
+	# correct specification:
 	summaryTable <- data.frame(
 		visit = c(1, 2, 3), 
 		statMean = rnorm(3)
