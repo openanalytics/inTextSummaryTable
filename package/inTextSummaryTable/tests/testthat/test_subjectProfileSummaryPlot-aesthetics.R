@@ -1,5 +1,8 @@
 context("Create a subject profile summary plot: specify aesthetics")
 
+library(ggplot2)
+library(plyr)
+
 test_that("color variable is specified", {
 			
 	summaryTable <- data.frame(

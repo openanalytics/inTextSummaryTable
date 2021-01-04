@@ -1,7 +1,6 @@
 context("Create a subject profile summary plot")
 
 library(ggplot2)
-library(plyr)
 
 test_that("plot fails if variable is not available", {
 			
