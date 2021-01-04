@@ -325,3 +325,101 @@ test_that("facet scale is specified", {
 	})
 			
 })
+
+test_that("color variable is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = c("A", "A", "B", "B"),
+		statMean = rnorm(4)
+	)	
+	
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT"
+	)
+	ggData <- ggplot_build(gg)$data
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	
+	for(layer in seq_along(ggData)){
+		
+		ggDataWithInput <- merge(
+			x = summaryTable, y = ggData[[layer]], 
+			by.x = c("statMean", "TRTN"),
+			by.y = c("y", "group"),
+			all = TRUE
+		)
+		expect_equal(nrow(ggDataWithInput), nrow(summaryTable))
+		
+		colors <- with(ggDataWithInput, tapply(colour, TRT, unique))
+		expect_type(colors, "character")
+		expect_length(colors, 2)
+		expect_length(unique(colors), 2)
+		
+	}
+			
+})
+
+test_that("color palette is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
+		statMean = rnorm(4)
+	)	
+	
+	colorPalette <- c(A = "red", B = "yellow")
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		colorPalette = colorPalette
+	)
+	ggData <- ggplot_build(gg)$data
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	
+	for(layer in seq_along(ggData)){
+		
+		ggDataWithInput <- merge(
+			x = summaryTable, y = ggData[[!!layer]], 
+			by.x = c("statMean", "TRTN"),
+			by.y = c("y", "group"),
+			all = TRUE
+		)
+		expect_equal(nrow(ggDataWithInput), nrow(summaryTable))
+		
+		colors <- with(ggDataWithInput, tapply(colour, TRT, unique))
+		expect_type(colors, "character")
+		expect_equal(as.character(colors[names(colorPalette)]), unname(colorPalette))
+		
+	}
+	
+})
+
+test_that("color label is specified", {
+	
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = c("A", "A", "B", "B"), 
+		statMean = rnorm(4)
+	)	
+	colorLab <- "Study Treatment"
+	
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable,
+		xVar = "visit", 
+		colorVar = "TRT",
+		colorLab = colorLab
+	)
+	
+	# extract color scale
+	ggScales <- gg$scales$scales
+	isColorAes <- sapply(ggScales, function(x) 
+		all(x[["aesthetics"]] == "colour")
+	)
+	expect_equal(sum(isColorAes), 1)
+	expect_equal(ggScales[[which(isColorAes)]]$name, colorLab)
+
+})
+			
