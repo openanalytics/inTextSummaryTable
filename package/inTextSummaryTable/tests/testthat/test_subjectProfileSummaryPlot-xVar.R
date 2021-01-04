@@ -3,6 +3,57 @@ context("Create a subject profile summary plot: x variable")
 library(ggplot2)
 library(plyr)
 
+test_that("plot is created with a continuous x variable", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+			
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit"
+	)
+	
+	ggData <- ggplot_build(gg)$data
+	
+	# combine across layers
+	ggDataAll <- do.call(plyr::rbind.fill, ggData)
+	ggDataAll <- unique(ggDataAll[, c("x", "y")])
+	
+	expect_equal(ggDataAll, summaryTable, check.attributes = FALSE)
+	
+})
+
+test_that("plot is created with a discrete x variable", {
+			
+	summaryTable <- data.frame(
+		visit = factor(c("B", "A")), 
+		statMean = rnorm(2)
+	)
+			
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit"
+	)
+			
+	ggData <- ggplot_build(gg)$data
+			
+	# combine across layers
+	ggDataAll <- do.call(plyr::rbind.fill, ggData)
+	ggDataAll <- unique(ggDataAll[, c("x", "y")])
+			
+	summaryTable$visitN <- as.numeric(summaryTable$visit)
+	summaryTable <- summaryTable[order(summaryTable$visitN), ]
+	ggDataAll$x <- as.numeric(ggDataAll$x) # x is also of type: 'mapped_discrete'
+	expect_equal(
+		ggDataAll, 
+		summaryTable[, c("visitN", "statMean")], 
+		check.attributes = FALSE
+	)
+		
+})
+
 test_that("labels are specified for the x-axis elements ", {
 			
 	summaryTable <- data.frame(

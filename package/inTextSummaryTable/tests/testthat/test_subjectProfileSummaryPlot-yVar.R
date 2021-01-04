@@ -2,7 +2,7 @@ context("Create a subject profile summary plot: y variable")
 
 library(ggplot2)
 
-test_that("x and mean variables are specified", {
+test_that("variable for the mean is specified", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
