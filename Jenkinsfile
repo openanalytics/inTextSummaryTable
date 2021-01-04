@@ -82,7 +82,7 @@ pipeline {
                                 sh '''
                                 R -q -e \'
                                 pc <- covr::package_coverage("package/inTextSummaryTable");
-                                covr::report(x = pc, file = paste0("testCoverage-inTextSummaryTable", packageVersion("inTextSummaryTable"), ".html"))
+                                covr::report(x = pc, file = "testCoverage-inTextSummaryTable.html")
                                 covr::to_cobertura(pc)
                                 \'
                                 '''
