@@ -84,7 +84,18 @@ test_that("plot is created by a variable", {
 		),
 		statMean = rnorm(4)
 	)
+	
+	# variable not available
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit", 
+			byVar = "TRT1"
+		),
+		"'byVar' is not available in the 'data'"
+	)
 
+	# correct specification
 	res <- subjectProfileSummaryPlot(
 		data = summaryTable,
 		xVar = "visit", 
