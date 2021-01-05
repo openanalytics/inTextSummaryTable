@@ -192,7 +192,7 @@ subjectProfileSummaryPlot <- function(data,
 	}
 	
 	if(!is.null(yTrans) && !(is.character(yTrans) && yTrans == "log10")){
-		stop("Currently 'yTrans' can only have value: 'log10', so this parameter is ignored.")
+		warning("Currently 'yTrans' can only have value: 'log10', so this parameter is ignored.")
 		yTrans <- NULL
 	}
 	
@@ -247,7 +247,7 @@ subjectProfileSummaryPlot <- function(data,
 				yMin <- if(!is.null(yLim))	yLim[1]
 				if(!(!is.null(yMin) && !is.na(yMin)))
 					yMin <- min(dataYMinYMax[dataYMinYMax > 0])/10
-				warning(paste(nrow(idxNeg), "negative values in the error bars, these values",
+				warning(paste(nrow(idxNeg), "negative value(s) in the error bars, these values",
 					"are set to:", prettyNum(yMin), "for plotting."
 				))
 				dataYMinYMax[idxNeg] <- yMin
@@ -293,10 +293,15 @@ subjectProfileSummaryPlot <- function(data,
 		geomFct <- match.fun(paste0("geom_", typeLine))
 		dataLine <- data.frame(line = inputLine, color = color, linetype = linetype, stringsAsFactors = FALSE)
 		if(!is.null(facetVar) & !is.null(names(inputLine))){
+			facetLine <- names(inputLine)
+			if(is.factor(data[, facetVar])){
+				facetLine <- factor(facetLine, levels = levels(data[, facetVar]))
+			}
 			dataLine <- cbind(
 				dataLine,
-				setNames(data.frame(names(inputLine)), facetVar)
+				setNames(data.frame(facetLine, stringsAsFactors = FALSE), facetVar)
 			)
+
 		}
 		for(i in seq_len(nrow(dataLine)))
 			gg <- gg + do.call(geomFct, 

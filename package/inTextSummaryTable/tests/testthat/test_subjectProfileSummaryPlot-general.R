@@ -153,6 +153,38 @@ test_that("horizontal lines are specified", {
 	
 })
 
+test_that("horizontal lines are specified by facet", {
+			
+	summaryTable <- data.frame(
+		PARAM = factor(
+			c("AAA", "AAA", "ZZZ", "ZZZ"),
+			levels = c("ZZZ", "AAA")
+		),
+		visit = c(1, 2, 1, 2), 
+		statMean = rnorm(4)
+	)
+			
+	expect_equal({
+				
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit", 
+			facetVar = "PARAM",
+			hLine = c(AAA = 3, ZZZ = 1)
+		)
+		
+		# extract data behind the lines
+		isGeomLine <- sapply(gg$layers, function(l) inherits(l$geom, "GeomHline"))
+		ggDataLine <- do.call(rbind, ggplot_build(gg)$data[isGeomLine])
+	
+		ggDataLine[match(c(1, 2), ggDataLine$PANEL), "yintercept"]
+		
+		}, 
+		expected = c(1, 3)
+	)
+	
+})
+
 test_that("vertical lines are specified", {
 			
 	vLine <- c(1, 2)

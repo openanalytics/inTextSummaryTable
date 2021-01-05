@@ -25,6 +25,20 @@ test_that("plot is created with a continuous x variable", {
 	
 })
 
+test_that("plot is created with a continuous x variable with only one element", {
+			
+	expect_silent(
+		subjectProfileSummaryPlot(
+			data = data.frame(
+				visit = 1, 
+				statMean = rnorm(1)
+			), 
+			xVar = "visit"
+		)	
+	)
+			
+})
+
 test_that("plot is created with a discrete x variable", {
 			
 	summaryTable <- data.frame(
