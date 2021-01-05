@@ -271,3 +271,57 @@ test_that("y-axis labels are included", {
 	
 })
 
+test_that("fontsize is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20)
+	)		
+			
+	fontsize <- 10
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n",
+		fontsize = fontsize
+	)
+	expect_equal(gg$theme$text$size, fontsize)
+
+})
+
+test_that("fontname is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20)
+	)		
+			
+	fontname <- "Arial"
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n",
+		fontname = fontname
+	)
+	
+	expect_equal(gg$theme$text$family, fontname)
+			
+})
+
+test_that("theme is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20)
+	)		
+			
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n",
+		themeFct = function() theme(base_size = 30)
+	)
+			
+	expect_equal(gg$theme$base_size, 30)
+			
+})

@@ -615,11 +615,19 @@ subjectProfileSummaryPlot <- function(data,
 #' @param yAxisLabs Logical, if TRUE include the labels in the y-axis.
 #' @param xAxisLabs Vector with labels for the x-axis if \code{xVar}
 #' is discrete or vector with limits if continuous.
-#' @param style String with subject profile style, either 'report' or 'presentation'.
-#' @param fontname String with font name.
-#' @param fontsize Numeric vector with font size.
+#' @param style String with subject profile style.
+#' This affects the parameters: \code{fontname}, \code{fontsize}
+#' and \code{themeFct}.
+#' @param fontname String with font name,
+#' by default 'Times' if \code{style} is 'report' and
+#' 'Tahoma' if \code{style} is 'presentation'.
+#' @param fontsize Numeric vector of length 1 with font size,
+#' by default 8 if \code{style} is 'report' and
+#' 10 if \code{style} is 'presentation'
 #' @param pointSize Numeric indicating the size of points in the legend, 1.5 by default
-#' @param themeFct Function with ggplot2 theme.
+#' @param themeFct Function with ggplot2 theme,
+#' by default \code{\link[ggplot2]{theme_classic}} if \code{style} is 'report' and
+#' \code{\link[ggplot2]{theme_bw}} if \code{style} is 'presentation'.
 #' @param xTrans (optional) ggplot2 transformation
 #' for the x-axis.
 #' @return \code{\link[ggplot2]{ggplot}} object
