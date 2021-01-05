@@ -2,7 +2,7 @@
 % Please edit documentation in R/subjectProfileSummaryPlot.R
 \name{subjectProfileSummaryTable}
 \alias{subjectProfileSummaryTable}
-\title{Plot a table with \code{ggplot} of a variable of interest}
+\title{Plot a table with \code{ggplot} of a text variable of interest.}
 \usage{
 subjectProfileSummaryTable(
   data,
@@ -54,15 +54,23 @@ the text label.}
 \item{xAxisLabs}{Vector with labels for the x-axis if \code{xVar}
 is discrete or vector with limits if continuous.}
 
-\item{style}{String with subject profile style, either 'report' or 'presentation'.}
+\item{style}{String with subject profile style.
+This affects the parameters: \code{fontname}, \code{fontsize}
+and \code{themeFct}.}
 
-\item{fontname}{String with font name.}
+\item{fontname}{String with font name,
+by default 'Times' if \code{style} is 'report' and
+'Tahoma' if \code{style} is 'presentation'.}
 
-\item{fontsize}{Numeric vector with font size.}
+\item{fontsize}{Numeric vector of length 1 with font size,
+by default 8 if \code{style} is 'report' and
+10 if \code{style} is 'presentation'}
 
 \item{pointSize}{Numeric indicating the size of points in the legend, 1.5 by default}
 
-\item{themeFct}{Function with ggplot2 theme.}
+\item{themeFct}{Function with ggplot2 theme,
+by default \code{\link[ggplot2]{theme_classic}} if \code{style} is 'report' and
+\code{\link[ggplot2]{theme_bw}} if \code{style} is 'presentation'.}
 
 \item{textSize}{Size for the text.}
 
@@ -73,7 +81,11 @@ for the x-axis.}
 \code{\link[ggplot2]{ggplot}} object
 }
 \description{
-Plot a table with \code{ggplot} of a variable of interest
+The labels extracted based on the \code{text} parameter 
+and displayed at the x-position based on \code{xVar} and the y-position based on
+\code{colorVar}.
+Each group specified in the color variables are displayed in different
+lines in the plot.
 }
 \author{
 Laure Cougnaud and Michela Pasetto

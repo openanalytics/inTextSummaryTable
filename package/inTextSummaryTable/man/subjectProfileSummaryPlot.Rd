@@ -191,13 +191,21 @@ with each corresponding element (collapsed with '.' if multiple).}
 
 \item{vLineLty}{String with linetype for \code{vLine}, 'solid' by defaul}
 
-\item{style}{String with subject profile style, either 'report' or 'presentation'.}
+\item{style}{String with subject profile style.
+This affects the parameters: \code{fontname}, \code{fontsize}
+and \code{themeFct}.}
 
-\item{fontname}{String with font name.}
+\item{fontname}{String with font name,
+by default 'Times' if \code{style} is 'report' and
+'Tahoma' if \code{style} is 'presentation'.}
 
-\item{fontsize}{Numeric vector with font size.}
+\item{fontsize}{Numeric vector of length 1 with font size,
+by default 8 if \code{style} is 'report' and
+10 if \code{style} is 'presentation'}
 
-\item{themeFct}{Function with ggplot2 theme.}
+\item{themeFct}{Function with ggplot2 theme,
+by default \code{\link[ggplot2]{theme_classic}} if \code{style} is 'report' and
+\code{\link[ggplot2]{theme_bw}} if \code{style} is 'presentation'.}
 
 \item{themeIncludeVerticalGrid}{Logical, if TRUE (by default)
 include theme vertical grid lines (if present in \code{themeFct}).}

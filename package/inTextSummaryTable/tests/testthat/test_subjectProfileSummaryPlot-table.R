@@ -1,5 +1,8 @@
 context("Create a subject profile summary plot with table")
 
+library(ggplot2)
+library(plyr)
+
 test_that("a text variable is specified", {
 		
 	summaryTable <- data.frame(
@@ -61,6 +64,51 @@ test_that("an expression is specified as text", {
 	)
 			
 })
+
+test_that("size of text is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20)
+	)		
+			
+	textSize <- 67
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n", textSize = textSize
+	)
+	
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomText"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+	
+	expect_setequal(ggDataText$size, textSize)
+		
+})
+
+test_that("size of point is specified", {
+			
+	# Note: this affect the size of the points in the legend
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20),
+		TRT = c("a", "b")
+	)
+			
+	pointSize <- 10
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n", 
+		colorVar = "TRT",
+		pointSize = pointSize
+	)
+			
+	expect_equal(gg$guides$colour$override.aes$size, pointSize) 
+	
+})
+
 
 test_that("label is specified for x variable", {
 			
