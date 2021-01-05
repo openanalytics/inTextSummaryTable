@@ -592,7 +592,13 @@ subjectProfileSummaryPlot <- function(data,
 	
 }
 
-#' Plot a table with \code{ggplot} of a variable of interest 
+#' Plot a table with \code{ggplot} of a text variable of interest.
+#' 
+#' The labels extracted based on the \code{text} parameter 
+#' and displayed at the x-position based on \code{xVar} and the y-position based on
+#' \code{colorVar}.
+#' Each group specified in the color variables are displayed in different
+#' lines in the plot.
 #' @param data Data.frame (in long format) with data for the table.
 #' @param xVar String, variable of \code{data} with variable for the x-axis.
 #' @param text Character vector with colnames of \code{data}
@@ -649,6 +655,9 @@ subjectProfileSummaryTable <- function(
 			data[, text]
 		}
 	}else stop("'text' should be an expression of character.")
+
+	if(yAxisLabs & is.null(colorVar))
+		warning("Labels for the y-axis are not included because color variable is not specified.")
 
 	# aesthetics
 	aesTablePlot <- c(
