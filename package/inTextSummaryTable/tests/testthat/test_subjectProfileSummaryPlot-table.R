@@ -62,6 +62,50 @@ test_that("an expression is specified as text", {
 			
 })
 
+test_that("label is specified for x variable", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20)
+	)
+	xLab <- "Study visit"
+	expect_identical({
+		gg <- subjectProfileSummaryTable(
+			data = summaryTable, 
+			xVar = "visit",
+			text = "n",
+			xLab = xLab
+		)
+		gg$labels$x
+		}, xLab
+	)
+			
+})
+
+test_that("x-axis labels are specified for a continuous x variable", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20)
+	)
+	xAxisLabs <- c(1, 4)
+	
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		xAxisLabs = xAxisLabs
+	)
+			
+	# extract labels from the ggplot object
+	ggScales <- gg$scales$scales
+	isScaleX <- sapply(ggScales, function(x) 
+		"x" %in% x[["aesthetics"]]
+	)
+	expect_equal(gg$scales$scales[[which(isScaleX)]]$limits, xLim)
+	
+})
+
 test_that("a color variable is specified", {
 		
 	summaryTable <- data.frame(
@@ -144,3 +188,86 @@ test_that("a color palette is specified", {
 	expect_equal(as.vector(colors[names(colorPalette)]), unname(colorPalette))
 			
 })
+
+test_that("variable labels specified with 'labelVars'", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20),
+		TRT = c("A", "B", "A", "B")
+	)
+	labelVars <- c(visit = "Study visit", TRT = "Study treatment")
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT",
+		labelVars = labelVars
+	)
+	
+	# check label for coloring
+	ggScales <- gg$scales$scales
+	isColorAes <- sapply(ggScales, function(x) 
+		all(x[["aesthetics"]] == "colour")
+	)
+	expect_equal(sum(isColorAes), 1)
+	expect_equal(ggScales[[which(isColorAes)]]$name, labelVars["TRT"])
+			
+})
+
+test_that("y-axis labels are included", {
+	
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20),
+		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A"))
+	)
+			
+	# y-labels only available if color variable is specified:
+	expect_warning(
+		subjectProfileSummaryTable(
+			data = summaryTable, 
+			xVar = "visit",
+			text = "n",
+			yAxisLabs = TRUE
+		),
+		"Labels for the y-axis are not included because color variable is not specified."
+	)
+
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT",
+		yAxisLabs = TRUE
+	)
+	
+#	expect_equal(
+#		object = layer_scales(gg)$y$range$range, 
+#		expected = levels(summaryTable$TRT)
+#	)
+	# check if axis labels have been removed
+	expect_true({
+		gg <- subjectProfileSummaryTable(
+			data = summaryTable, 
+			xVar = "visit",
+			text = "n",
+			colorVar = "TRT",
+			yAxisLabs = FALSE
+		)
+		inherits(gg$theme$axis.text.y, "element_blank")
+	})
+	
+	expect_false({
+		gg <- subjectProfileSummaryTable(
+			data = summaryTable, 
+			xVar = "visit",
+			text = "n",
+			colorVar = "TRT",
+			yAxisLabs = TRUE
+		)
+		inherits(gg$theme$axis.text.y, "element_blank")
+	})
+	
+})
+
