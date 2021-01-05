@@ -61,3 +61,86 @@ test_that("an expression is specified as text", {
 	)
 			
 })
+
+test_that("a color variable is specified", {
+		
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2),
+		n = sample.int(4),
+		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A"))
+	)	
+	
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT"
+	)
+	
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	
+	## check if labels are based on color var
+	
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomText"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+		
+	ggDataTextWithInput <- merge(ggDataText, summaryTable,
+		by.x = c("x", "y"),
+		by.y = c("visit", "TRTN"),
+		all = TRUE
+	)
+	
+	# label is correct
+	with(ggDataTextWithInput, expect_equal(label, n))
+	
+	## color is different for the groups for the text and point (used for the legend)
+	
+	isGeomTextPoint <- sapply(gg$layers, function(l) inherits(l$geom, c("GeomText", "GeomPoint")))
+	ggDataTextPoint <- do.call(plyr::rbind.fill, ggplot_build(gg)$data[isGeomTextPoint])
+			
+	ggDataTextPointWithInput <- merge(ggDataTextPoint, summaryTable,
+		by.x = c("x", "y"),
+		by.y = c("visit", "TRTN"),
+		all = TRUE
+	)
+			
+	colors <- with(ggDataTextPointWithInput, tapply(colour, TRT, unique))
+	expect_type(colors, "character")
+	expect_length(colors, 2)
+	expect_length(unique(colors), 2)
+			
+})
+
+test_that("a color palette is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2),
+		n = sample.int(4),
+		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A"))
+	)	
+			
+	colorPalette <- c(A = "red", B = "yellow")
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT", colorPalette = colorPalette
+	)
+			
+	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	
+	# extract data behind point and text:
+	isGeomTextPoint <- sapply(gg$layers, function(l) inherits(l$geom, c("GeomText", "GeomPoint")))
+	ggDataTextPoint <- do.call(plyr::rbind.fill, ggplot_build(gg)$data[isGeomTextPoint])
+			
+	ggDataTextPointWithInput <- merge(ggDataTextPoint, summaryTable,
+		by.x = c("x", "y"),
+		by.y = c("visit", "TRTN"),
+		all = TRUE
+	)
+			
+	colors <- with(ggDataTextPointWithInput, tapply(colour, TRT, unique))
+	expect_equal(as.vector(colors[names(colorPalette)]), unname(colorPalette))
+			
+})
