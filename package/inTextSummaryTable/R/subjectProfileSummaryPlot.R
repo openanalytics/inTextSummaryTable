@@ -640,7 +640,7 @@ subjectProfileSummaryTable <- function(
 	xTrans = NULL
 	){
 	
-	data$tableTextLabel <- if(is.expression(text)){
+	data$tableTextLabel <- if(is.language(text)){
 		eval(expr = text, envir = data)
 	}else if(is.character(text)){
 		if(!text %in% colnames(data)){
