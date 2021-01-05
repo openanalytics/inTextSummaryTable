@@ -128,7 +128,7 @@ test_that("y-axis is transformed", {
 	)
 			
 	# transformation should be specified as a character
-	expect_error(
+	expect_warning(
 		subjectProfileSummaryPlot(
 			data = summaryTable, 
 			xVar = "visit",
@@ -137,7 +137,7 @@ test_that("y-axis is transformed", {
 	)
 			
 	# only 'log10' transformation is supported currently
-	expect_error(
+	expect_warning(
 		subjectProfileSummaryPlot(
 			data = summaryTable, 
 			xVar = "visit",
@@ -161,6 +161,52 @@ test_that("y-axis is transformed", {
 	)	
 	with(ggDataWithInput, expect_equal(y, log10(statMean)))		
 	
+})
+
+test_that("negative y values are transformed with a log10 transformation", {
+		
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(1, 2),
+		statSE = c(0.5, 3)
+	)
+	
+	## default: set negative values to a minimum value
+	
+	expect_warning(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yTrans = "log10"
+		),
+		"1 negative value\\(s\\) in the error bars"
+	)
+	
+	
+	# extract data behind the error bars
+	isGeomEB <- sapply(gg$layers, function(l) inherits(l$geom, "GeomErrorbar"))
+	ggDataEB <- layer_data(gg, which(isGeomEB))
+
+	expect_equal(subset(ggDataEB, x == 2)$ymin, log10(0.5/10))
+	
+	## set negative values to lower limit of y if specified
+	
+	expect_warning(
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yTrans = "log10",
+			yLim = c(0.005, 20)
+		),
+		"1 negative value\\(s\\) in the error bars"
+	)
+	
+	# extract data behind the lines
+	isGeomEB <- sapply(gg$layers, function(l) inherits(l$geom, "GeomErrorbar"))
+	ggDataEB <- layer_data(gg, which(isGeomEB))
+	
+	expect_equal(subset(ggDataEB, x == 2)$ymin, log10(0.005))
+			
 })
 
 test_that("limit is specified for the y-axis", {

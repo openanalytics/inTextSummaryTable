@@ -4,7 +4,9 @@
   o export to DT: 
     - title can be of length > 1
     - pageDim should be of length 2
-  o subject profile summary plot: extra checks input params
+  o subject profile summary plot: 
+    - extra checks input params
+    - fix ordering facets in case [x]Line specified
   o compute stats: simplify stats expr check
 2.20.0
   o add unit tests
