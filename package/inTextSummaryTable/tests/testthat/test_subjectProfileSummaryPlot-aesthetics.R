@@ -65,7 +65,7 @@ test_that("color palette is specified", {
 	
 	colors <- with(ggDataWithInput, tapply(colour, TRT, unique))
 	expect_type(colors, "character")
-	expect_equal(as.character(colors[names(colorPalette)]), unname(colorPalette))
+	expect_equal(as.vector(colors[names(colorPalette)]), unname(colorPalette))
 	
 })
 
@@ -160,7 +160,7 @@ test_that("linetype palette is specified", {
 	
 	ltys <- with(ggDataLineWithInput, tapply(linetype, TRT, unique))
 	expect_type(ltys, "character")
-	expect_equal(as.character(ltys[names(linetypePalette)]), unname(linetypePalette))
+	expect_equal(as.vector(ltys[names(linetypePalette)]), unname(linetypePalette))
 	
 })
 
@@ -229,7 +229,7 @@ test_that("shape palette is specified", {
 	
 	shapes <- with(ggDataPointWithInput, tapply(shape, TRT, unique, incomparable = NA_character_))
 	expect_type(shapes, "double")
-	expect_equal(as.numeric(shapes[names(shapePalette)]), unname(shapePalette))
+	expect_equal(as.vector(shapes[names(shapePalette)]), unname(shapePalette))
 	
 })
 
