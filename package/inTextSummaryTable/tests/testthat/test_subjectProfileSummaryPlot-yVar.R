@@ -237,6 +237,8 @@ test_that("y-axis is expanded", {
 		statMean = rnorm(2)
 	)
 	
+	yAxisExpand <- expansion(mult = 0, add = 2)
+	
 	# yLimExpand -> yAxisExpand for consistency
 	expect_warning(
 		subjectProfileSummaryPlot(
@@ -248,7 +250,6 @@ test_that("y-axis is expanded", {
 	)
 		
 	# correct specification
-	yAxisExpand <- expansion(mult = 0, add = 2)
 	gg <- subjectProfileSummaryPlot(
 		data = summaryTable, 
 		xVar = "visit",
