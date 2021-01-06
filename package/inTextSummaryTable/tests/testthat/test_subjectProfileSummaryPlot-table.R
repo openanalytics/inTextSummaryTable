@@ -27,6 +27,8 @@ test_that("a text variable is specified", {
 		text = "n"
 	)
 	
+	expect_s3_class(gg, "ggplot")
+	
 	# extract data behind the text
 	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomText"))
 	ggDataText <- layer_data(gg, which(isGeomText))
@@ -87,27 +89,6 @@ test_that("size of text is specified", {
 		
 })
 
-test_that("size of point is specified", {
-			
-	# Note: this affect the size of the points in the legend
-	summaryTable <- data.frame(
-		visit = c(1, 2),
-		n = c(10, 20),
-		TRT = c("a", "b")
-	)
-			
-	pointSize <- 10
-	gg <- subjectProfileSummaryTable(
-		data = summaryTable,
-		xVar = "visit",
-		text = "n", 
-		colorVar = "TRT",
-		pointSize = pointSize
-	)
-			
-	expect_equal(gg$guides$colour$override.aes$size, pointSize) 
-	
-})
 
 
 test_that("label is specified for x variable", {
@@ -152,6 +133,29 @@ test_that("x-axis labels are specified for a continuous x variable", {
 	)
 	expect_equal(gg$scales$scales[[which(isScaleX)]]$limits, xAxisLabs)
 	
+})
+
+
+test_that("limit is specified for the x-axis", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20)
+	)
+			
+	xLim <- c(1, 10)
+	expect_equal({
+		gg <- subjectProfileSummaryTable(
+			data = summaryTable, 
+			xVar = "visit",
+			text = "n",
+			xLim = xLim
+		)
+		ggplot_build(gg)$layout$coord$limits$x
+		}, 
+		xLim
+	)		
+			
 })
 
 test_that("a color variable is specified", {
@@ -209,7 +213,7 @@ test_that("a color palette is specified", {
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
 		n = sample.int(4),
-		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A"))
+		TRT = c("A", "B", "A", "B")
 	)	
 			
 	colorPalette <- c(A = "red", B = "yellow")
@@ -220,7 +224,7 @@ test_that("a color palette is specified", {
 		colorVar = "TRT", colorPalette = colorPalette
 	)
 			
-	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
+	summaryTable$TRTN <- as.numeric(as.factor(summaryTable$TRT))
 	
 	# extract data behind point and text:
 	isGeomTextPoint <- sapply(gg$layers, function(l) inherits(l$geom, c("GeomText", "GeomPoint")))
@@ -234,6 +238,55 @@ test_that("a color palette is specified", {
 			
 	colors <- with(ggDataTextPointWithInput, tapply(colour, TRT, unique))
 	expect_equal(as.vector(colors[names(colorPalette)]), unname(colorPalette))
+			
+})
+
+test_that("color label is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2),
+		n = sample.int(4),
+		TRT = c("A", "B", "A", "B")
+	)	
+	colorLab <- "Study Treatment"
+			
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit", 
+		text = "n",
+		colorVar = "TRT",
+		colorLab = colorLab
+	)
+			
+	# extract color scale
+	ggScales <- gg$scales$scales
+	isColorAes <- sapply(ggScales, function(x) 
+		all(x[["aesthetics"]] == "colour")
+	)
+	expect_equal(sum(isColorAes), 1)
+	expect_equal(ggScales[[which(isColorAes)]]$name, colorLab)
+			
+})
+
+test_that("size of point is specified", {
+			
+	# Note: this affect the size of the points in the legend
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20),
+		TRT = c("a", "b")
+	)
+			
+	pointSize <- 10
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n", 
+		colorVar = "TRT",
+		pointSize = pointSize
+	)
+			
+	expect_equal(gg$guides$colour$override.aes$size, pointSize) 
 			
 })
 
@@ -372,4 +425,37 @@ test_that("theme is specified", {
 			
 	expect_equal(gg$theme$base_size, 30)
 			
+})
+
+test_that("legend is shown", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2),
+		n = sample.int(4),
+		TRT = c("A", "B", "A", "B")
+	)	
+			
+	expect_equal({
+		gg <- subjectProfileSummaryTable(
+			data = summaryTable,
+			xVar = "visit", 
+			text = "n",
+			showLegend = FALSE
+		)
+		gg$theme$legend.position
+		}, 
+		expected = "none"
+	)
+	
+	expect_false({
+		gg <- subjectProfileSummaryTable(
+			data = summaryTable,
+			xVar = "visit", 
+			text = "n",
+			showLegend = TRUE
+		)
+		(gg$theme$legend.position == "none")
+		}
+	)
+
 })
