@@ -150,7 +150,7 @@ test_that("x-axis labels are specified for a continuous x variable", {
 	isScaleX <- sapply(ggScales, function(x) 
 		"x" %in% x[["aesthetics"]]
 	)
-	expect_equal(gg$scales$scales[[which(isScaleX)]]$limits, xLim)
+	expect_equal(gg$scales$scales[[which(isScaleX)]]$limits, xAxisLabs)
 	
 })
 
