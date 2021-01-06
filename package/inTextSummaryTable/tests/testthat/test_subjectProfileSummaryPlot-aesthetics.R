@@ -263,7 +263,6 @@ test_that("points are labelled with the y-variable", {
 	
 })
 
-
 test_that("points are labelled with an expression", {
 			
 	summaryTable <- data.frame(
@@ -368,5 +367,30 @@ test_that("points are labelled with specified justification", {
 		object = vjust, 
 		expected = eval(labelExpr[["textVjust"]])
 	))
+	
+})
+
+test_that("padding between point and label is specified", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)	
+			
+	labelPadding <- unit(2, "cm")
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		label = TRUE,
+		labelPadding = labelPadding
+	)
+			
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomTextRepel"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+	expect_identical(
+		gg$layers[[which(isGeomText)]]$geom_params$point.padding,
+		labelPadding
+	)
 	
 })

@@ -170,8 +170,9 @@ should contain expression to extract label,
 and 'textHjust' and 'textVjust' (optional) may contain expression 
 specifying horizontal and vertical adjustment of the label.}
 
-\item{labelPadding}{Amount of padding around labelled points,
-1.5 lines by default, see parameter \code{point.padding} of the
+\item{labelPadding}{Amount of padding (space) between each point
+and its \code{label}, 1.5 lines by default.
+See parameter \code{point.padding} of the
 \code{\link[ggrepel]{geom_text_repel}} function.}
 
 \item{byVar}{Variable(s) of \code{data} for which separated plot(s)

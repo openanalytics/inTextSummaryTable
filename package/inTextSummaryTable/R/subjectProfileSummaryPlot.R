@@ -44,8 +44,9 @@
 #' should contain expression to extract label, 
 #' and 'textHjust' and 'textVjust' (optional) may contain expression 
 #' specifying horizontal and vertical adjustment of the label.
-#' @param labelPadding Amount of padding around labelled points,
-#' 1.5 lines by default, see parameter \code{point.padding} of the
+#' @param labelPadding Amount of padding (space) between each point
+#' and its \code{label}, 1.5 lines by default.
+#' See parameter \code{point.padding} of the
 #' \code{\link[ggrepel]{geom_text_repel}} function.
 #' @param sizePoint Size for the point.
 #' @param sizeLine Size for the line linking means and error bars.
@@ -426,9 +427,8 @@ subjectProfileSummaryPlot <- function(data,
 	if(!(is.logical(label) && !label)){
 		
 		# aes parameters
-		aesJust <- setNames(c("textHjust", "textVjust"), c("hjust", "vjust"))[
-			c("textHjust", "textVjust") %in% names(label)
-		]
+		aesJust <- setNames(c("textHjust", "textVjust"), c("hjust", "vjust"))
+		aesJust <- aesJust[c("textHjust", "textVjust") %in% names(label)]
 		aesArgs <- c(aesBase, list(label = "textLabel", y = "meanVar"))
 		geomTextFct <- "geom_text_repel"
 		if(length(aesJust) > 0){
