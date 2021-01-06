@@ -229,3 +229,37 @@ test_that("limit is specified for the y-axis", {
 	)		
 	
 })
+
+test_that("y-axis is expanded", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+	
+	# yLimExpand -> yAxisExpand for consistency
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yLimExpand = yAxisExpand
+		),
+		"'yLimExpand' is deprecated."
+	)
+		
+	# correct specification
+	yAxisExpand <- expansion(mult = 0, add = 2)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		yAxisExpand = yAxisExpand
+	)
+			
+	# extract labels from the ggplot object
+	ggScales <- gg$scales$scales
+	isScaleY <- sapply(ggScales, function(x) 
+		"y" %in% x[["aesthetics"]]
+	)
+	expect_equal(ggScales[[which(isScaleY)]]$expand, yAxisExpand)
+			
+})

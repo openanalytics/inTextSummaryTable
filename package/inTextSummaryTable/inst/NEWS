@@ -7,6 +7,7 @@
   o subject profile summary plot: 
     - extra checks input params
     - fix ordering facets in case [x]Line specified
+    - deprecate yLimExpand -> yAxisExpand
   o compute stats/subject profile (table): simplify stats expr check
 2.20.0
   o add unit tests

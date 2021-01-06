@@ -34,7 +34,8 @@ subjectProfileSummaryPlot(
   yTrans = NULL,
   yLim = NULL,
   xLim = NULL,
-  yLimExpand = c(0.05, 0.05),
+  yAxisExpand = c(0.05, 0.05),
+  yLimExpand = NULL,
   xAxisLabs = NULL,
   sizePoint = GeomPoint$default_aes$size,
   sizeLine = GeomLine$default_aes$size,
@@ -136,10 +137,13 @@ In case error bars go in the negative, their values are set to a 'small enough' 
 
 \item{xLim}{Vector of the length 2 with limits for the x-axis.}
 
-\item{yLimExpand}{Expansion constants for the limits for the y-axis.
+\item{yAxisExpand}{Expansion constants for the limits for the y-axis.
 See the documentation of the \code{expand} parameter of the 
 \code{\link[ggplot2]{scale_y_continuous}} function
 for the available values for this parameter.}
+
+\item{yLimExpand}{This parameter is deprecated, use \code{yAxisExpand}
+instead.}
 
 \item{xAxisLabs}{(optional) Named character vector with labels for the x-axis.}
 
