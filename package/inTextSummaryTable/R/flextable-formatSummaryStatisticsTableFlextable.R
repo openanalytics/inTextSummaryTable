@@ -244,6 +244,8 @@ formatSummaryStatisticsTableFlextable <- function(
 				idxMore2El <- which(diff(idxNARVF) == 1) # consecutive NAs
 				if(length(idxMore2El) > 0)
 					idxNARVF <- idxNARVF[-unique(c(idxMore2El, idxMore2El+1))]
+				# doesn't consider the case if row with total is the first row already
+				idxNARVF <- setdiff(idxNARVF, 1)
 				if(length(idxNARVF) > 0){
 					# get value of only element (next row)
 					dataNARVF <- summaryTable[idxNARVF, ] 
