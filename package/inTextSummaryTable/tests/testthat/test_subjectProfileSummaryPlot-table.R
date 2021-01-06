@@ -350,7 +350,7 @@ test_that("y-axis labels are included", {
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		n = c(10, 20),
-		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A"))
+		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A", "C", "Z"))
 	)
 			
 	# y-labels only available if color variable is specified:
@@ -363,42 +363,74 @@ test_that("y-axis labels are included", {
 		),
 		"Labels for the y-axis are not included because color variable is not specified."
 	)
-
-	gg <- subjectProfileSummaryTable(
-		data = summaryTable, 
-		xVar = "visit",
-		text = "n",
-		colorVar = "TRT",
-		yAxisLabs = TRUE
-	)
 	
 #	expect_equal(
 #		object = layer_scales(gg)$y$range$range, 
 #		expected = levels(summaryTable$TRT)
 #	)
+	
+	colorPalette <- c(A = "red", B = "blue")
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT",
+		colorPalette = colorPalette,
+		yAxisLabs = TRUE
+	)
+	expect_false(inherits(gg$theme$axis.text.y, "element_blank"))
+	# check that color of labels are correct in the y-axis
+	expect_equal(
+		gg$theme$axis.text.y$colour,
+		unname(colorPalette[levels(droplevels(summaryTable$TRT))])
+	)
+	
+})
+
+test_that("y-axis labels are not included", {
+
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20),
+		TRT = c("A", "B", "A", "B")
+	)
+	
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT",
+		yAxisLabs = FALSE
+	)
+			
 	# check if axis labels have been removed
-	expect_true({
-		gg <- subjectProfileSummaryTable(
-			data = summaryTable, 
-			xVar = "visit",
-			text = "n",
-			colorVar = "TRT",
-			yAxisLabs = FALSE
-		)
-		inherits(gg$theme$axis.text.y, "element_blank")
-	})
+	expect_true(inherits(gg$theme$axis.text.y, "element_blank"))
+			
+})
+
+test_that("y-axis labels are included for a non factor variable", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20),
+		TRT = c("A", "B", "A", "B")
+	)
 	
-	expect_false({
-		gg <- subjectProfileSummaryTable(
-			data = summaryTable, 
-			xVar = "visit",
-			text = "n",
-			colorVar = "TRT",
-			yAxisLabs = TRUE
-		)
-		inherits(gg$theme$axis.text.y, "element_blank")
-	})
+	colorPalette <- c(A = "red", B = "blue")
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT",
+		colorPalette = colorPalette,
+		yAxisLabs = TRUE
+	)
 	
+	expect_equal(
+		gg$theme$axis.text.y$colour,
+		unname(colorPalette[unique(summaryTable$TRT)])
+	)
+			
 })
 
 test_that("fontsize is specified", {
