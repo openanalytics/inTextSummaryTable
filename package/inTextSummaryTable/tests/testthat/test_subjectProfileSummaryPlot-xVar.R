@@ -27,14 +27,15 @@ test_that("plot is created with a continuous x variable", {
 
 test_that("plot is created with a continuous x variable with only one element", {
 			
-	expect_silent(
+	expect_s3_class(
 		subjectProfileSummaryPlot(
 			data = data.frame(
 				visit = 1, 
 				statMean = rnorm(1)
 			), 
 			xVar = "visit"
-		)	
+		),
+		"ggplot"
 	)
 			
 })
@@ -238,5 +239,28 @@ test_that("limit is specified for the x-axis", {
 		}, 
 		xLim
 	)		
+	
+})
+
+test_that("x-axis is expanded", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+			
+	xAxisExpand <- expansion(mult = 4, add = 0)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		xAxisExpand = xAxisExpand
+	)
+	
+	# extract labels from the ggplot object
+	ggScales <- gg$scales$scales
+	isScaleX <- sapply(ggScales, function(x) 
+		"x" %in% x[["aesthetics"]]
+	)
+	expect_equal(ggScales[[which(isScaleX)]]$expand, xAxisExpand)
 	
 })

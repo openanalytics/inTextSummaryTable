@@ -55,10 +55,12 @@
 #' \code{\link[ggplot2]{scale_x_continuous}},
 #' (\code{\link[ggplot2]{waiver}} by default).
 #' @param yLim Vector of the length 2 with limits for the y-axis.
-#' @param yLimExpand Expansion constants for the limits for the y-axis.
+#' @param yAxisExpand Expansion constants for the limits for the y-axis.
 #' See the documentation of the \code{expand} parameter of the 
 #' \code{\link[ggplot2]{scale_y_continuous}} function
 #' for the available values for this parameter.
+#' @param yLimExpand This parameter is deprecated, use \code{yAxisExpand}
+#' instead.
 #' @param tableText (optional) Character vector with colname of \code{data}
 #' or expression from colnames of \code{data} to be represented in
 #' the table below the plot.
@@ -128,7 +130,8 @@ subjectProfileSummaryPlot <- function(data,
 	jitter = NULL,
 	title = NULL, caption = NULL,
 	yTrans = NULL, yLim = NULL, xLim = NULL,
-	yLimExpand = c(0.05, 0.05),
+	yAxisExpand = c(0.05, 0.05),
+	yLimExpand = NULL,
 	xAxisLabs = NULL,
 	sizePoint = GeomPoint$default_aes$size,
 	sizeLine = GeomLine$default_aes$size,
@@ -146,6 +149,11 @@ subjectProfileSummaryPlot <- function(data,
 	themeIncludeVerticalGrid = TRUE,
 	ggExtra = NULL,
 	...){
+		
+	if(!is.null(yLimExpand)){
+		.Deprecated(new = "yAxisExpand", old = "yLimExpand")
+		yAxisExpand <- yLimExpand
+	}
 
 	useMinMax <- !is.null(minVar) & !is.null(maxVar)
 	if(!is.null(minVar) & is.null(maxVar))
@@ -498,7 +506,7 @@ subjectProfileSummaryPlot <- function(data,
 	
 	# y-axis:
 	argsYScale <- c(
-		if(!is.null(yLimExpand))	list(expand = yLimExpand),
+		if(!is.null(yAxisExpand))	list(expand = yAxisExpand),
 		if(!is.null(yTrans))	list(trans = yTrans)
 	)
 	if(length(argsYScale) > 0)
