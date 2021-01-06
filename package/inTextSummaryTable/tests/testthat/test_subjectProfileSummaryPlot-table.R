@@ -135,6 +135,35 @@ test_that("x-axis labels are specified for a continuous x variable", {
 	
 })
 
+test_that("x-axis labels are specified for a discrete x variable", {
+			
+	# Note: these labels are not displayed by default
+	# but still set in the ggplot object
+	summaryTable <- data.frame(
+		visit = c("Visit 0", "Visit 1"), 
+		n = c(10, 20)
+	)
+	xAxisLabs <- c(
+		`Visit 0` = "Baseline", 
+		"Visit 1" = "First visit"
+	)
+			
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		xAxisLabs = xAxisLabs
+	)
+			
+	# extract labels from the ggplot object
+	ggScales <- gg$scales$scales
+	isScaleX <- sapply(ggScales, function(x) 
+		"x" %in% x[["aesthetics"]]
+	)
+	expect_equal(gg$scales$scales[[which(isScaleX)]]$breaks, xAxisLabs)
+			
+})
+
 
 test_that("limit is specified for the x-axis", {
 			
