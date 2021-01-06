@@ -499,6 +499,38 @@ test_that("a placeholder is specified for empty value when table is exported to 
 			
 })
 
+test_that("list of tables are exported to flextable", {
+			
+	summaryTables <- list(
+		`PARAM 2` = data.frame(n = 10),
+		`PARAM 1` = data.frame(n = 2)
+	)
+			
+	fts <- exportSummaryStatisticsTable(
+		summaryTables, 
+		outputType = "flextable"
+	)
+	expect_type(fts, "list")
+	expect_named(fts, names(summaryTables))
+			
+	for(group in names(summaryTables)){
+			
+		# table content is the same as if the table would have
+		# been created directly
+		expect_identical({
+				ft <- exportSummaryStatisticsTable(summaryTables[[!!group]])
+				ft$body$dataset
+			},
+			expected = fts[[!!group]]$body$dataset
+		)
+		
+		# correct group is specified in the title
+		expect_equal(fts[[!!group]]$header$dataset[1, ], !!group)
+
+	}
+			
+})
+
 test_that("page dimension is specified when the table is exported to flextable", {
 	
 	summaryTable <- data.frame(n = 10)
