@@ -68,7 +68,7 @@ test_that("plot is created with a discrete x variable", {
 		
 })
 
-test_that("labels are specified for the x-axis elements ", {
+test_that("labels are specified for the x-axis elements", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
