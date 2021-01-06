@@ -531,6 +531,60 @@ test_that("list of tables are exported to flextable", {
 			
 })
 
+test_that("formatting row total variable is correct", {
+			
+	summaryTable <- data.frame(
+		variable = factor(c("RACE", "SEX", "SEX", "SEX")),
+		variableGroup = factor(
+			c("White", "Female", "Male", "Total"), 
+			levels = c("White", "Female", "Male", "Total")
+		),
+		n = c("9", "3", "7", "10")
+	)
+			
+	expect_warning(
+		exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			rowVar = c("variable", "variableGroup"),
+			statsVar = "n",
+			rowVarTotalInclude = "variableGroup"
+		),
+		"variable.*with total.*should be formatted.*with 'Total' as the first level"
+	)
+	
+})
+
+test_that("only a subset of the variables have a total", {
+			
+	summaryTable <- data.frame(
+		variable = factor(c("RACE", "SEX", "SEX", "SEX")),
+		variableGroup = factor(
+			c("White", "Female", "Male", "Total"), 
+			levels = c("Total", "White", "Female", "Male")
+		),
+		n = c("9", "3", "7", "10")
+	)
+	
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("variable", "variableGroup"),
+		statsVar = "n",
+		rowVarTotalInclude = "variableGroup"
+	)
+	
+	refData <- data.frame(
+		c("RACE", "White", "SEX", "Female", "Male"),
+		c(NA_character_, "9", "10", "3", "7"),
+		stringsAsFactors = FALSE
+	)
+	expect_equal(
+		unname(ft$body$dataset),
+		unname(refData),
+		check.attributes = FALSE
+	)
+	
+})
+
 test_that("page dimension is specified when the table is exported to flextable", {
 	
 	summaryTable <- data.frame(n = 10)

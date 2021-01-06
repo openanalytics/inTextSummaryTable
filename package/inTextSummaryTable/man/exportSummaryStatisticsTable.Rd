@@ -68,7 +68,8 @@ list(var1 = "bold").
 (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar} for which the total
-is included. These variables should be formatted as a factor with 'Total' as the first level.}
+is included. These variables should be formatted as a factor with 
+\strong{'Total' as the first level}.}
 
 \item{rowTotalLab}{label for the row with total}
 
