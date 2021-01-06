@@ -1,6 +1,6 @@
 context("Export summary statistics table to flextable")
 
-test_that("table is exported to flextable with row variables", {
+test_that("row variable is specified", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
@@ -20,7 +20,7 @@ test_that("table is exported to flextable with row variables", {
 			
 })
 
-test_that("table is exported to flextable with label for row variables", {
+test_that("label is specified for row variable", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
@@ -40,7 +40,7 @@ test_that("table is exported to flextable with label for row variables", {
 			
 })
 
-test_that("table is exported to flextable with label for row variables extracted from label vars", {
+test_that("label for row variable is extracted from label vars", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
@@ -61,7 +61,7 @@ test_that("table is exported to flextable with label for row variables extracted
 })
 
 
-test_that("table is exported to flextable with row variables in a separated column", {
+test_that("row variable is in a separated column", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -82,7 +82,32 @@ test_that("table is exported to flextable with row variables in a separated colu
 	
 })
 
-test_that("table is exported to flextable with specified row formatting", {
+test_that("row formatting is specified", {
+			
+	summaryTable <- data.frame(
+		TRT = c("A", "B"),
+		n = 1:2
+	)
+			
+	expect_identical(
+		object = {
+			ft <- exportSummaryStatisticsTable(
+				summaryTable = summaryTable,
+				rowVar = "TRT",
+				rowVarFormat = list(TRT = "bold")
+			)
+			unname(ft$body$styles$text$bold$data)
+		},
+		expected = cbind(
+			rep(TRUE, nrow(summaryTable)),
+			rep(FALSE, nrow(summaryTable))
+		)
+	)	
+		
+})
+
+
+test_that("row formatting is specified for nested row var", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -96,14 +121,45 @@ test_that("table is exported to flextable with specified row formatting", {
 				rowVar = c("TRT", "PARAM"),
 				rowVarFormat = list(PARAM = "bold")
 			)
-			ft$body$styles$text$bold$data[, 1]
+			unname(ft$body$styles$text$bold$data)
 		},
-		expected = c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+		expected = cbind(
+			c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE),
+			rep(FALSE, 6)
+		)
 	)
 			
 })
 
-test_that("table is exported to flextable with total included in the header row", {
+test_that("row formatting is specified for row in different column", {
+			
+	summaryTable <- data.frame(
+		TRT = c("A", "A", "B", "B"),
+		PARAM = c("a", "b", "a", "b"),
+		n = 1:4
+	)
+		
+	# only entire second column is in bold
+	expect_identical(
+		object = {
+			ft <- exportSummaryStatisticsTable(
+				summaryTable = summaryTable,
+				rowVar = c("TRT", "PARAM"),
+				rowVarInSepCol = "PARAM",
+				rowVarFormat = list(PARAM = "bold")
+			)
+			unname(ft$body$styles$text$bold$data)
+		},
+		expected = cbind(
+			rep(FALSE, nrow(summaryTable)),
+			rep(TRUE, nrow(summaryTable)),
+			rep(FALSE, nrow(summaryTable))
+		)
+	)
+			
+})
+
+test_that("row total is included in the header row", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -130,7 +186,7 @@ test_that("table is exported to flextable with total included in the header row"
 	
 })
 
-test_that("table is exported to flextable with row total included in a separated row", {
+test_that("row total is included in a separated row", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -158,7 +214,7 @@ test_that("table is exported to flextable with row total included in a separated
 	
 })
 
-test_that("row are merged in case of unique variable group in flextable", {
+test_that("rows are merged in case of unique variable group", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B", "B"),
@@ -196,7 +252,7 @@ test_that("row are merged in case of unique variable group in flextable", {
 	
 })
 
-test_that("rows are merged in case of unique stat in flextable", {
+test_that("rows are merged in case of unique statistic", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
@@ -237,7 +293,7 @@ test_that("rows are merged in case of unique stat in flextable", {
 	
 })
 
-test_that("table is exported to flextable with column variables", {
+test_that("column variable is specified", {
 			
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "B"), levels = c("B", "A")),
@@ -257,7 +313,7 @@ test_that("table is exported to flextable with column variables", {
 	
 })
 
-test_that("table is exported to flextable with total in header", {
+test_that("total is included in header", {
 	
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
@@ -293,7 +349,7 @@ test_that("table is exported to flextable with total in header", {
 
 })
 
-test_that("different stat layout when table is exported to flextable", {
+test_that("stat layout is specified", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
@@ -367,7 +423,7 @@ test_that("different stat layout when table is exported to flextable", {
 	
 })
 
-test_that("stat value label is specified when table is exported to flextable", {
+test_that("stat value label is specified", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
@@ -376,8 +432,10 @@ test_that("stat value label is specified when table is exported to flextable", {
 	)
 	expect_match(
 		object = {
-			ft <- exportSummaryStatisticsTable(summaryTable, rowVar = "variable", 
-				statsVar = "Statistic", statsValueLab = "Number of subjects"
+			ft <- exportSummaryStatisticsTable(
+				summaryTable, rowVar = "variable", 
+				statsVar = "Statistic", 
+				statsValueLab = "Number of subjects"
 			)
 			unname(unlist(ft$header$dataset[, 2]))
 		},
@@ -394,7 +452,7 @@ test_that("stat value label is specified when table is exported to flextable", {
 			
 })
 
-test_that("stat value label is specified when table is exported to flextable", {
+test_that("label for stat is included", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -449,7 +507,7 @@ test_that("stat value label is specified when table is exported to flextable", {
 	
 })
 
-test_that("a placeholder is specified for empty value when table is exported to flextable", {
+test_that("a placeholder is specified for empty value", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -499,7 +557,7 @@ test_that("a placeholder is specified for empty value when table is exported to 
 			
 })
 
-test_that("list of tables are exported to flextable", {
+test_that("list of summary tables is specified", {
 			
 	summaryTables <- list(
 		`PARAM 2` = data.frame(n = 10),
@@ -672,7 +730,7 @@ test_that("only one element in nested row variable", {
 
 })
 
-test_that("page dimension is specified when the table is exported to flextable", {
+test_that("page dimension is specified", {
 	
 	summaryTable <- data.frame(n = 10)
 	
@@ -690,7 +748,7 @@ test_that("page dimension is specified when the table is exported to flextable",
 			
 })
 
-test_that("margins are specified when the table is exported to flextable", {
+test_that("margins are specified", {
 			
 	summaryTable <- data.frame(n = 10)
 	
@@ -708,7 +766,7 @@ test_that("margins are specified when the table is exported to flextable", {
 	
 })
 
-test_that("table is exported to flextable in landscape mode", {
+test_that("table is displayed in landscape mode", {
 			
 	summaryTable <- data.frame(n = 10)	
 	
@@ -730,7 +788,7 @@ test_that("table is exported to flextable in landscape mode", {
 	
 })
 
-test_that("title is specified for flextable export", {
+test_that("title is specified", {
 		
 	summaryTable <- data.frame(n = 10)
 	
@@ -748,7 +806,7 @@ test_that("title is specified for flextable export", {
 			
 })
 
-test_that("footer is specified for flextable export", {
+test_that("footer is specified", {
 			
 	summaryTable <- data.frame(n = 10)
 	
@@ -766,7 +824,7 @@ test_that("footer is specified for flextable export", {
 	
 })
 
-test_that("color is specified for flextable export", {
+test_that("color is specified", {
 	
 	summaryTable <- data.frame(n = 10)
 	
@@ -795,7 +853,7 @@ test_that("color is specified for flextable export", {
 	
 })
 
-test_that("fontsize is specified for flextable export", {
+test_that("fontsize is specified", {
 			
 	summaryTable <- data.frame(n = 10)
 	
@@ -812,7 +870,7 @@ test_that("fontsize is specified for flextable export", {
 			
 })
 
-test_that("fontname is specified for flextable export", {
+test_that("fontname is specified", {
 			
 	summaryTable <- data.frame(n = 10)
 	
@@ -829,7 +887,7 @@ test_that("fontname is specified for flextable export", {
 	
 })
 
-test_that("vertical lines are set in flextable export", {
+test_that("vertical lines are set", {
 				
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -868,7 +926,7 @@ test_that("vertical lines are set in flextable export", {
 			
 })
 
-test_that("horizontal lines are set in flextable export", {
+test_that("horizontal lines are set", {
 			
 	summaryTable <- data.frame(
 		PARAM = c("a", "b"),
@@ -907,7 +965,7 @@ test_that("horizontal lines are set in flextable export", {
 	
 })
 
-test_that("no data remains besides total row in export flextable", {
+test_that("no data remains besides total row", {
 			
 	data <- data.frame(
 		isTotal = rep(TRUE, 2),
@@ -920,7 +978,7 @@ test_that("no data remains besides total row in export flextable", {
 			
 })
 
-test_that("total header should unique in flextable export", {
+test_that("total header is unique", {
 			
 	data <- data.frame(
 		isTotal = c(FALSE, TRUE, TRUE),
@@ -932,4 +990,3 @@ test_that("total header should unique in flextable export", {
 	)
 			
 })
-			
