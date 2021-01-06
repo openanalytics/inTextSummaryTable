@@ -86,7 +86,10 @@
 #' @param shapePalette Named vector with shape palette for \code{colorVar}.
 #' @param themeIncludeVerticalGrid Logical, if TRUE (by default)
 #' include theme vertical grid lines (if present in \code{themeFct}).
-#' @param ggExtra Extra \code{ggplot} command to be added in main plot.
+#' @param ggExtra Extra \code{ggplot} call to be added in main plot.
+#' If different calls should be used for different elements of the 
+#' \code{byVar} variable, the vector should be named
+#' with each corresponding element (collapsed with '.' if multiple).
 #' @param yTrans (optional) String with transformation for the y-axis.
 #' Currently only 'log10' (or NULL, default) is available.
 #' In case error bars go in the negative, their values are set to a 'small enough' value for plotting:

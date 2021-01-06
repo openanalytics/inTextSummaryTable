@@ -74,59 +74,6 @@ test_that("facet scale is specified", {
 			
 })
 
-test_that("plot is created by a variable", {
-
-	summaryTable <- data.frame(
-		visit = c(1, 2, 1, 2), 
-		TRT = factor(
-			c("A", "A", "B", "B"), 
-			levels = c("B", "A")
-		),
-		statMean = rnorm(4)
-	)
-	
-	# variable not available
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = summaryTable,
-			xVar = "visit", 
-			byVar = "TRT1"
-		),
-		"'byVar' is not available in the 'data'"
-	)
-
-	# correct specification
-	res <- subjectProfileSummaryPlot(
-		data = summaryTable,
-		xVar = "visit", 
-		byVar = "TRT"
-	)
-	
-	groups <- levels(summaryTable$TRT)
-	expect_named(res, groups)
-	
-	# compare the data behind the plot
-	for(group in groups){
-		
-		expect_identical(
-				
-			object = ggplot_build(res[[!!group]])$data, 
-			
-			expected = {
-				ggGroup <- subjectProfileSummaryPlot(
-					data = subset(summaryTable, TRT == !!group),
-					xVar = "visit",
-					yLab = paste("Mean", !!group)
-				)
-				ggplot_build(ggGroup)$data
-			}
-	
-		)
-		
-	}
-	
-})
-
 test_that("horizontal lines are specified", {
 			
 	hLine <- c(1, 3)
@@ -272,6 +219,28 @@ test_that("height is specified for the table", {
 	expect_setequal(
 		gDataYCoord,
 		list(c(0, 0.45), c(0.45, 1))
+	)
+	
+})
+
+
+test_that("facetting and text variable are not compatible", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		PARAM = c("AAA", "ZZZ"),
+		statMean = rnorm(2),
+		n = c(1, 2)
+	)	
+			
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit",
+			tableText = "n",
+			facetVar = "PARAM"
+		),
+		"Table cannot be used in combination with 'facetVar', no table is included."
 	)
 	
 })

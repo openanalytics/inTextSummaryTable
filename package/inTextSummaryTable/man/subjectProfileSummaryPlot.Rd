@@ -215,7 +215,10 @@ by default \code{\link[ggplot2]{theme_classic}} if \code{style} is 'report' and
 \item{themeIncludeVerticalGrid}{Logical, if TRUE (by default)
 include theme vertical grid lines (if present in \code{themeFct}).}
 
-\item{ggExtra}{Extra \code{ggplot} command to be added in main plot.}
+\item{ggExtra}{Extra \code{ggplot} call to be added in main plot.
+If different calls should be used for different elements of the 
+\code{byVar} variable, the vector should be named
+with each corresponding element (collapsed with '.' if multiple).}
 
 \item{...}{Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
 \code{\link[ggplot2]{geom_text}}
