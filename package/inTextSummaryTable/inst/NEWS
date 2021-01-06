@@ -9,7 +9,9 @@
     - fix ordering facets in case [x]Line specified
     - deprecate yLimExpand -> yAxisExpand
   o compute stats/subject profile (table): simplify stats expr check
-  o formatting flextable: check row var total include
+  o formatting flextable: 
+    - check row var total include
+    - fix in case only one row total
 2.20.0
   o add unit tests
   o computeSummaryStatisticsTable: more formal checks + warning for var/[row|col]Var...

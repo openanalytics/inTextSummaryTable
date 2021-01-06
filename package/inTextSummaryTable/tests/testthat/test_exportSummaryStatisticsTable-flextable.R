@@ -585,6 +585,93 @@ test_that("only a subset of the variables have a total", {
 	
 })
 
+test_that("only a subset of the variables have a total in a separated row", {
+			
+	summaryTable <- data.frame(
+		variable = factor(c("RACE", "SEX", "SEX", "SEX")),
+		variableGroup = factor(
+			c("White", "Female", "Male", "Total"), 
+			levels = c("Total", "White", "Female", "Male")
+		),
+		n = c("9", "3", "7", "10")
+	)
+			
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("variable", "variableGroup"),
+		statsVar = "n",
+		rowVarTotalInclude = "variableGroup",
+		rowVarTotalInSepRow = "variableGroup"
+	)
+			
+	refData <- data.frame(
+		c("RACE White", "SEX", "Total", "Female", "Male"),
+		c("9", NA_character_, "10", "3", "7"),
+		stringsAsFactors = FALSE
+	)
+			
+	expect_equal(
+		unname(ft$body$dataset),
+		unname(refData),
+		check.attributes = FALSE
+	)
+			
+})
+
+test_that("missing values are present in nested row variables", {
+			
+	summaryTable <- data.frame(
+		variable = factor(c("SEX", "SEX", "SEX")),
+		variableGroup = factor(
+			c(NA_character_, "Male", "Female"), 
+			levels = c("Male", "Female")
+		),
+		n = c("3", "7", "10")
+	)
+			
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("variable", "variableGroup"),
+		statsVar = "n"
+	)
+			
+	refData <- data.frame(
+		c("SEX", "Male", "Female", NA_character_),
+		c(NA_character_, "7", "10", "3"),
+		stringsAsFactors = FALSE
+	)
+			
+	expect_equal(
+		unname(ft$body$dataset),
+		unname(refData),
+		check.attributes = FALSE
+	)
+			
+})
+
+test_that("only one element in nested row variable", {
+			
+	summaryTable <- data.frame(
+		variable = "SEX",
+		variableGroup = factor("Total"),
+		n = "10"
+	)
+			
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("variable", "variableGroup"),
+		statsVar = "n",
+		rowVarTotalInclude = "variableGroup"
+	)
+	
+	expect_equal(
+		unname(ft$body$dataset),
+		unname(data.frame("SEX", "10", stringsAsFactors = FALSE)),
+		check.attributes = FALSE
+	)
+
+})
+
 test_that("page dimension is specified when the table is exported to flextable", {
 	
 	summaryTable <- data.frame(n = 10)
