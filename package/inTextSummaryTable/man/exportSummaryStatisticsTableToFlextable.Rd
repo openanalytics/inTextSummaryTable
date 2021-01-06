@@ -52,7 +52,8 @@ set: rowVarInSepCol == 'variableGroup'.
 This is only available if \code{rowVar} is not specified.}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar} for which the total
-is included. These variables should be formatted as a factor with 'Total' as the first level.}
+is included. These variables should be formatted as a factor with 
+\strong{'Total' as the first level}.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:

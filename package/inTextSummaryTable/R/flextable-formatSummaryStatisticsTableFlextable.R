@@ -45,7 +45,8 @@
 #' list(var1 = "bold").
 #' (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)
 #' @param rowVarTotalInclude Character vector with \code{rowVar} for which the total
-#' is included. These variables should be formatted as a factor with 'Total' as the first level.
+#' is included. These variables should be formatted as a factor with 
+#' \strong{'Total' as the first level}.
 #' @inheritParams computeSummaryStatisticsTable
 #' @inheritParams formatSummaryStatisticsTable
 #' @return summaryTable reformatted in long format, with extra attributes:
@@ -102,6 +103,24 @@ formatSummaryStatisticsTableFlextable <- function(
 		}, simplify = FALSE)	
 		return(res)
 		
+	}
+	
+	if(length(rowVarTotalInclude) > 0){
+		rowVarTotalWrongFormat <- names(which(sapply(
+			summaryTable[, rowVarTotalInclude, drop = FALSE], function(x){
+			!(is.factor(x) && levels(x)[1] == "Total")
+		})))
+		if(length(rowVarTotalWrongFormat) > 0){
+			
+			warning(paste(
+				"Row variable(s):", toString(shQuote(rowVarTotalWrongFormat)),
+				"with total should be formatted",
+				"as factor with 'Total' as the first level,",
+				"these variable(s) are not considered for total formatting."
+			))
+			
+			rowVarTotalInclude <- setdiff(rowVarTotalInclude, rowVarTotalWrongFormat)
+		}
 	}
 	
 	hlineParams <- mergeParams <- formatParams <- NULL	
