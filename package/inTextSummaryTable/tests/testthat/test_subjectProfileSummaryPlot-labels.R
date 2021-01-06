@@ -10,11 +10,11 @@ test_that("label is specified for x variable", {
 	)
 	xLab <- "Study visit"
 	expect_identical({
-			gg <- subjectProfileSummaryPlot(
-				data = summaryTable, xVar = "visit",
-				xLab = xLab
-			)
-			gg$labels$x
+		gg <- subjectProfileSummaryPlot(
+			data = summaryTable, xVar = "visit",
+			xLab = xLab
+		)
+		gg$labels$x
 		}, xLab
 	)
 	
