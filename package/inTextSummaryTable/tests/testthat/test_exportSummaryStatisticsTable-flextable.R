@@ -1,5 +1,7 @@
 context("Export summary statistics table to flextable")
 
+library(officer)
+
 test_that("row variable is specified", {
 			
 	summaryTable <- data.frame(
@@ -1362,4 +1364,49 @@ test_that("a cell is formatted in bold", {
 	expect_setequal(isBold[idxBold], TRUE)
 	expect_setequal(isBold[-idxBold], NA)			
 			
+})
+
+test_that("table is exported to a docx file", {
+
+	data <- data.frame(
+		pValue = c("0.05", "<0.001", "1", "0.89"),
+		TRT = rep(c("A", "B"), each = 2),
+		PARAM = rep(c("Actual Value", "Change from Baseline"), times = 2)
+	)
+	
+	file <- "summaryTable.docx"
+	expect_silent(
+		ft <- exportSummaryStatisticsTable(
+			data, 
+			rowVar = "PARAM", colVar = "TRT",
+			statsVar = "pValue",
+			file = file
+		)
+	)
+	
+	# has file been created?
+	expect_true(file.exists(file))
+	
+	# check if content is correct
+	# (Note: this is based on the 'officerverse' user documentation of officer)
+	doc <- officer::read_docx(file)
+	docTable <- subset(docx_summary(doc), `content_type` == "table cell")
+	
+	docTableData <- with(
+		subset(docTable, !`is_header`),
+		tapply(text, list(`row_id`, `cell_id`), I)
+	)
+	docTableHeader <- with(
+		subset(docTable, is_header), 
+		tapply(text, `cell_id`, I)
+	)
+	colnames(docTableData) <- docTableHeader
+	
+	dataRef <- cbind(
+		PARAM = c("Actual Value", "Change from Baseline"),
+		A = c("0.05", "<0.001"),
+		B = c("1", "0.89")
+	)
+	expect_equal(object = docTableData, expected = dataRef, check.attributes = FALSE)
+	
 })
