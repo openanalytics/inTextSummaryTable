@@ -357,7 +357,7 @@ formatSummaryStatisticsTableFlextable <- function(
 		summaryTable$rowPadding <- NULL
 		if(length(idxHLine) > 0)
 			hlineParams <- c(hlineParams, list(
-				list(i = idxHLine, part = "body", j = 1:ncol(summaryTable))
+				list(i = idxHLine, part = "body", j = seq_len(ncol(summaryTable)))
 			))
 		for(var in rowVarInSepCol[-length(rowVarInSepCol)]){
 			i <- which(diff(as.numeric(factor(summaryTable[, var], exclude = ""))) != 0)

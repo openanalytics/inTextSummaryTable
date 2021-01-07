@@ -61,23 +61,100 @@ test_that("label for row variable is extracted from label vars", {
 })
 
 
-test_that("row variable is in a separated column", {
+test_that("row variable(s) are in a separated column", {
 			
 	summaryTable <- data.frame(
-		TRT = c("A", "A", "B", "B"),
-		PARAM = c("a", "b", "a", "b"),
-		n = 1:4
+		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
+		COHORT = rep(c("I", "I", "II"), times = 2),
+		TRT = factor(rep(c("A", "B", "A"), times = 2), levels = c("B", "A")),
+		n = seq_len(6)
 	)
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("PARAM", "COHORT", "TRT"),
+		rowVarInSepCol = c("COHORT", "TRT")
+	)
+	
 	expect_identical(
-		object = {
-			ft <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				rowVar = c("TRT", "PARAM"),
-				rowVarInSepCol = "PARAM"
-			)
-			unname(unlist(ft$header$dataset[1:2]))
-		}, 
-		expected = c("TRT", "PARAM")
+		object = as.character(as.vector(ft$header$dataset[1, 1:3])),
+		expected = c("PARAM", "COHORT", "TRT")
+	)
+	
+	# check if data is correct
+	# Note: factor should have been re-ordered based on levels (e.g. TRT)
+	dataRef <- data.frame(
+		rep(c("Actual Value", "Change from baseline"), each = 3),
+		rep(c("I", "I", "II"), times = 2),
+		rep(c("B", "A", "A"), times = 2),
+		c("2", "1", "3", "5", "4", "6"),
+		stringsAsFactors = FALSE
+	)
+	expect_equal(
+		object = unname(ft$body$dataset),
+		expected = unname(dataRef),
+		check.attributes = FALSE
+	)
+	
+})
+
+test_that("horizontal lines are correctly set for multiple row variable(s) in separated column", {
+	
+	summaryTable <- data.frame(
+		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
+		COHORT = rep(c("I", "I", "II"), times = 2),
+		TRT = factor(rep(c("A", "B", "A"), times = 2), levels = c("B", "A")),
+		n = seq_len(6)
+	)
+	
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("PARAM", "COHORT", "TRT"),
+		rowVarInSepCol = c("COHORT", "TRT"),
+		colorTable = c(line = "red")
+	)
+	
+	# check that horizontal lines are properly set
+	ftDataBd <- ft$body$styles$cells$border.color.top$data
+	# separator between groups is set
+	expect_setequal(
+		object = ftDataBd[c(3, 4, 6), 2:4], 
+		expected = "red"
+	)
+	# other lines are not set
+	expect_false(unique(c(ftDataBd[-c(3, 4, 6), 2:4])) == "red") 
+			
+})
+
+test_that("row are merged correctly for multiple row variable(s) in separated column", {
+	
+	summaryTable <- data.frame(
+		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
+		COHORT = rep(c("I", "I", "II"), times = 2),
+		TRT = factor(rep(c("A", "B", "A"), times = 2), levels = c("B", "A")),
+		n = seq_len(6)
+	)
+			
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("PARAM", "COHORT", "TRT"),
+		rowVarInSepCol = c("COHORT", "TRT")
+	)
+			
+	# flextable specify 'merging' as the 'spans' in 'columns'
+			
+	# correct lines are merged
+	expect_identical(
+		ft$body$spans$columns[, 1:2],
+		cbind(
+			c(3, 0, 0, 3, 0, 0),
+			c(2, 0, 1, 2, 0, 1)
+		)
+	)
+	
+	# other lines are not merged
+	expect_setequal(
+		c(ft$body$spans$columns[, -(1:2)]),
+		1
 	)
 	
 })
