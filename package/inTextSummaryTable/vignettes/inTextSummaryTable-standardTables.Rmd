@@ -162,7 +162,7 @@ of the table might depends of the study and dataset
 
 	## create the table:
 	
-	getSummaryStatisticsTable(
+	computeSummaryStatisticsTable(
 		data = dataDM, 
 		# variables to summarize
 		var = varsDM, varLab = labelsDM,

@@ -457,7 +457,7 @@ test_that("rows are merged in case of unique statistic", {
 	
 })
 
-test_that("mixed table with different statistics by variable is formatted correctly", {
+test_that("mixed table is formatted correctly", {
 			
 	summaryTable <- data.frame(
 		variable = factor(
@@ -489,7 +489,62 @@ test_that("mixed table with different statistics by variable is formatted correc
 		check.attributes = FALSE	
 	)
 			
-})			
+})	
+
+test_that("mixed table without row auto merging is formatted correctly", {
+		
+	# Edge-case: different levels of nestings by row variables
+	# because variables are of different types (categorical/numeric)
+	# Padding is extracted for each nested level
+	# and smoothed afterwards to avoid double padding for cont var 
+	# (check 'smoothPadding')
+			
+	summaryTable <- data.frame(
+		variable = factor(
+			c("SEX", "SEX", "AGE"), 
+			levels = c("SEX", "AGE")
+		),
+		variableGroup = factor(
+			c("Female", "Male", NA_character_),
+			levels = c("Male", "Female")
+		),
+		n = c(3, 4, NA_real_),
+		mean = c(NA_real_, NA_real_, 3.33)
+	)
+			
+	rowPadBase <- 50
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("variable", "variableGroup"),
+		statsVar = c("n", "mean"),
+		rowPadBase = rowPadBase,
+		rowAutoMerge = FALSE
+	)
+		
+	# check that data is correctly set
+	dataRef <- data.frame(
+		c("SEX", "Male", "n", "Female", "n", 
+			"AGE", "mean"),
+		c(NA_character_, NA_character_, "4", NA_character_, "3", 
+			NA_character_, "3.33"),
+		stringsAsFactors = FALSE
+	)
+	
+	expect_equal(
+		object = unname(ft$body$dataset),
+		expected = unname(dataRef),
+		check.attributes = FALSE	
+	)
+	
+	# check that correct padding is set for the nested column
+	# (Note: remove row headers because flextable default padding is used)
+	expect_equal(
+		ft$body$styles$pars$padding.left$data[-c(1, 6), 1],
+		rowPadBase * c(1, 2, 1, 2, 1)
+	)
+	
+})	
+
 
 test_that("column variable is specified", {
 			
