@@ -29,11 +29,9 @@ test_that("row(s) are nested correctly for multiple row variable(s)", {
 		n = seq_len(6)
 	)
 			
-	rowPadBase <- 50
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
-		rowVar = c("PARAM", "COHORT", "TRT"),
-		rowPadBase = rowPadBase
+		rowVar = c("PARAM", "COHORT", "TRT")
 	)
 	
 	# check that correct data is displayed
@@ -53,15 +51,61 @@ test_that("row(s) are nested correctly for multiple row variable(s)", {
 		unname(dataRef),
 		check.attributes = FALSE
 	)
-	
+			
+})		
+
+test_that("padding is correctly set for nested row variable(s)", {
+			
+	summaryTable <- data.frame(
+		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
+		COHORT = rep(c("I", "I", "II"), times = 2),
+		TRT = factor(rep(c("A", "B", "A"), times = 2), levels = c("B", "A")),
+		n = seq_len(6)
+	)
+			
+	rowPadBase <- 50
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("PARAM", "COHORT", "TRT"),
+		rowPadBase = rowPadBase
+	)
+			
 	# check that correct padding is set for the nested column
 	# (Note: remove row headers because flextable default padding is used)
 	expect_equal(
 		ft$body$styles$pars$padding.left$data[-c(1, 7), 1],
 		rowPadBase * rep(c(1, 2, 2, 1, 2), 2)
 	)
+	
+})
+
+test_that("horizontal lines are correctly set for nested row variable", {
 			
-})		
+	summaryTable <- data.frame(
+		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
+		COHORT = rep(c("I", "I", "II"), times = 2),
+		TRT = factor(rep(c("A", "B", "A"), times = 2), levels = c("B", "A")),
+		n = seq_len(6)
+	)
+			
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("PARAM", "COHORT", "TRT"),
+		colorTable = c(line = "red")
+	)
+	
+	# check that horizontal lines are properly set
+	ftDataBd <- ft$body$styles$cells$border.color.top$data
+	# separator between groups is set
+	expect_setequal(
+		object = ftDataBd[7, ], 
+		expected = "red"
+	)
+	# other lines are not set
+	expect_false(unique(c(ftDataBd[-7, ])) == "red") 
+	
+})
+			
 
 test_that("label is specified for row variable", {
 			
