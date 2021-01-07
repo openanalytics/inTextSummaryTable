@@ -20,7 +20,7 @@ test_that("row variable is specified", {
 			
 })
 
-test_that("row(s) are nested correctly for multiple row variable(s)", {
+test_that("multiple row variables are nested correctly", {
 			
 	summaryTable <- data.frame(
 		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
@@ -54,7 +54,7 @@ test_that("row(s) are nested correctly for multiple row variable(s)", {
 			
 })		
 
-test_that("padding is correctly set for nested row variable(s)", {
+test_that("padding is correctly set for nested row variables", {
 			
 	summaryTable <- data.frame(
 		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
@@ -79,7 +79,7 @@ test_that("padding is correctly set for nested row variable(s)", {
 	
 })
 
-test_that("horizontal lines are correctly set for nested row variable", {
+test_that("horizontal lines are correctly set for nested row variables", {
 			
 	summaryTable <- data.frame(
 		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
@@ -148,7 +148,7 @@ test_that("label for row variable is extracted from label vars", {
 })
 
 
-test_that("row variable(s) are in a separated column", {
+test_that("row variable in a separated column are merged correctly", {
 			
 	summaryTable <- data.frame(
 		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
@@ -180,6 +180,48 @@ test_that("row variable(s) are in a separated column", {
 		object = unname(ft$body$dataset),
 		expected = unname(dataRef),
 		check.attributes = FALSE
+	)
+	
+})
+
+test_that("mix of nested and merged row variables is correct", {
+			
+	summaryTable <- data.frame(
+		AESOC = c("A", "A", "A"),
+		AEDECOD = factor(c("a", "b", "b"), levels = c("b", "a")),
+		WORSTINT = factor(
+			c("Moderate", "Severe", "Moderate"), 
+			levels = c("Moderate", "Severe")
+		),
+		n = c(2, 4, 7)
+	)
+	
+	rowPadBase <- 50
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("AESOC", "AEDECOD", "WORSTINT"),
+		rowVarInSepCol = "WORSTINT",
+		rowPadBase = rowPadBase
+	)
+	
+	# check if data is correct
+	dataRef <- data.frame(
+		c("A", "b", "b", "a"),
+		c(NA_character_, "Moderate", "Severe", "Moderate"),
+		c(NA_character_, "7", "4", "2"),
+		stringsAsFactors = FALSE
+	)
+	expect_equal(
+		object = unname(ft$body$dataset),
+		expected = unname(dataRef),
+		check.attributes = FALSE
+	)
+	
+	# check that correct padding is set for the nested column
+	# (Note: remove row headers because flextable default padding is used)
+	expect_setequal(
+		ft$body$styles$pars$padding.left$data[-1, 1],
+		rowPadBase
 	)
 	
 })
@@ -1241,5 +1283,83 @@ test_that("total header is unique", {
 		exportSummaryStatisticsTable(data),
 		regexp = "Multiple values for the header total .*"
 	)
+			
+})
+
+test_that("a superscript is specified", {
+			
+	# Example with row/col vars specification in specific cell
+	xSps <- "<0.001^{*}"
+	data <- data.frame(
+		pValue = c("0.05", xSps, "1", "0.89"),
+		TRT = rep(c("A", "B"), each = 2),
+		PARAM = rep(c("Actual Value", "Change from Baseline"), times = 2)
+	)
+	ft <- exportSummaryStatisticsTable(
+		data, 
+		rowVar = "PARAM", colVar = "TRT",
+		statsVar = "pValue"
+	)
+	
+	idxSps <- which(ft$body$dataset == xSps)
+	ftBodyCnt <- ft$body$content$content$data
+	cntDataSps <- ftBodyCnt[idxSps][[1]]
+	expect_equal(nrow(cntDataSps), 2)
+	expect_equal(cntDataSps[, "txt"], c("<0.001", "*"))
+	expect_equal(cntDataSps[, "vertical.align"], c(NA_character_, "superscript"))
+	
+	alignDataOther <- unlist(lapply(ftBodyCnt[-idxSps], "[", "vertical.align"))
+	expect_setequal(alignDataOther, NA_character_)		
+			
+})
+
+test_that("a subscript is specified", {
+			
+	# Example with row/col vars specification in specific cell
+	xSbs <- "<0.001_{(significative)}"
+	data <- data.frame(
+		pValue = c("0.05", xSbs, "1", "0.89"),
+		TRT = rep(c("A", "B"), each = 2),
+		PARAM = rep(c("Actual Value", "Change from Baseline"), times = 2)
+	)
+	ft <- exportSummaryStatisticsTable(
+		data, 
+		rowVar = "PARAM", colVar = "TRT",
+		statsVar = "pValue"
+	)
+			
+	idxSbs <- which(ft$body$dataset == xSbs)
+	ftBodyCnt <- ft$body$content$content$data
+	cntDataSbs <- ftBodyCnt[idxSbs][[1]]
+	expect_equal(nrow(cntDataSbs), 2)
+	expect_equal(cntDataSbs[, "txt"], c("<0.001", "(significative)"))
+	expect_equal(cntDataSbs[, "vertical.align"], c(NA_character_, "subscript"))
+			
+	alignDataOther <- unlist(lapply(ftBodyCnt[-idxSbs], "[", "vertical.align"))
+	expect_setequal(alignDataOther, NA_character_)		
+			
+})
+
+test_that("a cell is formatted in bold", {
+			
+	# Example with row/col vars specification in specific cell
+	xBold <- "bold{<0.001}"
+	data <- data.frame(
+		pValue = c("0.05", xBold, "1", "0.89"),
+		TRT = rep(c("A", "B"), each = 2),
+		PARAM = rep(c("Actual Value", "Change from Baseline"), times = 2)
+	)
+	ft <- exportSummaryStatisticsTable(
+		data, 
+		rowVar = "PARAM", colVar = "TRT",
+		statsVar = "pValue"
+	)
+	isBold <- apply(
+		ft$body$content$content$data, 
+		2, function(x) sapply(x, `[[`, "bold")	
+	)
+	idxBold <- which(ft$body$dataset == xBold)
+	expect_setequal(isBold[idxBold], TRUE)
+	expect_setequal(isBold[-idxBold], NA)			
 			
 })
