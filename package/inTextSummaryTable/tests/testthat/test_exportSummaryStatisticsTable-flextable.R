@@ -457,6 +457,40 @@ test_that("rows are merged in case of unique statistic", {
 	
 })
 
+test_that("mixed table with different statistics by variable is formatted correctly", {
+			
+	summaryTable <- data.frame(
+		variable = factor(
+			c("SEX", "SEX", "AGE"), 
+			levels = c("SEX", "AGE")
+		),
+		variableGroup = factor(
+			c("Female", "Male", NA_character_),
+			levels = c("Male", "Female")
+		),
+		n = c(3, 4, NA_real_),
+		mean = c(NA_real_, NA_real_, 3.33)
+	)
+			
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("variable", "variableGroup"),
+		statsVar = c("n", "mean")
+	)
+	
+	dataRef <- data.frame(
+		c("SEX", "Male n", "Female n", "AGE mean"),
+		c(NA_character_, "4", "3", "3.33"),
+		stringsAsFactors = FALSE
+	)
+	expect_equal(
+		object = unname(ft$body$dataset),
+		expected = unname(dataRef),
+		check.attributes = FALSE	
+	)
+			
+})			
+
 test_that("column variable is specified", {
 			
 	summaryTable <- data.frame(
