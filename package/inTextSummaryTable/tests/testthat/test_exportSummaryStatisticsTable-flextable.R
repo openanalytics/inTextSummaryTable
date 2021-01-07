@@ -20,6 +20,49 @@ test_that("row variable is specified", {
 			
 })
 
+test_that("row(s) are nested correctly for multiple row variable(s)", {
+			
+	summaryTable <- data.frame(
+		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
+		COHORT = rep(c("I", "I", "II"), times = 2),
+		TRT = factor(rep(c("A", "B", "A"), times = 2), levels = c("B", "A")),
+		n = seq_len(6)
+	)
+			
+	rowPadBase <- 50
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("PARAM", "COHORT", "TRT"),
+		rowPadBase = rowPadBase
+	)
+	
+	# check that correct data is displayed
+	dataRef <- data.frame(
+		c(
+			"Actual Value", "I", "B", "A", "II", "A",
+			"Change from baseline", "I", "B", "A", "II", "A"
+		),
+		c(
+			NA_character_, NA_character_, "2", "1", NA_character_, "3", 
+			NA_character_, NA_character_, "5", "4", NA_character_, "6"
+		),
+		stringsAsFactors = FALSE
+	)
+	expect_equal(
+		unname(ft$body$dataset),
+		unname(dataRef),
+		check.attributes = FALSE
+	)
+	
+	# check that correct padding is set for the nested column
+	# (Note: remove row headers because flextable default padding is used)
+	expect_equal(
+		ft$body$styles$pars$padding.left$data[-c(1, 7), 1],
+		rowPadBase * rep(c(1, 2, 2, 1, 2), 2)
+	)
+			
+})		
+
 test_that("label is specified for row variable", {
 			
 	summaryTable <- data.frame(
@@ -125,7 +168,7 @@ test_that("horizontal lines are correctly set for multiple row variable(s) in se
 			
 })
 
-test_that("row are merged correctly for multiple row variable(s) in separated column", {
+test_that("row(s) are merged correctly for multiple row variable(s) in separated column", {
 	
 	summaryTable <- data.frame(
 		PARAM = rep(c("Actual Value", "Change from baseline"), each = 3),
