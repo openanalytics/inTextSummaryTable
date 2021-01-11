@@ -82,9 +82,10 @@ pipeline {
                                 sh '''
                                 R -q -e \'
                                 pc <- covr::package_coverage("package/inTextSummaryTable");
-                                covr::report(x = pc, file = "testCoverage-inTextSummaryTable.html")
+                                covr::report(x = pc, file = paste0("testCoverage-", attr(pc, "package")$package, "-", attr(pc, "package")$version, ".html"))
                                 covr::to_cobertura(pc)
                                 \'
+                                zip -r testCoverage.zip lib/ testCoverage*.html
                                 '''
                             }
                            post {
@@ -102,7 +103,7 @@ pipeline {
                 }
                 stage('Archive artifacts') {
                     steps {
-                        archiveArtifacts artifacts: '*.tar.gz, *.pdf, **/00check.log, **/testthat.Rout, **/testCoverage*.html', fingerprint: true
+                        archiveArtifacts artifacts: '*.tar.gz, *.pdf, **/00check.log, **/testthat.Rout, testCoverage.zip', fingerprint: true
                     }
                 }
             }
