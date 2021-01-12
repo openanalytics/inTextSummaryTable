@@ -1,6 +1,6 @@
 context("Export summary statistics table to DT")
 
-test_that("table is exported to DT with row variables", {
+test_that("table is exported with row variables", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
@@ -21,7 +21,7 @@ test_that("table is exported to DT with row variables", {
 			
 })
 
-test_that("table is exported to DT with label for row variables", {
+test_that("table is exported with label for row variables", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
@@ -42,7 +42,7 @@ test_that("table is exported to DT with label for row variables", {
 			
 })
 
-test_that("table is exported to DT with label for row variables extracted from label vars", {
+test_that("table is exported with label for row variables extracted from label vars", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
@@ -64,7 +64,7 @@ test_that("table is exported to DT with label for row variables extracted from l
 })
 
 
-test_that("table is exported to DT with row variables in a separated column", {
+test_that("table is exported with row variables in a separated column", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -86,7 +86,7 @@ test_that("table is exported to DT with row variables in a separated column", {
 	
 })
 
-test_that("table is exported to DT with column variables", {
+test_that("table is exported with column variables", {
 			
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "B"), levels = c("B", "A")),
@@ -107,7 +107,7 @@ test_that("table is exported to DT with column variables", {
 	
 })
 
-test_that("table is exported to DT with total in header", {
+test_that("table is exported with total in header", {
 	
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
@@ -145,7 +145,7 @@ test_that("table is exported to DT with total in header", {
 
 })
 
-test_that("different stat layout when table is exported to DT", {
+test_that("stat layout is specified", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
@@ -214,7 +214,7 @@ test_that("different stat layout when table is exported to DT", {
 	
 })
 
-test_that("stat value label is specified when table is exported to DT", {
+test_that("stat value label is specified", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
@@ -245,7 +245,7 @@ test_that("stat value label is specified when table is exported to DT", {
 			
 })
 
-test_that("stat value label is specified when table is exported to DT", {
+test_that("stat value label is specified", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -303,7 +303,7 @@ test_that("stat value label is specified when table is exported to DT", {
 	
 })
 
-test_that("a placeholder is specified for empty value when table is exported to DT", {
+test_that("a placeholder is specified for empty value", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -354,7 +354,7 @@ test_that("a placeholder is specified for empty value when table is exported to 
 			
 })
 
-test_that("title is specified for DT export", {
+test_that("title is specified", {
 		
 	summaryTable <- data.frame(n = 10)
 	
@@ -374,7 +374,7 @@ test_that("title is specified for DT export", {
 			
 })
 
-test_that("no data remains besides total row in export DT", {
+test_that("no data remains besides total row", {
 			
 	data <- data.frame(
 		isTotal = rep(TRUE, 2),
@@ -401,7 +401,7 @@ test_that("total header should unique in DT export", {
 })
 
 
-test_that("export DT to a file", {
+test_that("export summary table to a file", {
 			
 	summaryTable <- data.frame(n = 10)
 	
@@ -447,7 +447,7 @@ test_that("table is exported to DT with row variables with expand variables", {
 	
 })
 
-test_that("table is exported to DT with row variables with expand one statistic", {
+test_that("one statistical variable is expanded", {
 			
 	summaryTable <- data.frame(
 		patientProfileLink = "/path/to/patientProfile1.pdf",
@@ -478,7 +478,7 @@ test_that("table is exported to DT with row variables with expand one statistic"
 			
 })
 
-test_that("page dimension is specified when the table is exported to DT", {
+test_that("page dimension is specified", {
 			
 	summaryTable <- data.frame(n = 10)
 	
@@ -496,7 +496,7 @@ test_that("page dimension is specified when the table is exported to DT", {
 	
 })
 
-test_that("table is exported to DT with non escapable variable", {
+test_that("a variable is not escaped", {
 			
 	summaryTable <- data.frame(
 		patientProfileLink = "www.google.com",
@@ -513,7 +513,7 @@ test_that("table is exported to DT with non escapable variable", {
 			
 })
 
-test_that("parameters are passed to datatable for DT export", {
+test_that("parameters are passed to datatable", {
 	
 	summaryTable <- data.frame(
 		patientProfileLink = "www.google.com",
