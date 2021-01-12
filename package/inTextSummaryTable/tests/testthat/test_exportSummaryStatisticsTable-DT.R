@@ -559,4 +559,36 @@ test_that("parameters are passed to datatable for DT export", {
 			
 })
 
+test_that("list of summary tables is specified", {
+			
+	summaryTables <- list(
+		`PARAM 2` = data.frame(n = 10),
+		`PARAM 1` = data.frame(n = 2)
+	)
+			
+	dts <- exportSummaryStatisticsTable(
+		summaryTables, 
+		outputType = "DT"
+	)
+	expect_type(dts, "list")
+	expect_named(dts, names(summaryTables))
+			
+	for(group in names(summaryTables)){
+				
+		# table content is the same as if the table would have
+		# been created directly
+		expect_identical({
+				dt <- exportSummaryStatisticsTable(summaryTables[[!!group]], outputType = "DT")
+				dt$x$data
+			},
+			expected = dts[[!!group]]$x$data
+		)
+		
+		expect_true(grepl(!!group, dts[[!!group]]$x$caption,))
+			
+	}
+	
+})
+
+
 			
