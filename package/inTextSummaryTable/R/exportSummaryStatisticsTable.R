@@ -51,9 +51,12 @@
 #' \item{for 'DT': }{filename with 'html' extension}
 #' }}
 #' }
+#' @param style,landscape,margin,rowPadBase,footer,style,colorTable,fontsize,fontname,vline,hline,rowVarFormat,rowVarTotalInclude,rowVarTotalInSepRow,rowTotalLab,rowAutoMerge 
+#' Parameters specific to the 'flextable' \code{output}.\cr 
+#' See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.
+#' @param expandVar,noEscapeVar,barVar,... Parameters specific to the 'DT' \code{output}.\cr 
+#' See correspondings parameter in \code{\link{exportSummaryStatisticsTableToDT}}.
 #' @inheritParams formatSummaryStatisticsTable
-#' @inheritParams exportSummaryStatisticsTableToFlextable
-#' @inheritParams exportSummaryStatisticsTableToDT
 #' @return Depending on the \code{outputType}:
 #' \itemize{
 #' \item{'data.frame-base': }{input summary table in a long format with
@@ -98,17 +101,18 @@ exportSummaryStatisticsTable <- function(
 	emptyValue = "-",
 	# extra
 	labelVars = NULL, 
-	file = NULL, landscape = (style == "presentation"), 
-	margin = 1, rowPadBase = 14.4,
+	file = NULL, 
 	title = NULL,
 	outputType = "flextable",
+	pageDim = NULL,
 	# flextable-specific
+	landscape = (style == "presentation"), 
+	margin = 1, rowPadBase = 14.4,
 	footer = NULL,
 	style = "report", colorTable = getColorTable(style = style),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none", hline = "auto", 
-	pageDim = NULL,
 	# DT-specific
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
 	...){

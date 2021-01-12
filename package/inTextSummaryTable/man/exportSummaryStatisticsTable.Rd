@@ -26,11 +26,12 @@ exportSummaryStatisticsTable(
   emptyValue = "-",
   labelVars = NULL,
   file = NULL,
+  title = NULL,
+  outputType = "flextable",
+  pageDim = NULL,
   landscape = (style == "presentation"),
   margin = 1,
   rowPadBase = 14.4,
-  title = NULL,
-  outputType = "flextable",
   footer = NULL,
   style = "report",
   colorTable = getColorTable(style = style),
@@ -38,7 +39,6 @@ exportSummaryStatisticsTable(
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   vline = "none",
   hline = "auto",
-  pageDim = NULL,
   expandVar = NULL,
   noEscapeVar = NULL,
   barVar = NULL,
@@ -51,35 +51,6 @@ exportSummaryStatisticsTable(
 \item{rowVar}{Character vector with variable(s) used for the rows.
 If multiple variables are specified, the variables should be sorted in hierarchical order.
 The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
-
-\item{rowVarLab}{Label for the \code{rowVar} variable(s).}
-
-\item{rowVarInSepCol}{Character vector with \code{rowVar}
-that should be included in multiple columns.
-NULL by default: the row variables are nested in the first column 
-of the table.
-To include the groups within a \code{var} variable in a separated column, 
-set: rowVarInSepCol == 'variableGroup'.
-This is only available if \code{rowVar} is not specified.}
-
-\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
-Currently, only possibility is to set the variable elements in bold, with:
-list(var1 = "bold").
-(Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
-
-\item{rowVarTotalInclude}{Character vector with \code{rowVar} for which the total
-is included. These variables should be formatted as a factor with 
-\strong{'Total' as the first level}.}
-
-\item{rowTotalLab}{label for the row with total}
-
-\item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
-(not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
-Otherwise (by default) the total is included in the header row of each category.}
-
-\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merge rows,
-e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
-or only one statistic per category.}
 
 \item{colVar}{Character vector with variable(s) used for the columns.
 If multiple variables are specified, the variables should be sorted in hierarchical order,
@@ -126,9 +97,6 @@ one statistic variables are available in the table.}
 This value is typically used e.g. if not all statistics are computed for all specified
 row/col/var variables.}
 
-\item{labelVars}{Named character vector with variable labels (names are the variable code),
-usually extracted from \code{data}.}
-
 \item{file}{(Optional) Filename to which to which the table should be exported, 
 either:
 \itemize{
@@ -148,20 +116,6 @@ The names should correspond to the options in \code{outputType}:}{
 }}
 }}
 
-\item{landscape}{Logical, if TRUE the table is presented in landscape
-format. \cr
-By default: TRUE for \code{style}: 'report',
-FALSE for \code{style}: 'presentation'.}
-
-\item{margin}{Margin in the document in inches, currently only used to specify the
-width of the table: [width page extracted from \code{dimPage} - 2* margin]}
-
-\item{rowPadBase}{Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)}
-
-\item{title}{Character vector with title(s) for the table.
-Set to NULL (by default) if no title should be included.
-If vector > 1, specified for each element of \code{byVar} (in order of the levels).}
-
 \item{outputType}{String with output type:
 \itemize{
 \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
@@ -174,37 +128,6 @@ e.g. to be exported to html}
 \code{colVar} in different rows), useful for debugging}
 }}
 
-\item{footer}{Character vector with footer(s) for the table.
-Set to NULL (by default) of no footer should be included.}
-
-\item{style}{string with table style in case \code{outputType} is 'flextable',
- either 'report' or 'presentation'.
-This parameter affects the fontsize, font family, color of the text and background, 
-and table dimensions of the table.}
-
-\item{colorTable}{Named character vector with color for the table background/body/text/line,
-e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
-
-\item{fontsize}{Integer with font size, by default:
-8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}
-
-\item{fontname}{String with font name, by default:
-'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}
-
-\item{vline}{String mentioning how vertical lines 
-should be included in the body of the table, either: 
-\itemize{
-\item{'none' (default): }{no vertical lines included}
-\item{'auto': }{vertical lines included between sub-groups}
-}}
-
-\item{hline}{String mentioning how horizontal lines 
-should be included in the body of the table, either: 
-\itemize{
-\item{'none': }{no horizontal lines included}
-\item{'auto' (default): }{horizontal lines included between sub-groups}
-}}
-
 \item{pageDim}{Numeric vector of length 2 with page width and height
 depending on \code{outputType}:
 \itemize{
@@ -213,17 +136,11 @@ depending on \code{outputType}:
 the height is used (e.g. \code{c(NA, 4)})
 }}}
 
-\item{expandVar}{Character vector with variables of the summary table which
-should be expanded in the data (only for 'DT' output).}
+\item{style, landscape, margin, rowPadBase, footer, style, colorTable, fontsize, fontname, vline, hline, rowVarFormat, rowVarTotalInclude, rowVarTotalInSepRow, rowTotalLab, rowAutoMerge}{Parameters specific to the 'flextable' \code{output}.\cr 
+See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
 
-\item{noEscapeVar}{Character vector with variables of \code{summaryTable}
-which shouldn't be escaped in the table (e.g. containing URLs).}
-
-\item{barVar}{Character vector with variables of \code{summaryTable}
-that should be represented as a bar.}
-
-\item{...}{Extra parameters passed to the 
-\code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}
+\item{expandVar, noEscapeVar, barVar, ...}{Parameters specific to the 'DT' \code{output}.\cr 
+See correspondings parameter in \code{\link{exportSummaryStatisticsTableToDT}}.}
 }
 \value{
 Depending on the \code{outputType}:

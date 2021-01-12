@@ -7,7 +7,7 @@
 #' @param file String with path of the file where the table should be exported.
 #' If NULL, the summary table is not exported but only returned as output.
 #' @param rowPadBase Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)
-#' @param style string with table style in case \code{outputType} is 'flextable',
+#' @param style string with table style,
 #'  either 'report' or 'presentation'.
 #' This parameter affects the fontsize, font family, color of the text and background, 
 #' and table dimensions of the table.

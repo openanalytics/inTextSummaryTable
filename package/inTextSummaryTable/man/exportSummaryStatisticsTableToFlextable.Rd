@@ -121,7 +121,7 @@ If vector > 1, specified for each element of \code{byVar} (in order of the level
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
 
-\item{style}{string with table style in case \code{outputType} is 'flextable',
+\item{style}{string with table style,
  either 'report' or 'presentation'.
 This parameter affects the fontsize, font family, color of the text and background, 
 and table dimensions of the table.}
@@ -138,9 +138,10 @@ e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
 \item{file}{String with path of the file where the table should be exported.
 If NULL, the summary table is not exported but only returned as output.}
 
-\item{pageDim}{Numeric vector of length 2 with page width and height,
-in number of rows (currently only
-the height is used (e.g. \code{c(NA, 4)})}
+\item{pageDim}{(optional) Numeric vector of length 2 with 
+page width and height in inches in portrait format,
+in case page dimensions differ from the default
+implemented report/presentation.}
 
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}

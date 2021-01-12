@@ -1,6 +1,6 @@
 #' Convert summary table to DT
 #' @param expandVar Character vector with variables of the summary table which
-#' should be expanded in the data (only for 'DT' output).
+#' should be expanded in the data.
 #' @param pageDim Numeric vector of length 2 with page width and height,
 #' in number of rows (currently only
 #' the height is used (e.g. \code{c(NA, 4)})
