@@ -1410,3 +1410,25 @@ test_that("table is exported to a docx file", {
 	expect_equal(object = docTableData, expected = dataRef, check.attributes = FALSE)
 	
 })
+
+test_that("table is exported in a landscape format", {
+			
+	summaryTable <- data.frame(n = 9)	
+	
+	# Note: landscape mode results in setting the width
+	# of the table, with the glpgUtilityFct:::getDimPage function
+	# see unit tests for this function directly
+	ftLandscape <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable, 
+		landscape = TRUE
+	)
+	ftPortrait <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable, 
+		landscape = FALSE
+	)
+	
+	# check that width in landscape mode is > than in portrait mode
+	for(part in c("body", "header", "footer"))
+		expect_gt(ftLandscape[[!!part]]$colwidths, ftPortrait[[!!part]]$colwidths)
+			
+})
