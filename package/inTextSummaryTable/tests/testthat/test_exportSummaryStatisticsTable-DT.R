@@ -584,10 +584,32 @@ test_that("list of summary tables is specified", {
 			expected = dts[[!!group]]$x$data
 		)
 		
+		# and group is specified in the title
 		expect_true(grepl(!!group, dts[[!!group]]$x$caption,))
 			
 	}
 	
+})
+
+test_that("a variable is visualized as a bar", {
+			
+	summaryTable <- data.frame(
+		n = c(1, 2, 4),
+		PARAM = paste("PARAM", seq_len(3)),
+		stringsAsFactors = FALSE
+	)
+			
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		barVar = "n",
+		colHeaderTotalInclude = FALSE,
+		rowVar = "PARAM", 
+		outputType = "DT"
+	)
+	
+	# check if a color gradient is specified in JS in the object:
+	expect_match(dt$x$options$rowCallback, "linear-gradient")
+			
 })
 
 
