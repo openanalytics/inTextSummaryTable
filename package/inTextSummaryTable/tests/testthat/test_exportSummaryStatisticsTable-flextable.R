@@ -1,6 +1,7 @@
 context("Export summary statistics table to flextable")
 
 library(officer)
+library(glpgStyle)
 
 test_that("row variable is specified", {
 			
@@ -1430,5 +1431,42 @@ test_that("table is exported in a landscape format", {
 	# check that width in landscape mode is > than in portrait mode
 	for(part in c("body", "header", "footer"))
 		expect_gt(ftLandscape[[!!part]]$colwidths, ftPortrait[[!!part]]$colwidths)
+			
+})
+
+test_that("style is set for exported table", {
+	
+	summaryTable <- data.frame(n = 9)	
+			
+	expect_identical(
+		object = exportSummaryStatisticsTable(
+			summaryTable = summaryTable, 
+			style = "report"
+		),
+		expected = exportSummaryStatisticsTable(
+			summaryTable = summaryTable, 
+			fontname = "Times", fontsize = 8,
+			landscape = FALSE,
+			pageDim = glpgStyle::getDimPage(style = "report", margin = 0),
+			colorTable = glpgStyle::getColorTable(style = "report")
+		)
+	)
+	
+	expect_identical(
+		object = exportSummaryStatisticsTable(
+			summaryTable = summaryTable, 
+			style = "presentation"
+		),
+		expected = exportSummaryStatisticsTable(
+			summaryTable = summaryTable, 
+			fontname = "Tahoma", fontsize = 10,
+			landscape = TRUE,
+			pageDim = glpgStyle::getDimPage(
+				style = "presentation", margin = 0,
+				landscape = FALSE
+			),
+			colorTable = glpgStyle::getColorTable(style = "presentation")
+		)
+	)
 			
 })

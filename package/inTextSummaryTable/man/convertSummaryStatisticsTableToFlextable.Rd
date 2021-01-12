@@ -40,7 +40,7 @@ If vector > 1, specified for each element of \code{byVar} (in order of the level
 \item{footer}{Character vector with footer(s) for the table.
 Set to NULL (by default) of no footer should be included.}
 
-\item{style}{string with table style in case \code{outputType} is 'flextable',
+\item{style}{string with table style,
  either 'report' or 'presentation'.
 This parameter affects the fontsize, font family, color of the text and background, 
 and table dimensions of the table.}

@@ -65,7 +65,7 @@ Set to NULL (by default) if no title should be included.
 If vector > 1, specified for each element of \code{byVar} (in order of the levels).}
 
 \item{expandVar}{Character vector with variables of the summary table which
-should be expanded in the data (only for 'DT' output).}
+should be expanded in the data.}
 
 \item{noEscapeVar}{Character vector with variables of \code{summaryTable}
 which shouldn't be escaped in the table (e.g. containing URLs).}
