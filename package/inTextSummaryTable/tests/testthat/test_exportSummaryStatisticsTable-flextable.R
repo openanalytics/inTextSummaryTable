@@ -887,6 +887,31 @@ test_that("list of summary tables is specified", {
 			
 })
 
+test_that("different titles are specified for a list of summary tables", {
+			
+	summaryTables <- list(
+		`PAR2` = data.frame(n = 10),
+		`PAR1` = data.frame(n = 2)
+	)
+			
+	titles <- c("PARAMETER 2", "PARAMETER 1")
+	fts <- exportSummaryStatisticsTable(
+		summaryTables, 
+		outputType = "flextable",
+		title = titles
+	)
+	
+	for(i in seq_along(summaryTables)){
+		
+		expect_equal(
+			fts[[!!i]]$header$dataset[1, 1],
+			titles[!!i]
+		)
+		
+	}
+		
+})
+
 test_that("formatting row total variable is correct", {
 			
 	summaryTable <- data.frame(
