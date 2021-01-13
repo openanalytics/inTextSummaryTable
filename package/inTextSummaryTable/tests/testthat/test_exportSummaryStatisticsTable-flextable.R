@@ -1157,7 +1157,7 @@ test_that("fontsize is specified", {
 	
 	expect_identical(
 		object = {
-			dt <- exportSummaryStatisticsTable(
+			ft <- exportSummaryStatisticsTable(
 				summaryTable, 
 				fontsize = 25
 			)
