@@ -81,7 +81,10 @@ the height is used (e.g. \code{c(NA, 4)})}
 usually extracted from \code{data}.}
 
 \item{file}{String with path of the file where the table should be exported.
-If NULL, the summary table is not exported but only returned as output.}
+The file should have the extension: '.html'.
+If NULL, the summary table is not exported but only returned as output.
+If \code{byVar} is specified, each table is exported to a separated
+file with the suffix: 'file_[i].html' with i the index of the file.}
 
 \item{...}{Extra parameters passed to the 
 \code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)}

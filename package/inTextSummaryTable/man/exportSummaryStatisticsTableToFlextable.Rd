@@ -136,7 +136,10 @@ e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}
 
 \item{file}{String with path of the file where the table should be exported.
-If NULL, the summary table is not exported but only returned as output.}
+The file should have the extension: '.docx'.
+If NULL, the summary table is not exported but only returned as output.
+If \code{byVar} is specified, each table is exported to a separated
+file with the suffix: 'file_[i].docx' with i the index of the file.}
 
 \item{pageDim}{(optional) Numeric vector of length 2 with 
 page width and height in inches in portrait format,

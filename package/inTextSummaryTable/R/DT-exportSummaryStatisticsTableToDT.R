@@ -98,7 +98,7 @@ exportSummaryStatisticsTableToDT <- function(
 	if(length(rowGroupVar) == 0)	rowGroupVar <- NULL
 	if(length(rowGroupVar) > 1){
 		rowGroupVar <- head(rowGroupVar, 1)
-		warning(paste0("Currently multi-level row grouping row variable not available in the 'DT' package",
+		warning(paste0("Currently multi-level row grouping row variable is not available in the 'DT' package",
 			", so the rows are grouped by ", rowGroupVar, " only."))
 	}
 	
