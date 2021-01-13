@@ -1,6 +1,6 @@
 context("Export summary statistics table to DT")
 
-test_that("table is exported with row variables", {
+test_that("table is exported with row variable", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
@@ -20,6 +20,27 @@ test_that("table is exported with row variables", {
 	)
 			
 })
+
+test_that("warning is table is exported with multiple nested row variables", {
+			
+	summaryTable <- data.frame(
+		TRT = rep(c("A", "A", "B", "B"), times = 2),
+		PARAM = rep(c("a", "b", "a", "b"), times = 2),
+		metric = rep(c("Actual Value", "Change from Baseline"), each = 4),
+		n = seq_len(8)
+	)
+	
+	expect_warning(
+		exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			rowVar = c("TRT", "PARAM", "metric"),
+			outputType = "DT"
+		),
+		"multi-level row grouping row variable is not available"
+	)
+	
+})
+
 
 test_that("table is exported with label for row variables", {
 			

@@ -114,7 +114,10 @@ The names should correspond to the options in \code{outputType}:}{
 \item{for 'flextable': }{filename with 'docx' extension}
 \item{for 'DT': }{filename with 'html' extension}
 }}
-}}
+}
+If NULL (by default), the summary table is not exported but only returned as output.
+If \code{byVar} is specified, each table is exported to a separated
+file with the suffix: 'file_[i].[ext]' with i the index of the file.}
 
 \item{outputType}{String with output type:
 \itemize{
