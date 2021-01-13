@@ -517,20 +517,29 @@ test_that("page dimension is specified", {
 	
 })
 
-test_that("a variable is not escaped", {
+test_that("a stat variable is not escaped", {
 			
 	summaryTable <- data.frame(
-		patientProfileLink = "www.google.com",
+		patientProfileLink = '<a href="www.google.com">blabla</a>',
 		n = 1,
 		stringsAsFactors = FALSE
 	)
 	
-	dt <- exportSummaryStatisticsTable(
-		summaryTable = summaryTable,
-		noEscapeVar = "patientProfileLink",
-		outputType = "DT"
+	# This is checked with 'statsLayout' is 'row'
+	# as in this case: the entire stat value column
+	# should not be escape
+	expect_match({
+		dt <- exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			noEscapeVar = "patientProfileLink",
+			statsVar = c("patientProfileLink", "n"),
+			statsLayout = "row",
+			outputType = "DT"
+		)
+		attr(dt$x$options, "escapeIdx")
+		}, 
+		regexp = "1"
 	)
-	expect_match(attr(dt$x$options, "escapeIdx"), regexp = "2")
 			
 })
 
