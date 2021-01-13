@@ -51,6 +51,9 @@
 #' \item{for 'DT': }{filename with 'html' extension}
 #' }}
 #' }
+#' If NULL (by default), the summary table is not exported but only returned as output.
+#' If \code{byVar} is specified, each table is exported to a separated
+#' file with the suffix: 'file_[i].[ext]' with i the index of the file.
 #' @param style,landscape,margin,rowPadBase,footer,style,colorTable,fontsize,fontname,vline,hline,rowVarFormat,rowVarTotalInclude,rowVarTotalInSepRow,rowTotalLab,rowAutoMerge 
 #' Parameters specific to the 'flextable' \code{output}.\cr 
 #' See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.
@@ -158,8 +161,9 @@ exportSummaryStatisticsTable <- function(
 	)
 	# export summary table in long format (if required)
 	summaryTableLongFile <- getFileForOutputType("data.frame")
-	if(!is.null(summaryTableLongFile))
+	if(!is.null(summaryTableLongFile)){
 		writeTable(summaryTableLong, file = summaryTableLongFile)
+	}
 	
 	summaryTableFtFile <- getFileForOutputType("flextable", fileExt = "docx")
 	createFt <- "flextable" %in% outputType | !is.null(summaryTableFtFile)

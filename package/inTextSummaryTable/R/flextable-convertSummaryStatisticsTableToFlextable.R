@@ -5,7 +5,10 @@
 #' @param footer Character vector with footer(s) for the table.
 #' Set to NULL (by default) of no footer should be included.
 #' @param file String with path of the file where the table should be exported.
+#' The file should have the extension: '.docx'.
 #' If NULL, the summary table is not exported but only returned as output.
+#' If \code{byVar} is specified, each table is exported to a separated
+#' file with the suffix: 'file_[i].docx' with i the index of the file.
 #' @param rowPadBase Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)
 #' @param style string with table style,
 #'  either 'report' or 'presentation'.
@@ -59,19 +62,18 @@ convertSummaryStatisticsTableToFlextable <- function(
 			summaryTableI <- summaryTable[[i]]
 			inputParamsBy <- inputParams
 			inputParamsBy$summaryTable <- summaryTableI
-			inputParamsBy$file <- NULL # export all tables at once
 			inputParamsBy$title <- if(length(title) > 1)
 				inputParams$title[i]	else	c(
 				inputParams$title, 
 				strsplit(names(summaryTable)[i], split = "\n")[[1]]
 			)
+			inputParamsBy$file <- if(!is.null(file)){
+				paste0(file_path_sans_ext(file), "_", i, ".", file_ext(file))
+			}
 			do.call(convertSummaryStatisticsTableToFlextable, inputParamsBy)		
 		}, simplify = FALSE)	
 		if(!is.null(names(summaryTable)))
 			names(res) <- names(summaryTable)
-
-		if(!is.null(file))
-			exportFlextableToDocx(object = res, file = file, landscape = landscape)
 	
 		return(res)
 		

@@ -591,6 +591,29 @@ test_that("list of summary tables is specified", {
 	
 })
 
+test_that("list of summary tables is exported to file", {
+			
+	summaryTables <- list(
+		`PARAM 2` = data.frame(n = 10),
+		`PARAM 1` = data.frame(n = 2)
+	)
+			
+	fileTable <- "table.html" 
+	
+	fileTableOutput <- c("table_1.html", "table_2.html")
+	if(any(file.exists(fileTableOutput)))
+		tmp <- file.remove(fileTableOutput)
+	
+	dts <- exportSummaryStatisticsTable(
+		summaryTables, 
+		outputType = "DT",
+		file = fileTable
+	)
+	expect_true(all(file.exists(fileTableOutput)))
+
+})
+
+
 test_that("a variable is visualized as a bar", {
 			
 	summaryTable <- data.frame(
@@ -611,6 +634,3 @@ test_that("a variable is visualized as a bar", {
 	expect_match(dt$x$options$rowCallback, "linear-gradient")
 			
 })
-
-
-			
