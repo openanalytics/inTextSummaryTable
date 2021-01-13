@@ -1412,6 +1412,29 @@ test_that("table is exported to a docx file", {
 	
 })
 
+test_that("list of summary tables is exported to file", {
+			
+	summaryTables <- list(
+		`PARAM 2` = data.frame(n = 10),
+		`PARAM 1` = data.frame(n = 2)
+	)
+			
+	fileTable <- "table.docx" 
+	
+	fileTableOutput <- c("table_1.docx", "table_2.docx")
+	if(any(file.exists(fileTableOutput)))
+		tmp <- file.remove(fileTableOutput)
+	
+	dts <- exportSummaryStatisticsTable(
+		summaryTables, 
+		outputType = "flextable",
+		file = fileTable
+	)
+			
+	expect_true(all(file.exists(fileTableOutput)))
+			
+})
+
 test_that("table is exported in a landscape format", {
 			
 	summaryTable <- data.frame(n = 9)	
