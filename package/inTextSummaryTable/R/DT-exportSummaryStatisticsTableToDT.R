@@ -152,7 +152,7 @@ exportSummaryStatisticsTableToDT <- function(
 		
 			escape <- which(!colnames(summaryTable) %in% noEscapeVar)
 			if(length(escape) == 0)	{
-				TRUE
+				FALSE
 			}else	escape
 			
 		}else	noEscapeVar

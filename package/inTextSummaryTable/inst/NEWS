@@ -4,6 +4,7 @@
   o export to DT: 
     - title can be of length > 1
     - pageDim should be of length 2
+    - fix when noEscapeVar contains all vars
   o subject profile summary plot: 
     - extra checks input params
     - fix ordering facets in case [x]Line specified
