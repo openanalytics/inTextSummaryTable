@@ -69,18 +69,43 @@ for continuous variable, or function returning this number based on \code{x}
 
 \item{nDecN, nDecm}{Integer with number of decimals for number of subjects/records (0 by default).}
 
-\item{formatPercentage}{Function used to format the percentage of the number of subjects
+\item{formatPercentage}{Function used to format the percentages
 (see \code{\link{formatPercentage}} for default behaviour).}
 }
 \value{
-(Optionally named) list of expression or call object containing
-function to extract summary statistics.
+Expression (or call object) containing
+function to extract requested summary statistics.
 If multiple \code{type} are specified, they are combined to a list.
+Names of the list will be typically used to name the statistic
+in the summary table.
 }
 \description{
 This set of statistics is passed directly to the \code{stats} parameter
 of the \code{\link{computeSummaryStatisticsTable}} function.
 }
+\section{Formatting of the statistics}{
+
+\itemize{
+
+\item{rounding: }{all rounding is taken care with the \code{roundCustomText}}
+
+\item{statistics for continuous variable are rounded with the following 
+number of decimals}{
+
+\itemize{
+
+\item{if the number of decimals is specified via \code{nDecCont}: }{
+\itemize{
+\item{'Min', 'Max': }{\code{nDecCont}}
+\item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
+\item{'SE': }{\code{nDecCont} + 2}
+}}
+\item{if the number of decimals is not specified: }{
+a default format is set via the \code{\link{formatC}} function.}
+}}
+}
+}
+
 \examples{
 ## default set of statistics are available for:
 

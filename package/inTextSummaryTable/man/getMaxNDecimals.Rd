@@ -19,6 +19,16 @@ Integer with maximum number of decimals in a character vector.
 The function \code{\link{getNDecimals}}) extracts the number
 of decimals in a specific variable.
 }
+\examples{
+x <- c(0.99, 5.679, 50.45, 1450)
+# extract max number of decimals based on data:
+getMaxNDecimals(x, useRule = FALSE, useData = TRUE)
+# extract max number of decimals based on pre-defined rule:
+getMaxNDecimals(x, useRule = TRUE, useData = FALSE)
+# extract max number of decimals based on both rules
+# minimum of both is used (by default)
+getMaxNDecimals(x, useRule = TRUE, useData = TRUE)
+}
 \author{
 Laure Cougnaud
 }
