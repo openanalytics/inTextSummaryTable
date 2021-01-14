@@ -1,5 +1,15 @@
-#' Custom round function, rounding to the closest digits
-#' (instead of rounding to the even number in case of 0.5)
+#' Round a number (with 'round-up' strategy)
+#' for a specific number of digits,
+#' and format number to a: 'xxx.xxx' text.
+#' 
+#' The following workflow is used:
+#' \enumerate{
+#' \item{numbers are rounded with the \code{\link[glpgUtilityFct]{roundCustom}}
+#' function, see the \code{? roundCustom} for more details
+#' on the rounding strategy}
+#' \item{round numbers are formatted to character in
+#' the format: 'xxx.xxx' with pads leading zeros}
+#' }
 #' @param x Numeric vector to round.
 #' @param digits Integer with number of digits to consider, 0 by default.
 #' @param format For backward compatibility. This parameter will be deprecated in the next package release.
@@ -14,6 +24,8 @@
 #' roundCustomText(x = c(0.345, 0.567, -0.98), digits = 0)
 #' # by default, 'digits' is 0!
 #' roundCustomText(x = c(0.345, 0.567, -0.98))
+#' # padding zeros
+#' roundCustomText(1.23, 10)
 #' @export
 roundCustomText <- function(x, digits = 0, format) {
 	

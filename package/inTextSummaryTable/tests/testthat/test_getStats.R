@@ -1,32 +1,14 @@
-test_that("Get statistics with 'getStats'", {
-			
-			statsNPerc <- getStats("n (%)")
-			expect_is(statsNPerc, "list")
-			expect_length(statsNPerc, 1)
-			expect_named(statsNPerc)
-			
-			expect_output(str(getStats(type = "summary")), "List of 9")
-			
-			namesStats <- names(getStats(type = "summary"))		
-			expect_named(
-					object = getStats(type = "summary"),
-					expected = c("n", "Mean", "SD", "SE", "Median", "Min", "Max", "%", "m" ))
-			expect_named(
-					object = getStats(type = "n", includeName = FALSE),
-					expected = NULL)
-			expect_warning(object = getStats(type = "summary-default", includeName = FALSE))
-			expect_error(object = getStats(type = "default", includeName = FALSE))
-			
-			library(glpgUtilityFct)
-			data(ADaMDataPelican)
-			getStatDefault <- getStatsData(data = ADaMDataPelican$ADSL, var = "WEIGHTBL", type = "default")
-			expect_output(str(getStatDefault), "List")
-			
-			expect_true(grepl("roundCustomText", getStatDefault))
-			sapply(names(getStatDefault), function(listArgs) 
-						sapply(names(getStatDefault[[listArgs]]), function(listStats)
-									expect_is(getStatDefault[[listArgs]][[listStats]], "call")))
-			
-			# We can still add more tests e.g. for the decimals ...
-			
-		})
+context("Get default set of statistics")
+
+test_that("number of subjects is extracted", {	
+		
+	stat <- getStats(type = "n")
+	
+	# check if correct stat is specified
+	statCode <- grep("stat\\w", as.character(stat$n), value = TRUE)
+	expect_equal(sub("(stat\\w)", "\\1", statCode), "statN")
+
+	# TODO
+	
+})
+

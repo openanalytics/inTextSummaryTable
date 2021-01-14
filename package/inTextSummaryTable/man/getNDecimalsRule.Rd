@@ -33,6 +33,10 @@ with the number of decimals.
 \description{
 Note: NA is returned if the element is missing (NA).
 }
+\examples{
+x <- c(0.99, 5.679, 50.45, 1450)
+getNDecimalsRule(x = x)
+}
 \author{
 Laure Cougnaud
 }

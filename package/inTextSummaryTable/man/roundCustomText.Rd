@@ -2,8 +2,9 @@
 % Please edit documentation in R/miscellaneous.R
 \name{roundCustomText}
 \alias{roundCustomText}
-\title{Custom round function, rounding to the closest digits
-(instead of rounding to the even number in case of 0.5)}
+\title{Round a number (with 'round-up' strategy)
+for a specific number of digits,
+and format number to a: 'xxx.xxx' text.}
 \usage{
 roundCustomText(x, digits = 0, format)
 }
@@ -19,8 +20,14 @@ A character vector with the rounded number.
 See the \code{glpgUtilityFct::roundCustom} for the rounding customization.
 }
 \description{
-Custom round function, rounding to the closest digits
-(instead of rounding to the even number in case of 0.5)
+The following workflow is used:
+\enumerate{
+\item{numbers are rounded with the \code{\link[glpgUtilityFct]{roundCustom}}
+function, see the \code{? roundCustom} for more details
+on the rounding strategy}
+\item{round numbers are formatted to character in
+the format: 'xxx.xxx' with pads leading zeros}
+}
 }
 \examples{
 # number of digits higher than number of decimal
@@ -29,6 +36,8 @@ roundCustomText(x = c(0.345, 0.567, -0.98), digits = 2)
 roundCustomText(x = c(0.345, 0.567, -0.98), digits = 0)
 # by default, 'digits' is 0!
 roundCustomText(x = c(0.345, 0.567, -0.98))
+# padding zeros
+roundCustomText(1.23, 10)
 }
 \author{
 Laure Cougnaud and Michela Pasetto

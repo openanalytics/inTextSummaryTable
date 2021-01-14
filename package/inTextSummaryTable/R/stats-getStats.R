@@ -106,6 +106,27 @@ getStatsData <- function(
 #' 
 #' This set of statistics is passed directly to the \code{stats} parameter
 #' of the \code{\link{computeSummaryStatisticsTable}} function.
+#' @section Formatting of the statistics:
+#' \itemize{
+#'
+#' \item{rounding: }{all rounding is taken care with the \code{roundCustomText}}
+#'
+#' \item{statistics for continuous variable are rounded with the following 
+#' number of decimals}{
+#'
+#' \itemize{
+#'
+#' \item{if the number of decimals is specified via \code{nDecCont}: }{
+#' \itemize{
+#' \item{'Min', 'Max': }{\code{nDecCont}}
+#' \item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
+#' \item{'SE': }{\code{nDecCont} + 2}
+#' }}
+#' \item{if the number of decimals is not specified: }{
+#' a default format is set via the \code{\link{formatC}} function.}
+#' }}
+
+#' }
 #' @param type Character vector with type of statistics (multiple are possible):
 #' \itemize{
 #' \item{base statistics: }{
@@ -155,11 +176,13 @@ getStatsData <- function(
 #' for continuous variable, or function returning this number based on \code{x} 
 #' (\code{\link{getNDecimals}} by default).
 #' @param nDecN,nDecm Integer with number of decimals for number of subjects/records (0 by default).
-#' @param formatPercentage Function used to format the percentage of the number of subjects
+#' @param formatPercentage Function used to format the percentages
 #' (see \code{\link{formatPercentage}} for default behaviour).
-#' @return (Optionally named) list of expression or call object containing
-#' function to extract summary statistics.
+#' @return Expression (or call object) containing
+#' function to extract requested summary statistics.
 #' If multiple \code{type} are specified, they are combined to a list.
+#' Names of the list will be typically used to name the statistic
+#' in the summary table.
 #' @examples
 #' ## default set of statistics are available for:
 #' 

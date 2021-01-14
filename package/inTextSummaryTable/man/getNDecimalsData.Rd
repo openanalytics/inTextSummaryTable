@@ -18,8 +18,10 @@ with the number of decimals.
 Get number of decimals based on the data in a numeric vector.
 Note: NA is returned if the element is missing (NA).
 }
+\examples{
+x <- c(0.99, 5.679, 50.45, 1450)
+getNDecimalsData(x)
+}
 \author{
 Laure Cougnaud
-x <- c(12.345, -123.45, 1234.5, -12345)
-getNDecimalsData(x)
 }

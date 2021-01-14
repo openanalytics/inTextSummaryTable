@@ -36,10 +36,26 @@ Numeric vector of same length than \code{x}
 with the number of decimals.
 }
 \description{
-The number of decimals is extracted from specific implemented rule
-(see \code{\link{getNDecimalsRule}}),
-from the data itself (see \code{\link{getNDecimalsData}}),
-or both: in this case the minimum of both criterias is used.
+The number of decimals is extracted either:
+\itemize{
+\item{from specific implemented rule :}{
+see \code{\link{getNDecimalsRule}} for further details}
+\item{from the data itself: }{
+see \code{\link{getNDecimalsData}} for further details
+}
+\item{both criterias: }{in this case the minimum of 
+the number of decimals for both criterias is used}
+}
+}
+\examples{
+x <- c(0.99, 5.679, 50.45, 1450)
+# extract number of decimals based on data:
+getNDecimals(x, useRule = FALSE, useData = TRUE)
+# extract number of decimals based on pre-defined rule:
+getNDecimals(x, useRule = TRUE, useData = FALSE)
+# extract number of decimals based on both rules
+# minimum of both is used (by default)
+getNDecimals(x, useRule = TRUE, useData = TRUE)
 }
 \author{
 Laure Cougnaud
