@@ -525,6 +525,16 @@ test_that("a stat variable is not escaped", {
 		stringsAsFactors = FALSE
 	)
 	
+	# entire table is escaped:
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		noEscapeVar = c("patientProfileLink", "n"),
+		statsVar = c("patientProfileLink", "n"),
+		outputType = "DT"
+	)	
+	expect_true(grepl("\\d", attr(dt$x$options, "escapeIdx"), invert = TRUE)
+	
+	# escape only one column
 	# This is checked with 'statsLayout' is 'row'
 	# as in this case: the entire stat value column
 	# should not be escape
