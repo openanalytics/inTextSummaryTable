@@ -532,7 +532,7 @@ test_that("a stat variable is not escaped", {
 		statsVar = c("patientProfileLink", "n"),
 		outputType = "DT"
 	)	
-	expect_true(grepl("\\d", attr(dt$x$options, "escapeIdx"), invert = TRUE)
+	expect_false(grepl("\\d", attr(dt$x$options, "escapeIdx")))
 	
 	# escape only one column
 	# This is checked with 'statsLayout' is 'row'
