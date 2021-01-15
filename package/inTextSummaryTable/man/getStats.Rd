@@ -15,42 +15,10 @@ getStats(
 )
 }
 \arguments{
-\item{type}{Character vector with type of statistics (multiple are possible):
-\itemize{
-\item{base statistics: }{
-\itemize{
-\item{'n': }{number of subjects}
-\item{'m': }{number of records}
-\item{'\%': }{percentage of subjects}
-\item{'\%m': }{percentage of records.
-Note: this is only available if \code{statsPerc} is set to 'statm'
-in \code{\link{getSummaryStatisticsTable}} or \code{\link{computeSummaryStatisticsTable}}.
-}
-\item{'Mean' (only for continuous variable): }{mean}
-\item{'Median' (only for continuous variable): }{median}
-\item{'SE' (only for continuous variable): }{standard error}
-\item{'SD' (only for continuous variable): }{standard deviation}
-\item{'Min' (only for continuous variable): }{minimum}
-\item{'Max' (only for continuous variable): }{maximum}
-}}
-\item{'summary': }{all statistics available for a continuous variable:
-n, Mean, SD, SE, Median, Min, Max, \%, m}
-\item{'count': }{all statistics available for a categorical variable: n, \%, m}
-\item{'summary-default': }{default set of statistics for a continuous variable:
- n, Mean, SD, SE, Median, Min, Max}
-\item{'count-default': }{default set of statistics for a categorical variable:
- n, \%}
-\item{'n (\%)': }{number of subjects (and associated percentage)}
-\item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
-\item{'m (\%)': }{number of records (and associated percentage).
-Note: this is only available if \code{statsPerc} is set to 'statm'
-in \code{\link{getSummaryStatisticsTable}} or \code{\link{computeSummaryStatisticsTable}}.
-}
-\item{'median (range)': }{median (minimum, maximum)}
-\item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
-\item{'mean (se)': }{mean and standard error}
-\item{'mean (range)': }{mean and (minimum, maximum)}
-}}
+\item{type}{Character vector with type of statistics (multiple are possible).
+Available statistics are specified in the section 'Formatted statistics' and
+formatting in 'Statistics formatting' in
+\code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.}
 
 \item{includeName}{Logical, should the statistics name be included (TRUE by default)?
 This is applied for the statistic names used in each for the set defined in \code{type};
@@ -67,7 +35,8 @@ If not specified, the values are rounded with \code{\link{formatC}}.}
 for continuous variable, or function returning this number based on \code{x} 
 (\code{\link{getNDecimals}} by default).}
 
-\item{nDecN, nDecm}{Integer with number of decimals for number of subjects/records (0 by default).}
+\item{nDecN, nDecm}{Integer with number of decimals 
+for number of subjects/records (0 by default).}
 
 \item{formatPercentage}{Function used to format the percentages
 (see \code{\link{formatPercentage}} for default behaviour).}
@@ -80,32 +49,9 @@ Names of the list will be typically used to name the statistic
 in the summary table.
 }
 \description{
-This set of statistics is passed directly to the \code{stats} parameter
+This set of statistics can be passed directly to the \code{stats} parameter
 of the \code{\link{computeSummaryStatisticsTable}} function.
 }
-\section{Formatting of the statistics}{
-
-\itemize{
-
-\item{rounding: }{all rounding is taken care with the \code{roundCustomText}}
-
-\item{statistics for continuous variable are rounded with the following 
-number of decimals}{
-
-\itemize{
-
-\item{if the number of decimals is specified via \code{nDecCont}: }{
-\itemize{
-\item{'Min', 'Max': }{\code{nDecCont}}
-\item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
-\item{'SE': }{\code{nDecCont} + 2}
-}}
-\item{if the number of decimals is not specified: }{
-a default format is set via the \code{\link{formatC}} function.}
-}}
-}
-}
-
 \examples{
 ## default set of statistics are available for:
 

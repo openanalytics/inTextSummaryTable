@@ -104,46 +104,28 @@
 #' \item{'statN' (by default): }{the number of subjects}
 #' \item{'statm': }{the number of records}
 #' }
-#' @param stats (Optionally) Statistic(s) of interest to compute, either:
+#' @param stats (optional) Statistic(s) of interest to compute, either:
 #' \itemize{
-#' \item{string with a default set of statistics, as implemented
-#' via the \code{type} parameter of the \code{\link{getStatsData}} function.}
-#' \item{Named list of expressions or call objects (see \code{\link{is.language}}) of summary statistics of interest: }{
-#' The names are reported in the header.
-#' The following \strong{'base statistical variables'} are recognized, depending if the variable is: 
-#' \itemize{
-#' \item{continuous (or \code{type} is 'summaryTable'): }{
-#' \itemize{
-#' \item{'statN': }{number of subjects}
-#' \item{'statMean': }{mean of \code{var}}
-#' \item{'statSD': }{standard deviation of \code{var}}
-#' \item{'statSE': }{standard error of \code{var}}
-#' \item{'statMedian': }{median of \code{var}}
-#' \item{'statMin': }{minimum of \code{var}}
-#' \item{'statMax': }{maximum of \code{var}}
-#' \item{'statPercN' (or 'statPercm'): }{percentage of subjects
-#' (or records depending on \code{statsPerc})}
-#' \item{'statm': }{number of records}
-#' }
-#' If multiple and different values are available for a specific \code{var}
-#' and subject ID, by \code{rowVar}/\code{colVar}: an error is triggered.
-#' }
-#' \item{categorical (or \code{type} is 'countTable': }{
-#' \itemize{
-#' \item{'statN': }{number of subjects}
-#' \item{'statPercN' (or 'statPercm'): }{percentage of subjects
-#' (or records depending on \code{statsPerc})}
-#' \item{'statm': }{number of records}
-#' }
-#' }
-#' }
+#' \item{string with a default set of statistics, 
+#' see section 'Formatted statistics' in
+#' \code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.}
+#' \item{Named list of expressions or call objects (see \code{\link{is.language}}) 
+#' of base summary statistics of interest, see section:
+#' 'Base statistics' in
+#' \code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.\cr
+#' The names are reported in the header.\cr
 #' If \code{stats} if of length 1, the name of the summary statistic is not included
-#' in the table.
-#' The statistics can be specified for each \code{var} (if multiple), 
+#' in the table.\cr
+#' The statistics can be specified separately:
+#' \itemize{
+#' \item{for each \code{var} (if multiple), 
 #' by naming each element of the list:
-#' \code{list(varName1 = list(...), varName2 = list())} and/or for each element in:
-#' \code{statsVarBy}, by naming each sublist.
+#' \code{list(varName1 = list(...), varName2 = list())}
+#' }
+#' \item{and/or for each element in:
+#' \code{statsVarBy}, by naming each sublist.}
 #' }}
+#' }
 #' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
 #' Only included if no \code{statsVar} if longer than 1.
 #' @param statsVarBy String with variable in \code{rowVar}/code{colVar}
