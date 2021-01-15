@@ -227,7 +227,11 @@ Summary statistics are extracted for a combined set of discrete and numeric vari
 
 The set of summary statistics can be combined and the format customized via the `stats` 
 parameter. 
+
 This parameter is an list of `expression` of the statistics (columns) computed by default (`stat[X]` variable(s)).
+
+Please see ? `inTextSummaryTable-stats` for an extensive documentation on the 
+specification of statistics in the in-text table package.
 
 If an unique statistic expression is specified, the 'Statistic' column doesn't appear 
 in the table. In case multiple statistics are specified, these are included as separated row.
