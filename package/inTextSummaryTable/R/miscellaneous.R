@@ -14,7 +14,8 @@
 #' @param digits Integer with number of digits to consider, 0 by default.
 #' @param format For backward compatibility. This parameter will be deprecated in the next package release.
 #' @return A character vector with the rounded number.
-#' See the \code{glpgUtilityFct::roundCustom} for the rounding customization.
+#' See the \code{\link[glpgUtilityFct](roundCustom} for the rounding customization.
+#' NA values are returned as 'NA' (as string).
 #' @author Laure Cougnaud and Michela Pasetto
 #' @importFrom glpgUtilityFct roundCustom
 #' @examples 
