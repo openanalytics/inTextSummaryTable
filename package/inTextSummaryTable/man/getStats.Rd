@@ -50,7 +50,7 @@ in the summary table.
 }
 \description{
 This set of statistics can be passed directly to the \code{stats} parameter
-of the \code{\link{computeSummaryStatisticsTable}} function.
+of the of the package functions.
 }
 \examples{
 ## default set of statistics are available for:
@@ -83,6 +83,9 @@ getStats(type = c('median (range)', 'mean (se)'))
 
 ## custom function to format the percentages:
 getStats(type = "count", formatPercentage = function(x) round(x, 2))
+}
+\seealso{
+getStatsData
 }
 \author{
 Laure Cougnaud

@@ -2,7 +2,7 @@
 % Please edit documentation in R/stats-getStats.R
 \name{getStatsData}
 \alias{getStatsData}
-\title{Get default set of statistics for variables of interest and specific dataset}
+\title{Get default set of statistics for variables of interest and specific dataset.}
 \usage{
 getStatsData(
   data,
@@ -23,7 +23,10 @@ getStatsData(
 \item{'default': }{default sets of statistics, 
 see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
 \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
-\item{any \code{type} available in the \code{\link{getStats}} function}
+\item{any formatted statistics as implemented in \code{\link{getStats}}, 
+see section 'Formatted statistics' in
+\code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.
+}
 }
 To specify statistics for a continuous (numeric) or categorical
 variable separately, this vector can be named with: 'cont' or
@@ -44,8 +47,10 @@ categorical variable (name: 'cat') specifically.}
 List with statistics to compute, named by \code{var}
 }
 \description{
-This set of statistics is passed directly to the \code{stats} parameter
-of the \code{\link{computeSummaryStatisticsTable}} function.
+This set of statistics can be passed directly to the \code{stats} parameter
+of the package functions.\cr
+By default, statistics are extracted based on the variable(s) type
+and formatted with the default rules implemented in the package.
 }
 \examples{
 library(glpgUtilityFct)
@@ -58,6 +63,9 @@ getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = "al
 getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = c("n", "\%"))
 # custom set of statistics, depending on the type of the variable
 getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = c(cont = "median (range)", cont = "mean (se)", cat = "n (\%)"), args = list(cat = list(includeName = FALSE)))
+}
+\seealso{
+getStats
 }
 \author{
 Laure Cougnaud

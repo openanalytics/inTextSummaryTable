@@ -1,4 +1,4 @@
-context("Get default set of statistics")
+context("Get set of statistics")
 
 test_that("output format of base and combined stats is correct", {	
 			
