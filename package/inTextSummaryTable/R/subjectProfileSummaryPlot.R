@@ -765,11 +765,10 @@ subjectProfileSummaryTable <- function(
 			# consider levels of color variable factor to
 			# set correct palette in case color palette specified for some elements
 			# without data (not represented in the plot)
-			paletteEl <- if(is.factor(data[, colorVar])){
-				levels(droplevels(data[, colorVar]))
-			}else{
-				unique(data[, colorVar])
-			}
+			colorVect <- data[, colorVar]
+			if(!is.factor(colorVect))
+				colorVect <- as.factor(colorVect)
+			paletteEl <- levels(droplevels(colorVect))
 			colorPaletteAxes <- unname(colorPalette[paletteEl])
 			list(axis.text.y = element_text(colour = colorPaletteAxes))
 		},

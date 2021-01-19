@@ -144,7 +144,8 @@ file with the suffix: 'file_[i].docx' with i the index of the file.}
 \item{pageDim}{(optional) Numeric vector of length 2 with 
 page width and height in inches in portrait format,
 in case page dimensions differ from the default
-implemented report/presentation.}
+implemented report/presentation.
+These dimensions should include the margins.}
 
 \item{labelVars}{Named character vector with variable labels (names are the variable code),
 usually extracted from \code{data}.}
