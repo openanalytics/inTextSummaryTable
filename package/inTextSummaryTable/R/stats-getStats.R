@@ -1,15 +1,22 @@
-#' Get default set of statistics for variables of interest and specific dataset
+#' Get default set of statistics for variables of interest and specific dataset.
 #' 
-#' This set of statistics is passed directly to the \code{stats} parameter
-#' of the \code{\link{computeSummaryStatisticsTable}} function.
+#' This set of statistics can be passed directly to the \code{stats} parameter
+#' of the package functions.\cr
+#' By default, statistics are extracted based on the variable(s) type
+#' and formatted with the default rules implemented in the package.
 #' @param data Data.frame with data.
-#' @param var Character vector with variable(s) of interest
+#' @param var Character vector with variable(s) of interest,
+#' available in \code{data}.\cr
+#' If not specified, count statistics are extracted for \code{data}.
 #' @param type Character vector with type of statistics to extract, among:
 #' \itemize{
 #' \item{'default': }{default sets of statistics, 
 #' see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
 #' \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
-#' \item{any \code{type} available in the \code{\link{getStats}} function}
+#' \item{any formatted statistics as implemented in \code{\link{getStats}}, 
+#' see section 'Formatted statistics' in
+#' \code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.
+#' }
 #' }
 #' To specify statistics for a continuous (numeric) or categorical
 #' variable separately, this vector can be named with: 'cont' or
@@ -23,6 +30,7 @@
 #' @param ... Extra parameters passed to the \code{\link{getStats}} function
 #' (independent of the variable type).
 #' @return List with statistics to compute, named by \code{var}
+#' @seealso getStats
 #' @examples 
 #' library(glpgUtilityFct)
 #' data(ADaMDataPelican)
@@ -78,7 +86,7 @@ getStatsData <- function(
 	}
 	
 	getExtra <- function(var = NULL){
-		if(var == "all")	var <- NULL
+		if(!is.null(var) && var == "all")	var <- NULL
 		if(!is.null(extra)){
 			listExtra <- lapply(extra, function(extraEl){
 				if(is.function(extraEl))	extraEl(data[, var])	else	extraEl
@@ -105,7 +113,7 @@ getStatsData <- function(
 #'  Get default set of statistics for one particular variable.
 #' 
 #' This set of statistics can be passed directly to the \code{stats} parameter
-#' of the \code{\link{computeSummaryStatisticsTable}} function.
+#' of the of the package functions.
 #' @param type Character vector with type of statistics (multiple are possible).
 #' Available statistics are specified in the section 'Formatted statistics' and
 #' formatting in 'Statistics formatting' in
@@ -162,6 +170,7 @@ getStatsData <- function(
 #' 
 #' ## custom function to format the percentages:
 #' getStats(type = "count", formatPercentage = function(x) round(x, 2))
+#' @seealso getStatsData
 #' @author Laure Cougnaud
 #' @export
 getStats <- function(

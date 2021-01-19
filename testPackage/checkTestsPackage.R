@@ -37,6 +37,6 @@ pc <- package_coverage(
 )
 report(
 	x = pc, 
-	file = paste0("testCoverage-inTextSummaryTable", packageVersion("inTextSummaryTable"), ".html")
+	file = paste0("testCoverage-inTextSummaryTable-", packageVersion("inTextSummaryTable"), ".html")
 )
 
