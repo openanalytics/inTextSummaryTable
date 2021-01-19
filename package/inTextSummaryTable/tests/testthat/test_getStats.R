@@ -59,17 +59,125 @@ test_that("percentage of subjects/records are formatted correctly", {
 			
 	statPerc <- c(`%` = "statPercN", `%m` = "statPercm")
 	for(type in names(statPerc)){
-			
+		
 		expect_equal({
-				summaryTable <- setNames(
-					data.frame(c(56.7, 0, 0.999, 1e-6, 99.99, NA_integer_)),
-					statPerc[!!type]
-				)
-				stat <- getStats(type = !!type)
-				eval(expr = stat[[!!type]], envir = summaryTable)
+			summaryTable <- setNames(
+				data.frame(c(56.7, 0, 0.999, 1e-6, 99.99, NA_integer_)),
+				statPerc[!!type]
+			)
+			stat <- getStats(type = !!type)
+			eval(expr = stat[[!!type]], envir = summaryTable)
 			},
 			formatPercentage(x = summaryTable[[statPerc[!!type]]])
 		)
 	}
+	
+})
+
+test_that("number of subjects is formatted with specified number of decimals", {
+	
+	stat <- getStats(type = "n", nDecN = 1)
+	summaryTable <- data.frame(statN = c(13, 100.56))
+	expect_equal(
+		eval(expr = stat$n, envir = summaryTable),
+		c("13.0", "100.6")
+	)
 			
 })
+
+test_that("number of records is formatted with specified number of decimals", {
+			
+	stat <- getStats(type = "m", nDecN = 2)
+	summaryTable <- data.frame(statm = c(13, 100.567))
+	expect_equal(
+		eval(expr = stat$m, envir = summaryTable),
+		c("13.00", "100.57")
+	)
+			
+})
+
+test_that("mean is formatted with specified number of decimals", {
+			
+	stat <- getStats(type = "Mean", nDecCont = 4)
+	summaryTable <- data.frame(statMean = c(1098, 100.567567))
+	expect_equal(
+		eval(expr = stat$Mean, envir = summaryTable),
+		c("1098.00000", "100.56757")
+	)
+			
+})
+
+test_that("median is formatted with specified number of decimals", {
+			
+	stat <- getStats(type = "Median", nDecCont = 4)
+	summaryTable <- data.frame(statMedian = c(1098, 100.567567))
+	expect_equal(
+		eval(expr = stat$Median, envir = summaryTable),
+		c("1098.00000", "100.56757")
+	)
+			
+})
+
+test_that("standard deviation is formatted with specified number of decimals", {
+			
+	stat <- getStats(type = "SD", nDecCont = 4)
+	summaryTable <- data.frame(statMedian = c(1098, 100.567567))
+	expect_equal(
+		eval(expr = stat$Median, envir = summaryTable),
+		c("1098.00000", "100.56757")
+	)
+			
+})
+
+test_that("standard error is formatted with specified number of decimals", {
+			
+	stat <- getStats(type = "SE", nDecCont = 4)
+	summaryTable <- data.frame(statSE = c(1098, 100.56756767))
+	expect_equal(
+		eval(expr = stat$SE, envir = summaryTable),
+		c("1098.000000", "100.567568")
+	)
+			
+})
+
+test_that("minimum is formatted with specified number of decimals", {
+			
+	stat <- getStats(type = "Min", nDecCont = 4)
+	summaryTable <- data.frame(statMin = c(1098, 100.56756767))
+	expect_equal(
+		eval(expr = stat$Min, envir = summaryTable),
+		c("1098.0000", "100.5676")
+	)
+			
+})
+
+test_that("maximum is formatted with specified number of decimals", {
+			
+	stat <- getStats(type = "Max", nDecCont = 4)
+	summaryTable <- data.frame(statMax = c(1098, 100.56756767))
+	expect_equal(
+		eval(expr = stat$Max, envir = summaryTable),
+		c("1098.0000", "100.5676")
+	)
+			
+})
+
+test_that("default set of summary stats is extracted", {
+			
+	statType <- c("statN", "statMean", "statSD", "statSE", "statMedian", "statMin", "statMax")
+	type <- ifelse(statType == "statN", "n", sub("stat", "", statType))
+
+	summaryTable <- setNames(
+		as.data.frame(replicate(7, rnorm(4))),
+		statType
+	)
+	
+	expect_identical(
+		getStats(type = "summary-default"),		
+		getStats(type = type)
+	)
+			
+})
+
+
+
