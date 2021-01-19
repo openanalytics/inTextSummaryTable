@@ -98,3 +98,30 @@ test_that("custom stats are specified for both cat and cont variables", {
 	expect_identical(stat, statSep)
 	
 })
+
+test_that("args are passed to getStats for cat and cont variables separately", {
+
+	data <- data.frame(
+		value = rnorm(10),
+		group = LETTERS[seq.int(10)]
+	)
+	args <- list(
+		cat = list(includeName = FALSE),
+		cont = list(includeName = TRUE)
+	)
+			
+	stat <- getStatsData(
+		data, 
+		var = c("value", "group"), 
+		type = "n", 
+		args = args
+	)
+			
+	statSep <- c(
+		getStatsData(data, var = "value", type = "n", includeName = TRUE), 
+		getStatsData(data, var = "group", type = "n", includeName = FALSE)
+	)
+			
+	expect_identical(stat, statSep)
+			
+})
