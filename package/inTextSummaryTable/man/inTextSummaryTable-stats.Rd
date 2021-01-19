@@ -152,14 +152,14 @@ specified via \code{nDecN} or \code{nDecm} (0 by default)}
 
 \item{'n (\%)' and 'm (\%)': }{ 
 \itemize{
-\item{if the number of subjects/records is missing, '-' is reported}
+\item{if the percentage of subjects/records is missing, '-' is reported}
 \item{if the number of subjects/records is 0, '0' is reported instead of '0 (0\%)'}
 \item{otherwise the number and percentage of subjects/records are formatted as specified}
 }}
 
 \item{'n/N (\%)': }{
 \itemize{
-\item{if the number of subjects (n) is missing, '-' is reported}
+\item{if the percentage of subjects is missing, '-' is reported}
 \item{if the number of subjects is 0, '0' is reported instead of '0/... (0\%)'}
 \item{otherwise the number and percentage of subjects and total are formatted as specified}
 }}
