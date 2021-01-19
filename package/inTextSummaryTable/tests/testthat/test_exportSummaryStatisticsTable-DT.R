@@ -136,7 +136,6 @@ test_that("table is exported with total in header", {
 		isTotal = c(FALSE, TRUE, FALSE, TRUE)
 	)
 	
-	# with header:
 	expect_identical(
 		object = {
 			dt <- exportSummaryStatisticsTable(
@@ -150,7 +149,16 @@ test_that("table is exported with total in header", {
 		expected = c("B\n(N=5)", "A\n(N=4)")
 	)
 	
-	# without header
+})
+	
+test_that("table is exported without total in header", {
+		
+	summaryTable <- data.frame(
+		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
+		statN = c(1, 4, 2, 5),
+		isTotal = c(FALSE, TRUE, FALSE, TRUE)
+	)
+			
 	expect_identical(
 		object = {
 			dt <- exportSummaryStatisticsTable(
@@ -164,6 +172,31 @@ test_that("table is exported with total in header", {
 		expected = c("B", "A")
 	)
 
+})
+
+test_that("table without rows with col total is exported without total in header", {
+			
+	# check that no records are filtered
+	summaryTable <- data.frame(
+		TRT = factor(c("A", "B"), levels = c("B", "A")),
+		statN = c(1, 4),
+		isTotal = c(FALSE, FALSE)
+	)	
+
+	expect_silent({
+		dt <- exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			colVar = "TRT",
+			outputType = "DT",
+			colHeaderTotalInclude = FALSE
+		)
+	})
+	expect_equal(
+		object = dt$x$data, 
+		expected = data.frame(B = 4, A = 1), 
+		check.attributes = FALSE
+	)
+			
 })
 
 test_that("stat layout is specified", {
