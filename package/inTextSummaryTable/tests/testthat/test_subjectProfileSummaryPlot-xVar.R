@@ -109,6 +109,19 @@ test_that("gap is specified in the x-axis ", {
 		"'xGap' should only be specified for continuous x-variable"
 	)
 	
+	# xGap is specified but not xVar
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = data.frame(
+				visit = c("1", "2"), 
+				statMean = rnorm(2)
+			),
+			colorVar = "visit",
+			xGap = c(1, 2)
+		),
+		"'xGap' should only be specified if 'xVar' is specified"
+	)
+	
 	expect_warning(
 		subjectProfileSummaryPlot(
 			data = data.frame(
