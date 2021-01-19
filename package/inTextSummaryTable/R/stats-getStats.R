@@ -23,7 +23,7 @@
 #' 'cat' respectively (elements not named are used for both continuous 
 #' and categorical variables).
 #' @param extra List with extra statistics to include, or function to apply on each
-#' \code{var} (e.g. depending on the class of \code{var}) to get such list.
+#' \code{var} (e.g. depending on the class of \code{var}) to get such statistic.
 #' @param args (optional) Named list with extra arguments for 
 #' \code{\link{getStats}} for continuous (name: 'cont') or 
 #' categorical variable (name: 'cat') specifically. 

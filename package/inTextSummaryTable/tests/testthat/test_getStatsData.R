@@ -125,3 +125,45 @@ test_that("args are passed to getStats for cat and cont variables separately", {
 	expect_identical(stat, statSep)
 			
 })
+
+test_that("extra custom stat is specified as a function of var", {
+			
+	data <- data.frame(
+		value = rnorm(10)
+	)
+	myCustomStat <- function(x){
+		bquote(mean(x)/.(length(x)))
+	}
+	stat <- getStatsData(
+		data = data, 
+		var = "value", 
+		type = "Mean",
+		extra = list(myCustomStat = myCustomStat)
+	)
+	expect_named(stat$value, c("Mean", "myCustomStat"))
+	expect_equal(
+		stat$value$myCustomStat, 
+		myCustomStat(x = data$value)
+	)
+			
+})
+
+test_that("extra custom stat is specified", {
+			
+	data <- data.frame(
+		value = rnorm(10)
+	)
+	myCustomStat <- bquote(mean(x))
+	stat <- getStatsData(
+		data = data, 
+		var = "value", 
+		type = "Mean",
+		extra = list(myCustomStat = myCustomStat)
+	)
+	expect_named(stat$value, c("Mean", "myCustomStat"))
+	expect_equal(
+		stat$value$myCustomStat, 
+		myCustomStat
+	)
+			
+})
