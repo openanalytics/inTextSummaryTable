@@ -16,7 +16,9 @@ getStatsData(
 \arguments{
 \item{data}{Data.frame with data.}
 
-\item{var}{Character vector with variable(s) of interest}
+\item{var}{Character vector with variable(s) of interest,
+available in \code{data}.\cr
+If not specified, count statistics are extracted for \code{data}.}
 
 \item{type}{Character vector with type of statistics to extract, among:
 \itemize{
