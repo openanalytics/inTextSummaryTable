@@ -611,6 +611,22 @@ test_that("column variable is specified", {
 	
 })
 
+test_that("duplicated records returns an error", {
+			
+	summaryTable <- data.frame(
+		TRT = c("A", "A", "B"), 
+		n = c(9, 8, 10)
+	)
+	expect_error(
+		exportSummaryStatisticsTable(
+			summaryTable = summaryTable,
+			colVar = "TRT"
+		),
+		"Table formatting to multiple columns failed because of duplicated records for each row/col"
+	)
+			
+})
+
 test_that("total is included in header", {
 	
 	summaryTable <- data.frame(
