@@ -1453,6 +1453,24 @@ test_that("table is exported to a docx file", {
 	
 })
 
+test_that("table is exported to a docx file in landscape format", {
+		
+	file <- "table.docx" 
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = data.frame(n = 10),
+		file = file,
+		landscape = TRUE
+	)
+	doc <- officer::read_docx(file)
+	docCnt <- doc$doc_obj$get()
+	expect_match(
+		object = as.character(docCnt), 
+		regexp = 'orient=\"landscape\"', 
+		fixed = TRUE
+	)
+			
+})
+
 test_that("list of summary tables is exported to file", {
 			
 	summaryTables <- list(
