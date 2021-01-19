@@ -150,9 +150,7 @@ test_that("extra custom stat is specified as a function of var", {
 
 test_that("extra custom stat is specified", {
 			
-	data <- data.frame(
-		value = rnorm(10)
-	)
+	data <- data.frame(value = rnorm(10))
 	myCustomStat <- bquote(mean(x))
 	stat <- getStatsData(
 		data = data, 
@@ -166,4 +164,20 @@ test_that("extra custom stat is specified", {
 		myCustomStat
 	)
 			
+})
+
+test_that("general args are passed to getStats", {
+			
+	data <- data.frame(value = rnorm(10))
+	stat <- getStatsData(
+		data = data, 
+		var = "value", 
+		type = "Mean",
+		nDecCont = 3
+	)
+	expect_equal(
+		stat$value, 
+		getStats(type = "Mean", nDecCont = 3)
+	)
+		
 })
