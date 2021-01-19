@@ -345,7 +345,7 @@ test_that("variable labels specified with 'labelVars'", {
 			
 })
 
-test_that("y-axis labels are included", {
+test_that("y-axis labels are included with color var as factor", {
 	
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -364,11 +364,7 @@ test_that("y-axis labels are included", {
 		"Labels for the y-axis are not included because color variable is not specified."
 	)
 	
-#	expect_equal(
-#		object = layer_scales(gg)$y$range$range, 
-#		expected = levels(summaryTable$TRT)
-#	)
-	
+	# correct spec, with color var as factor:
 	colorPalette <- c(A = "red", B = "blue")
 	gg <- subjectProfileSummaryTable(
 		data = summaryTable, 
@@ -383,6 +379,40 @@ test_that("y-axis labels are included", {
 	expect_equal(
 		gg$theme$axis.text.y$colour,
 		unname(colorPalette[levels(droplevels(summaryTable$TRT))])
+	)
+	
+})
+
+test_that("y-axis labels are included with color var as character", {
+			
+	# not as a factor:
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20),
+		TRT = c("B", "A", "B", "A"),
+		stringsAsFactors = FALSE
+	)		
+	colorPalette <- c(A = "red", B = "blue")
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT",
+		colorPalette = colorPalette,
+		yAxisLabs = TRUE
+	)
+	# check that color of labels are correct in the y-axis
+	expect_equal(
+		gg$theme$axis.text.y$colour,
+		unname(colorPalette)
+	)
+	
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomText"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+	expect_equal(
+		unname(c(with(ggDataText, tapply(colour, y, unique)))),
+		unname(colorPalette)
 	)
 	
 })

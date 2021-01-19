@@ -9,6 +9,8 @@
     - extra checks input params
     - fix ordering facets in case [x]Line specified
     - deprecate yLimExpand -> yAxisExpand
+  o subject profile summary table:
+    - fix y-labels when color var is character
   o compute stats/subject profile (table): simplify stats expr check
   o formatting flextable: 
     - check row var total include

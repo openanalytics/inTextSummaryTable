@@ -36,7 +36,7 @@ variable separately, this vector can be named with: 'cont' or
 and categorical variables).}
 
 \item{extra}{List with extra statistics to include, or function to apply on each
-\code{var} (e.g. depending on the class of \code{var}) to get such list.}
+\code{var} (e.g. depending on the class of \code{var}) to get such statistic.}
 
 \item{args}{(optional) Named list with extra arguments for 
 \code{\link{getStats}} for continuous (name: 'cont') or 
