@@ -131,9 +131,9 @@ test_that("median is formatted with specified number of decimals as number", {
 test_that("standard deviation is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "SD", nDecCont = 4)
-	summaryTable <- data.frame(statMedian = c(1098, 100.567567))
+	summaryTable <- data.frame(statSD = c(1098, 100.567567))
 	expect_equal(
-		eval(expr = stat$Median, envir = summaryTable),
+		eval(expr = stat$SD, envir = summaryTable),
 		c("1098.00000", "100.56757")
 	)
 			
