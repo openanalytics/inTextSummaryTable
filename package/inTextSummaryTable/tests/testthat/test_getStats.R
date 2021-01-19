@@ -168,7 +168,7 @@ test_that("default set of summary stats is extracted", {
 	type <- ifelse(statType == "statN", "n", sub("stat", "", statType))
 
 	summaryTable <- setNames(
-		as.data.frame(replicate(7, rnorm(4))),
+		as.data.frame(replicate(length(statType), rnorm(4))),
 		statType
 	)
 	
@@ -178,6 +178,61 @@ test_that("default set of summary stats is extracted", {
 	)
 			
 })
+
+test_that("entire set of summary stats is extracted", {
+			
+	statType <- c("statN", "statMean", "statSD", "statSE", "statMedian", 
+		"statMin", "statMax", "statPercN", "statm")
+	type <- sapply(statType, sub, pattern = "stat", replacement = "")
+	type["statN"] <- "n"
+	type["statPercN"] <- "%"
+			
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+			
+	expect_identical(
+		getStats(type = "summary"),		
+		getStats(type = type)
+	)
+			
+})
+
+test_that("default set of count stats is extracted", {
+			
+	statType <- c("statN", "statPercN")
+	type <- c(statN = "n", statm = "%")
+			
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+			
+	expect_identical(
+		getStats(type = "count-default"),		
+		getStats(type = type)
+	)
+			
+})
+
+test_that("entire set of count stats is extracted", {
+			
+	statType <- c("statN", "statPercN", "statm")
+	type <- c(statN = "n", statm = "%", statm = "m")
+			
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+			
+	expect_identical(
+		getStats(type = "count"),		
+		getStats(type = type)
+	)
+			
+})
+
 
 
 
