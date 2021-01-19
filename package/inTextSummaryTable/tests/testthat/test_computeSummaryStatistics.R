@@ -177,6 +177,34 @@ test_that("statistic type is correct for continuous variable", {
 			
 })
 
+test_that("variable is specified for a summary table", {
+			
+	dataCont <- data.frame(x = c(1, 3), USUBJID = c("a", "b"))
+	expect_error(
+		computeSummaryStatistics(
+			data = dataCont, 
+			var = NULL, 
+			type = "summaryTable"
+		),
+		"Variable.*should be specified.*for a summary table"
+	)
+			
+})
+
+test_that("count table should be computed if variable is 'all'", {
+			
+	dataCont <- data.frame(x = c(1, 3), USUBJID = c("a", "b"))
+	expect_error(
+		computeSummaryStatistics(
+			data = dataCont, 
+			var = "all", 
+			type = "summaryTable"
+		),
+		"'type' should be set to 'countTable'"
+	)
+			
+})
+
 test_that("filtering of empty continuous variable correctly done", {
 	
 	# variable is considered empty if all missing:
