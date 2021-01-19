@@ -81,7 +81,7 @@ Depending on the type of the variable:
 
 \item{combined statistics: }{
 \itemize{
-\item{'median (range)': }{median (minimum, maximum)}
+\item{'median (range)': }{median (minimum,maximum)}
 \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
 \item{'mean (se)': }{mean and standard error}
 \item{'mean (range)': }{mean and (minimum, maximum)}
