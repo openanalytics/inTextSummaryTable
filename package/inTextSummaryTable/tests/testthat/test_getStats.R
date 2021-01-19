@@ -333,6 +333,16 @@ test_that("n (%) is extracted", {
 			
 })
 
+test_that("percentage not included in n (%) if 0 counts", {
+			
+	stat0 <- eval(
+		expr = getStats(type = "n (%)")[[1]],
+		envir = data.frame(statN = 0, statPercN = Inf)
+	)
+	expect_equal(stat0, "0")
+	
+})
+
 test_that("m (%) is extracted", {
 			
 	stat <- getStats(type = "m (%)")
@@ -353,6 +363,16 @@ test_that("m (%) is extracted", {
 		with(statBaseValue, paste0(m, " (", `%m`, ")"))
 	)
 	
+})
+
+test_that("percentage not included in m (%) if 0 counts", {
+			
+	stat0 <- eval(
+		expr = getStats(type = "m (%)")[[1]],
+		envir = data.frame(statm = 0, statPercm = Inf)
+	)
+	expect_equal(stat0, "0")
+			
 })
 
 test_that("n/N (%) is extracted", {
@@ -378,6 +398,16 @@ test_that("n/N (%) is extracted", {
 		statValue,
 		with(statBaseValue, paste0(n, "/", statPercTotalN, " (", `%`, ")"))
 	)
+			
+})
+
+test_that("percentage not included in n/N (%) if 0 counts", {
+			
+	stat0 <- eval(
+		expr = getStats(type = "n/N (%)")[[1]],
+		envir = data.frame(statN = 0, statPercN = Inf, statPercTotalN = NA)
+	)
+	expect_equal(stat0, "0")
 			
 })
 
