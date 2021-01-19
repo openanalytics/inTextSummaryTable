@@ -1,30 +1,23 @@
 context("Get default set of statistics")
 
-test_that("output format of base stats is correct", {	
+test_that("output format of base and combined stats is correct", {	
 			
-	typeBase <- c("n", "m", "%", "%m", "Mean", "SD", "Median", "SE", "Min", "Max")
-	statBase <- c(n = "statN", `%` = "statPercN", `%m` = "statPercm")
-	statBase <- sapply(typeBase, function(type){
-		if(type %in% names(statBase)){
-			statBase[[type]]
-		}else	paste0("stat", type)
-	})
+	type <- c(
+		"n", "m", "%", "%m", 
+		"Mean", "SD", "Median", "SE", "Min", "Max",
+		"median (range)", "median\n(range)", "mean (se)", "mean (range)", 
+		"n (%)", "n/N (%)", "m (%)"
+	)
+	statName <- sapply(type, identity)
+	statName[grep("^median|mean", type)] <- glpgUtilityFct::simpleCap(statName[grep("^median|mean", type)])
+	statName["mean (se)"] <- "Mean (SE)"
 	
-	for(type in typeBase){
+	for(type in type){
 				
 		expect_type(getStats(type = !!type), "list")
 		expect_length(getStats(type = !!type), 1)
-		expect_equal(names(getStats(type = !!type)), !!type)
-		expect_type(getStats(type = !!type)[[!!type]], "language")
-				
-		# check if correct stat is specified
-		expect_equal({
-			stat <- getStats(type = !!type)
-			statCode <- grep("stat\\w", as.character(stat[[!!type]]), value = TRUE)
-			sub("(stat\\w)", "\\1", statCode)
-			}, 
-			statBase[[!!type]]
-		)
+		expect_equal(names(getStats(type = !!type)), statName[[!!type]])
+		expect_type(getStats(type = !!type)[[ statName[[!!type]]]], "language")
 		
 	}
 	
@@ -74,7 +67,7 @@ test_that("percentage of subjects/records are formatted correctly", {
 	
 })
 
-test_that("number of subjects is formatted with specified number of decimals", {
+test_that("number of subjects is formatted with specified number of decimals as number", {
 	
 	stat <- getStats(type = "n", nDecN = 1)
 	summaryTable <- data.frame(statN = c(13, 100.56))
@@ -85,7 +78,7 @@ test_that("number of subjects is formatted with specified number of decimals", {
 			
 })
 
-test_that("number of records is formatted with specified number of decimals", {
+test_that("number of records is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "m", nDecN = 2)
 	summaryTable <- data.frame(statm = c(13, 100.567))
@@ -96,7 +89,7 @@ test_that("number of records is formatted with specified number of decimals", {
 			
 })
 
-test_that("mean is formatted with specified number of decimals", {
+test_that("mean is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Mean", nDecCont = 4)
 	summaryTable <- data.frame(statMean = c(1098, 100.567567))
@@ -107,7 +100,24 @@ test_that("mean is formatted with specified number of decimals", {
 			
 })
 
-test_that("median is formatted with specified number of decimals", {
+test_that("mean is formatted with specified number of decimals as function", {
+			
+	stat <- getStats(
+		type = "Mean", 
+		x = seq.int(10),
+		nDecCont = function(x) 2
+	)
+	
+	summaryTable <- data.frame(statMean = c(1098, 100.567567))
+		
+	expect_equal(
+		eval(expr = stat$Mean, envir = summaryTable),
+		c("1098.000", "100.568")
+	)
+			
+})
+
+test_that("median is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Median", nDecCont = 4)
 	summaryTable <- data.frame(statMedian = c(1098, 100.567567))
@@ -118,7 +128,7 @@ test_that("median is formatted with specified number of decimals", {
 			
 })
 
-test_that("standard deviation is formatted with specified number of decimals", {
+test_that("standard deviation is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "SD", nDecCont = 4)
 	summaryTable <- data.frame(statMedian = c(1098, 100.567567))
@@ -129,7 +139,7 @@ test_that("standard deviation is formatted with specified number of decimals", {
 			
 })
 
-test_that("standard error is formatted with specified number of decimals", {
+test_that("standard error is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "SE", nDecCont = 4)
 	summaryTable <- data.frame(statSE = c(1098, 100.56756767))
@@ -140,7 +150,7 @@ test_that("standard error is formatted with specified number of decimals", {
 			
 })
 
-test_that("minimum is formatted with specified number of decimals", {
+test_that("minimum is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Min", nDecCont = 4)
 	summaryTable <- data.frame(statMin = c(1098, 100.56756767))
@@ -151,7 +161,7 @@ test_that("minimum is formatted with specified number of decimals", {
 			
 })
 
-test_that("maximum is formatted with specified number of decimals", {
+test_that("maximum is formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Max", nDecCont = 4)
 	summaryTable <- data.frame(statMax = c(1098, 100.56756767))
@@ -166,11 +176,6 @@ test_that("default set of summary stats is extracted", {
 			
 	statType <- c("statN", "statMean", "statSD", "statSE", "statMedian", "statMin", "statMax")
 	type <- ifelse(statType == "statN", "n", sub("stat", "", statType))
-
-	summaryTable <- setNames(
-		as.data.frame(replicate(length(statType), rnorm(4))),
-		statType
-	)
 	
 	expect_identical(
 		getStats(type = "summary-default"),		
@@ -187,11 +192,6 @@ test_that("entire set of summary stats is extracted", {
 	type["statN"] <- "n"
 	type["statPercN"] <- "%"
 			
-	summaryTable <- setNames(
-		as.data.frame(replicate(length(statType), rnorm(4))),
-		statType
-	)
-			
 	expect_identical(
 		getStats(type = "summary"),		
 		getStats(type = type)
@@ -203,11 +203,6 @@ test_that("default set of count stats is extracted", {
 			
 	statType <- c("statN", "statPercN")
 	type <- c(statN = "n", statm = "%")
-			
-	summaryTable <- setNames(
-		as.data.frame(replicate(length(statType), rnorm(4))),
-		statType
-	)
 			
 	expect_identical(
 		getStats(type = "count-default"),		
@@ -221,11 +216,6 @@ test_that("entire set of count stats is extracted", {
 	statType <- c("statN", "statPercN", "statm")
 	type <- c(statN = "n", statm = "%", statm = "m")
 			
-	summaryTable <- setNames(
-		as.data.frame(replicate(length(statType), rnorm(4))),
-		statType
-	)
-			
 	expect_identical(
 		getStats(type = "count"),		
 		getStats(type = type)
@@ -233,6 +223,196 @@ test_that("entire set of count stats is extracted", {
 			
 })
 
+test_that("median (range) is extracted", {
 
+	stat <- getStats(type = "median (range)")
+	
+	statType <- c("statMin", "statMax", "statMedian")
+	type <- sub("stat", "", statType)
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+	
+	# check value
+	statValue <- eval(expr = stat[[1]], envir = summaryTable)
+	statBase <- getStats(type = type)
+	statBaseValue <- as.data.frame(lapply(statBase, eval, envir = summaryTable))
+	expect_equal(
+		statValue,
+		with(statBaseValue, paste0(Median, " (", Min, ",", Max, ")"))
+	)
+			
+})
 
+test_that("median\n(range) is extracted", {
+			
+	stat <- getStats(type = "median\n(range)")
+			
+	statType <- c("statMin", "statMax", "statMedian")
+	type <- sub("stat", "", statType)
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+			
+	# check value
+	statValue <- eval(expr = stat[[1]], envir = summaryTable)
+	statBase <- getStats(type = type)
+	statBaseValue <- as.data.frame(lapply(statBase, eval, envir = summaryTable))
+	expect_equal(
+		statValue,
+		with(statBaseValue, paste0(Median, "\n(", Min, ",", Max, ")"))
+	)
+			
+})
+
+test_that("mean (se) is extracted", {
+			
+	stat <- getStats(type = "mean (se)")
+			
+	statType <- c("statMean", "statSE")
+	type <- sub("stat", "", statType)
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+			
+	# check value
+	statValue <- eval(expr = stat[[1]], envir = summaryTable)
+	statBase <- getStats(type = type)
+	statBaseValue <- as.data.frame(lapply(statBase, eval, envir = summaryTable))
+	expect_equal(
+		statValue,
+		with(statBaseValue, paste0(Mean, " (", SE, ")"))
+	)
+	
+})
+
+test_that("mean (range) is extracted", {
+			
+	stat <- getStats(type = "mean (range)")
+			
+	statType <- c("statMean", "statMin", "statMax")
+	type <- sub("stat", "", statType)
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+	
+	# check value
+	statValue <- eval(expr = stat[[1]], envir = summaryTable)
+	statBase <- getStats(type = type)
+	statBaseValue <- as.data.frame(lapply(statBase, eval, envir = summaryTable))
+	expect_equal(
+		statValue,
+		with(statBaseValue, paste0(Mean, " (", Min, ",", Max, ")"))
+	)
+	
+})
+
+test_that("n (%) is extracted", {
+			
+	stat <- getStats(type = "n (%)")
+			
+	statType <- c("statN", "statPercN")
+	type <- c(statN = "n", statPercN = "%")
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+			
+	# check value
+	statValue <- eval(expr = stat[[1]], envir = summaryTable)
+	statBase <- getStats(type = type)
+	statBaseValue <- as.data.frame(lapply(statBase, eval, envir = summaryTable), check.names = FALSE)
+	expect_equal(
+		statValue,
+		with(statBaseValue, paste0(n, " (", `%`, ")"))
+	)
+			
+})
+
+test_that("m (%) is extracted", {
+			
+	stat <- getStats(type = "m (%)")
+	
+	statType <- c("statm", "statPercm")
+	type <- c(statm = "m", statPercm = "%m")
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+	
+	# check value
+	statValue <- eval(expr = stat[[1]], envir = summaryTable)
+	statBase <- getStats(type = type)
+	statBaseValue <- as.data.frame(lapply(statBase, eval, envir = summaryTable), check.names = FALSE)
+	expect_equal(
+		statValue,
+		with(statBaseValue, paste0(m, " (", `%m`, ")"))
+	)
+	
+})
+
+test_that("n/N (%) is extracted", {
+			
+	stat <- getStats(type = "n/N (%)")
+			
+	statType <- c("statN", "statPercN", "statPercTotalN")
+	summaryTable <- setNames(
+		as.data.frame(replicate(length(statType), rnorm(4))),
+		statType
+	)
+			
+	statValue <- eval(expr = stat[[1]], envir = summaryTable)
+			
+	# get base stats
+	type <- c(statN = "n", statPercN = "%")
+	statBase <- getStats(type = type)
+	statBaseValue <- as.data.frame(lapply(statBase, eval, envir = summaryTable), check.names = FALSE)
+	# + add statPercTotalN
+	statBaseValue <- cbind(summaryTable, statBaseValue)		
+	
+	expect_equal(
+		statValue,
+		with(statBaseValue, paste0(n, "/", statPercTotalN, " (", `%`, ")"))
+	)
+			
+})
+
+test_that("stats don't have unique nams", {
+			
+	expect_warning(
+		getStats(type = c("count", "n")),
+		"duplicated names"
+	)
+			
+})
+
+test_that("name is included", {
+
+	expect_named(
+		getStats(type = "n", includeName = TRUE),
+		"n"
+	)
+	
+	expect_named(
+		getStats(type = "n", includeName = FALSE),
+		NULL
+	)
+			
+})
+
+test_that("name is included if multiple stats are requested", {
+		
+	type <- c("n", "m")
+	expect_warning(
+		stat <- getStats(type = type, includeName = FALSE),
+		"The labels for the different types.*are retained.*"
+	)
+	
+	expect_named(stat, type)
+			
+})
 

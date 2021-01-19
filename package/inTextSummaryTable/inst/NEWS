@@ -14,6 +14,7 @@
     - check row var total include
     - fix in case only one row total
   o export to flextable in separated file if by var is specified
+  o get stats: 'n/N (%)' is named by default for consistency
 2.20.0
   o add unit tests
   o computeSummaryStatisticsTable: more formal checks + warning for var/[row|col]Var...

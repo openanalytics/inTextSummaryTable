@@ -256,12 +256,13 @@ getStats <- function(
 					)
 				)
 			),
-			`n/N (%)` = bquote(
-				ifelse(
-					is.na(statPercN), "-",
-						ifelse(statN == 0, "0",
-							paste0(.(statsBase$n), "/",  statPercTotalN, " (", .(statsBase$`%`), ")")
-						)
+			`n/N (%)` = list('n/N (%)' = bquote(
+					ifelse(
+						is.na(statPercN), "-",
+							ifelse(statN == 0, "0",
+								paste0(.(statsBase$n), "/",  statPercTotalN, " (", .(statsBase$`%`), ")")
+							)
+					)
 				)
 			),
 			`median (range)` = list('Median (range)' = 
@@ -297,7 +298,8 @@ getStats <- function(
 	if(!includeName){
 		if(length(stats) == 1){
 			stats <- unname(stats)
-		}else	warning("The labels for the different types:", toString(sQuote(type)), "are retained, to avoid confusion.")
+		}else	warning(paste("The labels for the different types:", 
+			toString(sQuote(type)), "are retained, to avoid confusion."))
 	}
 	
 	return(stats)
