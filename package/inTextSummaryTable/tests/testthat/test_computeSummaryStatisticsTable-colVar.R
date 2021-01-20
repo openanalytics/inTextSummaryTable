@@ -212,7 +212,7 @@ test_that("column total for row total is extracted from different dataset", {
 	dataTotalColDummy$USUBJID <- as.character(sample.int(nrow(dataTotalColDummy)))
 	dataTotalCol <- list(
 		total = dataTotalColDummy,
-		AEBODSYS = dataTotalColDummy[sample(nrow(dataTotalColDummy), 10), ],
+		AEBODSYS = dataTotalColDummy[sample(nrow(dataTotalColDummy), 9), ],
 		AEDECOD = dataTotalColDummy[sample(nrow(dataTotalColDummy), 5), ]
 	)
 			
@@ -224,7 +224,21 @@ test_that("column total for row total is extracted from different dataset", {
 		rowVarTotalInclude = rowVar,
 		colVar = "TRT",
 		colTotalInclude = TRUE,
+#		stats = c("n (%)"),
 		dataTotalCol = dataTotalCol
+	)
+	
+	# total used for the percentages are based on 'dataTotalCol' with 'total' label
+	summaryTableColTotal <- subset(summaryTable, TRT == "Total")
+	nSubjTotalCol <- length(unique(dataTotalCol[["total"]]$USUBJID))
+	expect_setequal(
+		summaryTableColTotal$statPercTotalN,
+		nSubjTotalCol
+	)
+	# total used for the column header is based on 'dataTotalCol' with 'total' label
+	expect_equal(
+		subset(summaryTableColTotal, isTotal)$statN,
+		nSubjTotalCol
 	)
 			
 	# counts in total column should be the same
@@ -233,13 +247,12 @@ test_that("column total for row total is extracted from different dataset", {
 	# col total for the general row total
 	expect_equal(
 		object = subset(summaryTable, 
-			subset = (TRT == "Total" & AEDECOD == "Total" & AEBODSYS == "Total"), 
-			select = c("statN", "statm")
+			TRT == "Total" & AEDECOD == "Total" & AEBODSYS == "Total", 
+			select = c(-AEBODSYS, -AEDECOD, -TRT)
 		),
 		expected = subset(
 			computeSummaryStatisticsTable(data = dataTotalCol[["total"]]),
-			subset = !isTotal,
-			select = c("statN", "statm")
+			subset = !isTotal
 		),
 		check.attributes = FALSE
 	)
