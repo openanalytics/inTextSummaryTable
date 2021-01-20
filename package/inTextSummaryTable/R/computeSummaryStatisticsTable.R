@@ -319,10 +319,14 @@ computeSummaryStatisticsTable <- function(
 	colVarInit <- colVar <- checkVar(var = colVar, varLabel = "colVar", data = data, varUncheck = "variable")
 	if("variable" %in% colVar){
 		if(!(!is.null(var) && varLabInclude))
-			warning("'var' not included in columns because 'varLabInclude' is FALSE.",
-				"You might want to use: 'statsLayout' = 'col' in 'getSummaryStatisticsTable'.")
+			warning(paste(
+				"'var' not included in columns because",
+				"'varLabInclude' is FALSE.",
+				"You might want to set: 'statsLayout' to 'col'."
+			))
 	}
 	colVar <- setdiff(colVar, "variable")
+	if(length(colVar) == 0)	colVar <- NULL
 	colVarTotal <- checkVar(var = colVarTotal, varLabel = "colVarTotal", varRef = colVar, refLabel = "colVar", varUncheck = "variable")
 	colVarTotalPerc <- checkVar(var = colVarTotalPerc, varLabel = "colVarTotalPerc", varRef = colVar, refLabel = "colVar", varUncheck = "variable")
 

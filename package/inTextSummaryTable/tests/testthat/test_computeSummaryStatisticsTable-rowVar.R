@@ -485,15 +485,14 @@ test_that("percentage is computed by row variable", {
 	
 	## variable
 
-	# TODO: fix warning to use 'expect_silent'
-	expect_error(
+	expect_silent(
 		sumTableRVTPerc <- computeSummaryStatisticsTable(
 			data = data, 
 			rowVar = "AEDECOD",
 			var = c("AESEV", "AESEV2"), 
 			rowVarTotalPerc = "variable",
 			varLabInclude = TRUE # because 'variable' not included if only one variable
-		), NA
+		)
 	)
 	expect_equal(
 		unique(subset(sumTableRVTPerc, variable == "AESEV")$statPercTotalN), 
