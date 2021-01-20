@@ -37,8 +37,6 @@
 #' \item{'rowInSepCol': }{Statistics are included in different rows, but in a separated column than
 #' the \code{rowVar} variable(s)}
 #' }
-#' @param statsVar Character vector with columns of \code{summaryTable} with
-#' statistic variables.
 #' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowVarFormat Named list with special formatting for the \code{rowVar}.
 #' Currently, only possibility is to set the variable elements in bold, with:

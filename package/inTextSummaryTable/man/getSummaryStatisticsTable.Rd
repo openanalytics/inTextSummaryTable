@@ -376,7 +376,7 @@ See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlexta
 \item{footer}{Parameters specific to the 'flextable' \code{output}.\cr 
 See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
 
-\item{file}{(Optional) Filename to which to which the table should be exported, 
+\item{file}{(Optional) Name of the file the table should be exported to, 
 either:
 \itemize{
 \item{string (of length 1). In this case, depending on the
@@ -402,12 +402,12 @@ file with the suffix: 'file_[i].[ext]' with i the index of the file.}
 \itemize{
 \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
 CSR, compatible with Word/PowerPoint export}
-\item{'DT'}{interactive table: \code{\link[DT]{datatable}} ,
-e.g. to be exported to html}
+\item{'DT': }{\code{\link[DT]{datatable}} interactive table,
+compatible with html export}
 \item{'data.frame': }{data.frame in wide format (with elements in 
 \code{colVar} in different columns)}
 \item{'data.frame-base'}{data.frame in long format (with elements in 
-\code{colVar} in different rows), useful for debugging}
+\code{colVar} in different rows), useful for QC}
 }}
 
 \item{statsLayout}{String with layout for the statistics names 

@@ -1463,7 +1463,7 @@ test_that("table is exported to a docx file in landscape format", {
 		landscape = TRUE
 	)
 	doc <- officer::read_docx(file)
-	docCnt <- doc$doc_obj$get()
+	docCnt <- officer::docx_body_xml(doc)
 	expect_match(
 		object = as.character(docCnt), 
 		regexp = 'orient=\"landscape\"', 
@@ -1479,7 +1479,7 @@ test_that("list of summary tables is exported to different files", {
 		`PARAM 1` = data.frame(n = 2)
 	)
 			
-	fileTable <- "table.docx" 
+	file <- "table.docx" 
 	
 	fileTableOutput <- c("table_1.docx", "table_2.docx")
 	if(any(file.exists(fileTableOutput)))
@@ -1488,7 +1488,7 @@ test_that("list of summary tables is exported to different files", {
 	dts <- exportSummaryStatisticsTable(
 		summaryTables, 
 		outputType = "flextable",
-		file = fileTable
+		file = file
 	)
 			
 	expect_true(all(file.exists(fileTableOutput)))
@@ -1505,10 +1505,10 @@ test_that("list of summary tables is exported to a single file", {
 		`PARAM 1` = flextable(data.frame(n = 2))
 	)
 	
-	fileTable <- "table.docx" 
-	exportFlextableToDocx(object = summaryTables, file = fileTable)		
+	file <- "table.docx" 
+	exportFlextableToDocx(object = summaryTables, file = file)		
 	
-	doc <- officer::read_docx(fileTable)
+	doc <- officer::read_docx(file)
 	
 	docTables <- subset(officer::docx_summary(doc), `content_type` == "table cell")
 	expect_equal(docTables$text, c("n", "10", "n", "2"))

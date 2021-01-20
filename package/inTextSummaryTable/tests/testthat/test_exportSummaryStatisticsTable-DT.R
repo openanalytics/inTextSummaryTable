@@ -459,15 +459,15 @@ test_that("export summary table to a file", {
 			
 	summaryTable <- data.frame(n = 10)
 	
-	fileTable <- "table.html" 
-	if(file.exists(fileTable))	tmp <- file.remove(fileTable)
+	file <- "table.html" 
+	if(file.exists(file))	tmp <- file.remove(file)
 	
 	expect_silent(
 		exportSummaryStatisticsTable(
-			summaryTable, outputType = "DT", file = fileTable
+			summaryTable, outputType = "DT", file = file
 		)
 	)
-	expect_true(file.exists(fileTable))
+	expect_true(file.exists(file))
 
 })
 
@@ -691,7 +691,7 @@ test_that("list of summary tables is exported to file", {
 		`PARAM 1` = data.frame(n = 2)
 	)
 			
-	fileTable <- "table.html" 
+	file <- "table.html" 
 	
 	fileTableOutput <- c("table_1.html", "table_2.html")
 	if(any(file.exists(fileTableOutput)))
@@ -700,7 +700,7 @@ test_that("list of summary tables is exported to file", {
 	dts <- exportSummaryStatisticsTable(
 		summaryTables, 
 		outputType = "DT",
-		file = fileTable
+		file = file
 	)
 	expect_true(all(file.exists(fileTableOutput)))
 
