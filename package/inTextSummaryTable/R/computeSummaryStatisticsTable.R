@@ -824,10 +824,20 @@ computeSummaryStatisticsTable <- function(
 	if(length(colsToRemove) > 0)
 		summaryTable <- summaryTable[, -colsToRemove]
 	
-	# remove the rows with total if should be ordered by total but the total not included
+	# remove the rows with total if should be ordered by total 
+	# but the total not included
 	if(!colTotalIncludeInit & colTotalInclude){
+		
 		idxColTotal <- which(rowSums(summaryTable[, colVar, drop = FALSE] == colTotalLab) > 0)
-		if(length(idxColTotal) > 0)	summaryTable <- summaryTable[-idxColTotal, ]
+		if(length(idxColTotal) > 0)
+			summaryTable <- summaryTable[-idxColTotal, ]
+		removeTotalLevel <- function(x){
+			if(is.factor(x) && colTotalLab %in% levels(x)){
+				factor(x, levels = setdiff(levels(x), colTotalLab))
+			}else	x
+		}
+		summaryTable[, colVar] <- colwise(removeTotalLevel)(summaryTable[, colVar, drop = FALSE])
+	
 	}
 	
 	# if only flag variables, remove 'variableGroup'

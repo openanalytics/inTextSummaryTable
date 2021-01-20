@@ -224,7 +224,6 @@ test_that("column total for row total is extracted from different dataset", {
 		rowVarTotalInclude = rowVar,
 		colVar = "TRT",
 		colTotalInclude = TRUE,
-#		stats = c("n (%)"),
 		dataTotalCol = dataTotalCol
 	)
 	
