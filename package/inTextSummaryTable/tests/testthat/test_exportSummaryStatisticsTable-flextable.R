@@ -1,5 +1,6 @@
 context("Export summary statistics table to flextable")
 
+library(flextable)
 library(officer)
 library(glpgStyle)
 
@@ -1471,7 +1472,7 @@ test_that("table is exported to a docx file in landscape format", {
 			
 })
 
-test_that("list of summary tables is exported to file", {
+test_that("list of summary tables is exported to different files", {
 			
 	summaryTables <- list(
 		`PARAM 2` = data.frame(n = 10),
@@ -1492,6 +1493,26 @@ test_that("list of summary tables is exported to file", {
 			
 	expect_true(all(file.exists(fileTableOutput)))
 			
+})
+
+test_that("list of summary tables is exported to a single file", {
+		
+	# Note: this functionality is currently not available 
+	# in exportSummaryStatisticsTable
+	# only in exportFlextableToDocx
+	summaryTables <- list(
+		`PARAM 2` = flextable(data.frame(n = 10)),
+		`PARAM 1` = flextable(data.frame(n = 2))
+	)
+	
+	fileTable <- "table.docx" 
+	exportFlextableToDocx(object = summaryTables, file = fileTable)		
+	
+	doc <- officer::read_docx(fileTable)
+	
+	docTables <- subset(officer::docx_summary(doc), `content_type` == "table cell")
+	expect_equal(docTables$text, c("n", "10", "n", "2"))
+	
 })
 
 test_that("table is exported in a landscape format", {
