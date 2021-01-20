@@ -235,8 +235,17 @@ or list of such data.frame for each \code{rowVar} variable (named by variable).}
 
 \item{dataTotalCol}{Data.frame from which the total across columns is 
 extracted (in case \code{colTotalInclude} is TRUE)
-or list of such data.frame for each \code{rowVar} variable.
-This data is used for:
+or list of such data.frame for each \code{rowVar} variable.\cr
+If the dataset should be specified by row variables, the list should be named with:
+with:
+\itemize{
+\item{last row variable: }{for the dataset used in the total column for 
+the most nested row variable}
+\item{higher row variable: }{for the dataset used for the total column
+and row total across variable}
+\item{'total': }{for the dataset used for the total column and row general total}
+}
+This data is also used for:
 \itemize{
 \item{the header of the total column in case \code{dataTotal} is
 not specified}

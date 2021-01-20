@@ -115,7 +115,7 @@ test_that("column total is extracted from different dataset", {
 			
 	data <- data.frame(
 		USUBJID = c("1", "1", "2", "3", "2", "3", "3"),
-		ABODSYS = c("A", "A", "A", "A", "B", "B", "B"),
+		AEBODSYS = c("A", "A", "A", "A", "B", "B", "B"),
 		AEDECOD = c("a1", "a2", "a1", "a1", "b1", "b1", "b2"),
 		TRT = c("X1", "X1", "X1", "X2", "X1", "X2", "X2"),
 		stringsAsFactors = FALSE
@@ -129,7 +129,7 @@ test_that("column total is extracted from different dataset", {
 	# full summary table
 	summaryTable <- computeSummaryStatisticsTable(
 		data,
-		rowVar = c("ABODSYS", "AEDECOD"),
+		rowVar = c("AEBODSYS", "AEDECOD"),
 		colVar = "TRT",
 		colTotalInclude = TRUE,
 		dataTotalCol = dataTotalCol
@@ -141,25 +141,25 @@ test_that("column total is extracted from different dataset", {
 		object = subset(summaryTable, TRT == "Total", select = -TRT),
 		expected = computeSummaryStatisticsTable(
 			data = dataTotalCol,
-			rowVar = c("ABODSYS", "AEDECOD")
+			rowVar = c("AEBODSYS", "AEDECOD")
 		),
 		check.attributes = FALSE
 	)
 	
 })
 
-test_that("column total for row totals are correct", {
+test_that("column total for row total is correct", {
 			
 	data <- data.frame(
 		USUBJID = c("1", "1", "2", "3", "2", "3", "3"),
-		ABODSYS = c("A", "A", "A", "A", "B", "B", "B"),
+		AEBODSYS = c("A", "A", "A", "A", "B", "B", "B"),
 		AEDECOD = c("a1", "a2", "a1", "a1", "b1", "b1", "b2"),
 		TRT = c("X1", "X1", "X1", "X2", "X1", "X2", "X2"),
 		stringsAsFactors = FALSE
 	)
 				
 	# full summary table
-	rowVar <- c("ABODSYS", "AEDECOD")
+	rowVar <- c("AEBODSYS", "AEDECOD")
 	summaryTable <- computeSummaryStatisticsTable(
 		data,
 		rowVar = rowVar,
@@ -171,11 +171,11 @@ test_that("column total for row totals are correct", {
 	# row total across AEDECOD
 	expect_equal(
 		object = subset(summaryTable, 
-			subset = TRT == "Total" & AEDECOD == "Total" & ABODSYS != "Total", 
+			subset = TRT == "Total" & AEDECOD == "Total" & AEBODSYS != "Total", 
 			select = -c(TRT, AEDECOD),
 		),
 		expected = subset(
-			computeSummaryStatisticsTable(data = data, rowVar = c("ABODSYS")),
+			computeSummaryStatisticsTable(data = data, rowVar = c("AEBODSYS")),
 			subset = !isTotal
 		),
 		check.attributes = FALSE
@@ -184,7 +184,7 @@ test_that("column total for row totals are correct", {
 	# row total across AEBODYS		
 	expect_equal(
 		object = subset(summaryTable, 
-			subset = TRT == "Total" & AEDECOD == "Total" & ABODSYS == "Total", 
+			subset = TRT == "Total" & AEDECOD == "Total" & AEBODSYS == "Total", 
 			select = -c(TRT, AEDECOD, AEBODSYS),
 		),
 		expected = subset(
@@ -194,6 +194,90 @@ test_that("column total for row totals are correct", {
 		check.attributes = FALSE
 	)
 	
+})
+
+test_that("column total for row total is extracted from different dataset", {
+			
+	data <- data.frame(
+		USUBJID = c("1", "1", "2", "3", "2", "3", "3"),
+		AEBODSYS = c("A", "A", "A", "A", "B", "B", "B"),
+		AEDECOD = c("a1", "a2", "a1", "a1", "b1", "b1", "b2"),
+		TRT = c("X1", "X1", "X1", "X2", "X1", "X2", "X2"),
+		stringsAsFactors = FALSE
+	)
+	dataTotalColDummy <- do.call(
+		rbind, 
+		replicate(2, data, simplify = FALSE)
+	)
+	dataTotalColDummy$USUBJID <- as.character(sample.int(nrow(dataTotalColDummy)))
+	dataTotalCol <- list(
+		total = dataTotalColDummy,
+		AEBODSYS = dataTotalColDummy[sample(nrow(dataTotalColDummy), 10), ],
+		AEDECOD = dataTotalColDummy[sample(nrow(dataTotalColDummy), 5), ]
+	)
+			
+	# full summary table
+	rowVar <- c("AEBODSYS", "AEDECOD")
+	summaryTable <- computeSummaryStatisticsTable(
+		data,
+		rowVar = rowVar,
+		rowVarTotalInclude = rowVar,
+		colVar = "TRT",
+		colTotalInclude = TRUE,
+		dataTotalCol = dataTotalCol
+	)
+			
+	# counts in total column should be the same
+	# as computed for the full data specified in 'dataTotalCol'
+			
+	# col total for the general row total
+	expect_equal(
+		object = subset(summaryTable, 
+			subset = (TRT == "Total" & AEDECOD == "Total" & AEBODSYS == "Total"), 
+			select = c("statN", "statm")
+		),
+		expected = subset(
+			computeSummaryStatisticsTable(data = dataTotalCol[["total"]]),
+			subset = !isTotal,
+			select = c("statN", "statm")
+		),
+		check.attributes = FALSE
+	)
+	
+	# col total across AEDECOD
+	expect_equal(
+		object = subset(summaryTable, 
+			subset = (TRT == "Total" & AEDECOD == "Total" & AEBODSYS != "Total"), 
+			select = c("statN", "statm")
+		),
+		expected = subset(
+			computeSummaryStatisticsTable(
+				data = dataTotalCol[["AEBODSYS"]], 
+				rowVar = "AEBODSYS"
+			),
+			subset = !isTotal,
+			select = c("statN", "statm")
+		),
+		check.attributes = FALSE
+	)
+	
+	# col total for most nested row
+	expect_equal(
+		object = subset(summaryTable, 
+			subset = (TRT == "Total" & AEDECOD != "Total" & AEBODSYS != "Total"), 
+			select = c("statN", "statm")
+		),
+		expected = subset(
+			computeSummaryStatisticsTable(
+				data = dataTotalCol[["AEDECOD"]], 
+				rowVar = "AEDECOD"
+			),
+			subset = !isTotal,
+			select = c("statN", "statm")
+		),
+		check.attributes = FALSE
+	)
+			
 })
 
 test_that("columns with 0 counts are included", {

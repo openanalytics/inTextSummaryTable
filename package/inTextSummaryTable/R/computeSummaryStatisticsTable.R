@@ -31,7 +31,9 @@
 #' @param rowOrderCatLast String with category to be printed in the last 
 #' row of each \code{rowVar} (if any, set to NULL if none). 
 #' @param rowVarTotalInclude Character vector with \code{rowVar}
-#' for which the total should be reported.
+#' for which the total should be reported.\cr
+#' If the higher row variable is specified, the total across all rows
+#' is reported. 
 #' @param rowVarTotalByVar Character vector with a row variable
 #' used to categorize the row total.\cr
 #' Note that this is only used if row total(s) is/are requested via \code{rowVarTotalInclude},
@@ -63,8 +65,17 @@
 #' or list of such data.frame for each \code{rowVar} variable (named by variable).
 #' @param dataTotalCol Data.frame from which the total across columns is 
 #' extracted (in case \code{colTotalInclude} is TRUE)
-#' or list of such data.frame for each \code{rowVar} variable.
-#' This data is used for:
+#' or list of such data.frame for each \code{rowVar} variable.\cr
+#' If the dataset should be specified by row variables, the list should be named with:
+#' with:
+#' \itemize{
+#' \item{last row variable: }{for the dataset used in the total column for 
+#' the most nested row variable}
+#' \item{higher row variable (X+1): }{for the dataset used for the total column
+#' and row total of X}
+#' \item{'total': }{for the dataset used for the total column and row general total}
+#' }
+#' This data (last one if a list is provided) is also used for:
 #' \itemize{
 #' \item{the header of the total column in case \code{dataTotal} is
 #' not specified}
