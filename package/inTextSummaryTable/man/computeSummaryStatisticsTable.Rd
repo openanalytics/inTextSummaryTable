@@ -181,7 +181,9 @@ function(x) subset(x, TRTP == "treatmentX")}
 row of each \code{rowVar} (if any, set to NULL if none).}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
-for which the total should be reported.}
+for which the total should be reported.\cr
+If the higher row variable is specified, the total across all rows
+is reported.}
 
 \item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
@@ -223,35 +225,38 @@ per column in column header ('N = [X]').
 It should contain the variables specified by \code{colVarTotal}.
 If not specified, the total number of subjects is extracted from the \code{data}.}
 
-\item{dataTotalPerc}{Data.frame used to extract the Total count per column 
-for the computation of the percentage.
-By default same as \code{dataTotal} .
+\item{dataTotalPerc}{Data.frame used to extract the total counts per column 
+for the computation of the percentage.\cr
+By default, \code{dataTotal} is used.\cr
 It should contain the variables specified by \code{colVarTotalPerc}.}
 
 \item{dataTotalRow}{Data.frame used to extract the total count across all
 elements of the row
-variable, in case \code{rowVarTotalInclude} is specified,
-or list of such data.frame for each \code{rowVar} variable (named by variable).}
+variable, list of such data.frame for each \code{rowVar} variable.\cr
+If the dataset is specified by row variable, the list should be named with:
+variable X if the total across elements of variable X should be included.
+By default, \code{data} is used.}
 
 \item{dataTotalCol}{Data.frame from which the total across columns is 
 extracted (in case \code{colTotalInclude} is TRUE)
 or list of such data.frame for each \code{rowVar} variable.\cr
-If the dataset should be specified by row variables, the list should be named with:
+If the dataset is specified by row variable, the list should be named with:
 with:
 \itemize{
 \item{last row variable: }{for the dataset used in the total column for 
 the most nested row variable}
-\item{higher row variable: }{for the dataset used for the total column
-and row total across variable}
-\item{'total': }{for the dataset used for the total column and row general total}
+\item{higher row variable (X+1): }{for the dataset used for the total column
+and row total of X}
+\item{'total': }{for the dataset used for the total column and general row total}
 }
-This data is also used for:
+This dataset (the one for 'total' if a list) is also used for:
 \itemize{
 \item{the header of the total column in case \code{dataTotal} is
 not specified}
 \item{the denominator of the percentages in the total column
 in case \code{dataTotalPerc} is not specified}
-}}
+}
+By default, \code{data} is used.}
 
 \item{stats}{(optional) Statistic(s) of interest to compute, either:
 \itemize{

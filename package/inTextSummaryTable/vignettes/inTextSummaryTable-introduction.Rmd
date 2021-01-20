@@ -1122,17 +1122,41 @@ for a variable of interest if this variable contain missing values.
 
 ## Total
 
-The **total number of subjects** is displayed in the **column header**
-and used for the **computation of the percentages** in the table body.
+The summary table contains different types of total:
+
+* total used for the computation of the percentage
+displayed in the table,
+e.g. to report percentage of subjects with specific adverse event
+* total reported in the column header, e.g.
+total number of subjects for a specific treatment arm
+* total across rows, e.g. to report percentage
+of subjects with adverse events in a specific body system 
+(across adverse events)
+* total across columns, e.g. to report summary statistics
+across all treatments arms
+
+By default, the totals are extracted based on the input data, but 
+separated datasets can be specified for the header,
+ percentage computation, row or column total.
+
+### Summary
+
+The different types of total of the summary table are summarized below:
+
+| Type | Inclusion in the table |  Dataset: parameter name | Dataset: default | 
+|---|---|---|---| 
+| Total in the column header | by default <br/> removed if `colHeaderTotalInclude = FALSE`| `dataTotal` | `data` for table content <br/> `dataTotalCol` for total column| 
+| Total for the percentage | only if percentage in `stats` | `dataTotalPerc` | `dataTotal` for table content <br/> `dataTotalCol` for total column <br/> (for 'total' if specified as a list)| 
+| Total across rows | not by default <br/> for specified row variable with `rowVarTotalInclude` | `dataTotalRow`  | `data` for table content <br/> `dataTotalCol` for total column <br/> (for 'total' if specified as a list) | 
+| Total across columns | not by default <br/> only if `colTotalInclude = TRUE` | `dataTotalCol` | `data` |
+
+The datasets for the total across rows or across columns can be specified for each row variable separately.
 
 ### External dataset
 
-By default, this total is extracted from the **available number of subjects** 
+By default, the total reported in the total header
+and used for the computation of the percentage is extracted from the **available number of subjects** 
 in the input `data`.
-
- If the total should be extracted
-from a **different dataset**, e.g. if only a subset of the patients are present
-in the data, it should be specified via the **`dataTotal`** variable (by default set to `data`).
 
 For example, the total number of patients per treatment arm is extracted from the 
 subject-level (`ADSL`) dataset. 
@@ -1155,7 +1179,15 @@ subject-level (`ADSL`) dataset.
 		),
 		labelVars = labelVars
 	)
-	# and on dataTotal if specified:
+	
+```
+
+ If the total should be extracted from a **different dataset**, 
+ e.g. if only a subset of the patients are present in the data, 
+ it should be specified via the **`dataTotal`** variable (by default set to `data`).
+
+```{r countTable-LB-customDenominator-2}	
+	
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
@@ -1243,7 +1275,7 @@ getSummaryStatisticsTable(
 )
 ```
 
-### Total number of subjects across columns {#colTotal}
+### Total across columns {#colTotal}
 
 The total of the number of subjects **across all columns** is included 
 if the `colTotalInclude` is set to TRUE.
@@ -1273,7 +1305,7 @@ This column is by default labelled 'Total', but this can be customized with the
 
 ```
 
-### Row total
+### Total across rows
 
 If the total should be included across elements of specific `rowVar`
 variable(s), this(these) variable(s) should be included in `rowVarTotalInclude`.

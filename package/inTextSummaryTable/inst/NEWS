@@ -1,8 +1,10 @@
-2.20.1
+2.21.0
   o add unit tests
   o error if stats if not in correct format
+  o getStats: 'n/N (%)' is named by default for consistency
   o computeSummaryStatisticsTable: 
     - simpler impl for filter fct for var flag
+    - percentage and header total column extracted from 'total' if dataTotalCol if a list
   o formatting flextable: 
     - check row var total include
     - fix in case only one row total
@@ -12,7 +14,6 @@
     - title can be of length > 1
     - pageDim should be of length 2
     - fix when noEscapeVar contains all vars
-  o getStats: 'n/N (%)' is named by default for consistency
   o subject profile summary plot: 
     - extra checks input params
     - fix ordering facets in case [x]Line specified

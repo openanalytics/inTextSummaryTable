@@ -55,33 +55,36 @@
 #' per column in column header ('N = [X]').
 #' It should contain the variables specified by \code{colVarTotal}.
 #' If not specified, the total number of subjects is extracted from the \code{data}.
-#' @param dataTotalPerc Data.frame used to extract the Total count per column 
-#' for the computation of the percentage.
-#' By default same as \code{dataTotal} .
+#' @param dataTotalPerc Data.frame used to extract the total counts per column 
+#' for the computation of the percentage.\cr
+#' By default, \code{dataTotal} is used.\cr
 #' It should contain the variables specified by \code{colVarTotalPerc}.
 #' @param dataTotalRow Data.frame used to extract the total count across all
 #' elements of the row
-#' variable, in case \code{rowVarTotalInclude} is specified,
-#' or list of such data.frame for each \code{rowVar} variable (named by variable).
+#' variable, list of such data.frame for each \code{rowVar} variable.\cr
+#' If the dataset is specified by row variable, the list should be named with:
+#' variable X if the total across elements of variable X should be included.
+#' By default, \code{data} is used.
 #' @param dataTotalCol Data.frame from which the total across columns is 
 #' extracted (in case \code{colTotalInclude} is TRUE)
 #' or list of such data.frame for each \code{rowVar} variable.\cr
-#' If the dataset should be specified by row variables, the list should be named with:
+#' If the dataset is specified by row variable, the list should be named with:
 #' with:
 #' \itemize{
 #' \item{last row variable: }{for the dataset used in the total column for 
 #' the most nested row variable}
 #' \item{higher row variable (X+1): }{for the dataset used for the total column
 #' and row total of X}
-#' \item{'total': }{for the dataset used for the total column and row general total}
+#' \item{'total': }{for the dataset used for the total column and general row total}
 #' }
-#' This data (last one if a list is provided) is also used for:
+#' This dataset (the one for 'total' if a list) is also used for:
 #' \itemize{
 #' \item{the header of the total column in case \code{dataTotal} is
 #' not specified}
 #' \item{the denominator of the percentages in the total column
 #' in case \code{dataTotalPerc} is not specified}
 #' }
+#' By default, \code{data} is used.
 #' @param filterFct (optional) Function taking as input
 #' the summary table with computed statistics and returning a subset 
 #' of the summary table.\cr
@@ -469,6 +472,25 @@ computeSummaryStatisticsTable <- function(
 			factor(summaryTable[, x], levels = unique(c(colVarLevels[[x]], colTotalLab)))
 		)
 		
+		# extract the data used for the total header + percentage:
+		dataForColTotalPercHeader <- if(!is.null(dataTotalCol)){
+			# different datasets for the different row variables:
+			if(is.list(dataTotalCol) && !is.data.frame(dataTotalCol)){ 
+				if(!is.null(rowVar) && 'total' %in% names(dataTotalCol)){
+					dataTotalCol[["total"]]
+				}else	data
+				# one unique df:
+			}else	dataTotalCol
+		}else	data
+	
+		# convert row/column variables to factor
+		dataForColTotalPercHeader <- convertVarRowVarColVarToFactor(
+			data = dataForColTotalPercHeader, 
+			rowVar = rowVar, 
+			colVar = NULL,
+			var = var
+		)
+		
 	}
 	
 	if(!is.null(rowVarTotalInclude)){
@@ -638,7 +660,7 @@ computeSummaryStatisticsTable <- function(
 	if(!isDataTotalSpec){
 		dataTotal <- data
 		# in case no 'dataTotal' is included, consider 'dataTotalCol' for the header across columns
-		dataTotalColTotalHeader <- if(colTotalInclude)	dataForColTotal
+		dataTotalColTotalHeader <- if(colTotalInclude)	dataForColTotalPercHeader
 	}
 	# check if colVarTotal is in dataTotal:
 	colVarTotal <- checkVar(var = colVarTotal, varLabel = "colVarTotal", 
