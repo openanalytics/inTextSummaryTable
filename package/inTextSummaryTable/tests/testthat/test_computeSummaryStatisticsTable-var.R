@@ -265,7 +265,7 @@ test_that("Order of variable group is correct", {
       tableFactorNotComplete <- computeSummaryStatisticsTable(data = dataSubset, var = "SEX")
       expect_identical(levels(tableFactorNotComplete$variableGroup), levels(dataSubset$SEX))
       
-      # even if the var is character
+	# even if the var is character
       dataSubset$SEX <- as.character(dataSubset$SEX)
       tableCharacNotComplete <- computeSummaryStatisticsTable(data = dataSubset, var = "SEX")
       expect_identical(levels(tableCharacNotComplete$variableGroup), sort(unique(dataSubset$SEX)))
@@ -274,7 +274,7 @@ test_that("Order of variable group is correct", {
 
 test_that("label of variable name is included when needed", {
       
-      data <- data.frame(
+	data <- data.frame(
           USUBJID = seq.int(6),
           SEX = rep(c("M", "F"), times = 3),
           AGE = seq(20, 62, length.out = 6),
@@ -285,7 +285,10 @@ test_that("label of variable name is included when needed", {
       descTableNoVar <- computeSummaryStatisticsTable(data = data)
       expect_false("variable" %in% colnames(descTableNoVar))	
       expect_warning(
-          descTableNoVar <- computeSummaryStatisticsTable(data = data, varLabInclude = TRUE),
+          descTableNoVar <- computeSummaryStatisticsTable(
+				data = data, 
+				varLabInclude = TRUE
+			),
           regexp = "Variable label is not included"
       )
       
@@ -297,7 +300,15 @@ test_that("label of variable name is included when needed", {
       descTableOneVarWithLabel <- computeSummaryStatisticsTable(
           data = data, var = "AGE", varLabInclude = TRUE
       )
-      expect_true("variable" %in% colnames(descTableOneVarWithLabel))		
+	expect_true("variable" %in% colnames(descTableOneVarWithLabel))	
+	expect_warning(
+		computeSummaryStatisticsTable(
+			data = data, 
+			var = "AGE", colVar = "variable",
+			varLabInclude = FALSE
+	  	),
+		"var' not included in columns because 'varLabInclude' is FALSE"
+	)
       
       # > 1 variable
       descTableMoreOneVar <- computeSummaryStatisticsTable(
