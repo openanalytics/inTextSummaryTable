@@ -53,24 +53,47 @@ test_that("categorical var specification is successful", {
 
 test_that("flag var specification is successful", {
       
-      data <- data.frame(
-          USUBJID = seq.int(6),
-          x = rep(c("A", "B"), times = 3),
-          xFlag = rep(c("Y", ""), times = 3),
-          stringsAsFactors = FALSE
-      )
+	data <- data.frame(
+		USUBJID = seq.int(7),
+		x = rep(c("A", "B"), times = c(3, 4)),
+		xFlag = rep(c("", "Y"), length.out = 7),
+		stringsAsFactors = FALSE
+	)
       
-      expect_warning(
-          computeSummaryStatisticsTable(data = data, var = "x", varFlag = "xFlag"),
-          "xFlag.* in varFlag.*ignored"
-      )
+	expect_warning(
+		computeSummaryStatisticsTable(data = data, var = "x", varFlag = "xFlag"),
+		"xFlag.* in varFlag.*ignored"
+	)
       
-      res <- computeSummaryStatisticsTable(data = data, var = c("x", "xFlag"), varFlag = "xFlag")
-      expect_s3_class(res, "data.frame")
-      expect_true("variable" %in% colnames(res))
-      expect_true("variableGroup" %in% colnames(res))
+	res <- computeSummaryStatisticsTable(
+		data = data, 
+		var = c("x", "xFlag"), 
+		varFlag = "xFlag"
+	)
+	expect_s3_class(res, "data.frame")
+	expect_true("variable" %in% colnames(res))
+	expect_true("variableGroup" %in% colnames(res))
+	  
+	resAll <- computeSummaryStatisticsTable(
+		data = data, 
+		var = c("x", "xFlag")
+	)
+	  
+	# variable not specified in varFlag is retained
+	expect_equal(
+		subset(res, variable == "x"),
+		subset(resAll, variable == "x"),
+		check.attributes = FALSE
+	)
+	  
+	# only flagged records are retained for varFlag
+	expect_equal(
+		subset(res, variable == "xFlag", -variableGroup),
+		subset(resAll, variable == "xFlag" & variableGroup == "Y", -variableGroup),
+		check.attributes = FALSE
+	)	
       
-    })
+})
 
 test_that("zero counts in variable are included", {
 			
