@@ -491,8 +491,6 @@ test_that("percentage is computed by row variable", {
 	data <- data.frame(
 		USUBJID = c("a", "b", "c", "d", "a", "b"),
 		AEDECOD = c("A", "A", "A", "A", "B", "B"),
-		AESEV = c("Mild", "Moderate", "Moderate", "Severe", "Moderate", "Mild"),
-		AESEV2 = c("Mild", "Moderate", NA_character_, NA_character_, "Moderate", "Mild"),
 		stringsAsFactors = FALSE
 	)
 	
@@ -512,8 +510,31 @@ test_that("percentage is computed by row variable", {
 		100
 	)
 	
-	## variable
+	### wrong spec
+	
+	# variable not in rowVar
+	expect_warning(
+		sumTable <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "AEDECOD",
+			rowVarTotalPerc = "a"
+		),
+		"rowVarTotalPerc.*ignored.*not available in: rowVar"
+	)
+	
+})
+	
+test_that("percentage is computed by a variable", {
+				
+	data <- data.frame(
+		USUBJID = c("a", "b", "c", "d", "a", "b"),
+		AEDECOD = c("A", "A", "A", "A", "B", "B"),
+		AESEV = c("Mild", "Moderate", "Moderate", "Severe", "Moderate", "Mild"),
+		AESEV2 = c("Mild", "Moderate", NA_character_, NA_character_, "Moderate", "Mild"),
+		stringsAsFactors = FALSE
+	)
 
+	### correct spec
 	expect_silent(
 		sumTableRVTPerc <- computeSummaryStatisticsTable(
 			data = data, 
@@ -534,17 +555,6 @@ test_that("percentage is computed by row variable", {
 	
 	### wrong spec
 	
-	# variable not in rowVar
-	expect_warning(
-		sumTable <- computeSummaryStatisticsTable(
-			data = data, 
-			rowVar = "AEDECOD",
-			var = "AESEV", 
-			rowVarTotalPerc = "a"
-		),
-		"rowVarTotalPerc.*ignored.*not available in: rowVar"
-	)
-	
 	# variable not included in summary table:
 	expect_warning(
 		computeSummaryStatisticsTable(
@@ -555,6 +565,6 @@ test_that("percentage is computed by row variable", {
 		),
 		"Percentages cannot be computed by.*variable.* because variable not included"
 	)
-			
+	
 })
 

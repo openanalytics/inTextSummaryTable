@@ -960,13 +960,7 @@ computeSummaryStatisticsTableTotal <- function(
 	# total is computed based on number of elements available in each 'var'
 	# (and not # elements within each group of 'var')
 	if("variable" %in% c(rowVarTotal, colVarTotal)){
-		if(is.null(var)){
-			warning("Total is not computed by variable because no 'var' is specified.")
-			rowVarTotal <- setdiff(rowVarTotal, "variable")
-			colVarTotal <- setdiff(colVarTotal, "variable")
-		}else{
-			data <- formatDataTotalWithVar(data)
-		}
+		data <- formatDataTotalWithVar(data)
 	}
 	
 	# counts by elements in colVar
