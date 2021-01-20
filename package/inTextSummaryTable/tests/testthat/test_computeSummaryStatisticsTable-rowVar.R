@@ -172,88 +172,117 @@ test_that("row variables are correctly ordered based on alphabetical order", {
 			
 		})
 
-test_that("row variables are correctly ordered based on the total", {
+test_that("row variables are ordered based on the total without column var", {
 			
-			data <- data.frame(
-					USUBJID = seq.int(6),
-					TRT = c("B", "B", "B", "B", "A", "A"),
-					stringsAsFactors = FALSE
-			)
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		TRT = c("B", "B", "B", "B", "A", "A"),
+		stringsAsFactors = FALSE
+	)
+	
+	# Total
+	expect_silent(
+		resTotal <- computeSummaryStatisticsTable(
+			data,
+			rowVar = "TRT",
+			rowOrder = "total"
+		)
+	)
+	expect_identical(
+		levels(resTotal$TRT),
+		c("B", "A")
+	)
+	
+})
+
+test_that("row variables are ordered based on the total column with column var", {
 			
-			# Total
-			expect_silent(
-					resTotal <- computeSummaryStatisticsTable(
-							data,
-							rowVar = "TRT",
-							rowOrder = "total"
-					)
-			)
-			expect_identical(
-					levels(resTotal$TRT),
-					c("B", "A")
-			)
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = c("F", "F", "M", "M", "M", "M"),
+		TRT = c("B", "B", "B", "B", "A", "A"),
+		stringsAsFactors = FALSE
+	)
 			
-		})
+	# Total
+	expect_silent(
+		resTotal <- computeSummaryStatisticsTable(
+			data,
+			rowVar = "SEX", colVar = "TRT",
+			rowOrder = "total", 
+		)
+	)
+	expect_identical(
+		levels(resTotal$SEX),
+		c("M", "F")
+	)
+	# Total across columns included internally but not returned by the function
+	expect_identical(
+		levels(resTotal$TRT),
+		c("A", "B")
+	)
+			
+})
 
 test_that("row are ordered correctly when different order of row variables are specified", {
 			
-			data <- data.frame(
-					USUBJID = seq.int(6),
-					SEX = c("F", "F", "M", "M", "M", "M"),
-					TRT = c("B", "B", "B", "B", "A", "A"),
-					stringsAsFactors = FALSE
-			)
-			
-			# Different for each row variable
-			expect_silent(
-					resDoubleOrder <- computeSummaryStatisticsTable(
-							data,
-							rowVar = c("SEX", "TRT"),
-							rowOrder = c(SEX = "auto", TRT = "total")
-					)
-			)      
-			expect_identical(
-					levels(resDoubleOrder$TRT),
-					c("B", "A")
-			)
-			expect_identical(
-					levels(resDoubleOrder$SEX),
-					c("F", "M")
-			)
-			
-		})
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = c("F", "F", "M", "M", "M", "M"),
+		TRT = c("B", "B", "B", "B", "A", "A"),
+		stringsAsFactors = FALSE
+	)
+	
+	# Different for each row variable
+	expect_silent(
+		resDoubleOrder <- computeSummaryStatisticsTable(
+			data,
+			rowVar = c("SEX", "TRT"),
+			rowOrder = c(SEX = "auto", TRT = "total")
+		)
+	)      
+	expect_identical(
+		levels(resDoubleOrder$TRT),
+		c("B", "A")
+	)
+	expect_identical(
+		levels(resDoubleOrder$SEX),
+		c("F", "M")
+	)
+	
+})
 
 test_that("row variables are ordered based on function", {
 			
-			data <- data.frame(
-					USUBJID = seq.int(6),
-					TRT = c("B", "B", "B", "B", "A", "A"),
-					stringsAsFactors = FALSE
-			)
-			resFct <- computeSummaryStatisticsTable(
-					data,
-					rowVar = "TRT",
-					rowOrder = function(sumTable){
-						data <- subset(sumTable, !isTotal)
-						data[order(data$statN, decreasing = TRUE), "TRT"]
-					}
-			)
-			expect_identical(levels(resFct$TRT), c("B", "A"))
-			
-			# if function is wrong, e.g. doesn't return all values in sumTable
-			# the remaining values are added anyway
-			expect_silent(
-					resFct <- computeSummaryStatisticsTable(
-							data,
-							rowVar = "TRT",
-							rowOrderTotalFilterFct = function(sumTable){
-								c("")
-							}
-					)
-			)
-			expect_identical(levels(resFct$TRT), c("A", "B"))
-			
-		})
+		data <- data.frame(
+				USUBJID = seq.int(6),
+				TRT = c("B", "B", "B", "B", "A", "A"),
+				stringsAsFactors = FALSE
+		)
+		resFct <- computeSummaryStatisticsTable(
+				data,
+				rowVar = "TRT",
+				rowOrder = function(sumTable){
+					data <- subset(sumTable, !isTotal)
+					data[order(data$statN, decreasing = TRUE), "TRT"]
+				}
+		)
+		expect_identical(levels(resFct$TRT), c("B", "A"))
+		
+		# if function is wrong, e.g. doesn't return all values in sumTable
+		# the remaining values are added anyway
+		expect_silent(
+				resFct <- computeSummaryStatisticsTable(
+						data,
+						rowVar = "TRT",
+						rowOrderTotalFilterFct = function(sumTable){
+							c("")
+						}
+				)
+		)
+		expect_identical(levels(resFct$TRT), c("A", "B"))
+		
+	})
 
 test_that("row variable are ordered based on filtered data total", {
 			
