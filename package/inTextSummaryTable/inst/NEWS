@@ -2,9 +2,10 @@
   o add unit tests
   o error if stats if not in correct format
   o getStats: 'n/N (%)' is named by default for consistency
-  o computeSummaryStatisticsTable: 
+  o compute summary statistics table: 
     - simpler impl for filter fct for var flag
     - percentage and header total column extracted from 'total' if dataTotalCol if a list
+    - no error if unique stat name is in default stat name
   o formatting flextable: 
     - check row var total include
     - fix in case only one row total
