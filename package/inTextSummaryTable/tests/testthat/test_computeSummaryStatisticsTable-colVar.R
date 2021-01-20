@@ -111,18 +111,41 @@ test_that("column total and label is extracted", {
 	
 })
 
-test_that("label for column total is specified", {
+test_that("column total is extracted from different dataset", {
 			
 	data <- data.frame(
-		USUBJID = seq.int(6),
-		AGE = seq(20, 62, length.out = 6),
-		TRT = rep(c("A", "B"), each = 3),
+		USUBJID = c("1", "1", "2", "3", "2", "3", "3"),
+		ABODSYS = c("A", "A", "A", "A", "B", "B", "B"),
+		AEDECOD = c("a1", "a2", "a1", "a1", "b1", "b1", "b2"),
+		TRT = c("X1", "X1", "X1", "X2", "X1", "X2", "X2"),
 		stringsAsFactors = FALSE
 	)
+	dataTotalCol <- do.call(
+		rbind, 
+		replicate(2, data, simplify = FALSE)
+	)
+	dataTotalCol$USUBJID <- as.character(sample.int(nrow(dataTotalCol)))
 		
+	# full summary table
+	summaryTable <- computeSummaryStatisticsTable(
+		data,
+		rowVar = c("ABODSYS", "AEDECOD"),
+		colVar = "TRT",
+		colTotalInclude = TRUE,
+		dataTotalCol = dataTotalCol
+	)
 	
-
-			
+	# counts in total column should be the same
+	# as computed for the full data specified in 'dataTotalCol'
+	expect_equal(
+		object = subset(summaryTable, TRT == "Total", select = -TRT),
+		expected = computeSummaryStatisticsTable(
+			data = dataTotalCol,
+			rowVar = c("ABODSYS", "AEDECOD")
+		),
+		check.attributes = FALSE
+	)
+	
 })
 
 test_that("columns with 0 counts are included", {
