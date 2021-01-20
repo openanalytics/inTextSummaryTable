@@ -1396,6 +1396,9 @@ getStatisticsSummaryStatisticsTable <- function(
 					for(stat in statsNameConflict){
 						if(as.character(stats[[stat]]) == stat){
 							stats <- stats[names(stats) != stat]
+							if(length(stats) == 0){
+								return(sumTable)
+							}
 						}else{
 							stop("The statistic name: '", stat, "'",
 								" is a default name used, please choose a different name.")
@@ -1480,6 +1483,9 @@ getStatisticsSummaryStatisticsTable <- function(
 				x
 			}else	addStats(sumTable = x, stats = statsX)
 		})
+
+		if(".id" %in% colnames(summaryTable))
+			summaryTable <- summaryTable[, -which(colnames(summaryTable) == ".id")]
 		
 	}else	statsVar <- statsVarInit
 	

@@ -31,7 +31,7 @@ test_that("an unique statistic is specified as expression/name", {
 test_that("statistic is specified as a string among default set", {
 			
 	set.seed(123)
-	data <- data.frame(AVAL = rnorm(5), CHG = rnorm(5), USUBJID = seq.int(5))
+	data <- data.frame(AVAL = rnorm(5), USUBJID = seq.int(5))
 		
 	expect_silent(
 		summaryTableString <- computeSummaryStatisticsTable(
@@ -63,10 +63,45 @@ test_that("statistic is specified as a string among default set", {
 			
 })
 
+test_that("stats is a copy of default statistic", {
+			
+	set.seed(123)
+	data <- data.frame(AVAL = rnorm(5),	USUBJID = seq.int(5))	
+	expect_silent(
+		summaryTable <- computeSummaryStatisticsTable(
+			data = data, var = "AVAL", 
+			stats = list(statMean = expression(statMean))
+		)
+	)
+	expect_true("statMean" %in% colnames(summaryTable))
+	expect_equal(
+		subset(summaryTable, !isTotal)$statMean,
+		mean(data$AVAL)
+	)
+			
+})
+
+test_that("stats has same name than default statistic", {
+			
+	data <- data.frame(AVAL = rnorm(5),	USUBJID = seq.int(5))	
+	expect_error(
+		computeSummaryStatisticsTable(
+			data = data, var = "AVAL", 
+			stats = list(statMean = expression(statMean+statSD))
+		),
+		"statistic name.*is a default name used"
+	)
+			
+})
+
 test_that("unique set of stats are computed by variable", {
 		
 	set.seed(123)
-	data <- data.frame(AVAL = rnorm(10), CHG = c(NA_real_, rnorm(9)), USUBJID = seq.int(10))	
+	data <- data.frame(
+		AVAL = rnorm(10), 
+		CHG = c(NA_real_, rnorm(9)), 
+		USUBJID = seq.int(10)
+	)	
 	
 	expect_silent(
 		summaryTable <- computeSummaryStatisticsTable(
@@ -88,7 +123,11 @@ test_that("unique set of stats are computed by variable", {
 test_that("multiple sets of stats are computed by variable", {
 		
 	set.seed(123)
-	data <- data.frame(AVAL = rnorm(10), CHG = c(NA_real_, rnorm(9)), USUBJID = seq.int(10))		
+	data <- data.frame(
+		AVAL = rnorm(10), 
+		CHG = c(NA_real_, rnorm(9)), 
+		USUBJID = seq.int(10)
+	)		
 		
 	# variable to summarize
 	stats <- list(
@@ -118,7 +157,11 @@ test_that("multiple sets of stats are computed by variable", {
 test_that("incorrect specification of stats by variable is correctly flagged", {
 		
 	set.seed(123)
-	data <- data.frame(AVAL = rnorm(10), CHG = c(NA_real_, rnorm(9)), USUBJID = seq.int(10))	
+	data <- data.frame(
+		AVAL = rnorm(10), 
+		CHG = c(NA_real_, rnorm(9)), 
+		USUBJID = seq.int(10)
+	)	
 				
 	# in this case, stats should be specified for all variables
 	expect_error(
