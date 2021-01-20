@@ -9,6 +9,10 @@
 #' @param emptyValue String with placeholder used to fill the table for missing values, '-' by default.
 #' This value is typically used e.g. if not all statistics are computed for all specified
 #' row/col/var variables.
+#' @param statsVar Character vector with columns of \code{summaryTable} with
+#' statistic variables. If not specified, all columns of \code{data}
+#' besides row, column variables, 'variable', 'variableGroup'
+#' and 'isTotal' are considered.
 #' @param statsLabInclude Logical, if TRUE include the statistic label
 #' in the table. By default only included if more than
 #' one statistic variables are available in the table.
@@ -111,11 +115,11 @@ formatSummaryStatisticsTable <- function(
 	}
 
 	# convert from wide to long format
-	statsVar <- if(is.null(statsVar)){
-		setdiff(colnames(dataWithTotal),  
+	if(is.null(statsVar)){
+		statsVar <- setdiff(colnames(dataWithTotal),  
 			c(rowVar, colVar, "variable", "variableGroup", "isTotal")
 		)
-	}else{statsVar}
+	}
 
 	if(statsValueLab == "Statistic")
 		stop("'statsValueLab' should be different than 'Statistic'.")

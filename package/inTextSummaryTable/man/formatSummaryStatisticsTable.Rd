@@ -37,7 +37,9 @@ if \code{colTotalInclude} is TRUE, 'Total' by default.}
 (\code{'statN'}) in the header.}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
-statistic variables.}
+statistic variables. If not specified, all columns of \code{data}
+besides row, column variables, 'variable', 'variableGroup'
+and 'isTotal' are considered.}
 
 \item{statsLabInclude}{Logical, if TRUE include the statistic label
 in the table. By default only included if more than

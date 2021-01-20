@@ -36,7 +36,9 @@ The variables are included in rows, excepted if specified in \code{rowVarInSepCo
 that should be included in multiple columns.}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
-statistic variables.}
+statistic variables. If not specified, all columns of \code{data}
+besides row, column variables, 'variable', 'variableGroup'
+and 'isTotal' are considered.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
