@@ -3,7 +3,7 @@ context("Export summary statistics table")
 library(tools)
 library(officer)
 
-test_that("summary table is exported to multiple format", {
+test_that("summary table is exported to multiple formats", {
 			
 	summaryTable <- data.frame(
 		PARAM = c("A", "B"),
@@ -26,7 +26,7 @@ test_that("summary table is exported to multiple format", {
 		switch(tools::file_ext(file),
 			txt = readLines(file),
 			docx = officer::docx_summary(officer::read_docx(file)),
-			html = readLines(file)
+			html = gsub("htmlwidget-\\w+", "\\1", readLines(file))
 		)
 	}
 	
@@ -35,14 +35,15 @@ test_that("summary table is exported to multiple format", {
 		
 		expect_equal(
 			object = {
-				importTableFromFile(files[[!!outputType]])
+				importTableFromFile(file = files[[!!outputType]])
 			}, 	
 			expected = {
-				fileTest <- paste0("test", ".", tools::file_ext(files[[!!outputType]]))
+				fileTest <- sapply(files[!!outputType], function(x)
+					sub("(.+)\\.(.+)", "\\1-test.\\2", x)
+				)
 				res <- exportSummaryStatisticsTable(
 					summaryTable = summaryTable,
 					rowVar = "PARAM", statsVar = "n",
-					outputType = !!outputType,
 					file = fileTest
 				)
 				importTableFromFile(fileTest)
