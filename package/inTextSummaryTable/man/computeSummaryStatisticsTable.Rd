@@ -249,6 +249,8 @@ the most nested row variable}
 and row total of X}
 \item{'total': }{for the dataset used for the total column and general row total}
 }
+If only a subset of the variables is specified in this list, 
+\code{data} is used for the remaining variable(s) (or 'total') if needed.\cr
 This dataset (the one for 'total' if a list) is also used for:
 \itemize{
 \item{the header of the total column in case \code{dataTotal} is

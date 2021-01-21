@@ -18,6 +18,7 @@ Integer with maximum number of decimals in a character vector.
 \description{
 The function \code{\link{getNDecimals}}) extracts the number
 of decimals in a specific variable.
+This is based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}.
 }
 \examples{
 x <- c(0.99, 5.679, 50.45, 1450)
