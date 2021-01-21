@@ -30,12 +30,14 @@ vignette: >
 ```
 
 The package `inTextSummaryTable` contains functionalities to **create
-complex table of summary statistics or counts of metrics of interest**, to
-**format them as in-text table for the Clinical Study Report**.
+complex table of summary statistics or counts of metrics of interest**.
+
+This table can be formatted to static **in-text table for Clinical Study Report**,
+**toplines presentation** or **interactive tables for medical monitoring report**.
 
 These tables can be included into a `rmarkdown` document, to be
 converted into `html`, `docx` and `pptx`.
-Each table can be exported into a `docx` document.
+Each table can be separately exported into a `text`, `docx` or `html `document.
 
 ```{r loadPackages}
 
