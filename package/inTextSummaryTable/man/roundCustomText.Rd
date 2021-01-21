@@ -17,7 +17,6 @@ roundCustomText(x, digits = 0, format)
 }
 \value{
 A character vector with the rounded number.
-See the \code{\link[glpgUtilityFct](roundCustom} for the rounding customization.
 NA values are returned as 'NA' (as string).
 }
 \description{
@@ -39,6 +38,9 @@ roundCustomText(x = c(0.345, 0.567, -0.98), digits = 0)
 roundCustomText(x = c(0.345, 0.567, -0.98))
 # padding zeros
 roundCustomText(1.23, 10)
+}
+\seealso{
+\link[glpgUtilityFct]{roundCustom} for the rounding customization.
 }
 \author{
 Laure Cougnaud and Michela Pasetto
