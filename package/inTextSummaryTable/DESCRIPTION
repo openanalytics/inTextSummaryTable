@@ -10,7 +10,7 @@ Description: Functions to create table of summary statistics or count tables are
 Imports: glpgUtilityFct (>= 3.0.1), dplyr, plyr, reshape2 (>= 1.4), 
   ggplot2, flextable, officer, magrittr, glpgStyle (>= 1.0.0),
   ggrepel, cowplot, methods, scales
-Suggests: testthat, pander, vdiffr, knitr
+Suggests: testthat, pander, knitr
 License: file LICENSE
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

@@ -155,8 +155,7 @@ RUN R -e "remotes::install_version('rematch2', version = '2.1.2', upgrade = FALS
 	R -e "remotes::install_version('ggplot2', version = '3.3.2', upgrade = FALSE)"
 RUN R -e "remotes::install_version('cowplot', version = '1.0.0', upgrade = FALSE)" && \
 	R -e "remotes::install_version('ggrepel', version = '0.8.2', upgrade = FALSE)" && \
-	R -e "remotes::install_version('plotly', version = '4.9.2.1', upgrade = FALSE)" && \
-	R -e "remotes::install_version('vdiffr', version = '0.3.2', upgrade = FALSE)"
+	R -e "remotes::install_version('plotly', version = '4.9.2.1', upgrade = FALSE)"
 
 # install tar gz package(s)
 RUN mkdir -p /tmp
