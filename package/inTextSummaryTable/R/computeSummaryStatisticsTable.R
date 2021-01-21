@@ -1261,12 +1261,7 @@ convertVarToFactorWithOrder <- function(
 					intersect(catLast, varLevels)
 				)
 				res <- factor(data[, var], levels = varLevels)
-			}else{
-				convertVarToFactorWithOrder(
-					data = data, var = var, catLast = catLast,
-					method = "alphabetical"
-				)
-			},
+			}else	stop(paste(var, "should be a factor.")),
 			'alphabetical' = {
 				varLevels <- c(
 					intersect("Total", data[, var]),
@@ -1286,11 +1281,9 @@ convertVarToFactorWithOrder <- function(
 					}else{
 						if(!is.null(colVar)){
 							idxTotal <- which(rowSums(dataForTotal[, colVar, drop = FALSE] == colTotalLab) == length(colVar))
-							if(length(idxTotal) == 0){
-								warning("Total across columns not available to order the rows in the summary table.")
-							}else{
+							if(length(idxTotal) != 0){
 								dataForTotal <- dataForTotal[idxTotal, ]
-							}
+							}else	warning("Total across columns not available to order the rows in the summary table.")
 						}
 					}
 					
