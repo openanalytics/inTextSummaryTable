@@ -5,10 +5,12 @@ Version: 2.21.0
 Date: 2021-01-21
 Author: Laure Cougnaud
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
-Description: Functions to create table of summary statistics or count tables are created
-  to be included as in-text table in a Word document.
+Description: Tables of summary statistics or count tables are created.
+  These tables can exported as in-text table to a Clinical Study Report
+  (Word format), a topline presentation (PowerPoint format), 
+  or as interactive table to an html document.
 Imports: glpgUtilityFct (>= 3.0.1), dplyr, plyr, reshape2 (>= 1.4), 
-  ggplot2, flextable, officer, magrittr, glpgStyle (>= 1.0.0),
+  ggplot2, flextable, officer, magrittr, glpgStyle (>= 2.2.0),
   ggrepel, cowplot, methods, scales
 Suggests: testthat, pander, knitr
 License: file LICENSE
