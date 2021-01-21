@@ -433,8 +433,8 @@ These statistics are then available for customization via the `stats` parameter.
 To specify fixed amounts of digits for the statistics to be displayed in the table, 
 the statistics are formatted in the `stats` parameter.
 
-The number of decimals is based by default from the rules specified by the Mock Standard SAP
-(_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020).
+The number of decimals is based by default from the rules specified in the
+_Mock Standard SAP **Phase 2/3**_ (version 1.0).
 
 #### `getStats` function
 

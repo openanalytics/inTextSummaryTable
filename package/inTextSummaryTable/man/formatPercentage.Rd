@@ -17,7 +17,8 @@ of decimals used to round the percentage,
 String with formatted percentage
 }
 \description{
-The following rules are used:
+The following rules are used,
+based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}:
 \itemize{
 \item{percentage = 0\%: }{'0'}
 \item{ 0\% < percentage < 0.1\%: }{'<0.1'}

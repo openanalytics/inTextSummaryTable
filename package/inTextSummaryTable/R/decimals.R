@@ -49,6 +49,7 @@ getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 #' 
 #' The function \code{\link{getNDecimals}}) extracts the number
 #' of decimals in a specific variable.
+#' This is based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}.
 #' @param ... Any parameters for the \code{\link{getNDecimals}} function.
 #' @inheritParams getNDecimals
 #' @return Integer with maximum number of decimals in a character vector.
@@ -76,7 +77,7 @@ getMaxNDecimals <- function(x, ...)
 #' \item{'1': }{Standard rule for the number of 
 #' decimals for individual values for a 
 #' continuous variable based on the 
-#' \emph{Mock Standard SAP (version 1.0)} document.
+#' \emph{Mock Standard SAP Phase 2/3 (version 1.0)} document.
 #' \itemize{
 #' \item{value < 1 ('very small values' in SAP): }{3}
 #' \item{value < 10: }{2}
@@ -145,7 +146,8 @@ getMaxNDecimalsData <- function(x)
 
 #' Format a percentage.
 #' 
-#' The following rules are used:
+#' The following rules are used,
+#' based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}:
 #' \itemize{
 #' \item{percentage = 0\%: }{'0'}
 #' \item{ 0\% < percentage < 0.1\%: }{'<0.1'}

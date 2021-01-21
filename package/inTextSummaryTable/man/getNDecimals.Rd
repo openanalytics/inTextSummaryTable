@@ -18,7 +18,7 @@ Currently only: '1' is implemented.
 \item{'1': }{Standard rule for the number of 
 decimals for individual values for a 
 continuous variable based on the 
-\emph{Mock Standard SAP (version 1.0)} document.
+\emph{Mock Standard SAP Phase 2/3 (version 1.0)} document.
 \itemize{
 \item{value < 1 ('very small values' in SAP): }{3}
 \item{value < 10: }{2}

@@ -132,7 +132,8 @@ Note: this is only available if the percentage of records is reported
 \item{statistics for continuous variable: }{
 \itemize{
 \item{if the number of decimals is specified (via \code{nDecCont}): }{
-\cr statistics are rounded with the following number of decimals:
+\cr statistics are rounded with the following number of decimals,
+based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}:
 \itemize{
 \item{'Min', 'Max': }{\code{nDecCont}}
 \item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
