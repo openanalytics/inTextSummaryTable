@@ -260,9 +260,10 @@ formatSummaryStatisticsTableFlextable <- function(
 			}
 			
 			# merge rows, e.g. unique statistic for a subgroup are fill in the sub-group directly
-			colContentTable <- setdiff(colnames(summaryTable), c(rowVar, rowVarFinal, "rowVarFinal", "rowPadding"))
 			idxIsNA <- which(is.na(summaryTable[, rowVarFinal]))
 			if(length(idxIsNA) > 0){
+				
+				colContentTable <- setdiff(colnames(summaryTable), c(rowVar, rowVarFinal, "rowVarFinal", "rowPadding"))
 				
 				# first case: values are the same than in previous row
 				# e.g. only total included (e.g. rest is NA)

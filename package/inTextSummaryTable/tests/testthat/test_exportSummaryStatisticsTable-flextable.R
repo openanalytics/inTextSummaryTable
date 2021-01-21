@@ -591,6 +591,50 @@ test_that("mixed table without row auto merging is formatted correctly", {
 	
 })	
 
+test_that("mixed table with unnamed stat for cat var is formatted correctly", {
+			
+	# edge case to check if merging rows variableGroup/stats is correct
+	summaryTable <- data.frame(
+		variable = factor(
+			c("SEX", "SEX", "AGE"), 
+			levels = c("SEX", "AGE")
+		),
+		variableGroup = factor(
+			c("Female", "Male", NA_character_),
+			levels = c("Male", "Female")
+		),
+		Statistic = c(3, 4, NA_real_),
+		Mean = c(NA_real_, NA_real_, 3.33)
+	)
+			
+	rowPadBase <- 50
+	ft <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("variable", "variableGroup"),
+		rowPadBase = rowPadBase
+	)	
+	
+	# check that data is correctly set
+	dataRef <- data.frame(
+		c("SEX", "Male", "Female", "AGE Mean"),
+		c(NA_character_, "4", "3", "3.33"),
+		stringsAsFactors = FALSE
+	)
+	
+	expect_equal(
+		object = unname(ft$body$dataset),
+		expected = unname(dataRef),
+		check.attributes = FALSE	
+	)
+	
+	# check that correct padding is set for the nested column
+	# (Note: remove row headers because flextable default padding is used)
+	expect_setequal(
+		ft$body$styles$pars$padding.left$data[-c(1, 4), 1],
+		rowPadBase
+	)
+			
+})
 
 test_that("column variable is specified", {
 			
