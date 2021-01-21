@@ -720,18 +720,11 @@ computeSummaryStatisticsTable <- function(
 		!setequal(colVarTotal, colVarTotalPerc) | 
 		!is.null(rowVarTotalPerc) | 
 		!is.null(dataTotalPerc)
+
 	if(is.null(dataTotalPerc)){
 		dataTotalPerc <- dataTotal
 		dataTotalPercTotalHeader <- dataTotalColTotalHeader
 	}else{
-		dataTotalPercTotalHeader <- dataTotalPerc
-	}
-	# check if colVarTotal is in dataTotal:
-	colVarTotalPerc <- checkVar(var = colVarTotalPerc, varLabel = "colVarTotalPerc", 
-		data = dataTotalPerc, refLabel = "total dataset for percentage", varUncheck = "variable")
-
-	summaryTableTotalPerc <- if(computeTotalPerc){
-				
 		# convert row/column variables to factor
 		dataTotalPerc <- convertVarRowVarColVarToFactor(
 			data = dataTotalPerc, 
@@ -739,6 +732,19 @@ computeSummaryStatisticsTable <- function(
 			colVar = colVar,
 			var = var
 		)
+		dataTotalPercTotalHeader <- dataTotalPerc
+	}
+	
+	# check if colVarTotal is in dataTotal:
+	colVarTotalPerc <- checkVar(
+		var = colVarTotalPerc, 
+		varLabel = "colVarTotalPerc", 
+		data = dataTotalPerc, 
+		refLabel = "total dataset for percentage", 
+		varUncheck = "variable"
+	)
+
+	summaryTableTotalPerc <- if(computeTotalPerc){
 
 		computeSummaryStatisticsTableTotal(
 			data = dataTotalPerc, dataTotalCol = dataTotalPercTotalHeader,
@@ -751,6 +757,7 @@ computeSummaryStatisticsTable <- function(
 			subjectVar = subjectVar,
 			msgLabel = "total for percentage"
 		)
+		
 	}else	summaryTableTotal
 	summaryTable <- rbind.fill(
 		cbind(summaryTable, isTotalPerc = FALSE), 
@@ -1261,7 +1268,12 @@ convertVarToFactorWithOrder <- function(
 					intersect(catLast, varLevels)
 				)
 				res <- factor(data[, var], levels = varLevels)
-			}else	stop(paste(var, "should be a factor.")),
+			}else{
+				convertVarToFactorWithOrder(
+					data = data, var = var, catLast = catLast,
+					method = "alphabetical"
+				)
+			},
 			'alphabetical' = {
 				varLevels <- c(
 					intersect("Total", data[, var]),
