@@ -10,7 +10,7 @@ Description: Tables of summary statistics or count tables are created.
   (Word format), a topline presentation (PowerPoint format), 
   or as interactive table to an html document.
 Imports: glpgUtilityFct (>= 3.0.1), dplyr, plyr, reshape2 (>= 1.4), 
-  ggplot2, flextable, officer, magrittr, glpgStyle (>= 2.2.0),
+  ggplot2, flextable (>= 0.5.5), officer, magrittr, glpgStyle (>= 2.2.0),
   ggrepel, cowplot, methods, scales
 Suggests: testthat, pander, knitr
 License: file LICENSE

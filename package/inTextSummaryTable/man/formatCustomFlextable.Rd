@@ -27,7 +27,7 @@ summary table for body or header data.frame for the header.}
 \item{fontname}{String with font name, 'Times' by default.}
 
 \item{part}{string with part of the table to consider, 
-see \code{\link[flextable]{display}}.}
+see \code{\link[flextable]{compose}}.}
 
 \item{fontsize}{Integer with font size, 8 by default.}
 
