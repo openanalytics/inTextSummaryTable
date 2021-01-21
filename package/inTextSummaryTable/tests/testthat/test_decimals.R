@@ -33,7 +33,7 @@ test_that("Get number of decimals from data", {
 test_that("Get maximum number of decimals from data", {
 
 	x <- c(NA, 1e-2, 1e-3)
-	expect_equal(getMaxNDecimals(x), 3)
+	expect_equal(getMaxNDecimalsData(x), 3)
 			
 })
 
@@ -52,20 +52,25 @@ test_that("Get number of decimals from specified rule", {
 
 test_that("Get number of decimals", {
 
-	# test rule and/or data for edge case:	
+	x <- 5.1		
+			
+	# example from the Mock SAP phase 2/3
 	expect_equal(
-		object = getNDecimals(1e-2, useRule = TRUE, rule = "1", useData = FALSE),
-		expected = 3,
+		object = getNDecimals(x, 
+			useRule = TRUE, rule = "1", 
+			useData = FALSE
+		),
+		expected = 2,
 		label = "decimals from rule only"
 	)
 	expect_equal(
-		object = getNDecimals(1e-2, useRule = FALSE, useData = TRUE),
-		expected = 2,
+		object = getNDecimals(x, useRule = FALSE, useData = TRUE),
+		expected = 1,
 		label = "decimals from data only"
 	)
 	expect_equal(
-		object = getNDecimals(1e-2, useRule = TRUE, rule = "1", useData = TRUE),
-		expected = 2,
+		object = getNDecimals(x, useRule = TRUE, rule = "1", useData = TRUE),
+		expected = 1,
 		label = "decimals from rule and data"
 	)
 	
@@ -73,5 +78,15 @@ test_that("Get number of decimals", {
 		getNDecimals(1e-2, useRule = FALSE, useData = FALSE),
 		"'useRule' and/or 'useData'"
 	)
+			
+})
+
+test_that("Get maximum number of decimals", {
+	
+	# example from the Mock SAP phase 2/3
+	x <- c(5.1, 6.8, 10.2, 80.0, NA_real_)		
+			
+	# nDec based on rule is taken
+	expect_equal(getMaxNDecimals(x), 1)
 			
 })
