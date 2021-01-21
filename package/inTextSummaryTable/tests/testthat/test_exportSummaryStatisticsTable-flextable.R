@@ -1545,8 +1545,8 @@ test_that("list of summary tables is exported to a single file", {
 	# in exportSummaryStatisticsTable
 	# only in exportFlextableToDocx
 	summaryTables <- list(
-		`PARAM 2` = flextable(data.frame(n = 10)),
-		`PARAM 1` = flextable(data.frame(n = 2))
+		`PARAM 2` = flextable(data.frame(n = "10")),
+		`PARAM 1` = flextable(data.frame(n = "2"))
 	)
 	
 	file <- "table.docx" 

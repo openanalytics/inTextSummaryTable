@@ -97,7 +97,7 @@ RUN R -e "remotes::install_version('Matrix', version = '1.2-18', upgrade = FALSE
 	R -e "remotes::install_version('memoise', version = '1.1.0', upgrade = FALSE)" && \
 	R -e "remotes::install_version('munsell', version = '0.5.0', upgrade = FALSE)" && \
 	R -e "remotes::install_version('nlme', version = '3.1-148', upgrade = FALSE)" && \
-	R -e "remotes::install_version('officer', version = '0.3.11', upgrade = FALSE)" && \
+	R -e "remotes::install_version('officer', version = '0.3.16', upgrade = FALSE)" && \
 	R -e "remotes::install_version('openxlsx', version = '4.1.5', upgrade = FALSE)" && \
 	R -e "remotes::install_version('pander', version = '0.6.3', upgrade = FALSE)" && \
 	R -e "remotes::install_version('plyr', version = '1.8.6', upgrade = FALSE)" && \
@@ -133,7 +133,7 @@ RUN R -e "remotes::install_version('hms', version = '0.5.3', upgrade = FALSE)" &
 	R -e "remotes::install_version('tidyselect', version = '1.1.0', upgrade = FALSE)" && \
 	R -e "remotes::install_version('bookdown', version = '0.20', upgrade = FALSE)" && \
 	R -e "remotes::install_version('covr', version = '3.5.0', upgrade = FALSE)"
-RUN R -e "remotes::install_version('flextable', version = '0.5.10', upgrade = FALSE)" && \
+RUN R -e "remotes::install_version('flextable', version = '0.6.1', upgrade = FALSE)" && \
 	R -e "remotes::install_version('gh', version = '1.1.0', upgrade = FALSE)" && \
 	R -e "remotes::install_version('pkgload', version = '1.1.0', upgrade = FALSE)" && \
 	R -e "remotes::install_version('rcmdcheck', version = '1.3.3', upgrade = FALSE)" && \
