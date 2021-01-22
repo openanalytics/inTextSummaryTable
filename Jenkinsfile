@@ -29,7 +29,7 @@ pipeline {
                 ecrPull "${env.REG}", "${env.NS}/${env.IMAGE}", "${env.TAG}", '', 'eu-west-1'
                 copyArtifacts filter: '*.tar.gz', fingerprintArtifacts: true, projectName: 'git/glpgStyle/master', selector: lastSuccessful()
                 copyArtifacts filter: '*.tar.gz', fingerprintArtifacts: true, projectName: 'git/GLPGUtilityFct/master', selector: lastSuccessful()
-                sh "docker build --cache-from ${env.REG}/${env.NS}/${env.IMAGE}:${env.TAG} -t ${env.NS}/${env.IMAGE}:${env.TAG} -f Dockerfile.build ."
+                sh "docker build -t ${env.NS}/${env.IMAGE}:${env.TAG} -f Dockerfile.build ."
                 ecrPush "${env.REG}", "${env.NS}/${env.IMAGE}", "${env.TAG}", '', 'eu-west-1'
             }
         }
