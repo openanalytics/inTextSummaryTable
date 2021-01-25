@@ -1,15 +1,10 @@
 #' @section Formatted statistics:
 #' 
 #' In the in-text package, the following formatted
-#' statistics can reported in the output table,
-#' via the \code{type} parameter.\cr
-#' These statistics are reported as text variables,
-#' and typically reported in the table itself.
-#' 
-#' Depending on the type of the variable:
+#' statistics can be reported in the final output table.
 #' \itemize{
 #' 
-#' \item{specific for a continuous variable: }{
+#' \item{for a continuous variable: }{
 #' \itemize{
 #' 
 #' \item{base statistics: }{
@@ -40,7 +35,7 @@
 #' 
 #' }}
 #' 
-#' \item{for a categorical variable or for a group/full table: }{
+#' \item{for a categorical or continuous variable (or the full table): }{
 #' \itemize{
 #' 
 #' \item{base statistics: }{
@@ -70,5 +65,9 @@
 #' }}
 #' 
 #' }}
-#' 
+#' #' These statistics are specified via the \code{stats} parameter 
+#' (or \code{type} parameter of \code{\link{getStats}}).\cr
+#' These statistics are reported as text variables
+#' in the summary table (as data.frame),
+#' and typically displayed inside the final table.
 #' }

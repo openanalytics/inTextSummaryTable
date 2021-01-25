@@ -16,13 +16,11 @@ getStatsData(
 \arguments{
 \item{data}{Data.frame with dataset to consider for the summary table.}
 
-\item{var}{Character vector with variable(s) of \code{data}, 
-to compute statistics on.\cr
-If NULL (by default), counts by row/column variable(s) are computed.\cr
-To also return counts of the \code{rowVar} in case other \code{var}
-are specified, you can include: 'all' in the \code{var}.\cr
-Missing values, if present, are filtered 
-(also for the report of number of subjects/records).}
+\item{var}{(optional, recommended for continuous variable)
+Character vector with variable(s) of data, to
+compute statistics on.\cr
+If NULL (by default), counts of the entire dataset are computed.\cr
+It is passed to the \code{x} parameter of \code{\link{getStats}}.}
 
 \item{type}{Character vector with type of statistics to extract, among:
 \itemize{

@@ -112,10 +112,14 @@
 #' }
 #' @param stats (optional) Statistic(s) of interest to compute, either:
 #' \itemize{
-#' \item{string with a default set of statistics, 
+#' \item{string with the name of a default set of statistics
+#' available in the package, 
 #' see section 'Formatted statistics' in
-#' \code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.}
-#' \item{Named list of expressions or call objects (see \code{\link{is.language}}) 
+#' \code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.\cr
+#' See the corresponding \code{type} parameter of the
+#' \code{\link{getStatsData}} for more information
+#' on how the statistic is internally extracted.}
+#' \item{(expert mode) named list of language object (see \code{\link{is.language}}) 
 #' of base summary statistics of interest, see section:
 #' 'Base statistics' in
 #' \code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.\cr

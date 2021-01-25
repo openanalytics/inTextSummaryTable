@@ -5,14 +5,18 @@
 #'
 #' \item{statistics for continuous variable: }{
 #' \itemize{
-#' \item{if the number of decimals is specified (via \code{nDecCont}): }{
+#' \item{if the number of decimals (\code{nDecCont}) is specified: }{
 #' \cr statistics are rounded with the following number of decimals,
 #' based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}:
 #' \itemize{
 #' \item{'Min', 'Max': }{\code{nDecCont}}
 #' \item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
 #' \item{'SE': }{\code{nDecCont} + 2}
-#' }}
+#' }
+#' Note that the number of decimals is extracted
+#' from standard rules/data is the variable of interest 
+#' is specified (e.g. via \code{var} in \code{\link{getStatsData}}).
+#' }
 #' \item{if the number of decimals is not specified: }{
 #' \cr a default format is set via the \code{\link{formatC}} function.}
 #' }}

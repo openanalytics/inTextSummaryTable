@@ -18,6 +18,11 @@
 #' variable separately, this vector can be named with: 'cont' or
 #' 'cat' respectively (elements not named are used for both continuous 
 #' and categorical variables).
+#' @param var (optional, recommended for continuous variable)
+#' Character vector with variable(s) of data, to
+#' compute statistics on.\cr
+#' If NULL (by default), counts of the entire dataset are computed.\cr
+#' It is passed to the \code{x} parameter of \code{\link{getStats}}.
 #' @param extra List with extra statistics to include, or function to apply on each
 #' \code{var} (e.g. depending on the class of \code{var}) to get such statistic.
 #' @param args (optional) Named list with extra arguments for 
@@ -120,9 +125,9 @@ getStatsData <- function(
 #' and for the label of the list if \code{type} is of length 2.
 #' If there are multiple \code{type} or statistics within a set, the names are retained (to avoid confusion).
 #' @param x (optional, recommended for continuous variable) Numeric vector 
-#' for which the statistics should be computed on 
-#' (has an effect only for continuous variable).
-#' If specified, this is used to derive the number of decimals to include.
+#' for which the statistics should be computed on.\cr
+#' This is used to derive the number of decimals to include
+#' for a continuous variable.\cr
 #' If not specified, the values are rounded with \code{\link{formatC}}.
 #' @param nDecCont Integer with base number of decimals 
 #' for continuous variable, or function returning this number based on \code{x} 

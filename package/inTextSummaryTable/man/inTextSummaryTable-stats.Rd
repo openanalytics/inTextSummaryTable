@@ -7,22 +7,18 @@
 In the in-text package, different set of statistics are available.
 }
 \details{
-The statistics are first computed as numeric,
-then formatted to be displayed in the table.
+The statistics are first computed as numeric
+('Base statistics' section below),
+then formatted to be displayed in the table
+('Formatted statistics' section below).
 }
 \section{Base statistics}{
 
 
 In the in-text package, the following 'base
-statistics' can reported in the output table.\cr
-These statistics are reported as numeric and
-non rounded in the output table, and are
-typically as input for the formatted statistics,
-or for plots.
-
-Depending on the type of the variable:
+statistics' are reported in the summary table:
 \itemize{
-\item{specific for a continuous variable: }{
+\item{for a continuous variable: }{
 \itemize{
 \item{'statMean': }{variable mean}
 \item{'statSD': }{variable standard deviation}
@@ -35,30 +31,35 @@ During the computation of the statistics,
 if multiple and different values are available for a specific variable
 and subject ID (by row/column): an error is triggered.
 }
-\item{for a categorical variable or for a group/full table}{
+\item{for a categorical and continuous variable (or the full table): }{
 \itemize{
 \item{'statN': }{number of subjects}
-\item{'statPercN' (or 'statPercm'): }{percentage of subjects
-(or records depending on \code{statsPerc})}
 \item{'statm': }{number of records}
+\item{'statPercN' (or 'statPercm'): }{percentage of subjects
+(or records) for the specific group}
+\item{'statPercTotalN' (or 'statPercTotalm'): }{number of subjects 
+(or records) considered 
+for the total (denominator) of the percentage}
+}
+The percentage and denominator of the percentage are based
+on the number of subjects or records depending on
+the \code{statsPerc} parameter.
 }
 }
-}
+These statistics are reported as numeric and
+non rounded in the summary table, and are
+typically used as input for the formatted statistics,
+or for plots.
 }
 
 \section{Formatted statistics}{
 
 
 In the in-text package, the following formatted
-statistics can reported in the output table,
-via the \code{type} parameter.\cr
-These statistics are reported as text variables,
-and typically reported in the table itself.
-
-Depending on the type of the variable:
+statistics can be reported in the final output table.
 \itemize{
 
-\item{specific for a continuous variable: }{
+\item{for a continuous variable: }{
 \itemize{
 
 \item{base statistics: }{
@@ -89,7 +90,7 @@ Depending on the type of the variable:
 
 }}
 
-\item{for a categorical variable or for a group/full table: }{
+\item{for a categorical or continuous variable (or the full table): }{
 \itemize{
 
 \item{base statistics: }{
@@ -119,7 +120,11 @@ Note: this is only available if the percentage of records is reported
 }}
 
 }}
-
+#' These statistics are specified via the \code{stats} parameter 
+(or \code{type} parameter of \code{\link{getStats}}).\cr
+These statistics are reported as text variables
+in the summary table (as data.frame),
+and typically displayed inside the final table.
 }
 }
 
@@ -131,14 +136,18 @@ Note: this is only available if the percentage of records is reported
 
 \item{statistics for continuous variable: }{
 \itemize{
-\item{if the number of decimals is specified (via \code{nDecCont}): }{
+\item{if the number of decimals (\code{nDecCont}) is specified: }{
 \cr statistics are rounded with the following number of decimals,
 based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}:
 \itemize{
 \item{'Min', 'Max': }{\code{nDecCont}}
 \item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
 \item{'SE': }{\code{nDecCont} + 2}
-}}
+}
+Note that the number of decimals is extracted
+from standard rules/data is the variable of interest 
+is specified (e.g. via \code{var} in \code{\link{getStatsData}}).
+}
 \item{if the number of decimals is not specified: }{
 \cr a default format is set via the \code{\link{formatC}} function.}
 }}
