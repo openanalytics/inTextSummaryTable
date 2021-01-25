@@ -568,17 +568,3 @@ test_that("percentage is computed by a variable", {
 	
 })
 
-test_that("variable is alphabetically ordered", {
-			
-	# edge-case: alphabetical order is used
-	# all variables should already be converted as factor as input of the fct
-	data <- data.frame(group = c("B", "Z", "A", "G"), stringsAsFactors = FALSE)
-	varConverted <- inTextSummaryTable:::convertVarToFactorWithOrder(
-		data = data, var = "group",
-		method = "alphabetical"
-	)	
-	expect_s3_class(varConverted, "factor")
-	expect_equal(levels(varConverted), c("A", "B", "G", "Z"))
-			
-})
-
