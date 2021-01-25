@@ -460,3 +460,17 @@ test_that("label for variable subgroup is specified", {
 	)
 			
 })
+
+test_that("non factor variable is automatically ordered", {
+			
+	# edge-case: alphabetical order is used
+	# all variables should already be converted as factor as input of the fct
+	data <- data.frame(group = c("B", "Z", "A", "G"), stringsAsFactors = FALSE)
+	varConverted <- inTextSummaryTable:::convertVarToFactorWithOrder(
+		data = data, var = "group",
+		method = "auto"
+	)	
+	expect_s3_class(varConverted, "factor")
+	expect_equal(levels(varConverted), c("A", "B", "G", "Z"))
+			
+})
