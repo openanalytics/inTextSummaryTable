@@ -1,52 +1,7 @@
 #' Merge nested rows of a summary table
 #' for a format compatible with \code{flextable} 
-#' @param summaryTable summaryTable.frame with summaryTable
-#' @param vline String mentioning how vertical lines 
-#' should be included in the body of the table, either: 
-#' \itemize{
-#' \item{'none' (default): }{no vertical lines included}
-#' \item{'auto': }{vertical lines included between sub-groups}
-#' }
-#' @param hline String mentioning how horizontal lines 
-#' should be included in the body of the table, either: 
-#' \itemize{
-#' \item{'none': }{no horizontal lines included}
-#' \item{'auto' (default): }{horizontal lines included between sub-groups}
-#' }
-#' @param rowTotalLab label for the row with total
-#' @param rowAutoMerge Logical, if TRUE (by default) automatically merge rows,
-#' e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
-#' or only one statistic per category.
-#' @param rowVar Character vector with variable(s) used for the rows.
-#' If multiple variables are specified, the variables should be sorted in hierarchical order.
-#' The variables are included in rows, excepted if specified in \code{rowVarInSepCol}. 
-#' @param rowVarInSepCol Character vector with \code{rowVar}
-#' that should be included in multiple columns.
-#' NULL by default: the row variables are nested in the first column 
-#' of the table.
-#' To include the groups within a \code{var} variable in a separated column, 
-#' set: rowVarInSepCol == 'variableGroup'.
-#' This is only available if \code{rowVar} is not specified.
-#' @param statsLayout String with layout for the statistics names 
-#' (in case more than one statistic is included), among:
-#' \itemize{
-#' \item{row (by default): }{All statistics are included in different rows 
-#' in the first column of the table}
-#' \item{'col': }{Statistics are included in separated columns (last row of the header).
-#' This option is not compatible with categorical variable(s).}
-#' \item{'rowInSepCol': }{Statistics are included in different rows, but in a separated column than
-#' the \code{rowVar} variable(s)}
-#' }
-#' @param rowVarLab Label for the \code{rowVar} variable(s).
-#' @param rowVarFormat Named list with special formatting for the \code{rowVar}.
-#' Currently, only possibility is to set the variable elements in bold, with:
-#' list(var1 = "bold").
-#' (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)
-#' @param rowVarTotalInclude Character vector with \code{rowVar} for which the total
-#' is included. These variables should be formatted as a factor with 
-#' \strong{'Total' as the first level}.
-#' @inheritParams computeSummaryStatisticsTable
-#' @inheritParams formatSummaryStatisticsTable
+#' @inheritParams inTextSummaryTable-common-args
+#' @inheritParams inTextSummaryTable-flextable-args
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
 #' \item{'header': }{data.frame with header for each column}

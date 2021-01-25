@@ -24,6 +24,7 @@
 #' # extract number of decimals based on both rules
 #' # minimum of both is used (by default)
 #' getNDecimals(x, useRule = TRUE, useData = TRUE)
+#' @family decimals
 #' @export
 getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 	
@@ -63,6 +64,7 @@ getNDecimals <- function(x, useRule = TRUE, rule = "1", useData = TRUE){
 #' # extract max number of decimals based on both rules
 #' # minimum of both is used (by default)
 #' getMaxNDecimals(x, useRule = TRUE, useData = TRUE)
+#' @family decimals
 #' @export
 getMaxNDecimals <- function(x, ...)
 	max(getNDecimals(x, ...), na.rm = TRUE)
@@ -113,6 +115,7 @@ getNDecimalsRule <- function(x, rule = c("1")){
 #' @examples
 #' x <- c(0.99, 5.679, 50.45, 1450)
 #' getNDecimalsData(x)
+#' @family decimals
 #' @export
 getNDecimalsData <- function(x){
 	
@@ -140,6 +143,7 @@ getNDecimalsData <- function(x){
 #' x <- c(0.99, 5.679, 50.45, 1450)
 #' # extract max number of decimals based on data:
 #' getMaxNDecimalsData(x)
+#' @family decimals
 #' @export
 getMaxNDecimalsData <- function(x)
 	max(getNDecimalsData(x), na.rm = TRUE)
@@ -165,6 +169,7 @@ getMaxNDecimalsData <- function(x)
 #' @examples
 #' xPerc <- c(NA, 0, 100, 99.95, 0.012, 34.768)
 #' formatPercentage(x = xPerc)
+#' @family decimals
 #' @export
 formatPercentage <- function(x, nDec = 1){
 	

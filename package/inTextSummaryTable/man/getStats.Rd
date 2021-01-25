@@ -85,7 +85,7 @@ getStats(type = c('median (range)', 'mean (se)'))
 getStats(type = "count", formatPercentage = function(x) round(x, 2))
 }
 \seealso{
-getStatsData
+\link{getStatsData}
 }
 \author{
 Laure Cougnaud

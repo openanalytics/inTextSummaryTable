@@ -1,7 +1,9 @@
-#' Convert summary table to flextable
-#' @param summaryTable summary table as provided by the \code{\link{formatSummaryStatisticsTable}}
-#' @inheritParams formatSummaryStatisticsTableFlextable
-#' @inheritParams convertSummaryStatisticsTableToFlextable
+#' Export summary table to a flextable object,
+#' e.g. to be exported in Word or PowerPoint.
+#' @param summaryTable Summary table as provided by the 
+#' \code{\link{formatSummaryStatisticsTable}}
+#' @inheritParams inTextSummaryTable-common-args
+#' @inheritParams inTextSummaryTable-flextable-args
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct toDTGLPG

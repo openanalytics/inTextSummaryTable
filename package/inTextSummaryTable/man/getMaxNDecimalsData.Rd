@@ -17,9 +17,17 @@ Integer with maximum number of decimals in a character vector.
 Get maximum number of decimals in a variable based on the data
 (\code{\link{getNDecimalsData}})
 }
+\seealso{
+Other decimals: 
+\code{\link{formatPercentage}()},
+\code{\link{getMaxNDecimals}()},
+\code{\link{getNDecimalsData}()},
+\code{\link{getNDecimals}()}
+}
 \author{
 Laure Cougnaud
 x <- c(0.99, 5.679, 50.45, 1450)
 # extract max number of decimals based on data:
 getMaxNDecimalsData(x)
 }
+\concept{decimals}

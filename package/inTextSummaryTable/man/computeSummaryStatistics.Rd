@@ -17,11 +17,15 @@ computeSummaryStatistics(
 )
 }
 \arguments{
-\item{data}{Data.frame with data.}
+\item{data}{Data.frame with dataset to consider for the summary table.}
 
-\item{var}{String, variable of \code{data} with variable to compute statistics on.
-Missing values, if present, are filtered.
-If NULL or 'all', counts in the entire \code{data} are computed.}
+\item{var}{Character vector with variable(s) of \code{data}, 
+to compute statistics on.\cr
+If NULL (by default), counts by row/column variable(s) are computed.\cr
+To also return counts of the \code{rowVar} in case other \code{var}
+are specified, you can include: 'all' in the \code{var}.\cr
+Missing values, if present, are filtered 
+(also for the report of number of subjects/records).}
 
 \item{varTotalInclude}{Logical (FALSE by default)
 Should the total across all categories of \code{var} 
@@ -29,10 +33,15 @@ be included for the count table?
 Only used if \code{var} is a categorical variable.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
-statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
-Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
-and return the corresponding summary statistic.}
+statistics to be computed.\cr
+Each function:
+\itemize{
+\item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+the summary statistic on or 'data': the entire dataset}
+\item{returns the corresponding summary statistic as a numeric vector}
+}
+For example, to additionally compute the coefficient of variation, this can be set to:
+\code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
@@ -50,11 +59,10 @@ By default, an empty variable are filtered.}
 
 \item{type}{String with type of table: 
 \itemize{
-\item{'summaryTable': }{summary table with custom statistics}
+\item{'summaryTable': }{summary table with statistics for numeric variable}
 \item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
-'countTable' otherwise
-}
+\item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+'countTable' otherwise}
 }}
 
 \item{msgLabel}{(optional) String with label for the data (NULL by default), 

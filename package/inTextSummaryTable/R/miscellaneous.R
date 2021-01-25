@@ -42,7 +42,6 @@ roundCustomText <- function(x, digits = 0, format) {
 }
 
 #' Get specific attribute from a summaryTable or a list of summaryTables
-#' @param summaryTable Data.frame with summaryTable or list of such data.frames.
 #' @param name String with attribute name.
 #' @param default Object with default value for attribute, 
 #' NULL by default.
@@ -134,11 +133,8 @@ convertVarFlag <- function(x){
 }
 
 #' Convert \code{rowVar}, \code{colVar} and character \code{var} in \code{data} to factor
-#' @param data Data.frame with data.
-#' @param rowVar Character vector with variable(s) used for the rows.
-#' @param colVar Character vector with variable(s) used for the columns.
-#' @param var Character vector with variable(s) used for the summary statistics.
 #' @return Updated \code{data}
+#' @inheritParams inTextSummaryTable-common-args
 #' @author Laure Cougnaud
 convertVarRowVarColVarToFactor <- function(data, rowVar = NULL, colVar = NULL, var = NULL){
 	
@@ -187,12 +183,8 @@ convertVarRowVarColVarToFactor <- function(data, rowVar = NULL, colVar = NULL, v
 #' }
 #' \item{variable name is not included if no variable is specified}
 #' }
-#' @param var Character vector with summary statistics variable(s).
-#' @param varLabInclude Logical, if TRUE
-#' the name of the summary statistic variable(s) (\code{var})
-#' are included in the table.
-#' This is automatically set to TRUE if more than one variable(s) 
-#' and is specified, and FALSE if only one variable is specified.
+#' @param var String with variable to check.
+#' @inheritParams inTextSummaryTable-common-args
 #' @return (Updated) \code{varLabInclude}
 #' @author Laure Cougnaud
 checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
@@ -217,7 +209,7 @@ checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
 #' 
 #' Filter variables not present in the data or in reference set with a warning,
 #' and only returned filtered vector, or NULL if empty.
-#' @param var (Named) character vector with variables of interest.
+#' @param var String with variable to check.
 #' @param varLabel String with label for \code{var}, e.g.
 #' name of associated parameter.
 #' @param varRef (Named) character vector with set of reference variables.

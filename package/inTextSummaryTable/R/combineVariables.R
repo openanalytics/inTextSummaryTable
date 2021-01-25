@@ -4,7 +4,6 @@
 #' a.k.a multiple variables available in multiple columns of the data
 #' are included into one single column.
 #' For each variable, a subset of interest based on a condition can be specified.
-#' @param data Data.frame with data.
 #' @param paramsList nested list of parameters, 
 #' specifying how the records of interest should be selected.\cr
 #' There are two ways to select a subset of interest:
@@ -48,7 +47,7 @@
 #' This is only used if \code{fctTest} is not specified in each sublist.
 #' @param includeAll Logical, if TRUE (FALSE by default) include also the entire data as an additional subgroup.
 #' @param labelAll String of group label for the entire data in case \code{includeAll} is TRUE.
-#' @inheritParams glpgUtilityFct::getLabelVar
+#' @inheritParams inTextSummaryTable-common-args
 #' @return Data.frame with records from \code{data} extracted based on
 #' the different conditions specified in \code{paramsList}.\cr
 #' This data.frame contains an additional variable 

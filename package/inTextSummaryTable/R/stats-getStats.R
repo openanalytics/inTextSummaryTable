@@ -4,10 +4,6 @@
 #' of the package functions.\cr
 #' By default, statistics are extracted based on the variable(s) type
 #' and formatted with the default rules implemented in the package.
-#' @param data Data.frame with data.
-#' @param var Character vector with variable(s) of interest,
-#' available in \code{data}.\cr
-#' If not specified, count statistics are extracted for \code{data}.
 #' @param type Character vector with type of statistics to extract, among:
 #' \itemize{
 #' \item{'default': }{default sets of statistics, 
@@ -29,8 +25,9 @@
 #' categorical variable (name: 'cat') specifically. 
 #' @param ... Extra parameters passed to the \code{\link{getStats}} function
 #' (independent of the variable type).
+#' @inheritParams inTextSummaryTable-common-args
 #' @return List with statistics to compute, named by \code{var}
-#' @seealso getStats
+#' @seealso \link{getStats}
 #' @examples 
 #' library(glpgUtilityFct)
 #' data(ADaMDataPelican)
@@ -170,7 +167,7 @@ getStatsData <- function(
 #' 
 #' ## custom function to format the percentages:
 #' getStats(type = "count", formatPercentage = function(x) round(x, 2))
-#' @seealso getStatsData
+#' @seealso \link{getStatsData}
 #' @author Laure Cougnaud
 #' @export
 getStats <- function(

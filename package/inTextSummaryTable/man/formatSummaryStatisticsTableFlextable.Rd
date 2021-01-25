@@ -27,77 +27,88 @@ formatSummaryStatisticsTableFlextable(
 )
 }
 \arguments{
-\item{summaryTable}{summaryTable.frame with summaryTable}
+\item{summaryTable}{Summary table as provided by the 
+\code{\link{computeSummaryStatisticsTable}}.}
 
-\item{rowVar}{Character vector with variable(s) used for the rows.
-If multiple variables are specified, the variables should be sorted in hierarchical order.
-The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
+\item{rowVar}{Character vector with variable(s)
+to be included in the rows.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order
+(e.g. body system class before adverse event term)
+and are nested in the table.}
 
 \item{rowVarInSepCol}{Character vector with \code{rowVar}
-that should be included in multiple columns.
-NULL by default: the row variables are nested in the first column 
-of the table.
+that should be included in separated columns.
+By default (NULL), all row variables are nested in the first column 
+of the table.\cr
 To include the groups within a \code{var} variable in a separated column, 
-set: rowVarInSepCol == 'variableGroup'.
-This is only available if \code{rowVar} is not specified.}
+set: \code{rowVarInSepCol == 'variableGroup'}.}
 
-\item{rowVarTotalInclude}{Character vector with \code{rowVar} for which the total
-is included. These variables should be formatted as a factor with 
+\item{rowVarTotalInclude}{Character vector with \code{rowVar}
+for which the total should be reported.\cr
+If the higher row variable is specified, the total across all rows
+is reported. \cr
+For the export, these variable(s) are formatted as factor with 
 \strong{'Total' as the first level}.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row (by default): }{All statistics are included in different rows 
-in the first column of the table}
-\item{'col': }{Statistics are included in separated columns (last row of the header).
+\item{row (by default for 'flextable' output): }{All statistics are
+ included in different rows in the first column of the table (after the row variable(s))}
+\item{'col' (by default for 'DT' output): }{Statistics are included 
+in separated columns (last row of the header).\cr
 This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in different rows, but in a separated column than
-the \code{rowVar} variable(s)}
+\item{'rowInSepCol': }{Statistics are included in different rows, 
+but in a separated column than the \code{rowVar} variable(s)}
 }}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
-statistic variables. If not specified, all columns of \code{data}
+statistic variables. For the export: if not specified, all columns of \code{data}
 besides row, column variables, 'variable', 'variableGroup'
 and 'isTotal' are considered.}
 
 \item{statsLabInclude}{Logical, if TRUE include the statistic label
-in the table. By default only included if more than
+in the table. \cr By default only included if more than
 one statistic variables are available in the table.}
 
-\item{rowVarLab}{Label for the \code{rowVar} variable(s).}
+\item{rowVarLab}{Named character vector with 
+label for the \code{rowVar} variable(s).}
 
 \item{rowVarTotalInSepRow}{Character vector with \code{rowVarTotalInclude}
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
 Otherwise (by default) the total is included in the header row of each category.}
 
-\item{vline}{String mentioning how vertical lines 
+\item{vline}{(flextable output) String mentioning how vertical lines 
 should be included in the body of the table, either: 
 \itemize{
 \item{'none' (default): }{no vertical lines included}
 \item{'auto': }{vertical lines included between sub-groups}
 }}
 
-\item{hline}{String mentioning how horizontal lines 
+\item{hline}{(flextable output) String mentioning how horizontal lines 
 should be included in the body of the table, either: 
 \itemize{
 \item{'none': }{no horizontal lines included}
 \item{'auto' (default): }{horizontal lines included between sub-groups}
 }}
 
-\item{rowAutoMerge}{Logical, if TRUE (by default) automatically merge rows,
+\item{rowAutoMerge}{(flextable output) Logical, if TRUE (by default) automatically merge rows,
 e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
 or only one statistic per category.}
 
-\item{rowVarFormat}{Named list with special formatting for the \code{rowVar}.
+\item{rowVarFormat}{(flextable output) Named list with special formatting for the \code{rowVar}.
 Currently, only possibility is to set the variable elements in bold, with:
 list(var1 = "bold").
 (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
-\item{rowTotalLab}{label for the row with total}
+\item{rowTotalLab}{(flextable output) string with label for the row with total.}
 
-\item{labelVars}{Named character vector with variable labels (names are the variable code),
-usually extracted from \code{data}.}
+\item{labelVars}{(optional) Named character vector with label for
+the row, column variable(s) or variable(s) to summarize. \cr
+Labels specified via dedicated parameter: e.g. 
+\code{rowVarLab}, \code{colVarLab}, \code{varLab}
+have priority on this parameter.}
 }
 \value{
 summaryTable reformatted in long format, with extra attributes:

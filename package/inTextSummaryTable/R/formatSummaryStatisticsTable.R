@@ -1,24 +1,11 @@
 #' Format summary statistics table for export
-#' @param summaryTable Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.
 #' @param colHeaderTotalInclude Logical, if TRUE include the total of number of patients
-#' (\code{'statN'}) in the header.
-#' @param statsValueLab String with label for the statistic value, 
-#' 'StatisticValue' by default.
-#' This is only used if the statistics provided in \code{stats} are not named
-#' and if no \code{colVar} is specified.
+#' (\code{'statN'}) in the column header.
 #' @param emptyValue String with placeholder used to fill the table for missing values, '-' by default.
 #' This value is typically used e.g. if not all statistics are computed for all specified
 #' row/col/var variables.
-#' @param statsVar Character vector with columns of \code{summaryTable} with
-#' statistic variables. If not specified, all columns of \code{data}
-#' besides row, column variables, 'variable', 'variableGroup'
-#' and 'isTotal' are considered.
-#' @param statsLabInclude Logical, if TRUE include the statistic label
-#' in the table. By default only included if more than
-#' one statistic variables are available in the table.
 #' @inheritParams subjectProfileSummaryPlot
-#' @inheritParams formatSummaryStatisticsTableFlextable
-#' @inheritParams computeSummaryStatisticsTable
+#' @inheritParams inTextSummaryTable-common-args
 #' @return summaryTable reformatted to wide format
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar

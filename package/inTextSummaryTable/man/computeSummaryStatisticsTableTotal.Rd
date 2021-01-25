@@ -23,11 +23,12 @@ computeSummaryStatisticsTableTotal(
 )
 }
 \arguments{
-\item{data}{Data.frame with data.}
+\item{data}{Data.frame with dataset to consider for the summary table.}
 
-\item{colVar}{Character vector with variable(s) used for the columns.
-If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.
+\item{colVar}{Character vector with variable(s) to be included in columns.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order,
+and are included in multi-columns layout.\cr
 Use: 'variable' to include the variables to summarize: \code{var}
  (if multiple) in different columns.}
 
@@ -37,19 +38,15 @@ This could also contain 'variable'.}
 \item{rowVarTotal}{Character vector with row(s) considered to compute the total.
 This could also contain 'variable'.}
 
-\item{var}{Character vector with variable, used if 'variable' is specified
-within \code{rowVarTotal}.}
+\item{var}{Character vector with variable(s) of \code{data}, 
+to compute statistics on.\cr
+If NULL (by default), counts by row/column variable(s) are computed.\cr
+To also return counts of the \code{rowVar} in case other \code{var}
+are specified, you can include: 'all' in the \code{var}.\cr
+Missing values, if present, are filtered 
+(also for the report of number of subjects/records).}
 
-\item{varLab}{Named character vector with label for each variable 
-specified in \code{var}.
-By default, extracted from the \code{labelVars}.
-if not available, \code{var} is used.}
-
-\item{colInclude0}{Logical, if TRUE (FALSE by default),
-include columns with no records, based on all combinations 
-of the \code{columnVar} (assuming nested variable(s)).
-If variable(s) are not nested, possible combinations
-can be specified via \code{colVarDataLevels}.}
+\item{colTotalLab}{String, label for the total column  'Total' by default.\cr}
 
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
@@ -57,18 +54,16 @@ statistics across columns in a separated column.}
 \item{dataTotalCol}{Data.frame from which the total across columns is 
 extracted (in case \code{colTotalInclude} is TRUE).}
 
-\item{colVarDataLevels}{Data.frame with unique combinations of \code{colVar}
-to be included in columns.
-Each column should correspond to \code{colVar} and as factor
-if the elements should be ordered in the final table.}
-
 \item{colVarLevels}{list with levels of each \code{colVar}}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{labelVars}{Named character vector with variable labels (names are the variable code),
-usually extracted from \code{data}.}
+\item{labelVars}{(optional) Named character vector with label for
+the row, column variable(s) or variable(s) to summarize. \cr
+Labels specified via dedicated parameter: e.g. 
+\code{rowVarLab}, \code{colVarLab}, \code{varLab}
+have priority on this parameter.}
 
 \item{msgLabel}{(optional) String with label for the data ('total' by default), 
 included in the message/warning for checks.}

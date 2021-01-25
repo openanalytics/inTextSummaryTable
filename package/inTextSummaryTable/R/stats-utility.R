@@ -1,15 +1,22 @@
+#' Common arguments for the for the statistics utility functions
+#' of the inTextSummaryTable package.
+#' @param x Numeric vector.
+#' @param na.rm Logical, should NA value(s) be removed (FALSE by default)?
+#' @name inTextSummaryTable-stats-utility
+NULL
+
 #' Compute standard error of the mean.
 #' 
 #' The standard error of the mean is computed as:
 #' \eqn{\frac{\sigma(x)}{\sqrt{length(x)}}}, with:\cr
 #' \eqn{\sigma(x)}: standard deviation of \code{x}
-#' @param x Numeric vector.
-#' @param na.rm Logical, should NA value(s) be removed (FALSE by default)?
+#' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector with standard error of the mean
 #' @author Laure Cougnaud
 #' @importFrom stats na.omit sd
 #' @examples
 #' se(rnorm(1000))
+#' @family stats utility functions
 #' @export
 se <- function(x, na.rm = FALSE){
 	if(na.rm)	 x <- na.omit(x)
@@ -26,13 +33,14 @@ se <- function(x, na.rm = FALSE){
 #' \item{\eqn{\sigma(x)}: }{standard deviation of \code{x}}
 #' \item{\eqn{\bar{x}}: }{arithmetic mean of \code{x}}
 #' }
-#' @inheritParams se
+#' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with coefficient of variation.
 #' @author Laure Cougnaud
 #' @importFrom stats sd
 #' @examples
 #' # coefficient of variation of normal distribution tends to 100%
 #' cv(rnorm(n = 1000, mean = 1, sd = 1))
+#' @family stats utility functions
 #' @export
 cv <- function(x, na.rm = FALSE){
 	
@@ -49,13 +57,14 @@ cv <- function(x, na.rm = FALSE){
 #' \item{log: }{natural logarithm}
 #' \item{\eqn{\bar{log(x)}}: }{arithmetic mean of log(x)}
 #' }
-#' @inheritParams se
+#' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with geometric mean.
 #' @author Laure Cougnaud
 #' @examples
 #' # geometric mean of a big sample from log normal distribution
 #' # tends to the mean of the distribution:
 #' geomMean(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
+#' @family stats utility functions
 #' @export
 geomMean <- function(x, na.rm = FALSE){
 	res <- exp(mean(log(x), na.rm = na.rm))
@@ -70,13 +79,14 @@ geomMean <- function(x, na.rm = FALSE){
 #' \item{log: }{natural logarithm}
 #' \item{\eqn{\sigma}: }{standard deviation}
 #' }
-#' @inheritParams se
+#' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with geometric mean.
 #' @author Laure Cougnaud
 #' @importFrom stats sd
 #' @examples
 #' # geometric mean of a sample from log normal distribution:
 #' geomSD(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
+#' @family stats utility functions
 #' @export
 geomSD <- function(x, na.rm = FALSE){
 	res <- exp(sd(log(x), na.rm = na.rm))
@@ -92,7 +102,7 @@ geomSD <- function(x, na.rm = FALSE){
 #' \item{log: }{natural logarithm}
 #' \item{\eqn{\sigma}: }{standard deviation}
 #' }
-#' @inheritParams se
+#' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with 
 #' geometric coefficient of variation.
 #' @author Laure Cougnaud
@@ -100,6 +110,7 @@ geomSD <- function(x, na.rm = FALSE){
 #' @examples
 #' # Geometric mean of a sample from log normal distribution:
 #' geomCV(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
+#' @family stats utility functions
 #' @export
 geomCV <- function(x, na.rm = FALSE){
 	res <- sqrt(exp(sd(log(x), na.rm = na.rm)^2)-1)*100

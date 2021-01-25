@@ -7,8 +7,6 @@
 getAttribute(summaryTable, name, default = NULL)
 }
 \arguments{
-\item{summaryTable}{Data.frame with summaryTable or list of such data.frames.}
-
 \item{name}{String with attribute name.}
 
 \item{default}{Object with default value for attribute, 

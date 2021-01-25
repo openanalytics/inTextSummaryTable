@@ -27,6 +27,14 @@ The geometric mean is computed as:
 # tends to the mean of the distribution:
 geomMean(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
 }
+\seealso{
+Other stats utility functions: 
+\code{\link{cv}()},
+\code{\link{geomCV}()},
+\code{\link{geomSD}()},
+\code{\link{se}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{stats utility functions}

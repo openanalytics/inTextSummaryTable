@@ -32,6 +32,14 @@ based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}:
 xPerc <- c(NA, 0, 100, 99.95, 0.012, 34.768)
 formatPercentage(x = xPerc)
 }
+\seealso{
+Other decimals: 
+\code{\link{getMaxNDecimalsData}()},
+\code{\link{getMaxNDecimals}()},
+\code{\link{getNDecimalsData}()},
+\code{\link{getNDecimals}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{decimals}

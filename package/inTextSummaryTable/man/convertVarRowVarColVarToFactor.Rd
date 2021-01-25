@@ -7,13 +7,29 @@
 convertVarRowVarColVarToFactor(data, rowVar = NULL, colVar = NULL, var = NULL)
 }
 \arguments{
-\item{data}{Data.frame with data.}
+\item{data}{Data.frame with dataset to consider for the summary table.}
 
-\item{rowVar}{Character vector with variable(s) used for the rows.}
+\item{rowVar}{Character vector with variable(s)
+to be included in the rows.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order
+(e.g. body system class before adverse event term)
+and are nested in the table.}
 
-\item{colVar}{Character vector with variable(s) used for the columns.}
+\item{colVar}{Character vector with variable(s) to be included in columns.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order,
+and are included in multi-columns layout.\cr
+Use: 'variable' to include the variables to summarize: \code{var}
+ (if multiple) in different columns.}
 
-\item{var}{Character vector with variable(s) used for the summary statistics.}
+\item{var}{Character vector with variable(s) of \code{data}, 
+to compute statistics on.\cr
+If NULL (by default), counts by row/column variable(s) are computed.\cr
+To also return counts of the \code{rowVar} in case other \code{var}
+are specified, you can include: 'all' in the \code{var}.\cr
+Missing values, if present, are filtered 
+(also for the report of number of subjects/records).}
 }
 \value{
 Updated \code{data}

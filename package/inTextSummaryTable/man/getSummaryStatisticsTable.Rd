@@ -80,19 +80,24 @@ getSummaryStatisticsTable(
 )
 }
 \arguments{
-\item{data}{Data.frame with data.}
+\item{data}{Data.frame with dataset to consider for the summary table.}
 
-\item{var}{Character vector, variable(s) of \code{data} to compute statistics on.
-Missing values, if present, are filtered.
-If NULL (by default), counts of the \code{rowVar} are returned.
+\item{var}{Character vector with variable(s) of \code{data}, 
+to compute statistics on.\cr
+If NULL (by default), counts by row/column variable(s) are computed.\cr
 To also return counts of the \code{rowVar} in case other \code{var}
-are specified, you can include: 'all' in the \code{var}.}
+are specified, you can include: 'all' in the \code{var}.\cr
+Missing values, if present, are filtered 
+(also for the report of number of subjects/records).}
 
 \item{varFlag}{Character vector, subset of \code{var} with variable(s) 
 of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
 Only the counts for records flagged (with 'Y') are retained.}
 
-\item{varLab}{Label for the \code{var} variable.}
+\item{varLab}{Named character vector with label for each variable 
+specified in \code{var}.
+By default, extracted from the \code{labelVars}.
+if not available, \code{var} is used.}
 
 \item{varLabInclude}{Logical, if TRUE
 the name of the summary statistic variable(s) (\code{var})
@@ -138,10 +143,15 @@ Either:
 \item{varTotalInSepRow}{Logical, should the total per variable be included in
 a separated row (by default) or in the row containing the header of the variable?}
 
-\item{rowVar}{Variable(s) of \code{data} used for
-grouping in row in the final table.}
+\item{rowVar}{Character vector with variable(s)
+to be included in the rows.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order
+(e.g. body system class before adverse event term)
+and are nested in the table.}
 
-\item{rowVarLab}{Label for the \code{rowVar} variable(s).}
+\item{rowVarLab}{Named character vector with 
+label for the \code{rowVar} variable(s).}
 
 \item{rowVarDataLevels}{Data.frame with unique combinations of \code{rowVar}
 to be included in columns.
@@ -173,13 +183,24 @@ function(x) subset(x, TRTP == "treatmentX")}
 \item{rowOrderCatLast}{String with category to be printed in the last 
 row of each \code{rowVar} (if any, set to NULL if none).}
 
-\item{rowVarFormat}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{rowVarInSepCol}{Character vector with \code{rowVar}
+that should be included in separated columns.
+By default (NULL), all row variables are nested in the first column 
+of the table.\cr
+To include the groups within a \code{var} variable in a separated column, 
+set: \code{rowVarInSepCol == 'variableGroup'}.}
+
+\item{rowVarFormat}{(flextable output) Named list with special formatting for the \code{rowVar}.
+Currently, only possibility is to set the variable elements in bold, with:
+list(var1 = "bold").
+(Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
 \item{rowVarTotalInclude}{Character vector with \code{rowVar}
 for which the total should be reported.\cr
 If the higher row variable is specified, the total across all rows
-is reported.}
+is reported. \cr
+For the export, these variable(s) are formatted as factor with 
+\strong{'Total' as the first level}.}
 
 \item{rowVarTotalByVar}{Character vector with a row variable
 used to categorize the row total.\cr
@@ -194,15 +215,15 @@ for row adverse event term in a typical adverse event count table
 (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
 Otherwise (by default) the total is included in the header row of each category.}
 
-\item{rowTotalLab}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{rowTotalLab}{(flextable output) string with label for the row with total.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
 of the \code{rowVar} (assuming nested variable(s)).}
 
-\item{rowAutoMerge}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{rowAutoMerge}{(flextable output) Logical, if TRUE (by default) automatically merge rows,
+e.g. in case there is only one sub-category (e.g. categorical variable with only one group)
+or only one statistic per category.}
 
 \item{emptyValue}{String with placeholder used to fill the table for missing values, '-' by default.
 This value is typically used e.g. if not all statistics are computed for all specified
@@ -214,9 +235,10 @@ By default the total is only computed only by column (NULL by default).
 If the total should be based on the total number of records per variable,
 \code{rowVarTotalPerc} should be set to 'variable'.}
 
-\item{colVar}{Character vector with variable(s) used for the columns.
-If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.
+\item{colVar}{Character vector with variable(s) to be included in columns.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order,
+and are included in multi-columns layout.\cr
 Use: 'variable' to include the variables to summarize: \code{var}
  (if multiple) in different columns.}
 
@@ -242,8 +264,7 @@ if the elements should be ordered in the final table.}
 \item{colTotalInclude}{Logical, if TRUE (FALSE by default) include the summary 
 statistics across columns in a separated column.}
 
-\item{colTotalLab}{String, label for the total column included 
-if \code{colTotalInclude} is TRUE, 'Total' by default.}
+\item{colTotalLab}{String, label for the total column  'Total' by default.\cr}
 
 \item{stats}{(optional) Statistic(s) of interest to compute, either:
 \itemize{
@@ -269,10 +290,15 @@ by naming each element of the list:
 }}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
-statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
-Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
-and return the corresponding summary statistic.}
+statistics to be computed.\cr
+Each function:
+\itemize{
+\item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+the summary statistic on or 'data': the entire dataset}
+\item{returns the corresponding summary statistic as a numeric vector}
+}
+For example, to additionally compute the coefficient of variation, this can be set to:
+\code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).}
 
 \item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
 which the statistics should be computed by.
@@ -290,12 +316,12 @@ percentage, either:
 Only included if no \code{statsVar} if longer than 1.}
 
 \item{statsValueLab}{String with label for the statistic value, 
-'StatisticValue' by default.
-This is only used if the statistics provided in \code{stats} are not named
-and if no \code{colVar} is specified.}
+'StatisticValue' by default.\cr
+This is only included in the table if the statistics provided in 
+\code{stats} are not named and if no \code{colVar} is specified.}
 
 \item{statsLabInclude}{Logical, if TRUE include the statistic label
-in the table. By default only included if more than
+in the table. \cr By default only included if more than
 one statistic variables are available in the table.}
 
 \item{subjectVar}{String, variable of \code{data} with subject ID,
@@ -356,27 +382,35 @@ By default, \code{data} is used.}
 
 \item{type}{String with type of table: 
 \itemize{
-\item{'summaryTable': }{summary table with custom statistics}
+\item{'summaryTable': }{summary table with statistics for numeric variable}
 \item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
-'countTable' otherwise
-}
+\item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+'countTable' otherwise}
 }}
 
-\item{labelVars}{Named character vector with variable labels (names are the variable code),
-usually extracted from \code{data}.}
+\item{labelVars}{(optional) Named character vector with label for
+the row, column variable(s) or variable(s) to summarize. \cr
+Labels specified via dedicated parameter: e.g. 
+\code{rowVarLab}, \code{colVarLab}, \code{varLab}
+have priority on this parameter.}
 
-\item{landscape}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
+By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}
 
-\item{margin}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{margin}{(flextable output) Margin in the document in inches
+(1 by default).
+This is used to specify the width of the table, from:
+[\code{pageDim[1]} - 2 * margin].}
 
-\item{rowPadBase}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{rowPadBase}{(flextable output) Base padding for row (in points), 
+14.4 by default (corresponds to 0.2 inches)}
 
-\item{footer}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{title}{Character vector with title(s) for the table.
+Set to NULL (by default) if no title should be included.
+If multiple are specified, specified for each element of \code{byVar} (in order of the levels).}
+
+\item{footer}{(flextable output) Character vector with footer(s) for the table.
+Set to NULL (by default) if no footer should be included.}
 
 \item{file}{(Optional) Name of the file the table should be exported to, 
 either:
@@ -415,25 +449,22 @@ compatible with html export}
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row (by default when \code{outputType} is: 'flextable'): }{
-All statistics are included in different rows 
-in the first column of the table
-}
-\item{'col' (by default when \code{outputType} is: 'DT'): }{
-Statistics are included in separated columns (last row of the header).
-This option is not compatible with categorical variable(s).
-}
-\item{'rowInSepCol': }{
-Statistics are included in different rows, but in a separated column than
-the \code{rowVar} variable(s)
-}
+\item{row (by default for 'flextable' output): }{All statistics are
+ included in different rows in the first column of the table (after the row variable(s))}
+\item{'col' (by default for 'DT' output): }{Statistics are included 
+in separated columns (last row of the header).\cr
+This option is not compatible with categorical variable(s).}
+\item{'rowInSepCol': }{Statistics are included in different rows, 
+but in a separated column than the \code{rowVar} variable(s)}
 }}
 
-\item{style}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{style}{(flextable output) String with table style,
+ either 'report' or 'presentation'.
+This parameter affects the fontsize, font family, color of the text and background, 
+and table dimensions of the table.}
 
-\item{colorTable}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{colorTable}{(flextable output) Named character vector with color for the table background/body/text/line,
+e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}
@@ -442,39 +473,47 @@ should be created.}
 of the output list of table(s).}
 
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
-(\code{'statN'}) in the header.}
+(\code{'statN'}) in the column header.}
 
-\item{fontsize}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{fontsize}{(flextable output) Integer with font size, by default:
+8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}
 
-\item{fontname}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
+\item{fontname}{(flextable output) String with font name, by default:
+'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}
 
-\item{vline}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
-
-\item{hline}{Parameters specific to the 'flextable' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.}
-
-\item{pageDim}{Numeric vector of length 2 with page width and height
-depending on \code{outputType}:
+\item{vline}{(flextable output) String mentioning how vertical lines 
+should be included in the body of the table, either: 
 \itemize{
-\item{'flextable': }{in inches in portrait format}
-\item{'DT': }{number of rows in the table (currently only
-the height is used (e.g. \code{c(NA, 4)})
+\item{'none' (default): }{no vertical lines included}
+\item{'auto': }{vertical lines included between sub-groups}
+}}
+
+\item{hline}{(flextable output) String mentioning how horizontal lines 
+should be included in the body of the table, either: 
+\itemize{
+\item{'none': }{no horizontal lines included}
+\item{'auto' (default): }{horizontal lines included between sub-groups}
+}}
+
+\item{pageDim}{Numeric vector of length 2 with page width and height.\cr
+Depending on \code{outputType}:
+\itemize{
+\item{'flextable': }{in inches}
+\item{'DT': }{in number of rows in the table.\cr
+Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
 
-\item{expandVar}{Parameters specific to the 'DT' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToDT}}.}
+\item{expandVar}{(DT output) Character vector with variables of the summary table which
+should be expanded in the data.}
 
-\item{noEscapeVar}{Parameters specific to the 'DT' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToDT}}.}
+\item{noEscapeVar}{(DT output) Character vector with variables of \code{summaryTable}
+which shouldn't be escaped in the table (e.g. containing URLs).}
 
-\item{barVar}{Parameters specific to the 'DT' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToDT}}.}
+\item{barVar}{(DT output) Character vector with variables of \code{summaryTable}
+that should be represented as a bar.}
 
-\item{...}{Parameters specific to the 'DT' \code{output}.\cr 
-See correspondings parameter in \code{\link{exportSummaryStatisticsTableToDT}}.}
+\item{...}{(DT output) Extra parameters passed to the 
+\code{\link[glpgUtilityFct]{toDTGLPG}}}
 }
 \value{
 Depending on the \code{outputType}:
@@ -488,7 +527,7 @@ different columns for each \code{colVar}), with specified labels}
 \item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
 }
 If multiple \code{outputType} are specified, a list of those objects, named
-by \code{outputType}.
+by \code{outputType}.\cr
 If \code{byVar} is specified, each object consists of a list of tables,
 one for each element in \code{byVar}.
 }
