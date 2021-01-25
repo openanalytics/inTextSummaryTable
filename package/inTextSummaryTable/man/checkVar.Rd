@@ -16,7 +16,7 @@ checkVar(
 )
 }
 \arguments{
-\item{var}{(Named) character vector with variables of interest.}
+\item{var}{String with variable to check.}
 
 \item{varLabel}{String with label for \code{var}, e.g.
 name of associated parameter.}

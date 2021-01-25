@@ -15,7 +15,7 @@ combineVariables(
 )
 }
 \arguments{
-\item{data}{Data.frame with data.}
+\item{data}{Data.frame with dataset to consider for the summary table.}
 
 \item{paramsList}{nested list of parameters, 
 specifying how the records of interest should be selected.\cr
@@ -57,8 +57,11 @@ If not specified and:
 
 \item{newVar}{String with name of new variable to construct.}
 
-\item{labelVars}{Named character vector with variable labels (names are the variable code),
-usually extracted from \code{data}.}
+\item{labelVars}{(optional) Named character vector with label for
+the row, column variable(s) or variable(s) to summarize. \cr
+Labels specified via dedicated parameter: e.g. 
+\code{rowVarLab}, \code{colVarLab}, \code{varLab}
+have priority on this parameter.}
 
 \item{fctTest}{Default function to use to compare \code{var} and \code{value} specified
 in each sublist of \code{paramsList}.\cr

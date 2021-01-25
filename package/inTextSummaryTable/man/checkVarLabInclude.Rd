@@ -7,7 +7,7 @@
 checkVarLabInclude(var, varLabInclude = length(var) > 1)
 }
 \arguments{
-\item{var}{Character vector with summary statistics variable(s).}
+\item{var}{String with variable to check.}
 
 \item{varLabInclude}{Logical, if TRUE
 the name of the summary statistic variable(s) (\code{var})

@@ -17,21 +17,21 @@ convertVarToFactorWithOrder(
 )
 }
 \arguments{
-\item{data}{Data.frame with data.}
+\item{data}{Data.frame with dataset to consider for the summary table.}
 
 \item{var}{String with variable of \code{data} to sort.}
 
 \item{otherVars}{Character vector with other variable(s) of \code{data}
 considered in the specific dimension.}
 
-\item{colVar}{Character vector with variable(s) used for the columns.
-If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.
+\item{colVar}{Character vector with variable(s) to be included in columns.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order,
+and are included in multi-columns layout.\cr
 Use: 'variable' to include the variables to summarize: \code{var}
  (if multiple) in different columns.}
 
-\item{colTotalLab}{String, label for the total column included 
-if \code{colTotalInclude} is TRUE, 'Total' by default.}
+\item{colTotalLab}{String, label for the total column  'Total' by default.\cr}
 
 \item{method}{Ordering method to use, either:
 \itemize{

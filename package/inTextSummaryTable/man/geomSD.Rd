@@ -26,6 +26,14 @@ The geometric standard deviation is computed as:
 # geometric mean of a sample from log normal distribution:
 geomSD(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
 }
+\seealso{
+Other stats utility functions: 
+\code{\link{cv}()},
+\code{\link{geomCV}()},
+\code{\link{geomMean}()},
+\code{\link{se}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{stats utility functions}

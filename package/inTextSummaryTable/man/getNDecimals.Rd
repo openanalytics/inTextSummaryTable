@@ -57,6 +57,14 @@ getNDecimals(x, useRule = TRUE, useData = FALSE)
 # minimum of both is used (by default)
 getNDecimals(x, useRule = TRUE, useData = TRUE)
 }
+\seealso{
+Other decimals: 
+\code{\link{formatPercentage}()},
+\code{\link{getMaxNDecimalsData}()},
+\code{\link{getMaxNDecimals}()},
+\code{\link{getNDecimalsData}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{decimals}

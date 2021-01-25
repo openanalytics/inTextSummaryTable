@@ -27,6 +27,14 @@ The coefficient of variation is computed as:
 # coefficient of variation of normal distribution tends to 100\%
 cv(rnorm(n = 1000, mean = 1, sd = 1))
 }
+\seealso{
+Other stats utility functions: 
+\code{\link{geomCV}()},
+\code{\link{geomMean}()},
+\code{\link{geomSD}()},
+\code{\link{se}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{stats utility functions}

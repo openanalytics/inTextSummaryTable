@@ -3,7 +3,7 @@
 %   R/flextable-convertSummaryStatisticsTableToFlextable.R
 \name{exportFlextableToDocx}
 \alias{exportFlextableToDocx}
-\title{Export flextable to docx filr}
+\title{Export flextable to docx file}
 \usage{
 exportFlextableToDocx(
   object,
@@ -16,9 +16,13 @@ exportFlextableToDocx(
 \item{object}{\code{\link[flextable]{flextable}} object, or list of such objects}
 
 \item{file}{String with path of the file where the table should be exported.
-If NULL, the summary table is not exported but only returned as output.}
+The file should have the extension: '.html'.
+If NULL, the summary table is not exported but only returned as output.
+If \code{byVar} is specified, each table is exported to a separated
+file with the suffix: 'file_[i].html' with i the index of the file.}
 
-\item{landscape}{Logical, if TRUE the file is in landscape format.}
+\item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
+By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}
 
 \item{breaksAfter}{In case \code{object} is list: 
 integer vector with indices of list item after which a page break should 
@@ -28,7 +32,7 @@ be included in the final document.}
 no returned value, the \code{object} is exported to a docx file.
 }
 \description{
-Export flextable to docx filr
+Export flextable to docx file
 }
 \author{
 Laure Cougnaud

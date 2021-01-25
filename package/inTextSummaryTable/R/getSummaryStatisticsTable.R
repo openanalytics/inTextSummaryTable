@@ -1,21 +1,8 @@
 #' Get summary statistics table
-#' @param varLab Label for the \code{var} variable.
 #' @inheritParams computeSummaryStatisticsTable
 #' @inheritParams exportSummaryStatisticsTable
-#' @return Depending on the \code{outputType}:
-#' \itemize{
-#' \item{'data.frame-base': }{input summary table in a long format with
-#' all computed statistics}
-#' \item{'data.frame': }{summary table in a wide format (
-#' different columns for each \code{colVar}), with specified labels}
-#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
-#'  object with summary table}
-#' \item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
-#' }
-#' If multiple \code{outputType} are specified, a list of those objects, named
-#' by \code{outputType}.
-#' If \code{byVar} is specified, each object consists of a list of tables,
-#' one for each element in \code{byVar}.
+#' @inheritParams inTextSummaryTable-common-args
+#' @inherit exportSummaryStatisticsTable return
 #' @author Laure Cougnaud
 #' @importFrom glpgStyle getColorTable
 #' @export

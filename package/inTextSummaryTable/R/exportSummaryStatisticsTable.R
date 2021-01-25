@@ -10,29 +10,6 @@
 #' \item{'data.frame-base'}{data.frame in long format (with elements in 
 #' \code{colVar} in different rows), useful for QC}
 #' }
-#' @param pageDim Numeric vector of length 2 with page width and height
-#' depending on \code{outputType}:
-#' \itemize{
-#' \item{'flextable': }{in inches in portrait format}
-#' \item{'DT': }{number of rows in the table (currently only
-#' the height is used (e.g. \code{c(NA, 4)})
-#' }}
-#' @param statsLayout String with layout for the statistics names 
-#' (in case more than one statistic is included), among:
-#' \itemize{
-#' \item{row (by default when \code{outputType} is: 'flextable'): }{
-#' All statistics are included in different rows 
-#' in the first column of the table
-#' }
-#' \item{'col' (by default when \code{outputType} is: 'DT'): }{
-#' Statistics are included in separated columns (last row of the header).
-#' This option is not compatible with categorical variable(s).
-#' }
-#' \item{'rowInSepCol': }{
-#' Statistics are included in different rows, but in a separated column than
-#' the \code{rowVar} variable(s)
-#' }
-#' }
 #' @param file (Optional) Name of the file the table should be exported to, 
 #' either:
 #' \itemize{
@@ -54,12 +31,10 @@
 #' If NULL (by default), the summary table is not exported but only returned as output.
 #' If \code{byVar} is specified, each table is exported to a separated
 #' file with the suffix: 'file_[i].[ext]' with i the index of the file.
-#' @param style,landscape,margin,rowPadBase,footer,style,colorTable,fontsize,fontname,vline,hline,rowVarFormat,rowVarTotalInclude,rowVarTotalInSepRow,rowTotalLab,rowAutoMerge 
-#' Parameters specific to the 'flextable' \code{output}.\cr 
-#' See correspondings parameter in \code{\link{exportSummaryStatisticsTableToFlextable}}.
-#' @param expandVar,noEscapeVar,barVar,... Parameters specific to the 'DT' \code{output}.\cr 
-#' See correspondings parameter in \code{\link{exportSummaryStatisticsTableToDT}}.
+#' @inheritParams inTextSummaryTable-common-args
 #' @inheritParams formatSummaryStatisticsTable
+#' @inheritParams exportSummaryStatisticsTableToFlextable
+#' @inheritParams exportSummaryStatisticsTableToDT
 #' @return Depending on the \code{outputType}:
 #' \itemize{
 #' \item{'data.frame-base': }{input summary table in a long format with
@@ -70,8 +45,10 @@
 #'  object with summary table}
 #' \item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
 #' }
-#' If \code{summaryTable} is a list of summary tables,
-#' returns a list of corresponding summary tables in long format.
+#' If multiple \code{outputType} are specified, a list of those objects, named
+#' by \code{outputType}.\cr
+#' If \code{byVar} is specified, each object consists of a list of tables,
+#' one for each element in \code{byVar}.
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom glpgUtilityFct getLabelVar

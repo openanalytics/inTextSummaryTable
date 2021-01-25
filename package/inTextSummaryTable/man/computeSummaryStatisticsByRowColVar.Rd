@@ -25,9 +25,15 @@ computeSummaryStatisticsByRowColVar(
 )
 }
 \arguments{
-\item{data}{Data.frame with data.}
+\item{data}{Data.frame with dataset to consider for the summary table.}
 
-\item{var}{Character vector with summary statistics variable(s).}
+\item{var}{Character vector with variable(s) of \code{data}, 
+to compute statistics on.\cr
+If NULL (by default), counts by row/column variable(s) are computed.\cr
+To also return counts of the \code{rowVar} in case other \code{var}
+are specified, you can include: 'all' in the \code{var}.\cr
+Missing values, if present, are filtered 
+(also for the report of number of subjects/records).}
 
 \item{varLab}{Named character vector with label for each variable 
 specified in \code{var}.
@@ -63,15 +69,18 @@ Either:
 
 \item{type}{String with type of table: 
 \itemize{
-\item{'summaryTable': }{summary table with custom statistics}
+\item{'summaryTable': }{summary table with statistics for numeric variable}
 \item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
-'countTable' otherwise
-}
+\item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+'countTable' otherwise}
 }}
 
-\item{rowVar}{Variable(s) of \code{data} used for
-grouping in row in the final table.}
+\item{rowVar}{Character vector with variable(s)
+to be included in the rows.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order
+(e.g. body system class before adverse event term)
+and are nested in the table.}
 
 \item{rowInclude0}{Logical, if TRUE (FALSE by default),
 include rows with no records, based on all combinations 
@@ -82,9 +91,10 @@ to be included in columns.
 Each column should correspond to \code{colVar} and as factor
 if the elements should be ordered in the final table.}
 
-\item{colVar}{Character vector with variable(s) used for the columns.
-If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.
+\item{colVar}{Character vector with variable(s) to be included in columns.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order,
+and are included in multi-columns layout.\cr
 Use: 'variable' to include the variables to summarize: \code{var}
  (if multiple) in different columns.}
 
@@ -102,17 +112,22 @@ if the elements should be ordered in the final table.}
 \item{subjectVar}{String, variable of \code{data} with subject ID,
 'USUBJID' by default.}
 
-\item{labelVars}{Named character vector with variable labels (names are the variable code),
-usually extracted from \code{data}.}
+\item{labelVars}{(optional) Named character vector with label for
+the row, column variable(s) or variable(s) to summarize. \cr
+Labels specified via dedicated parameter: e.g. 
+\code{rowVarLab}, \code{colVarLab}, \code{varLab}
+have priority on this parameter.}
 
 \item{statsExtra}{(optional) Named list with functions for additional custom
-statistics to be computed, only available for 'summaryTable',
-e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
-Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
-and return the corresponding summary statistic.}
-
-\item{msgLabel}{(optional) String with label for the data (NULL by default), 
-included in the message/warning for checks.}
+statistics to be computed.\cr
+Each function:
+\itemize{
+\item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+the summary statistic on or 'data': the entire dataset}
+\item{returns the corresponding summary statistic as a numeric vector}
+}
+For example, to additionally compute the coefficient of variation, this can be set to:
+\code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',

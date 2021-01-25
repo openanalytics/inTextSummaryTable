@@ -21,50 +21,54 @@ convertSummaryStatisticsTableToFlextable(
 )
 }
 \arguments{
-\item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
+\item{summaryTable}{Summary table as provided by the 
+\code{\link{computeSummaryStatisticsTable}}.}
 
-\item{landscape}{Logical, if TRUE the table is presented in landscape
-format. \cr
-By default: TRUE for \code{style}: 'report',
-FALSE for \code{style}: 'presentation'.}
+\item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
+By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}
 
-\item{margin}{Margin in the document in inches, currently only used to specify the
-width of the table: [width page extracted from \code{dimPage} - 2* margin]}
+\item{margin}{(flextable output) Margin in the document in inches
+(1 by default).
+This is used to specify the width of the table, from:
+[\code{pageDim[1]} - 2 * margin].}
 
-\item{rowPadBase}{Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)}
+\item{rowPadBase}{(flextable output) Base padding for row (in points), 
+14.4 by default (corresponds to 0.2 inches)}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.
-If vector > 1, specified for each element of \code{byVar} (in order of the levels).}
+If multiple are specified, specified for each element of \code{byVar} (in order of the levels).}
 
-\item{footer}{Character vector with footer(s) for the table.
-Set to NULL (by default) of no footer should be included.}
+\item{footer}{(flextable output) Character vector with footer(s) for the table.
+Set to NULL (by default) if no footer should be included.}
 
-\item{style}{string with table style,
+\item{style}{(flextable output) String with table style,
  either 'report' or 'presentation'.
 This parameter affects the fontsize, font family, color of the text and background, 
 and table dimensions of the table.}
 
-\item{colorTable}{Named character vector with color for the table background/body/text/line,
+\item{colorTable}{(flextable output) Named character vector with color for the table background/body/text/line,
 e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
 
-\item{fontname}{String with font name, by default:
+\item{fontname}{(flextable output) String with font name, by default:
 'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}
 
-\item{fontsize}{Integer with font size, by default:
+\item{fontsize}{(flextable output) Integer with font size, by default:
 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}
 
 \item{file}{String with path of the file where the table should be exported.
-The file should have the extension: '.docx'.
+The file should have the extension: '.html'.
 If NULL, the summary table is not exported but only returned as output.
 If \code{byVar} is specified, each table is exported to a separated
-file with the suffix: 'file_[i].docx' with i the index of the file.}
+file with the suffix: 'file_[i].html' with i the index of the file.}
 
-\item{pageDim}{(optional) Numeric vector of length 2 with 
-page width and height in inches in portrait format,
-in case page dimensions differ from the default
-implemented report/presentation.
-These dimensions should include the margins.}
+\item{pageDim}{Numeric vector of length 2 with page width and height.\cr
+Depending on \code{outputType}:
+\itemize{
+\item{'flextable': }{in inches}
+\item{'DT': }{in number of rows in the table.\cr
+Currently only the height is used (e.g. \code{c(NA, 4)})
+}}}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table

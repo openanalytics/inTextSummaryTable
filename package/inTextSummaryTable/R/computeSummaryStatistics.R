@@ -8,20 +8,6 @@
 #' \item{an indicative message is triggered if multiple but identical records are available
 #' for \code{subjectVar} and a continuous \code{var}}
 #' } 
-#' @param data Data.frame with data.
-#' @param var String, variable of \code{data} with variable to compute statistics on.
-#' Missing values, if present, are filtered.
-#' If NULL or 'all', counts in the entire \code{data} are computed.
-#' @param subjectVar String, variable of \code{data} with subject ID,
-#' 'USUBJID' by default.
-#' @param type String with type of table: 
-#' \itemize{
-#' \item{'summaryTable': }{summary table with custom statistics}
-#' \item{'countTable': }{count table}
-#' \item{'auto' (by default): }{'summaryTable' of \code{var} is numeric,
-#' 'countTable' otherwise
-#' }
-#' }
 #' @param filterEmptyVar Logical, if TRUE doesn't return any results
 #' if the variable is empty, otherwise return 0 for the counts and NA for summary 
 #' statistics.
@@ -36,16 +22,12 @@
 #' Should the total across all categories of \code{var} 
 #' be included for the count table?
 #' Only used if \code{var} is a categorical variable.
-#' @param statsExtra (optional) Named list with functions for additional custom
-#' statistics to be computed, only available for 'summaryTable',
-#' e.g. list(statCVPerc = function(x) sd(x)/mean(x)*100) (or \code{\link{cv}}).
-#' Each function has as parameter: either 'x': the variable or 'data': the entire dataset,
-#' and return the corresponding summary statistic.
 #' @param msgLabel (optional) String with label for the data (NULL by default), 
 #' included in the message/warning for checks.
 #' @param msgVars (optional) Character vector with columns of \code{data}
 #' containing extra variables (besides \code{var} and \code{subjectVar})
 #' that should be included in the message/warning for checks.
+#' @inheritParams inTextSummaryTable-common-args
 #' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{

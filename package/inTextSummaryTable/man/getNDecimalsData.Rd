@@ -22,6 +22,14 @@ Note: NA is returned if the element is missing (NA).
 x <- c(0.99, 5.679, 50.45, 1450)
 getNDecimalsData(x)
 }
+\seealso{
+Other decimals: 
+\code{\link{formatPercentage}()},
+\code{\link{getMaxNDecimalsData}()},
+\code{\link{getMaxNDecimals}()},
+\code{\link{getNDecimals}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{decimals}

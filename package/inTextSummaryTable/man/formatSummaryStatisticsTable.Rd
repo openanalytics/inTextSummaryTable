@@ -18,48 +18,53 @@ formatSummaryStatisticsTable(
 )
 }
 \arguments{
-\item{summaryTable}{Summary table, created with the \code{\link{computeSummaryStatisticsTable}} function.}
+\item{summaryTable}{Summary table as provided by the 
+\code{\link{computeSummaryStatisticsTable}}.}
 
-\item{rowVar}{Character vector with variable(s) used for the rows.
-If multiple variables are specified, the variables should be sorted in hierarchical order.
-The variables are included in rows, excepted if specified in \code{rowVarInSepCol}.}
+\item{rowVar}{Character vector with variable(s)
+to be included in the rows.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order
+(e.g. body system class before adverse event term)
+and are nested in the table.}
 
-\item{colVar}{Character vector with variable(s) used for the columns.
-If multiple variables are specified, the variables should be sorted in hierarchical order,
-and are included in multi-columns layout.
+\item{colVar}{Character vector with variable(s) to be included in columns.
+If multiple variables are specified, the variables should 
+be sorted in hierarchical order,
+and are included in multi-columns layout.\cr
 Use: 'variable' to include the variables to summarize: \code{var}
  (if multiple) in different columns.}
 
-\item{colTotalLab}{String, label for the total column included 
-if \code{colTotalInclude} is TRUE, 'Total' by default.}
+\item{colTotalLab}{String, label for the total column  'Total' by default.\cr}
 
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
-(\code{'statN'}) in the header.}
+(\code{'statN'}) in the column header.}
 
 \item{statsVar}{Character vector with columns of \code{summaryTable} with
-statistic variables. If not specified, all columns of \code{data}
+statistic variables. For the export: if not specified, all columns of \code{data}
 besides row, column variables, 'variable', 'variableGroup'
 and 'isTotal' are considered.}
 
 \item{statsLabInclude}{Logical, if TRUE include the statistic label
-in the table. By default only included if more than
+in the table. \cr By default only included if more than
 one statistic variables are available in the table.}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row (by default): }{All statistics are included in different rows 
-in the first column of the table}
-\item{'col': }{Statistics are included in separated columns (last row of the header).
+\item{row (by default for 'flextable' output): }{All statistics are
+ included in different rows in the first column of the table (after the row variable(s))}
+\item{'col' (by default for 'DT' output): }{Statistics are included 
+in separated columns (last row of the header).\cr
 This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in different rows, but in a separated column than
-the \code{rowVar} variable(s)}
+\item{'rowInSepCol': }{Statistics are included in different rows, 
+but in a separated column than the \code{rowVar} variable(s)}
 }}
 
 \item{statsValueLab}{String with label for the statistic value, 
-'StatisticValue' by default.
-This is only used if the statistics provided in \code{stats} are not named
-and if no \code{colVar} is specified.}
+'StatisticValue' by default.\cr
+This is only included in the table if the statistics provided in 
+\code{stats} are not named and if no \code{colVar} is specified.}
 
 \item{emptyValue}{String with placeholder used to fill the table for missing values, '-' by default.
 This value is typically used e.g. if not all statistics are computed for all specified

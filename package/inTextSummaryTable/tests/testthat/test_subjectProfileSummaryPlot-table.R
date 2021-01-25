@@ -443,7 +443,7 @@ test_that("y-axis labels are included for a non factor variable", {
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		n = c(10, 20),
-		TRT = c("A", "B", "A", "B")
+		TRT = c("A", "B")
 	)
 	
 	colorPalette <- c(A = "red", B = "blue")

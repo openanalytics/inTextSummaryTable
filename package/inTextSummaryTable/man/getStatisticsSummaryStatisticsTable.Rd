@@ -17,8 +17,13 @@ getStatisticsSummaryStatisticsTable(
 
 \item{statsVarInit}{Character vector with initial statistics names.}
 
-\item{var}{Character vector with variable, used if 'variable' is specified
-within \code{rowVarTotal}.}
+\item{var}{Character vector with variable(s) of \code{data}, 
+to compute statistics on.\cr
+If NULL (by default), counts by row/column variable(s) are computed.\cr
+To also return counts of the \code{rowVar} in case other \code{var}
+are specified, you can include: 'all' in the \code{var}.\cr
+Missing values, if present, are filtered 
+(also for the report of number of subjects/records).}
 
 \item{stats}{(Optionally) named list of expression or call object of summary statistics of interest.
 The names are reported in the header.

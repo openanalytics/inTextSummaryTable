@@ -1,41 +1,11 @@
-#' Convert summary table to DT
-#' @param expandVar Character vector with variables of the summary table which
-#' should be expanded in the data.
-#' @param pageDim Numeric vector of length 2 with page width and height,
-#' in number of rows (currently only
-#' the height is used (e.g. \code{c(NA, 4)})
-#' @param noEscapeVar Character vector with variables of \code{summaryTable}
-#' which shouldn't be escaped in the table (e.g. containing URLs).
-#' @param barVar Character vector with variables of \code{summaryTable}
-#' that should be represented as a bar.
-#' @param rowVarInSepCol Character vector with \code{rowVar}
-#' that should be included in multiple columns.
-#' @param statsLayout String with layout for the statistics names 
-#' (in case more than one statistic is included), among:
-#' \itemize{
-#' \item{row: }{
-#' All statistics are included in different rows 
-#' in the first column of the table
-#' }
-#' \item{'col' (by default): }{
-#' Statistics are included in separated columns (last row of the header).
-#' This option is not compatible with categorical variable(s).
-#' }
-#' \item{'rowInSepCol': }{
-#' Statistics are included in different rows, but in a separated column than
-#' the \code{rowVar} variable(s)
-#' }
-#' }
-#' @param file String with path of the file where the table should be exported.
-#' The file should have the extension: '.html'.
-#' If NULL, the summary table is not exported but only returned as output.
-#' If \code{byVar} is specified, each table is exported to a separated
-#' file with the suffix: 'file_[i].html' with i the index of the file.
-#' @param ... Extra parameters passed to the 
-#' \code{\link[glpgUtilityFct]{toDTGLPG}} (only for 'DT' output)
-#' @inheritParams formatSummaryStatisticsTable
-#' @inheritParams formatSummaryStatisticsTableFlextable
-#' @inheritParams exportSummaryStatisticsTableToFlextable
+#' Export summary table to an interactive DT table,
+#' e.g. to be exported into an html document.
+#' @param summaryTable Summary table as provided by the 
+#' \code{\link{formatSummaryStatisticsTable}}.
+#' @param ... (DT output) Extra parameters passed to the 
+#' \code{\link[glpgUtilityFct]{toDTGLPG}}
+#' @inheritParams inTextSummaryTable-common-args
+#' @inheritParams inTextSummaryTable-DT-args
 #' @inherit glpgUtilityFct::toDTGLPG return
 #' @author Laure Cougnaud
 #' @importFrom utils head

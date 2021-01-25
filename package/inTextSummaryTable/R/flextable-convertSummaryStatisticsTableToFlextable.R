@@ -1,31 +1,6 @@
 #' Convert summary statistics table to flextable
-#' @param title Character vector with title(s) for the table.
-#' Set to NULL (by default) if no title should be included.
-#' If vector > 1, specified for each element of \code{byVar} (in order of the levels).
-#' @param footer Character vector with footer(s) for the table.
-#' Set to NULL (by default) of no footer should be included.
-#' @param file String with path of the file where the table should be exported.
-#' The file should have the extension: '.docx'.
-#' If NULL, the summary table is not exported but only returned as output.
-#' If \code{byVar} is specified, each table is exported to a separated
-#' file with the suffix: 'file_[i].docx' with i the index of the file.
-#' @param rowPadBase Base padding for row (in points), 14.4 by default (corresponds to 0.2 inches)
-#' @param style string with table style,
-#'  either 'report' or 'presentation'.
-#' This parameter affects the fontsize, font family, color of the text and background, 
-#' and table dimensions of the table.
-#' @param fontname String with font name, by default:
-#' 'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.
-#' @param fontsize Integer with font size, by default:
-#' 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.
-#' @param margin Margin in the document in inches, currently only used to specify the
-#' width of the table: [width page extracted from \code{dimPage} - 2* margin]
-#' @param colorTable Named character vector with color for the table background/body/text/line,
-#' e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.
-#' @inheritParams glpgStyle::getDimPage
-#' @inheritParams formatCustomFlextable
-#' @inheritParams formatSummaryStatisticsTable
-#' @inheritParams exportFlextableToDocx
+#' @inheritParams inTextSummaryTable-common-args
+#' @inheritParams inTextSummaryTable-flextable-args
 #' @return \code{\link[flextable]{flextable}} object with summary table
 #' If \code{summaryTable} is a list of summary tables,
 #' returns a list of \code{\link[flextable]{flextable}}.
@@ -378,14 +353,12 @@ formatCustomFlextable <- function(
 
 }
 
-#' Export flextable to docx filr
+#' Export flextable to docx file
 #' @param object \code{\link[flextable]{flextable}} object, or list of such objects
-#' @param file String with path of the file where the table should be exported.
-#' If NULL, the summary table is not exported but only returned as output.
-#' @param landscape Logical, if TRUE the file is in landscape format.
 #' @param breaksAfter In case \code{object} is list: 
 #' integer vector with indices of list item after which a page break should 
 #' be included in the final document.
+#' @inheritParams inTextSummaryTable-flextable-args
 #' @return no returned value, the \code{object} is exported to a docx file.
 #' @import officer
 #' @importFrom magrittr "%>%"

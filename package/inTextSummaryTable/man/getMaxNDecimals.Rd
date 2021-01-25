@@ -30,6 +30,14 @@ getMaxNDecimals(x, useRule = TRUE, useData = FALSE)
 # minimum of both is used (by default)
 getMaxNDecimals(x, useRule = TRUE, useData = TRUE)
 }
+\seealso{
+Other decimals: 
+\code{\link{formatPercentage}()},
+\code{\link{getMaxNDecimalsData}()},
+\code{\link{getNDecimalsData}()},
+\code{\link{getNDecimals}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{decimals}

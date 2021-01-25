@@ -1,9 +1,4 @@
 #' Compute summary statistics for a specific dataset and variables of interest
-#' @param var Character vector, variable(s) of \code{data} to compute statistics on.
-#' Missing values, if present, are filtered.
-#' If NULL (by default), counts of the \code{rowVar} are returned.
-#' To also return counts of the \code{rowVar} in case other \code{var}
-#' are specified, you can include: 'all' in the \code{var}.
 #' @param varFlag Character vector, subset of \code{var} with variable(s) 
 #' of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
 #' Only the counts for records flagged (with 'Y') are retained.
@@ -22,7 +17,6 @@
 #' of such elements, named with the \code{rowVar} variable.
 #' For the table output of \code{\link{computeSummaryStatisticsTable}} (long format),
 #' this order is also reflected in the \strong{\code{levels}} of the row factor variable.
-#' @param rowVarLab Label for the \code{rowVar} variable(s).
 #' @param rowOrderTotalFilterFct Function used to filter the data used to order the rows
 #' based on total counts (in case \code{rowOrder} is 'total'),
 #' To order rows based on one specific column category,
@@ -30,10 +24,6 @@
 #' function(x) subset(x, TRTP == "treatmentX")
 #' @param rowOrderCatLast String with category to be printed in the last 
 #' row of each \code{rowVar} (if any, set to NULL if none). 
-#' @param rowVarTotalInclude Character vector with \code{rowVar}
-#' for which the total should be reported.\cr
-#' If the higher row variable is specified, the total across all rows
-#' is reported. 
 #' @param rowVarTotalByVar Character vector with a row variable
 #' used to categorize the row total.\cr
 #' Note that this is only used if row total(s) is/are requested via \code{rowVarTotalInclude},
@@ -151,13 +141,8 @@
 #' @param varIncludeTotal This argument is deprecated, please use: 'varTotalInclude' instead.
 #' @param varTotalInSepRow Logical, should the total per variable be included in
 #' a separated row (by default) or in the row containing the header of the variable?
-#' @param rowVarTotalInSepRow Character vector with \code{rowVarTotalInclude}
-#' (not in \code{rowVarInSepCol}) for which the total should be included in a separated row labelled 'Total'.
-#' Otherwise (by default) the total is included in the header row of each category.
-#' @inheritParams computeSummaryStatisticsTableTotal
+#' @inheritParams inTextSummaryTable-common-args
 #' @inheritParams computeSummaryStatisticsByRowColVar
-#' @inheritParams getStatisticsSummaryStatisticsTable
-#' @inheritParams convertVarToFactorWithOrder
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; or list of such data.frame if
 #' \code{byVar} is specified.
@@ -911,16 +896,12 @@ computeSummaryStatisticsTable <- function(
 #' This could also contain 'variable'.
 #' @param rowVarTotal Character vector with row(s) considered to compute the total.
 #' This could also contain 'variable'.
-#' @param var Character vector with variable, used if 'variable' is specified
-#' within \code{rowVarTotal}.
 #' @param colVarLevels list with levels of each \code{colVar}
-#' @param colTotalInclude Logical, if TRUE (FALSE by default) include the summary 
-#' statistics across columns in a separated column.
 #' @param dataTotalCol Data.frame from which the total across columns is 
 #' extracted (in case \code{colTotalInclude} is TRUE).
 #' @param msgLabel (optional) String with label for the data ('total' by default), 
 #' included in the message/warning for checks.
-#' @inheritParams computeSummaryStatisticsByRowColVar
+#' @inheritParams inTextSummaryTable-common-args
 #' @return data.frame with total table.
 #' @author Laure Cougnaud
 #' @importFrom reshape2 melt
@@ -1017,8 +998,6 @@ computeSummaryStatisticsTableTotal <- function(
 }
 
 #' Compute summary statistics by specified \code{rowVar} and \code{colVar}
-#' @param rowVar Variable(s) of \code{data} used for
-#' grouping in row in the final table.
 #' @param rowInclude0 Logical, if TRUE (FALSE by default),
 #' include rows with no records, based on all combinations 
 #' of the \code{rowVar} (assuming nested variable(s)).
@@ -1058,10 +1037,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' \item{logical of length 1, if TRUE (FALSE by default) include the total for all categorical \code{var}}
 #' \item{a character vector containing categorical \code{var} for which the total should be included}
 #' }
-#' @inheritParams checkVarLabInclude
-#' @inheritParams convertVarToFactorWithOrder
-#' @inheritParams computeSummaryStatistics
-#' @inheritParams glpgUtilityFct::getLabelVar
+#' @inheritParams inTextSummaryTable-common-args
 #' @return data.frame of class 'countTable' or 'summaryTable',
 #' depending on the 'type' parameter; with statistics in columns,
 #' either if \code{type} is:
@@ -1214,7 +1190,6 @@ computeSummaryStatisticsByRowColVar <- function(
 
 
 #' Convert a variable to a factor with levels in specified order.
-#' @param data Data.frame with data.
 #' @param var String with variable of \code{data} to sort.
 #' @param otherVars Character vector with other variable(s) of \code{data}
 #' considered in the specific dimension.
@@ -1237,13 +1212,7 @@ computeSummaryStatisticsByRowColVar <- function(
 #' to filter the total data considered for the ordering.
 #' @param catLast String with last category (if any).
 #' Set to NULL if no specific category should be included as last element.
-#' @param colVar Character vector with variable(s) used for the columns.
-#' If multiple variables are specified, the variables should be sorted in hierarchical order,
-#' and are included in multi-columns layout.
-#' Use: 'variable' to include the variables to summarize: \code{var}
-#'  (if multiple) in different columns.
-#' @param colTotalLab String, label for the total column included 
-#' if \code{colTotalInclude} is TRUE, 'Total' by default.
+#' @inheritParams inTextSummaryTable-common-args
 #' @return Factor \code{var} variable of \code{data} with specified order.
 #' @importFrom plyr daply
 #' @author Laure Cougnaud
@@ -1338,8 +1307,6 @@ convertVarToFactorWithOrder <- function(
 #' Compute custom statistics specified by the user.
 #' @param summaryTable Summary table.
 #' @param statsVarInit Character vector with initial statistics names.
-#' @param var Character vector with variable, used if 'variable' is specified
-#' within \code{rowVarTotal}.
 #' @param stats (Optionally) named list of expression or call object of summary statistics of interest.
 #' The names are reported in the header.
 #' The following variables are recognized, if the table is a: 
@@ -1375,6 +1342,7 @@ convertVarToFactorWithOrder <- function(
 #' \code{data} by which the statistics should be computed.
 #' In this case, \code{stats} (nested list or not) should be additionally nested
 #' to specify the statistics for each element in \code{statsVarBy}.
+#' @inheritParams inTextSummaryTable-common-args
 #' @return List with two elements:
 #' \itemize{
 #' \item{'summaryTable': }{summary table updated with statistics specified in \code{stats}}

@@ -28,6 +28,14 @@ The geometric coefficient of variation is computed as:
 # Geometric mean of a sample from log normal distribution:
 geomCV(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
 }
+\seealso{
+Other stats utility functions: 
+\code{\link{cv}()},
+\code{\link{geomMean}()},
+\code{\link{geomSD}()},
+\code{\link{se}()}
+}
 \author{
 Laure Cougnaud
 }
+\concept{stats utility functions}
