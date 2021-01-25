@@ -1,4 +1,4 @@
-context("Export summary statistics table as data.frame")
+context("Export summary statistics table as data frame")
 
 test_that("summary table is exported to multiple format", {
 			
