@@ -26,9 +26,9 @@ and for the label of the list if \code{type} is of length 2.
 If there are multiple \code{type} or statistics within a set, the names are retained (to avoid confusion).}
 
 \item{x}{(optional, recommended for continuous variable) Numeric vector 
-for which the statistics should be computed on 
-(has an effect only for continuous variable).
-If specified, this is used to derive the number of decimals to include.
+for which the statistics should be computed on.\cr
+This is used to derive the number of decimals to include
+for a continuous variable.\cr
 If not specified, the values are rounded with \code{\link{formatC}}.}
 
 \item{nDecCont}{Integer with base number of decimals 
