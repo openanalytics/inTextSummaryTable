@@ -18,13 +18,3 @@
 #' @docType package
 #' @name inTextSummaryTable
 NULL
-
-#' @importFrom utils packageVersion
-.onAttach <- function(libname, pkgname) {
-  if (interactive()) {
-    packageStartupMessage(
-        "inTextSummaryTable version ",
-        packageVersion("inTextSummaryTable"),
-        ", see ? inTextSummaryTable to get started")
-  }
-}

@@ -1,5 +1,6 @@
 2.21.0
   o add unit tests
+  o reorganize introduction vignette, help page for pkg
   o error if stats if not in correct format
   o getStats: 'n/N (%)' is named by default for consistency
   o compute summary statistics table: 
