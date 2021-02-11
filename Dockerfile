@@ -137,10 +137,6 @@ RUN R -e "remotes::install_version('haven', version = '2.3.1', upgrade = FALSE)"
 # install tar gz package(s)
 RUN mkdir -p /tmp
 WORKDIR /tmp
-COPY glpgStyle_2.2.0.tar.gz /tmp/glpgStyle_2.2.0.tar.gz
-RUN R -e "install.packages('/tmp/glpgStyle_2.2.0.tar.gz', repos = NULL, dependencies = FALSE)"
-COPY glpgUtilityFct_3.0.1.tar.gz /tmp/glpgUtilityFct_3.0.1.tar.gz
-RUN R -e "install.packages('/tmp/glpgUtilityFct_3.0.1.tar.gz', repos = NULL, dependencies = FALSE)"
 COPY glpgStyle_*.tar.gz /tmp/glpgStyle.tar.gz
 RUN R -e "install.packages('/tmp/glpgStyle.tar.gz', repos = NULL, dependencies = FALSE)"
 COPY glpgUtilityFct_*.tar.gz /tmp/glpgUtilityFct.tar.gz
