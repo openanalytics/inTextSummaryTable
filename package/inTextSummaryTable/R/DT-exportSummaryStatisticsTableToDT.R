@@ -162,7 +162,7 @@ exportSummaryStatisticsTableToDT <- function(
 	barVar <- intersect(barVar, colnames(summaryTable))
 	if(length(barVar) == 0) barVar <- NULL
 	
-	if(!is.null(title) && length(title) > 1)
+	if(!is.null(title) && is.character(title) && length(title) > 1)
 		title <- paste(title, collapse = " ")
 	
 	argsDT <- c(
