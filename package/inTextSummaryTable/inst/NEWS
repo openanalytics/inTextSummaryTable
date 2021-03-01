@@ -1,3 +1,5 @@
+2.21.1
+  o fix export summary table to DT in case multiple title formatted as HTML
 2.21.0
   o add unit tests
   o reorganize introduction vignette, help page for pkg
