@@ -1,5 +1,7 @@
 context("Export summary statistics table to DT")
 
+library(htmltools)
+
 test_that("table is exported with row variable", {
 			
 	summaryTable <- data.frame(
@@ -435,7 +437,7 @@ test_that("title is specified as an HTML string", {
 	# multiple titles
 	titles <- htmltools::tags$caption(
 		htmltools::a("Formatted .docx table", target="_blank", href = "./myFile.docx"),
-		br(),
+		htmltools::br(),
 		"This is a test caption."
 	)
 	expect_silent(
