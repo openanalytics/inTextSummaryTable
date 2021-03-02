@@ -618,6 +618,7 @@ subjectProfileSummaryPlot <- function(data,
 #' @param xLim Vector of the length 2 with limits for the x-axis.
 #' @param colorVar String, variable of \code{data} for coloring.
 #' @param colorLab String, label for \code{colorVar}, used in the legend.
+#' @param fontface Numeric, fontface for the text.
 #' @param colorPalette (named) Vector with color palette.
 #' @param xLab String with label for the x-axis.
 #' @param textSize Size for the text.
@@ -651,6 +652,7 @@ subjectProfileSummaryTable <- function(
 	xLim = NULL, 
 	colorVar = NULL, colorPalette = NULL,
 	colorLab = getLabelVar(colorVar, labelVars = labelVars),
+    fontface = 1,
 	xLab = NULL,
 	labelVars = NULL,
 	showLegend = TRUE,
@@ -683,7 +685,8 @@ subjectProfileSummaryTable <- function(
 		list(
 			x = xVar,
 			y = ifelse(!is.null(colorVar), colorVar, 1),
-			label = "tableTextLabel"
+			label = "tableTextLabel",
+            fontface = fontface
 		),
 		if(!is.null(colorVar)) list(color = colorVar)
 	)

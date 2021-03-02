@@ -12,6 +12,7 @@ subjectProfileSummaryTable(
   colorVar = NULL,
   colorPalette = NULL,
   colorLab = getLabelVar(colorVar, labelVars = labelVars),
+  fontface = 1,
   xLab = NULL,
   labelVars = NULL,
   showLegend = TRUE,
@@ -42,6 +43,8 @@ the text label.}
 \item{colorPalette}{(named) Vector with color palette.}
 
 \item{colorLab}{String, label for \code{colorVar}, used in the legend.}
+
+\item{fontface}{Numeric, fontface for the text.}
 
 \item{xLab}{String with label for the x-axis.}
 

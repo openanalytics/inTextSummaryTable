@@ -481,6 +481,24 @@ test_that("fontsize is specified", {
 
 })
 
+test_that("fontface is specified", {
+      
+      summaryTable <- data.frame(
+          visit = c(1, 2),
+          n = c(10, 20)
+      )		
+      
+      fontface <- 3
+      gg <- subjectProfileSummaryTable(
+          data = summaryTable,
+          xVar = "visit",
+          text = "n",
+          fontface = 2
+      )
+      expect_equal(gg$labels$fontface, "fontface")
+       
+    })
+
 test_that("fontname is specified", {
 			
 	summaryTable <- data.frame(
