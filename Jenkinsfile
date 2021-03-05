@@ -5,9 +5,10 @@ pipeline {
     }
     environment {
         IMAGE = 'glpgintextsummarytable'
-        NS = 'oa'
+        NS = 'glpgintextsummarytable'
         REG = '196229073436.dkr.ecr.eu-west-1.amazonaws.com'
-        TAG = sh(returnStdout: true, script: "echo $BRANCH_NAME | sed 's/[^a-z0-9._-]/./g'").trim()
+        TAG = sh(returnStdout: true, script: "echo $BRANCH_NAME | sed -e 's/[A-Z]/\\L&/g' -e 's/[^a-z0-9._-]/./g'").trim()
+        DOCKER_BUILDKIT = '1'
     }
     stages {
         stage('Build Image') {
@@ -26,10 +27,11 @@ pipeline {
                 }
             }
             steps {
-                ecrPull "${env.REG}", "${env.NS}/${env.IMAGE}", "${env.TAG}", '', 'eu-west-1'
-                copyArtifacts filter: '*.tar.gz', fingerprintArtifacts: true, projectName: 'git/glpgStyle/master', selector: lastSuccessful()
+				copyArtifacts filter: '*.tar.gz', fingerprintArtifacts: true, projectName: 'git/glpgStyle/master', selector: lastSuccessful()
                 copyArtifacts filter: '*.tar.gz', fingerprintArtifacts: true, projectName: 'git/GLPGUtilityFct/master', selector: lastSuccessful()
-                sh "docker build --cache-from ${env.REG}/${env.NS}/${env.IMAGE}:${env.TAG} -t ${env.NS}/${env.IMAGE}:${env.TAG} -f Dockerfile ."
+                withOARegistry {
+                    sh "docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${env.REG}/${env.NS}/${env.IMAGE}:${env.TAG} --cache-from ${env.REG}/${env.NS}/${env.IMAGE}:master -t ${env.NS}/${env.IMAGE}:${env.TAG} -f Dockerfile ."
+                }
                 ecrPush "${env.REG}", "${env.NS}/${env.IMAGE}", "${env.TAG}", '', 'eu-west-1'
             }
         }
@@ -55,7 +57,7 @@ pipeline {
                     stages {
                         stage('Roxygen') {
                             steps {
-                                sh 'R -q -e \'roxygen2::roxygenize("package/inTextSummaryTable", load = "source")\''
+                                sh 'R -q -e \'roxygen2::roxygenize("package/inTextSummaryTable")\''
                             }
                         }
                         stage('Build') {
@@ -63,9 +65,9 @@ pipeline {
                                 sh 'R CMD build package/inTextSummaryTable'
                             }
                         }
-                        stage('Check') {
+                        stage('Check (no tests)') {
                             steps {
-                                sh 'ls inTextSummaryTable_*.tar.gz && R CMD check inTextSummaryTable_*.tar.gz --no-manual'
+                                sh 'ls inTextSummaryTable_*.tar.gz && R CMD check inTextSummaryTable_*.tar.gz --no-manual --no-tests'
                             }
                         }
                         stage('Install') {
@@ -75,9 +77,9 @@ pipeline {
                         }
                         stage('Test and coverage') {
                             steps {
-                             	sh '''
+							                 sh '''
                                 R -q -e \'
-                                pc <- covr::package_coverage("package/inTextSummaryTable", code = "testthat::test_package(\\"inTextSummaryTable\\", reporter = testthat::JunitReporter$new(file = file.path(Sys.getenv(\\"WORKSPACE\\"), \\"results.xml\\")))");
+                                pc <- covr::package_coverage("package/inTextSummaryTable",  type = "none", code = "testthat::test_package(\\"inTextSummaryTable\\", reporter = testthat::JunitReporter$new(file = file.path(Sys.getenv(\\"WORKSPACE\\"), \\"results.xml\\")))");
                                 covr::report(x = pc, file = paste0("testCoverage-", attr(pc, "package")$package, "-", attr(pc, "package")$version, ".html"))
                                 covr::to_cobertura(pc)
                                 \'
@@ -95,7 +97,7 @@ pipeline {
                 }
                 stage('Archive artifacts') {
                     steps {
-                        archiveArtifacts artifacts: '*.tar.gz, *.pdf, **/00check.log, **/testthat.Rout, testCoverage.zip', fingerprint: true
+                        archiveArtifacts artifacts: '*.tar.gz, *.pdf, **/00check.log, testCoverage.zip', fingerprint: true
                     }
                 }
             }
