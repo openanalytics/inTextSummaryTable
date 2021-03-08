@@ -155,6 +155,7 @@ getStatsData <- function(
 #' # for continuous variable:
 #' getStats("summary")
 #' getStats("mean (se)")
+#' getStats("mean (sd)")
 #' getStats("median (range)")
 #' getStats("median\n(range)")
 #' getStats(c("Mean", "SE"))
@@ -235,7 +236,8 @@ getStats <- function(
 			"n (%)", "n/N (%)",
 			"m (%)",
 			"median (range)", "median\n(range)",
-			"mean (se)", "mean (range)",
+			"mean (se)", "mean (sd)", "mean (range)",
+			"min,max",
 			names(statsBase)
 		),
 		several.ok = TRUE
@@ -276,6 +278,11 @@ getStats <- function(
 					)
 				)
 			),
+			`min,max` = list('Min,Max' =
+				bquote(paste0(
+					.(statsBase$Min), ",", .(statsBase$Max)
+				))
+			),
 			`median (range)` = list('Median (range)' = 
 				bquote(paste0(
 					.(statsBase$Median), 
@@ -290,6 +297,9 @@ getStats <- function(
 			),
 			`mean (se)` = list('Mean (SE)' = 
 				bquote(paste0(.(statsBase$Mean), " (", .(statsBase$SE),  ")"))
+			),
+			`mean (sd)` = list('Mean (SD)' = 
+				bquote(paste0(.(statsBase$Mean), " (", .(statsBase$SD),  ")"))
 			),
 			`mean (range)` = list('Mean (range)' = 
 				bquote(paste0(
