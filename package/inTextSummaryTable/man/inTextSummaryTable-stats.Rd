@@ -84,8 +84,10 @@ statistics can be reported in the final output table.
 \itemize{
 \item{'median (range)': }{median (minimum,maximum)}
 \item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
+\item{'mean (sd)': }{mean and standard deviation}
 \item{'mean (se)': }{mean and standard error}
 \item{'mean (range)': }{mean and (minimum, maximum)}
+\item{'min,max': }{minimum, maximum}
 }}
 
 }}
