@@ -66,6 +66,7 @@ getStats("m (\%)")
 # for continuous variable:
 getStats("summary")
 getStats("mean (se)")
+getStats("mean (sd)")
 getStats("median (range)")
 getStats("median\n(range)")
 getStats(c("Mean", "SE"))

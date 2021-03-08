@@ -1,5 +1,6 @@
 2.22.0
   o add fontface parameter in 'subjectProfileSummaryTable'
+  o getStats: supports 'mean (sd)' and 'min,max'
 2.21.1
   o fix export summary table to DT in case multiple title formatted as HTML
 2.21.0
