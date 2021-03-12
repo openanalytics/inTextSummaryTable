@@ -699,7 +699,8 @@ subjectProfileSummaryTable <- function(
 	# arguments for geom_point
 	# geom_point is used with size = NA to avoid the 'a' in the legend
 	# this workaround will show points in the legend
-	aesPoint <- aesTablePlot
+    idxFontface <- which(names(aesTablePlot) == "fontface")
+	aesPoint <- aesTablePlot[- idxFontface]
 	aesPoint[["label"]] <- NULL # remove 'label' not used for geom_point
 	argsGeomPoint <- list(
 		mapping = do.call("aes_string", aesPoint),
