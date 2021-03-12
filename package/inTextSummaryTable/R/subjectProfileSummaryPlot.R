@@ -35,7 +35,6 @@
 #' If different labels should be used for different elements of
 #' \code{byVar} variable, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
-#' @param caption String with caption for the plot.
 #' @param jitter Numeric with jitter for the x-axis, only used if \code{colorVar} specified.
 #' @param label Logical or expression or list of expression.
 #' Points are labelled with \code{meanVar} if set to TRUE,
@@ -66,6 +65,11 @@
 #' or expression from colnames of \code{data} to be represented in
 #' the table below the plot.
 #' By default, no table is displayed.
+#' @param tableTextFontface Font face for the text included
+#' in the table.
+#' @param tableYAxisLabs Logical, if TRUE (by default)
+#' the labels of the \code{colorVar} are included
+#' in the y-axis of the table.
 #' @param tableHeight Numeric of length 1 with height for the table.
 #' @param byVar Variable(s) of \code{data} for which separated plot(s)
 #' should be created.
@@ -94,6 +98,9 @@
 #' Currently only 'log10' (or NULL, default) is available.
 #' In case error bars go in the negative, their values are set to a 'small enough' value for plotting:
 #' \code{min(data)/10} or \code{yLim[1]} if \code{yLim} is specified.
+#' @param legendPosition String with legend position.
+#' By default, 'bottom' of \code{tableText} is not specified,
+#' 'none' otherwise.
 #' @param ... Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
 #' \code{\link[ggplot2]{geom_text}}
 #' used for the \code{label}.
@@ -141,7 +148,9 @@ subjectProfileSummaryPlot <- function(data,
 	sizeLine = GeomLine$default_aes$size,
 	sizeLabel = GeomText$default_aes$size,
 	widthErrorBar = GeomErrorbar$default_aes$width,
-	tableText = NULL, tableHeight = 0.1,
+	tableText = NULL, tableTextFontface = 1,
+	tableHeight = 0.1, 
+	tableYAxisLabs = !is.null(colorVar),
 	label = FALSE, labelPadding = unit(1, "lines"), 
 	byVar = NULL,
 	hLine = NULL, hLineColor = "black", hLineLty = "solid",
@@ -152,6 +161,7 @@ subjectProfileSummaryPlot <- function(data,
 	themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
 	themeIncludeVerticalGrid = TRUE,
 	ggExtra = NULL,
+	legendPosition = ifelse(!is.null(tableText), "none", "bottom"),
 	...){
 		
 	if(!is.null(yLimExpand)){
@@ -489,14 +499,19 @@ subjectProfileSummaryPlot <- function(data,
 	}	
 
 	# labels for the axes/title
-	argsLab <- list(x = xLab, y = yLab, title = title, caption = caption)
+	argsLab <- list(
+		x = xLab, 
+		y = yLab, 
+		title = title, 
+		caption = if(is.null(tableText))	caption
+	)
 	argsLab <- argsLab[!sapply(argsLab, is.null)]
 	if(length(argsLab) > 0)
 		gg <- gg + do.call(labs, argsLab)
 	
 	argsTheme <- c(
 		list(
-			legend.position = "bottom",
+			legend.position = legendPosition,
 			text = element_text(family = fontname, size = fontsize)
 		),
 		if(!themeIncludeVerticalGrid)
@@ -569,12 +584,15 @@ subjectProfileSummaryPlot <- function(data,
 		# create plot with table
 		ggTable <- subjectProfileSummaryTable(
 			data = dataTable, xVar = xVar, 
-			text = tableText,
+			text = tableText, fontface = tableTextFontface,
 			xLim = xLim,
 			xLab = xLab,
-			colorVar = colorVar,
+			colorVar = colorVar, 
+			colorLab = colorLab,
 			colorPalette = colorPalette,
-			showLegend = FALSE, yAxisLabs = !is.null(colorVar),
+			legendPosition = legendPosition,
+			yAxisLabs = tableYAxisLabs,
+			caption = caption,
 			style = style,
 			fontname = fontname,
 			fontsize = fontsize,
@@ -642,6 +660,10 @@ subjectProfileSummaryPlot <- function(data,
 #' \code{\link[ggplot2]{theme_bw}} if \code{style} is 'presentation'.
 #' @param xTrans (optional) ggplot2 transformation
 #' for the x-axis.
+#' @param legendPosition String with legendPosition,
+#' 'right' by default.
+#' @param caption String with caption for the plot,
+#' NULL by default.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @importFrom utils packageVersion
@@ -655,7 +677,9 @@ subjectProfileSummaryTable <- function(
     fontface = 1,
 	xLab = NULL,
 	labelVars = NULL,
-	showLegend = TRUE,
+	caption = NULL,
+	showLegend = (legendPosition != "none"), 
+	legendPosition = "right",
 	yAxisLabs = FALSE,
 	xAxisLabs = NULL,
 	style = "report",
@@ -720,7 +744,11 @@ subjectProfileSummaryTable <- function(
 	
 	# labels
 	# if no x-label, set labs(x = NULL) to remove bottom margin
-	ggTable <- ggTable + labs(x = if(!is.null(xLab))	xLab)
+	ggTable <- ggTable + 
+		labs(
+			x = if(!is.null(xLab))	xLab,
+			caption = caption
+		)
 	
 	# color palette
 	if(!is.null(colorVar)){
@@ -751,6 +779,7 @@ subjectProfileSummaryTable <- function(
 	# theme
 	argsTheme <- c(
 		list(
+			legend.position = legendPosition,
 			axis.ticks.y = element_blank(),
 			axis.title.y = element_blank(),
 			axis.text.x = element_blank(),
@@ -775,8 +804,7 @@ subjectProfileSummaryTable <- function(
 			paletteEl <- levels(droplevels(colorVect))
 			colorPaletteAxes <- unname(colorPalette[paletteEl])
 			list(axis.text.y = element_text(colour = colorPaletteAxes))
-		},
-		if(!showLegend)	list(legend.position = "none")
+		}
 	)
 	ggTable <- ggTable + themeFct() + do.call(theme, argsTheme)
 	

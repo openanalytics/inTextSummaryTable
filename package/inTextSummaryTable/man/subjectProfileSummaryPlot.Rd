@@ -42,7 +42,9 @@ subjectProfileSummaryPlot(
   sizeLabel = GeomText$default_aes$size,
   widthErrorBar = GeomErrorbar$default_aes$width,
   tableText = NULL,
+  tableTextFontface = 1,
   tableHeight = 0.1,
+  tableYAxisLabs = !is.null(colorVar),
   label = FALSE,
   labelPadding = unit(1, "lines"),
   byVar = NULL,
@@ -58,6 +60,7 @@ subjectProfileSummaryPlot(
   themeFct = switch(style, report = theme_classic, presentation = theme_bw),
   themeIncludeVerticalGrid = TRUE,
   ggExtra = NULL,
+  legendPosition = ifelse(!is.null(tableText), "none", "bottom"),
   ...
 )
 }
@@ -126,7 +129,8 @@ If different labels should be used for different elements of
 \code{byVar} variable, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
 
-\item{caption}{String with caption for the plot.}
+\item{caption}{String with caption for the plot,
+NULL by default.}
 
 \item{yTrans}{(optional) String with transformation for the y-axis.
 Currently only 'log10' (or NULL, default) is available.
@@ -160,7 +164,14 @@ or expression from colnames of \code{data} to be represented in
 the table below the plot.
 By default, no table is displayed.}
 
+\item{tableTextFontface}{Font face for the text included
+in the table.}
+
 \item{tableHeight}{Numeric of length 1 with height for the table.}
+
+\item{tableYAxisLabs}{Logical, if TRUE (by default)
+the labels of the \code{colorVar} are included
+in the y-axis of the table.}
 
 \item{label}{Logical or expression or list of expression.
 Points are labelled with \code{meanVar} if set to TRUE,
@@ -219,6 +230,10 @@ include theme vertical grid lines (if present in \code{themeFct}).}
 If different calls should be used for different elements of the 
 \code{byVar} variable, the vector should be named
 with each corresponding element (collapsed with '.' if multiple).}
+
+\item{legendPosition}{String with legend position.
+By default, 'bottom' of \code{tableText} is not specified,
+'none' otherwise.}
 
 \item{...}{Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
 \code{\link[ggplot2]{geom_text}}
