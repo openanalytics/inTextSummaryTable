@@ -15,7 +15,9 @@ subjectProfileSummaryTable(
   fontface = 1,
   xLab = NULL,
   labelVars = NULL,
-  showLegend = TRUE,
+  caption = NULL,
+  showLegend = (legendPosition != "none"),
+  legendPosition = "right",
   yAxisLabs = FALSE,
   xAxisLabs = NULL,
   style = "report",
@@ -50,7 +52,13 @@ the text label.}
 
 \item{labelVars}{Named string with variable labels (names are the variable code).}
 
+\item{caption}{String with caption for the plot,
+NULL by default.}
+
 \item{showLegend}{Logical, should the legend be displayed? TRUE by default.}
+
+\item{legendPosition}{String with legendPosition,
+'right' by default.}
 
 \item{yAxisLabs}{Logical, if TRUE include the labels in the y-axis.}
 
