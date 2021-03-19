@@ -704,11 +704,22 @@ subjectProfileSummaryTable <- function(
 	if(yAxisLabs & is.null(colorVar))
 		warning("Labels for the y-axis are not included because color variable is not specified.")
 
+	if(!is.null(colorVar)){
+		
+		# convert variable to a factor to set correct order of elements in the y-axis
+		if(!is.factor(data[, colorVar]))
+			data[, colorVar] <- as.factor(data[, colorVar])
+	
+		# order y rows with first level on top (max y), last level on the bottom (min y)
+		data$tableY <- factor(data[, colorVar], levels = rev(levels(data[, colorVar])))
+	
+	}
+	
 	# aesthetics
 	aesTablePlot <- c(
 		list(
 			x = xVar,
-			y = ifelse(!is.null(colorVar), colorVar, 1),
+			y = ifelse(!is.null(colorVar), "tableY", 1),
 			label = "tableTextLabel",
             fontface = fontface
 		),
@@ -736,7 +747,7 @@ subjectProfileSummaryTable <- function(
 	ggTable <- ggplot(data = data) + 
 		do.call("geom_text", argsGeomText) + 
 		do.call("geom_point", argsGeomPoint) +
-		guides(colour = guide_legend(reverse = TRUE, override.aes = list(size = pointSize)))
+		guides(colour = guide_legend(override.aes = list(size = pointSize)))
 	
 	# axis limits
 	if(!is.null(xLim))
@@ -798,10 +809,7 @@ subjectProfileSummaryTable <- function(
 			# consider levels of color variable factor to
 			# set correct palette in case color palette specified for some elements
 			# without data (not represented in the plot)
-			colorVect <- data[, colorVar]
-			if(!is.factor(colorVect))
-				colorVect <- as.factor(colorVect)
-			paletteEl <- levels(droplevels(colorVect))
+			paletteEl <- levels(droplevels(data[, "tableY"]))
 			colorPaletteAxes <- unname(colorPalette[paletteEl])
 			list(axis.text.y = element_text(colour = colorPaletteAxes))
 		}

@@ -187,11 +187,11 @@ test_that("limit is specified for the x-axis", {
 			
 })
 
-test_that("a color variable is specified", {
+test_that("the color variable is displayed in the y-axis", {
 		
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
-		n = sample.int(4),
+		n = c("1", "2", "3", "4"),
 		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A"))
 	)	
 	
@@ -202,35 +202,49 @@ test_that("a color variable is specified", {
 		colorVar = "TRT"
 	)
 	
-	summaryTable$TRTN <- as.numeric(summaryTable$TRT)
-	
 	## check if labels are based on color var
 	
 	# extract data behind the text
 	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomText"))
 	ggDataText <- layer_data(gg, which(isGeomText))
-		
-	ggDataTextWithInput <- merge(ggDataText, summaryTable,
-		by.x = c("x", "y"),
-		by.y = c("visit", "TRTN"),
-		all = TRUE
+	ggDataText$y <- as.numeric(ggDataText$y) # ggplot set target to 'mapped_discrete' class
+	ggDataText <- ggDataText[with(ggDataText, order(x, y)), ]
+	
+	dataPlotReference <- data.frame(
+		x = c(1, 1, 2, 2),
+		y = c(1, 2, 1, 2), # 1: bottom (last level), 2: top (first level)
+		label = c("1", "2", "3", "4")
+	)
+	# check that correct data is displayed (and in the correct order)
+	expect_equal(
+		ggDataText[, c("x", "y", "label")],
+		dataPlotReference,
+		check.attributes = FALSE
 	)
 	
-	# label is correct
-	with(ggDataTextWithInput, expect_equal(label, n))
+})
+	
+test_that("different colors are used based on a variable", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2),
+		n = sample.int(4),
+		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A"))
+	)	
+			
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n",
+		colorVar = "TRT"
+	)
 	
 	## color is different for the groups for the text and point (used for the legend)
 	
 	isGeomTextPoint <- sapply(gg$layers, function(l) inherits(l$geom, c("GeomText", "GeomPoint")))
 	ggDataTextPoint <- do.call(plyr::rbind.fill, ggplot_build(gg)$data[isGeomTextPoint])
 			
-	ggDataTextPointWithInput <- merge(ggDataTextPoint, summaryTable,
-		by.x = c("x", "y"),
-		by.y = c("visit", "TRTN"),
-		all = TRUE
-	)
-			
-	colors <- with(ggDataTextPointWithInput, tapply(colour, TRT, unique))
+	colors <- with(ggDataTextPoint, tapply(colour, y, unique))
 	expect_type(colors, "character")
 	expect_length(colors, 2)
 	expect_length(unique(colors), 2)
@@ -253,7 +267,8 @@ test_that("a color palette is specified", {
 		colorVar = "TRT", colorPalette = colorPalette
 	)
 			
-	summaryTable$TRTN <- as.numeric(as.factor(summaryTable$TRT))
+	# levels of the color variable are sorted from the top (high y) to the bottom (low y)
+	summaryTable$y <- as.numeric(factor(summaryTable$TRT, levels = rev(levels(summaryTable$TRT))))
 	
 	# extract data behind point and text:
 	isGeomTextPoint <- sapply(gg$layers, function(l) inherits(l$geom, c("GeomText", "GeomPoint")))
@@ -261,7 +276,7 @@ test_that("a color palette is specified", {
 			
 	ggDataTextPointWithInput <- merge(ggDataTextPoint, summaryTable,
 		by.x = c("x", "y"),
-		by.y = c("visit", "TRTN"),
+		by.y = c("visit", "y"),
 		all = TRUE
 	)
 			
@@ -366,19 +381,22 @@ test_that("y-axis labels are included with color var as factor", {
 	
 	# correct spec, with color var as factor:
 	colorPalette <- c(A = "red", B = "blue")
-	gg <- subjectProfileSummaryTable(
-		data = summaryTable, 
-		xVar = "visit",
-		text = "n",
-		colorVar = "TRT",
-		colorPalette = colorPalette,
-		yAxisLabs = TRUE
+	expect_warning(
+		gg <- subjectProfileSummaryTable(
+			data = summaryTable, 
+			xVar = "visit",
+			text = "n",
+			colorVar = "TRT",
+			colorPalette = colorPalette,
+			yAxisLabs = TRUE
+		)
 	)
 	expect_false(inherits(gg$theme$axis.text.y, "element_blank"))
 	# check that color of labels are correct in the y-axis
+	# Warning: labels are set from the lowest y (last level factor) to the highest y (first level factor)
 	expect_equal(
 		gg$theme$axis.text.y$colour,
-		unname(colorPalette[levels(droplevels(summaryTable$TRT))])
+		c("red", "blue")
 	)
 	
 })
@@ -402,9 +420,10 @@ test_that("y-axis labels are included with color var as character", {
 		yAxisLabs = TRUE
 	)
 	# check that color of labels are correct in the y-axis
+	# Warning: labels are set from the lowest y (last level factor) to the highest y (first level factor)
 	expect_equal(
 		gg$theme$axis.text.y$colour,
-		unname(colorPalette)
+		c("blue", "red")
 	)
 	
 	# extract data behind the text
@@ -412,7 +431,7 @@ test_that("y-axis labels are included with color var as character", {
 	ggDataText <- layer_data(gg, which(isGeomText))
 	expect_equal(
 		unname(c(with(ggDataText, tapply(colour, y, unique)))),
-		unname(colorPalette)
+		c("blue", "red")
 	)
 	
 })
@@ -458,7 +477,7 @@ test_that("y-axis labels are included for a non factor variable", {
 	
 	expect_equal(
 		gg$theme$axis.text.y$colour,
-		unname(colorPalette[unique(summaryTable$TRT)])
+		c("blue", "red")
 	)
 			
 })
