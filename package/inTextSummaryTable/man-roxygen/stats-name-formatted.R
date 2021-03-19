@@ -32,7 +32,7 @@
 #' \item{'mean (sd)': }{mean and standard deviation}
 #' \item{'mean (se)': }{mean and standard error}
 #' \item{'mean (range)': }{mean and (minimum, maximum)}
-#' \item{'min,max': }{minimum, maximum}
+#' \item{'(min, max)': }{(minimum, maximum)}
 #' }}
 #' 
 #' }}

@@ -237,7 +237,7 @@ getStats <- function(
 			"m (%)",
 			"median (range)", "median\n(range)",
 			"mean (se)", "mean (sd)", "mean (range)",
-			"min,max",
+			"(min, max)",
 			names(statsBase)
 		),
 		several.ok = TRUE
@@ -278,9 +278,9 @@ getStats <- function(
 					)
 				)
 			),
-			`min,max` = list('Min,Max' =
+			`(min, max)` = list('(Min, Max)' =
 				bquote(paste0(
-					.(statsBase$Min), ",", .(statsBase$Max)
+					"(", .(statsBase$Min), ", ", .(statsBase$Max), ")"
 				))
 			),
 			`median (range)` = list('Median (range)' = 

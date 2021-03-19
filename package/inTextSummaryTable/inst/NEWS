@@ -1,6 +1,6 @@
 2.22.0
   o add fontface parameter in 'subjectProfileSummaryTable'
-  o getStats: supports 'mean (sd)' and 'min,max'
+  o getStats: supports 'mean (sd)' and '(min, max)'
   o subjectProfileSummaryPlot: 
     - new parameter: tableYAxisLabs
     - pass colorLab to subjectProfileSummaryTable
