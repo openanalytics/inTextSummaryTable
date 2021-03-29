@@ -1,18 +1,33 @@
 Package: inTextSummaryTable
 Type: Package
 Title: Creation Of In-Text Summary Table
-Version: 2.22.0
-Date: 2021-03-19
+Version: 2.22.0.999
+Date: 2021-03-29
 Author: Laure Cougnaud
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
 Description: Tables of summary statistics or count tables are created.
   These tables can be exported as in-text table to a Clinical Study Report
   (Word format), a topline presentation (PowerPoint format), 
   or as interactive table to an html document.
-Imports: glpgUtilityFct (>= 3.0.1), dplyr, plyr, reshape2 (>= 1.4), 
-  ggplot2, flextable (>= 0.5.5), officer, magrittr, glpgStyle (>= 2.2.0),
-  ggrepel, cowplot, methods, scales
-Suggests: testthat, pander, knitr, htmltools
+Imports:
+  cowplot,
+  dplyr,
+  flextable (>= 0.5.5),
+  ggplot2,
+  ggrepel,
+  magrittr,
+  methods,
+  officer,
+  plyr,
+  reshape2 (>= 1.4),
+  scales,
+  glpgUtilityFct (>= 3.0.1),
+  glpgStyle (>= 2.2.0)     
+Suggests:
+  htmltools,
+  knitr,
+  pander,
+  testthat
 License: file LICENSE
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
