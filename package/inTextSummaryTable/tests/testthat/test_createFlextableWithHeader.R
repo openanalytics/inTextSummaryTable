@@ -8,10 +8,15 @@ data <- iris
 test_that("Create a flextable simple header", {		
       
       # no header
-      expect_is(res <- createFlextableWithHeader(data = data), "list")
+      expect_is(
+          res <- createFlextableWithHeader(data = data),
+          "list"
+      )
       expect_is(res$ft, "flextable")
       expect_named(res$colsData)
-      expect_identical(setdiff(res$colsData, ""), colnames(data))
+      expect_identical(
+          setdiff(res$colsData, ""), colnames(data)
+      )
       
       # in case ncol(headerDf) != ncol(data)
       headerDf <- as.data.frame(t(colnames(data)))
@@ -45,7 +50,10 @@ test_that("Create a flextable simple header", {
 
 test_that("Create a flextable with header and title", {
       
-      title <- c("Table: content of the iris dataset", "This is an informative subtitle")
+      title <- c(
+          "Table: content of the iris dataset",
+          "This is an informative subtitle"
+      )
       headerDf <- as.data.frame(t(colnames(data)))
       expect_is(
           ftWithTitle <- createFlextableWithHeader(
@@ -56,7 +64,7 @@ test_that("Create a flextable with header and title", {
           "flextable"
       )
       
-      file <- "tableWithTitle.html"
+      file <- file.path(tempdir(), "tableWithTitle.html")
       save_as_html(ftWithTitle, path = file)
       
       tableXML <- read_xml(file)
