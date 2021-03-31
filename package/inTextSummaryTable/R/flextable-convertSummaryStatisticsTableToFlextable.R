@@ -8,7 +8,6 @@
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
 #' @importFrom glpgStyle getColorTable getDimPage
-#' @importFrom glpgUtilityFct getGLPGFlextable createFlextableWithHeader
 #' @author Laure Cougnaud
 #' @export
 convertSummaryStatisticsTableToFlextable <- function(
@@ -22,18 +21,18 @@ convertSummaryStatisticsTableToFlextable <- function(
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	file = NULL, pageDim = NULL
-){
+) {
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
 	
-	if(is.null(summaryTable)){
+	if(is.null(summaryTable)) {
 		return(invisible())
 	}
 	
-	if(!is.data.frame(summaryTable)){
+	if(!is.data.frame(summaryTable)) {
 		
 		inputParams <- as.list(environment())
-		res <- sapply(seq_along(summaryTable), function(i){
+		res <- sapply(seq_along(summaryTable), function(i) {
 			summaryTableI <- summaryTable[[i]]
 			inputParamsBy <- inputParams
 			inputParamsBy$summaryTable <- summaryTableI
@@ -42,7 +41,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 				inputParams$title, 
 				strsplit(names(summaryTable)[i], split = "\n")[[1]]
 			)
-			inputParamsBy$file <- if(!is.null(file)){
+			inputParamsBy$file <- if(!is.null(file)) {
 				paste0(file_path_sans_ext(file), "_", i, ".", file_ext(file))
 			}
 			do.call(convertSummaryStatisticsTableToFlextable, inputParamsBy)		
@@ -77,7 +76,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	hasPadding <- length(padParams) > 0
 	
 	# special formatting (e.g. bold)
-	for(el in sumTableAttr$formatParams){
+	for(el in sumTableAttr$formatParams) {
 		if("bold" %in% el$type)
 			ft <- ft %>% bold(i = el$i, j = el$j, part = el$part)
 	}
@@ -86,27 +85,27 @@ convertSummaryStatisticsTableToFlextable <- function(
 	# important: merge rows before setting horizontal lines
 	# otherwise might encounter issues
 	rowVarToMerge <- c(rowVar, sumTableAttr$rowVarInSepCol)
-	for(col in rowVarToMerge){
+	for(col in rowVarToMerge) {
 		j <- match(col, colnames(summaryTable))
 		# vector with # duplicates
 		countDupl <- rle(x = summaryTable[, j])$lengths
 		countDuplIdx <- which(countDupl > 1) # only duplicated
-		for(idx in countDuplIdx){
+		for(idx in countDuplIdx) {
 			# indices of duplicated rows
 			i <- seq.int(
 				from = ifelse(idx == 1, 1, cumsum(countDupl)[idx-1]+1), 
 				length.out = countDupl[idx]
 			)
-			if(hasPadding){
+			if(hasPadding) {
 				# extract padding spec for this column:
 				idxPadCol <- sapply(padParams, function(x)
 					x$part == "body" & 
 					x$j == j
 				)
 				padParamsCol <- padParams[idxPadCol]
-				if(length(padParamsCol) > 0){
+				if(length(padParamsCol) > 0) {
 					# extract padding for each row
-					iPad <- sapply(i, function(iP){
+					iPad <- sapply(i, function(iP) {
 						padIP <- unlist(lapply(padParamsCol, function(pad)
 							if(iP %in% pad$i)	pad$padding.left	
 						))
@@ -118,20 +117,20 @@ convertSummaryStatisticsTableToFlextable <- function(
 				}
 			}
 			# merge rows
-			if(length(i) > 1){
+			if(length(i) > 1) {
 				ft <- merge_at(ft, j = getNewCol(col), i = i)
 			}
 		}
 	}
 	
-	if(!is.null(sumTableAttr$mergeParams)){
+	if(!is.null(sumTableAttr$mergeParams)) {
 		for(params in sumTableAttr$mergeParams)
 			ft <- merge_at(ft, j = params$j, params$i, part = params$part)
 	}
 	
 	# add footer
-	if(!is.null(footer)){
-		for(iFoot in seq_along(footer)){
+	if(!is.null(footer)) {
+		for(iFoot in seq_along(footer)) {
 			paramsFooter <- setNames(list(footer[iFoot]), names(colsDataFt[1]))
 			ft <- do.call(add_footer, 
 				c(list(x = ft, top = FALSE), paramsFooter)
@@ -151,7 +150,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 	## padding
 	if(hasPadding)
-		for(padParams in sumTableAttr$padParams){
+		for(padParams in sumTableAttr$padParams) {
 			padPars <- grep("^padding", names(padParams), value = TRUE)
 			padParams[padPars] <- sapply(padPars, function(par) padParams[[par]] * rowPadBase, simplify = FALSE)
 			# if title is specified, shift row coordinate of padding by 1
@@ -166,7 +165,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	# if no vertical lines, only horizontal line 
 	# between header/stub, top header and bottom stub
 	isVline <- sumTableAttr$vline
-	if(!is.null(isVline) && isVline == "none"){
+	if(!is.null(isVline) && isVline == "none") {
 		ft <- ft %>% 
 #			hline_top(border = bd, part = "header") %>%
 			hline_bottom(border = bd, part = "body") %>%
@@ -177,13 +176,13 @@ convertSummaryStatisticsTableToFlextable <- function(
 	
 	# horizontal lines
 	isHline <- sumTableAttr$hline
-	if(!(!is.null(isHline) && isHline == "none")){
+	if(!(!is.null(isHline) && isHline == "none")) {
 		for(hlineParams in sumTableAttr$hlineParams)
 			ft <- do.call(hline, c(list(x = ft, border = bd), hlineParams))
 	}
 	
 	# vertical lines
-	for(vlineParams in sumTableAttr$vlineParams){
+	for(vlineParams in sumTableAttr$vlineParams) {
 		if(!is.null(vlineParams$i))	vlineParams$i <- vlineParams$i + length(title)
 		ft <- do.call(vline, c(list(x = ft, border = bd), vlineParams))
 	}
@@ -231,7 +230,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 		)
 	
 	# set style
-	ft <- getGLPGFlextable(
+	ft <- getFlextable(
 		data = summaryTable, ft = ft, 
 		border = FALSE, adjustWidth = FALSE, align = FALSE,
 		style = style,
@@ -291,7 +290,7 @@ formatCustomFlextable <- function(
 	part = "body",
 	fontsize = 8,
 	iBase = 0,
-	bold = FALSE){
+	bold = FALSE) {
 
 	patterns <- c(
 		"bold" = "(.*)bold\\{(.+)\\}(.*)",
@@ -299,7 +298,7 @@ formatCustomFlextable <- function(
 		"subscript" = "(.+)_\\{(.+)\\}(.*)"
 	)
 	
-	for(patternName in names(patterns)){
+	for(patternName in names(patterns)) {
 		
 		pattern <- patterns[patternName]
 
@@ -308,13 +307,13 @@ formatCustomFlextable <- function(
 		idxPatternMat <- grep(pattern, dataTableMat)
 		
 		# if any
-		if(length(idxPatternMat) > 0){
+		if(length(idxPatternMat) > 0) {
 			
 			# convert matrix indices to [row, col]
 			idxPatternAI <- arrayInd(idxPatternMat, .dim = dim(dataTableMat))
 			
 			# for each element with superscript
-			for(idx in seq_along(idxPatternMat)){
+			for(idx in seq_along(idxPatternMat)) {
 				
 				textInit <- dataTableMat[idxPatternMat[idx]]
 				# split text with before/after superscript
@@ -322,7 +321,7 @@ formatCustomFlextable <- function(
 				textSplit <- regmatches(textInit, idxMatches)
 				
 				# for each superscript (in case multiple for the same text)
-				for(el in textSplit){
+				for(el in textSplit) {
 			
 					iEl <- idxPatternAI[idx, 1] + iBase
 					jEl <- idxPatternAI[idx, 2]
@@ -367,7 +366,7 @@ formatCustomFlextable <- function(
 exportFlextableToDocx <- function(
 	object, file, landscape = FALSE,
 	breaksAfter = if(!inherits(object, "flextable"))	seq_along(object)	else	1
-	){
+	) {
 	
 	isListTables <- !inherits(object, "flextable")
 	
@@ -376,15 +375,15 @@ exportFlextableToDocx <- function(
 	doc <- read_docx()
 	if(landscape)	doc <- doc %>% body_end_section_landscape()
 	
-	if(isListTables){
-		for(i in seq_along(object)){
+	if(isListTables) {
+		for(i in seq_along(object)) {
 			doc <- doc %>% body_add_flextable(value = object[[i]]) 
 			if(i %in% breaksAfter)	
 				doc <- doc %>% body_add_break()
 		}
 	}else	doc <- doc %>% body_add_flextable(value = object)
 	
-	if(landscape){
+	if(landscape) {
 		doc <- doc %>%
 			# a paragraph needs to be included after the table otherwise the layout is not landscape
 			body_add_par(value = "", style = "Normal") %>%

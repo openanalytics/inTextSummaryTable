@@ -3,7 +3,7 @@ Type: Package
 Title: Creation Of In-Text Summary Table
 Version: 2.22.0.999
 Date: 2021-03-29
-Author: Laure Cougnaud
+Author: Laure Cougnaud and Michela Pasetto
 Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
 Description: Tables of summary statistics or count tables are created.
   These tables can be exported as in-text table to a Clinical Study Report
@@ -21,13 +21,15 @@ Imports:
   plyr,
   reshape2 (>= 1.4),
   scales,
+  stats,
   glpgUtilityFct (>= 3.0.1),
   glpgStyle (>= 2.2.0)     
 Suggests:
   htmltools,
   knitr,
   pander,
-  testthat
+  testthat,
+  xml2
 License: file LICENSE
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
