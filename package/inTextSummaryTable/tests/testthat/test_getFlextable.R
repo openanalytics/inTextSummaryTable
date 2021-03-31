@@ -1,4 +1,4 @@
-context("Get GLPG flextable")
+context("Get flextable")
 
 data <- head(mtcars)
 
@@ -6,7 +6,7 @@ library(flextable)
 library(xml2)
 
 # export table and get JSON table
-exportAndGetFlextableXML <- function(ft, label){
+exportAndGetFlextableXML <- function(ft, label) {
   file <- paste0("table-", label, ".html")
   flextable::save_as_html(ft, path = file)
   tableXML <- xml2::read_xml(file)
@@ -40,7 +40,9 @@ test_that("a flextable is created from data", {
 
 test_that("table is created in presentation style", {
       
-      expect_silent(ftPres <- getFlextable(data = data, style = "presentation"))
+      expect_silent(ftPres <- getFlextable(
+              data = data, style = "presentation")
+      )
       expect_is(ftPres, "flextable")
       
       tableXML <- exportAndGetFlextableXML(ftPres, label = "presentation")
