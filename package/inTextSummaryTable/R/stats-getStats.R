@@ -193,8 +193,8 @@ getStats <- function(
 		# statistics for categorical variable
 		list(
 			# counts
-			n = bquote(roundCustomText(statN, .(nDecN))),
-			m = bquote(roundCustomText(statm, .(nDecm))),
+			n = bquote(roundUpText(statN, .(nDecN))),
+			m = bquote(roundUpText(statm, .(nDecm))),
 			# percentage
 			`%` = substitute(
 				formatPercentage(statPercN), 
@@ -208,12 +208,12 @@ getStats <- function(
 		# statistics for continuous variable
 		if(!is.null(nDecContBase)){
 			list(
-				Mean = bquote(roundCustomText(statMean, .(nDecContBase + 1))),
-				Median = bquote(roundCustomText(statMedian, .(nDecContBase + 1))),
-				SD = bquote(roundCustomText(statSD, .(nDecContBase + 1))),
-				SE = bquote(roundCustomText(statSE, .(nDecContBase + 2))),
-				Min = bquote(roundCustomText(statMin, .(nDecContBase))),
-				Max = bquote(roundCustomText(statMax, .(nDecContBase)))		
+				Mean = bquote(roundUpText(statMean, .(nDecContBase + 1))),
+				Median = bquote(roundUpText(statMedian, .(nDecContBase + 1))),
+				SD = bquote(roundUpText(statSD, .(nDecContBase + 1))),
+				SE = bquote(roundUpText(statSE, .(nDecContBase + 2))),
+				Min = bquote(roundUpText(statMin, .(nDecContBase))),
+				Max = bquote(roundUpText(statMax, .(nDecContBase)))		
 			)
 		}else{
 			list(
