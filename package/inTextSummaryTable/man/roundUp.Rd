@@ -16,13 +16,15 @@ roundUp(x, digits = 0)
 Rounded numeric vector.
 }
 \description{
-This function rounds a number up to the nearest number,
-for a specified number of digits.
+This function rounds a number for a specified number of digits.
+It rounds off to the highest number for a 5.
 The default R \code{\link{round}} function rounds to the
 'even digit' in case of rounding off a 5 
 (see 'Details' section in \code{? round}).
-This function rounds up to the nearest number in this case,
-to mimic a similar rounding strategy used in SAS.
+This function instead rounds up to the nearest number for a 5. 
+It mimics a similar rounding strategy used in SAS.
+See examples for the difference between \code{\link{round}} and
+'roundUp' below.
 }
 \examples{
 # numbers are rounded to the closest even number in case of .5 
