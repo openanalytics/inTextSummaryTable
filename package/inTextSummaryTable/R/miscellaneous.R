@@ -1,4 +1,6 @@
-#' Round a number (with 'round-up' strategy)
+#' Round a number with 'round-up' strategy in text format.
+#' 
+#' This function rounds numbers with a 'round-up' strategy 
 #' for a specific number of digits,
 #' and format number to a: 'xxx.xxx' text.
 #' 
