@@ -14,7 +14,6 @@
 #' }
 #' @param x Numeric vector to round.
 #' @param digits Integer with number of digits to consider, 0 by default.
-#' @param format For backward compatibility. This parameter will be deprecated in the next package release.
 #' @return A character vector with the rounded number.
 #' NA values are returned as 'NA' as string.
 #' @author Laure Cougnaud and Michela Pasetto
@@ -29,11 +28,7 @@
 #' # padding zeros
 #' roundUpText(1.23, 10)
 #' @export
-roundUpText <- function(x, digits = 0, format) {
-	
-	#format <- match.arg(format)	
-	#res <- roundUp(..., format = format)
-	if(! missing(format)) warning("The 'format' argument is deprecated. \n The format output is always a character vector.")
+roundUpText <- function(x, digits = 0) {
 	
 	z <- roundUp(x = x, digits = digits)
 	res <- formatC(z, digits = digits, format = "f", flag = "0")
@@ -54,8 +49,6 @@ roundUpText <- function(x, digits = 0, format) {
 #' to mimic a similar rounding strategy used in SAS.
 #' @param x Numeric vector to round.
 #' @param digits Integer with number of digits to consider, 0 by default.
-#' @param format String with format for the number. Only 'number' is allowed.
-#' The option 'format = text' has been deprecated.
 #' @return Rounded numeric vector.
 #' @author stackoverflow question 6461209
 #' @examples
@@ -72,10 +65,7 @@ roundUpText <- function(x, digits = 0, format) {
 #' round(1.456e-2, digits = 2)
 #' round(1.456e-2, digits = 1)
 #' @export
-roundUp <- function(x, digits = 0, format = "number") {
-  
-  #format <- match.arg(format)
-  if(format == "text") stop("The 'format = text' is deprecated. Only numeric output is possible.")
+roundUp <- function(x, digits = 0) {
   
   x <- x + abs(x) * sign(x) * .Machine$double.eps
   z <- round(x, digits = digits)

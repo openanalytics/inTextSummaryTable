@@ -4,14 +4,12 @@
 \alias{roundUpText}
 \title{Round a number with 'round-up' strategy in text format.}
 \usage{
-roundUpText(x, digits = 0, format)
+roundUpText(x, digits = 0)
 }
 \arguments{
 \item{x}{Numeric vector to round.}
 
 \item{digits}{Integer with number of digits to consider, 0 by default.}
-
-\item{format}{For backward compatibility. This parameter will be deprecated in the next package release.}
 }
 \value{
 A character vector with the rounded number.

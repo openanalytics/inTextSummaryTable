@@ -16,9 +16,6 @@ test_that("'roundUp' function returns correct results", {
       # test case leading to issue with implementation in version < 0.21.0 (was returning 18.27)
       expect_equal(roundUp(x = 18.275, digits = 2), 18.28)
       
-      # option no longer supported
-      expect_error(roundUp(x = 0.55, digits = 1, format = "text"))
-      
       ## negative numbers
       expect_equal(roundUp(x = -0.55, digits = 1), -0.6)
       expect_equal(roundUp(x = -0.45, digits = 1), -0.5)
@@ -36,8 +33,6 @@ test_that("'roundUpText' function returns correct rounding", {
           roundUpText(x = 0.55, digits = 1),
           as.character(round(0.55, 1))
       )
-      
-      expect_warning(roundUpText(x = 4.0, digits = 2, format = "text"))
       
     })
 

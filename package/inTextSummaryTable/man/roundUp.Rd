@@ -5,15 +5,12 @@
 \title{Custom round function, with 'rounding up' strategy 
 for rounding off a 5.}
 \usage{
-roundUp(x, digits = 0, format = "number")
+roundUp(x, digits = 0)
 }
 \arguments{
 \item{x}{Numeric vector to round.}
 
 \item{digits}{Integer with number of digits to consider, 0 by default.}
-
-\item{format}{String with format for the number. Only 'number' is allowed.
-The option 'format = text' has been deprecated.}
 }
 \value{
 Rounded numeric vector.
