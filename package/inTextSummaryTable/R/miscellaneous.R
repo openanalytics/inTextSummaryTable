@@ -4,8 +4,8 @@
 #' 
 #' The following workflow is used:
 #' \enumerate{
-#' \item{numbers are rounded with the \code{\link[glpgUtilityFct]{roundCustom}}
-#' function, see the \code{? roundCustom} for more details
+#' \item{numbers are rounded with the \code{\link{roundUp}}
+#' function, see the \code{? roundUp} for more details
 #' on the rounding strategy}
 #' \item{round numbers are formatted to character in
 #' the format: 'xxx.xxx' with pads leading zeros}
@@ -14,31 +14,72 @@
 #' @param digits Integer with number of digits to consider, 0 by default.
 #' @param format For backward compatibility. This parameter will be deprecated in the next package release.
 #' @return A character vector with the rounded number.
-#' NA values are returned as 'NA' (as string).
+#' NA values are returned as 'NA' as string.
 #' @author Laure Cougnaud and Michela Pasetto
-#' @importFrom glpgUtilityFct roundCustom
-#' @seealso \link[glpgUtilityFct]{roundCustom} for the rounding customization.
+#' @seealso \link{roundUp} for the rounding customization.
 #' @examples 
 #' # number of digits higher than number of decimal
-#' roundCustomText(x = c(0.345, 0.567, -0.98), digits = 2)
+#' roundUpText(x = c(0.345, 0.567, -0.98), digits = 2)
 #' # number of digits lower than number of decimal
-#' roundCustomText(x = c(0.345, 0.567, -0.98), digits = 0)
+#' roundUpText(x = c(0.345, 0.567, -0.98), digits = 0)
 #' # by default, 'digits' is 0!
-#' roundCustomText(x = c(0.345, 0.567, -0.98))
+#' roundUpText(x = c(0.345, 0.567, -0.98))
 #' # padding zeros
-#' roundCustomText(1.23, 10)
+#' roundUpText(1.23, 10)
 #' @export
-roundCustomText <- function(x, digits = 0, format) {
+roundUpText <- function(x, digits = 0, format) {
 	
 	#format <- match.arg(format)	
-	#res <- roundCustom(..., format = format)
+	#res <- roundUp(..., format = format)
 	if(! missing(format)) warning("The 'format' argument is deprecated. \n The format output is always a character vector.")
 	
-	z <- roundCustom(x = x, digits = digits)
+	z <- roundUp(x = x, digits = digits)
 	res <- formatC(z, digits = digits, format = "f", flag = "0")
 	
 	return(res)
 	
+}
+
+#' Custom round function, with 'rounding up' strategy 
+#' for rounding off a 5.
+#' 
+#' This function rounds a number up to the nearest number,
+#' for a specified number of digits.
+#' The default R \code{\link{round}} function rounds to the
+#' 'even digit' in case of rounding off a 5 
+#' (see 'Details' section in \code{? round}).
+#' This function rounds up to the nearest number in this case,
+#' to mimic a similar rounding strategy used in SAS.
+#' @param x Numeric vector to round.
+#' @param digits Integer with number of digits to consider, 0 by default.
+#' @param format String with format for the number. Only 'number' is allowed.
+#' The option 'format = text' has been deprecated.
+#' @return Rounded numeric vector.
+#' @author stackoverflow question 6461209
+#' @examples
+#' # numbers are rounded to the closest even number in case of .5 
+#' # with the round 'base' function
+#' round(0.45, 1)
+#' # 'roundUp' always round to the next highest number in case of .5
+#' roundUp(0.45, 1)
+#' # rounding is the same for uneven number:
+#' round(0.55, 1)
+#' roundUp(0.55)
+#' # other examples
+#' round(1.456e-2, digits = 3)
+#' round(1.456e-2, digits = 2)
+#' round(1.456e-2, digits = 1)
+#' @export
+roundUp <- function(x, digits = 0, format = "number") {
+  
+  #format <- match.arg(format)
+  if(format == "text") stop("The 'format = text' is deprecated. Only numeric output is possible.")
+  
+  x <- x + abs(x) * sign(x) * .Machine$double.eps
+  z <- round(x, digits = digits)
+  
+  return(z)
+  
 }
 
 #' Get specific attribute from a summaryTable or a list of summaryTables
