@@ -57,16 +57,15 @@ By default, statistics are extracted based on the variable(s) type
 and formatted with the default rules implemented in the package.
 }
 \examples{
-library(glpgUtilityFct)
-data(ADaMDataPelican)
 # default set of statistics (depending if the variable is continuous or categorical)
-getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"))
+exampleData <- data.frame(USUBJID = 1 : 4, WEIGHT = c(67, 78, 83, 61), SEX = c("F", "M", "M", "F"), stringsAsFactors = FALSE)
+getStatsData(data = exampleData, var = c("WEIGHT", "SEX"))
 # all set of statistics (depending if the variable is continuous or categorical)
-getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = "all")
+getStatsData(data = exampleData, var = c("WEIGHT", "SEX"), type = "all")
 # custom set of statistics for all variables
-getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = c("n", "\%"))
+getStatsData(data = exampleData, var = c("WEIGHT", "SEX"), type = c("n", "\%"))
 # custom set of statistics, depending on the type of the variable
-getStatsData(data = ADaMDataPelican$ADSL, var = c("WEIGHTBL", "SEX"), type = c(cont = "median (range)", cont = "mean (se)", cat = "n (\%)"), args = list(cat = list(includeName = FALSE)))
+getStatsData(data = exampleData, var = c("WEIGHT", "SEX"), type = c(cont = "median (range)", cont = "mean (se)", cat = "n (\%)"), args = list(cat = list(includeName = FALSE)))
 }
 \seealso{
 \link{getStats}
