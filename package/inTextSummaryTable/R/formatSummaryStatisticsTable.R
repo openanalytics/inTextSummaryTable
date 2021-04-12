@@ -8,7 +8,7 @@
 #' @inheritParams inTextSummaryTable-common-args
 #' @return summaryTable reformatted to wide format
 #' @author Laure Cougnaud
-#' @importFrom glpgUtilityFct getLabelVar
+#' @importFrom clinUtils getLabelVar
 #' @importFrom reshape2 melt dcast
 #' @importFrom plyr colwise
 #' @importFrom dplyr n_distinct

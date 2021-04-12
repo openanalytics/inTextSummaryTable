@@ -19,6 +19,7 @@
 #' }
 #' If \code{summaryTable} is a list of summary tables,
 #' returns a list of corresponding summary tables in long format.
+#' @importFrom clinUtils getLabelVar
 #' @author Laure Cougnaud
 formatSummaryStatisticsTableFlextable <- function(
 	summaryTable,

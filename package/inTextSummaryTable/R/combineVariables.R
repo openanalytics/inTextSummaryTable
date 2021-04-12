@@ -57,6 +57,7 @@
 #' This variable is a factor whose levels are ordered based on the order
 #' of the condition specified in \code{paramsList}.
 #' @author Laure Cougnaud
+#' @importFrom clinUtils getLabelVar
 #' @export
 combineVariables <- function(
 	data, paramsList, newVar, 

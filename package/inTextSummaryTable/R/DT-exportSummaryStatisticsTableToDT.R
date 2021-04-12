@@ -9,6 +9,7 @@
 #' @inherit glpgUtilityFct::toDTGLPG return
 #' @author Laure Cougnaud
 #' @importFrom utils head
+#' @importFrom clinUtils getLabelVar
 #' @importFrom glpgUtilityFct toDTGLPG
 #' @importFrom tools file_path_sans_ext file_ext
 #' @export

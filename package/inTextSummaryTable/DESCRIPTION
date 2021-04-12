@@ -10,6 +10,7 @@ Description: Tables of summary statistics or count tables are created.
   (Word format), a topline presentation (PowerPoint format), 
   or as interactive table to an html document.
 Imports:
+  clinUtils,
   cowplot,
   dplyr,
   flextable (>= 0.5.5),

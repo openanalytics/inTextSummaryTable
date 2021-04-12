@@ -109,7 +109,7 @@
 #' objects of \code{byVar} is specified.
 #' @author Laure Cougnaud
 #' @importFrom glpgStyle getGLPGColorPalette getGLPGShapePalette getGLPGLinetypePalette
-#' @importFrom glpgUtilityFct getLabelVar
+#' @importFrom clinUtils getLabelVar
 #' @import ggplot2
 #' @import cowplot
 #' @importFrom ggrepel geom_text_repel
@@ -667,6 +667,7 @@ subjectProfileSummaryPlot <- function(data,
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
 #' @importFrom utils packageVersion
+#' @importFrom clinUtils getLabelVar
 #' @author Laure Cougnaud and Michela Pasetto
 #' @export
 subjectProfileSummaryTable <- function(

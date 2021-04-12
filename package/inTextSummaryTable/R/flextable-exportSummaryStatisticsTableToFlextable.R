@@ -6,6 +6,7 @@
 #' @inheritParams inTextSummaryTable-flextable-args
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
+#' @importFrom clinUtils getLabelVar
 #' @importFrom glpgUtilityFct toDTGLPG
 #' @importFrom glpgStyle getColorTable
 #' @export

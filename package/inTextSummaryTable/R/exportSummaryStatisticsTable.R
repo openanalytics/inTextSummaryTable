@@ -51,7 +51,7 @@
 #' one for each element in \code{byVar}.
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
-#' @importFrom glpgUtilityFct getLabelVar
+#' @importFrom clinUtils getLabelVar
 #' @importFrom glpgStyle getColorTable
 #' @importFrom tools file_ext
 #' @export

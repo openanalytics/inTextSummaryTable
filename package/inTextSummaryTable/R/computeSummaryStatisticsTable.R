@@ -210,7 +210,7 @@
 #' @author Laure Cougnaud
 #' @importFrom dplyr n_distinct
 #' @importFrom plyr ddply rbind.fill dlply
-#' @importFrom glpgUtilityFct getLabelVar
+#' @importFrom clinUtils getLabelVar
 #' @export
 computeSummaryStatisticsTable <- function(
 	data,  
@@ -1066,7 +1066,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' }
 #' }
 #' @author Laure Cougnaud
-#' @importFrom glpgUtilityFct getLabelVar
+#' @importFrom clinUtils getLabelVar
 #' @keywords internal
 computeSummaryStatisticsByRowColVar <- function(
 	data, 
