@@ -6,8 +6,8 @@
 #' 
 #' The following workflow is used:
 #' \enumerate{
-#' \item{numbers are rounded with the \code{\link{roundUp}}
-#' function, see the \code{? roundUp} for more details
+#' \item{numbers are rounded with the \code{\link{roundHalfUp}}
+#' function, see the \code{? roundHalfUp} for more details
 #' on the rounding strategy}
 #' \item{round numbers are formatted to character in
 #' the format: 'xxx.xxx' with pads leading zeros}
@@ -17,20 +17,20 @@
 #' @return A character vector with the rounded number.
 #' NA values are returned as 'NA' as string.
 #' @author Laure Cougnaud and Michela Pasetto
-#' @seealso \link{roundUp} for the rounding customization.
+#' @seealso \link{roundHalfUp} for the rounding customization.
 #' @examples 
 #' # number of digits higher than number of decimal
-#' roundUpText(x = c(0.345, 0.567, -0.98), digits = 2)
+#' roundHalfUpTextFormat(x = c(0.345, 0.567, -0.98), digits = 2)
 #' # number of digits lower than number of decimal
-#' roundUpText(x = c(0.345, 0.567, -0.98), digits = 0)
+#' roundHalfUpTextFormat(x = c(0.345, 0.567, -0.98), digits = 0)
 #' # by default, 'digits' is 0!
-#' roundUpText(x = c(0.345, 0.567, -0.98))
+#' roundHalfUpTextFormat(x = c(0.345, 0.567, -0.98))
 #' # padding zeros
-#' roundUpText(1.23, 10)
+#' roundHalfUpTextFormat(1.23, 10)
 #' @export
-roundUpText <- function(x, digits = 0) {
+roundHalfUpTextFormat <- function(x, digits = 0) {
 	
-	z <- roundUp(x = x, digits = digits)
+	z <- roundHalfUp(x = x, digits = digits)
 	res <- formatC(z, digits = digits, format = "f", flag = "0")
 	
 	return(res)
@@ -48,7 +48,7 @@ roundUpText <- function(x, digits = 0) {
 #' This function instead rounds up to the nearest number for a 5. 
 #' It mimics a similar rounding strategy used in SAS.
 #' See examples for the difference between \code{\link{round}} and
-#' 'roundUp' below.
+#' 'roundHalfUp' below.
 #' @param x Numeric vector to round.
 #' @param digits Integer with number of digits to consider, 0 by default.
 #' @return Rounded numeric vector.
@@ -57,17 +57,17 @@ roundUpText <- function(x, digits = 0) {
 #' # numbers are rounded to the closest even number in case of .5 
 #' # with the round 'base' function
 #' round(0.45, 1)
-#' # 'roundUp' always round to the next highest number in case of .5
-#' roundUp(0.45, 1)
+#' # 'roundHalfUp' always round to the next highest number in case of .5
+#' roundHalfUp(0.45, 1)
 #' # rounding is the same for uneven number:
 #' round(0.55, 1)
-#' roundUp(0.55)
+#' roundHalfUp(0.55)
 #' # other examples
 #' round(1.456e-2, digits = 3)
 #' round(1.456e-2, digits = 2)
 #' round(1.456e-2, digits = 1)
 #' @export
-roundUp <- function(x, digits = 0) {
+roundHalfUp <- function(x, digits = 0) {
   
   x <- x + abs(x) * sign(x) * .Machine$double.eps
   z <- round(x, digits = digits)
