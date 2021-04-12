@@ -134,7 +134,7 @@ and typically displayed inside the final table.
 
 \itemize{
 
-\item{In general, all rounding is handled with \code{\link{roundCustomText}}.}
+\item{In general, all rounding is handled with \code{\link{roundHalfUpTextFormat}}.}
 
 \item{statistics for continuous variable: }{
 \itemize{

@@ -183,7 +183,7 @@ formatPercentage <- function(x, nDec = 1){
 					"<0.1",
 					ifelse(x > 99.9,
 						">99.9",
-						roundHalfUpTextFormatText(x, digits = nDec)
+                        roundHalfUpTextFormat(x, digits = nDec)
 					)
 				)
 			)
