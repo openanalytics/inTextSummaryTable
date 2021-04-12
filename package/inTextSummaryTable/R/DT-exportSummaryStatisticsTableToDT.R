@@ -3,14 +3,14 @@
 #' @param summaryTable Summary table as provided by the 
 #' \code{\link{formatSummaryStatisticsTable}}.
 #' @param ... (DT output) Extra parameters passed to the 
-#' \code{\link[glpgUtilityFct]{toDTGLPG}}
+#' \code{\link[clinUtils]{toDTGLPG}}
 #' @inheritParams inTextSummaryTable-common-args
 #' @inheritParams inTextSummaryTable-DT-args
-#' @inherit glpgUtilityFct::toDTGLPG return
+#' @inherit clinUtils::toDTGLPG return
 #' @author Laure Cougnaud
 #' @importFrom utils head
 #' @importFrom clinUtils getLabelVar
-#' @importFrom glpgUtilityFct toDTGLPG
+#' @importFrom clinUtils toDTGLPG
 #' @importFrom tools file_path_sans_ext file_ext
 #' @export
 exportSummaryStatisticsTableToDT <- function(

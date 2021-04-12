@@ -76,9 +76,8 @@ getStats("median\n(range)", includeName = FALSE)
 getStats(c("summary", "median\n(range)"), includeName = FALSE)
 
 ## to extract the number of decimals based on a continuous variable (see ?getMaxNDecimals) 
-library(glpgUtilityFct)
-data(ADaMDataPelican)
-getStats(type = c('median (range)', 'mean (se)'), x = ADaMDataPelican$ADSL$WEIGHTBL)
+exampleData <- data.frame(USUBJID = 1 : 4, WEIGHT = c(67, 78, 83, 61), SEX = c("F", "M", "M", "F"), stringsAsFactors = FALSE)
+getStats(type = c('median (range)', 'mean (se)'), x = exampleData$WEIGHT)
 # compare with when 'x' is not specified:
 getStats(type = c('median (range)', 'mean (se)'))
 
