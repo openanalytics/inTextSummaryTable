@@ -725,8 +725,8 @@ Please note that the content of the table strongly depends on the study.
 		}else{
 			nDecBase <- getMaxNDecimals(dataParam$AVAL)
 			list(bquote(paste0(
-				roundCustomText(statMean, .(nDecBase + 1)), 
-				" (", roundCustomText(statCV, .(nDecBase + 1)), ")"
+				roundHalfUpTextFormat(statMean, .(nDecBase + 1)), 
+				" (", roundHalfUpTextFormat(statCV, .(nDecBase + 1)), ")"
 			)))
 		}
 	)

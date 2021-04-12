@@ -638,7 +638,7 @@ the number of decimals of interest can be fixed via the `nDecCont` parameter.
 ```
 
 Notes: by default the `round` function in R rounds the number to the even number in case of 0.5. 
-The `roundCustomText` function rounds to the closest digit.
+The `roundHalfUpTextFormat` function rounds to the closest digit.
 
 #### Custom `stats` function (Advanced)
 
@@ -652,8 +652,8 @@ For example, the AGE is displayed with 1 digit and the height with two digits:
 		data = dataSL,
 		var = c("AGE", "HEIGHT"),
 		stats = list(
-			AGE = list(Median = expression(roundCustomText(statMedian, 1))),
-			HEIGHT = list(Median = expression(roundCustomText(statMedian, 2)))
+			AGE = list(Median = expression(roundHalfUpTextFormat(statMedian, 1))),
+			HEIGHT = list(Median = expression(roundHalfUpTextFormat(statMedian, 2)))
 		)
 	)
 
@@ -669,9 +669,9 @@ a custom function can be created:
 	statsDMNum <- function(digitsMin)
 		list('Median (range)' = 
 			bquote(paste0(
-				roundCustomText(statMedian, .(digitsMin+1)), 
-				" (", roundCustomText(statMin, .(digitsMin)), ",", 
-				roundCustomText(statMax, .(digitsMin)),
+				roundHalfUpTextFormat(statMedian, .(digitsMin+1)), 
+				" (", roundHalfUpTextFormat(statMin, .(digitsMin)), ",", 
+				roundHalfUpTextFormat(statMax, .(digitsMin)),
 				")"
 			))
 	)
@@ -2067,7 +2067,7 @@ This is for example useful to reference additional informations in a specific fo
 			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
 			'PARCAT1' = "" 
 		),
-		stats = list(expression(paste0(roundCustomText(statMean, 1), "\n(", roundCustomText(statSE, 2),")"))),
+		stats = list(expression(paste0(roundHalfUpTextFormat(statMean, 1), "\n(", roundHalfUpTextFormat(statSE, 2),")"))),
 		# include the footnote
 		footer = c(
 			"(1) Each compound is labelled according to its Galapagos compound ID.",
@@ -2104,11 +2104,11 @@ Greek letter are included as it is in the table.
 		stats = list(
 			expression(paste0(
 				ifelse(statMean > statMedian, 
-					paste0("bold{", roundCustomText(statMean, 1), "}"), 
+					paste0("bold{", roundHalfUpTextFormat(statMean, 1), "}"), 
 					statMean
 				), 
 				"\n(", 
-				roundCustomText(statSE, 2),")")
+				roundHalfUpTextFormat(statSE, 2),")")
 			)
 		),
 		# include greek letter
@@ -2143,7 +2143,7 @@ For example, pharmacokinetic tables are created for each compound:
 		),
 		byVar = "PARCAT1", 
 		labelVars = labelVars,
-		stats = list(expression(paste0(roundCustomText(statMean, 1), "\n(", roundCustomText(statSE, 2),")")))
+		stats = list(expression(paste0(roundHalfUpTextFormat(statMean, 1), "\n(", roundHalfUpTextFormat(statSE, 2),")")))
 	)	
 	# print the list of tables in the rmarkdown document
 	glpgUtilityFct::knitPrintListObjects(summaryTableList) 
