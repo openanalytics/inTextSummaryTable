@@ -1,4 +1,6 @@
 2.22.0.999
+  o roundUpText renamed to 'roundHalfUpTextFormat'
+  o roundUp renamed to 'roundHalfUp'
   o roundUp: remove deprecated parameter 'format'
   o rename 'roundCustom' to 'roundUp'
   o add function 'roundCustom'
