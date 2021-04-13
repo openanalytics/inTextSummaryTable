@@ -2,7 +2,12 @@
 title: "Introduction to the `inTextSummaryTable` package"
 author: "Laure Cougnaud"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output: glpgStyle::html_report
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    number_sections: true
 vignette: >
   %\VignetteIndexEntry{Introduction to the inTextSummaryTable package}
   %\VignetteEngine{knitr::rmarkdown}
@@ -55,22 +60,21 @@ usually loaded from a _SAS_ data file (`sas7bdat` format).
 The label of the variables stored in the `SAS` datasets is also used
 for the title/captions. 
 
-Note that the `loadDataADaMSDTM` function of the `glpgUtilityFct` package 
+Note that the `loadDataADaMSDTM` function of the `clinUtils` package 
 can be used to import your study-specific dataset(s) of interest into R.
 
-For this vignette, ADaM datasets from the _Pelican_ study,
- included in the `glpgpUtilityFct` package are used.
+For this vignette, ADaM datasets from the _CDISC_ study,
+ included in the `clinUtils` package are used.
 
 ```{r loadData}	
 	
-	library(glpgUtilityFct)
+	library(clinUtils)
 
 	# load example data
-	data(ADaMDataPelican)
-	data(labelVarsADaMPelican)
+    data(dataADaMCDISCP01)
 	
-	dataAll <- ADaMDataPelican
-	labelVars <- labelVarsADaMPelican
+	dataAll <- dataADaMCDISCP01
+    labelVars <- attr(dataAll, "labelVars")
 	
 	# dataAll contains a list
 	class(dataAll)
@@ -115,8 +119,11 @@ statistics are reported depending on the type of variable:
 
 See the documentation in section _Base statistics_ for more details 
 on the statistics included by default for each type, via:
-```{r eval = FALSE}
+
+```{r getHelp, eval = FALSE}
+
 ? `inTextSummaryTable-stats` 
+
 ```
 
 ### Categorical variable
@@ -159,6 +166,7 @@ The categories of the variable are sorted alphabetically by default. To sort the
 	getSummaryStatisticsTable(data = dataSL, var = "SEX")
 	
 	# order categories based on a numeric variable
+    dataSL$SEXN <- ifelse(dataSL$SEX == "M", 2, 1)
 	dataSL$SEX <- reorder(dataSL$SEX, dataSL$SEXN)
 	getSummaryStatisticsTable(data = dataSL, var = "SEX")
 	
@@ -293,7 +301,7 @@ The table can contain a mix of categorical and continuous variables.
 
 	getSummaryStatisticsTable(
 		data = dataSL, 
-		var = c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL", "RACE", "SEX")
+		var = c("AGE", "HEIGHTBL", "WEIGHTBL", "BMIBL", "RACE", "SEX")
 	)
 
 ```
@@ -407,7 +415,7 @@ The summary statistics table is restricted to the median and range:
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL"),
+		var = c("AGE", "HEIGHTBL", "WEIGHTBL", "BMIBL"),
 		varGeneralLab = "Parameter", statsGeneralLab = "",
 		colVar = "ACTARM",
 		stats = list(
@@ -485,7 +493,7 @@ also available in the package:
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = "HEIGHT",
+		var = "HEIGHTBL",
 		# specify extra stats to compute
 		statsExtra = list(
 			statCV = cv,
@@ -506,7 +514,7 @@ for the coefficient of variation:
 	# include the coefficient of variation via the 'statsExtra' parameter
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = "HEIGHT",
+		var = "HEIGHTBL",
 		statsExtra = list(statCVPerc = function(x) sd(x)/mean(x)*100)
 	)
 
@@ -519,7 +527,7 @@ These statistics are then available for customization via the `stats` parameter.
 	# format the statistics with the 'stats' parameter
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = "HEIGHT",
+		var = "HEIGHTBL",
 		statsExtra = list(statCVPerc = function(x) sd(x)/mean(x)*100),
 		stats = list(Mean = expression(statMean), 'CV%' = expression(statCVPerc))
 	)
@@ -532,8 +540,11 @@ By default, the number of decimals is based on the rules
 specified in the _Mock Standard SAP **Phase 2/3**_ (version 1.0)
 
 The detailed rules are available in the section _Statistics formatting_ in:
-```{r eval = FALSE}
+
+```{r getHelpStats, eval = FALSE}
+
 ? `inTextSummaryTable-stats` 
+
 ```
 
 To specify fixed amounts of digits for the statistics to be displayed in the table, 
@@ -548,8 +559,10 @@ without decimals.
 The number of decimals for the percentages
 is specified below:
 
-```{r nDecimals-catVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables<br>(_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
+```{r nDecimals-catVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables<br>"}
+
 include_graphics("./images/nDecimals_catVar_SAP_phase23.png")
+
 ```
 
 By default, the counts for a categorical variables are formatted as specified above:
@@ -572,8 +585,10 @@ By default, the counts for a categorical variables are formatted as specified ab
 The number of decimals for individual values is based on the Mock SAP (see tables below)
 unless the number of digits in the database is lower. In this case, the resolution of the specified values is used.
 
-```{r nDecimals-numVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables<br>(_GLPGS_Mock Standards_v1.0_FINAL.docx_ document, from 5/02/2020)"}
+```{r nDecimals-numVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables<br>"}
+
 include_graphics("./images/nDecimals_numVar_SAP_phase23.png")
+
 ```
 
 In the package: 'Very small values' are considered values below 1.
@@ -603,24 +618,24 @@ the number of decimals of interest can be fixed via the `nDecCont` parameter.
 ```{r getMaxNDecimals}
 
 	# %FEV1 at baseline
-	print(dataSL$PFEVBL)
+	print(dataSL$DURDIS)
 	
 	## Extract the number of decimals for each value:
 	
 	# based on pre-defined rule, this metric should be displayed with 1 decimal:
-	getNDecimalsRule(x = dataSL$PFEVBL)
+	getNDecimalsRule(x = dataSL$DURDIS)
 	
 	# but available in the data only with 0 decimals
-	getNDecimalsData(x = dataSL$PFEVBL)
+	getNDecimalsData(x = dataSL$DURDIS)
 	
 	# The minimum of the #decimals based on the data and pre-defined rule is:
-	getNDecimals(x = dataSL$PFEVBL)
+	getNDecimals(x = dataSL$DURDIS)
 	
 	## Take the maximum number of decimals 
-	getMaxNDecimals(x = dataSL$PFEVBL)
+	getMaxNDecimals(x = dataSL$DURDIS)
 	
 	## Custom set of statistics are extracted when x is specified:
-	getStats(x = dataSL$PFEVBL)
+	getStats(x = dataSL$DURDIS)
 	
 	# To fix the number of decimals:
 	getStats(type = "summary", nDecCont = 1)
@@ -628,10 +643,10 @@ the number of decimals of interest can be fixed via the `nDecCont` parameter.
 	## Create summary statistics table
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "PFEVBL"),
+		var = c("AGE", "DURDIS"),
 		stats = list(
 			AGE = getStats(type = "median (range)", x = dataSL$AGE),
-			PFEVBL = getStats(type = "median (range)", x = dataSL$PFEVBL)
+            DURDIS = getStats(type = "median (range)", x = dataSL$DURDIS)
 		)
 	)
 
@@ -650,10 +665,10 @@ For example, the AGE is displayed with 1 digit and the height with two digits:
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT"),
+		var = c("AGE", "HEIGHTBL"),
 		stats = list(
 			AGE = list(Median = expression(roundHalfUpTextFormat(statMedian, 1))),
-			HEIGHT = list(Median = expression(roundHalfUpTextFormat(statMedian, 2)))
+            HEIGHTBL = list(Median = expression(roundHalfUpTextFormat(statMedian, 2)))
 		)
 	)
 
@@ -678,10 +693,10 @@ a custom function can be created:
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT", "WEIGHTBL", "BMIBL", "RACE", "SEX"),
+		var = c("AGE", "HEIGHTBL", "WEIGHTBL", "BMIBL", "RACE", "SEX"),
 		stats = list(
 			AGE = statsDMNum(0),
-			HEIGHT = statsDMNum(1),
+			HEIGHTBL = statsDMNum(1),
 			WEIGHTBL = statsDMNum(1),
 			BMIBL = statsDMNum(1),
 			RACE = getStats("n (%)"),
@@ -703,7 +718,7 @@ variable.
 	# statsLayout = 'row'
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT"),
+		var = c("AGE", "HEIGHTBL"),
 		stats = list(Mean = expression(statMean), 'SE' = expression(statSE))
 	)
 	
@@ -715,7 +730,7 @@ The statistics can also be included in columns.
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT"),
+		var = c("AGE", "HEIGHTBL"),
 		stats = list(Mean = expression(statMean), 'SE' = expression(statSE)),
 		statsLayout = "col"
 	)
@@ -728,7 +743,7 @@ The statistics can also be specified in different rows, but in a separated colum
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT"),
+		var = c("AGE", "HEIGHTBL"),
 		stats = list(Mean = expression(statMean), 'SE' = expression(statSE)),
 		statsLayout = "rowInSepCol"
 	)
@@ -744,7 +759,7 @@ of the table.
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT"),
+		var = c("AGE", "HEIGHTBL"),
 		stats = list(Mean = expression(statMean))
 	)
 
@@ -757,7 +772,7 @@ parameter `statsLabInclude` should be set to `TRUE`.
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = c("AGE", "HEIGHT"),
+		var = c("AGE", "HEIGHTBL"),
 		stats = list(Mean = expression(statMean)),
 		statsLabInclude = TRUE
 	)
@@ -777,17 +792,17 @@ The adverse events dataset is used for demonstration.
 
 ```{r countTable-AE-data}
 				
-	dataAE <-  subset(dataAll$ADAE, FASFL == "Y" & TRTEMFL == "Y")
-	dataAEInterest <- subset(dataAE, AESOC %in% c("Infections and infestations", "General disorders and administration site conditions", "Ear and labyrinth disorders"))
+	dataAE <-  subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
+	dataAEInterest <- subset(dataAE, AESOC %in% c(
+            "INFECTIONS AND INFESTATIONS",
+            "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
+            )
+    )
 
 	# ensure that order of elements is the one specified in 
 	# the corresponding numeric variable
-	library(glpgUtilityFct)
-	dataAEInterest <- convertVarToFactor(
-		data = dataAEInterest, 
-		var = c("TRTP", "AESEV"),
-		varNum = c("TRTPN", "AESEVN")
-	)
+    dataAEInterest$TRTA <- reorder(dataAEInterest$TRTA, dataAEInterest$TRTAN)
+	dataAEInterest$AESEV <- factor(dataAEInterest$AESEV, levels = c("MILD", "MODERATE"))
 
 ```
 
@@ -961,12 +976,12 @@ The adverse events are sorted based on the incidence in the treated group.
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", colTotalInclude = TRUE,
+		colVar = "TRTA", colTotalInclude = TRUE,
 		rowOrder = "total",
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		# consider only the counts of the treated patients to order the rows
-		rowOrderTotalFilterFct = function(x) subset(x, TRTP == "treatmentX")
+		rowOrderTotalFilterFct = function(x) subset(x, TRTA == "Xanomeline High Dose")
 	)
 
 ```
@@ -981,7 +996,7 @@ For example, the adverse event table is sorted based on the counts of patient
 presenting this event across all treatment classes, and in case of ties based on 
 the counts of treated-patients presenting this event.
 
-```{r rowOrder-function-example1}
+```{r rowOrder-functionExample1}
 
 	library(plyr)
 	getSummaryStatisticsTable(
@@ -990,14 +1005,14 @@ the counts of treated-patients presenting this event.
 		rowVar = "AEHLT",
 		rowOrder = function(x){
 			x <- subset(x, !isTotal)
-			totalAcrossTreatments <- subset(x, TRTP == "Total")
+			totalAcrossTreatments <- subset(x, TRTA == "Total")
 			# counts across treated patients
-			totalForTreatmentOnly <- subset(x, TRTP == "treatmentX")
+			totalForTreatmentOnly <- subset(x, TRTA == "Xanomeline High Dose")
 			dataCounts <- merge(totalAcrossTreatments, totalForTreatmentOnly, by = "AEHLT", suffixes = c(".all", ".treat"))
 			# sort first based on overall count, then counts of treated patients
 			dataCounts[with(dataCounts, order(`statN.all`, `statN.treat`, decreasing = TRUE)), "AEHLT"]
 		},
-		colVar = "TRTP", colTotalInclude = TRUE,
+		colVar = "TRTA", colTotalInclude = TRUE,
 		labelVars = labelVars,
 		title = "Table: Adverse Events ordered based on total counts",
 		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
@@ -1009,26 +1024,26 @@ the counts of treated-patients presenting this event.
 The adverse event table is now ordered based on the counts in the placebo, then
 treated-patients column, for the organ class and the adverse event term separately.
 
-```{r rowOrder-function-example2}
+```{r rowOrder-functionExample2}
 
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", colTotalInclude = TRUE,
+		colVar = "TRTA", colTotalInclude = TRUE,
 		rowOrder = list(
-			AESOC = function(table){
+			AESOC = function(table) {
 				# records with total for each AESOC
-				nAESOCPlacebo <- subset(table, !isTotal & grepl("placebo", TRTP) & AEDECOD == "Total")
-				nAESOCTreat <- subset(table, !isTotal & grepl("75 mg", TRTP) & AEDECOD == "Total")
+				nAESOCPlacebo <- subset(table, !isTotal & grepl("placebo", TRTA) & AEDECOD == "Total")
+				nAESOCTreat <- subset(table, !isTotal & grepl("High Dose", TRTA) & AEDECOD == "Total")
 				nAESOCDf <- merge(nAESOCPlacebo, nAESOCTreat, by = "AESOC", suffixes = c(".placebo", ".treatment"))
 				nAESOCDf[with(nAESOCDf, order(`statN.placebo`, `statN.treatment`, decreasing = TRUE)), "AESOC"]
 			},
-			AEDECOD = function(table){
+			AEDECOD = function(table) {
 				# records with counts for each AEDECOD
-				nAEDECODPlacebo <- subset(table, !isTotal & grepl("placebo", TRTP) & AEDECOD != "Total")
-				nAEDECODTreat <- subset(table, !isTotal & grepl("75 mg", TRTP) & AEDECOD != "Total")
+				nAEDECODPlacebo <- subset(table, !isTotal & grepl("placebo", TRTA) & AEDECOD != "Total")
+				nAEDECODTreat <- subset(table, !isTotal & grepl("High Dose", TRTA) & AEDECOD != "Total")
 				nAEDECODDf <- merge(nAEDECODPlacebo, nAEDECODTreat, by = "AEDECOD", suffixes = c(".placebo", ".treatment"))
 				nAEDECODDf[with(nAEDECODDf, order(`statN.placebo`, `statN.treatment`, decreasing = TRUE)), "AEDECOD"]
 			}
@@ -1053,7 +1068,7 @@ specifying the `labelVars` parameter.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
@@ -1073,7 +1088,7 @@ specified), `rowVarLab` is set to this unique label.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		rowVarLab = c(
 			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
@@ -1100,8 +1115,8 @@ include counts for empty categories within the row/column.
 	
 	## create dummy categories for:
 	# treatment
-	dataAESubset$TRTP <- with(dataAESubset, 
-		factor(TRTP, levels = c(unique(as.character(TRTP)), "Treatment B"))
+	dataAESubset$TRTA <- with(dataAESubset, 
+		factor(TRTA, levels = c(unique(as.character(TRTA)), "Treatment B"))
 	)
 	# low-level term category
 	dataAESubset$AELLT <- with(dataAESubset, 
@@ -1114,7 +1129,7 @@ include counts for empty categories within the row/column.
 		type = "count",
 		rowVar = c("AEHLT", "AELLT"),
 		rowInclude0 = TRUE, colInclude0 = TRUE,
-		colVar = "TRTP",
+		colVar = "TRTA",
 		labelVars = labelVars,
 		title = "Table: Adverse Events: white blood cell analyses",
 		stats = getStats("n (%)"),
@@ -1133,14 +1148,13 @@ The **variable(s) used for the summary statistics**
 
 ```{r summaryTable-layout-var}
 
-	dataPFEV1 <- subset(dataAll$ADRE, FASFL == "Y" & PARAMCD == "FEV1PP" & AN01FL == "Y")
-	dataPFEV1 <- convertVarToFactor(
-		data = dataPFEV1, 
-		var = c("TRTP", "AVISIT"),
-		varNum = c("TRTPN", "AVISITN")
-	)
+	dataDIABP <- subset(dataAll$ADVS, SAFFL == "Y" & ANL01FL == "Y")
+    dataDIABP <- subset(dataDIABP, PARAMCD == "DIABP" & ATPT == "AFTER LYING DOWN FOR 5 MINUTES")
+    dataDIABP$TRTA <- reorder(dataDIABP$TRTA, dataDIABP$TRTAN)
+    dataDIABP$AVISIT <- reorder(dataDIABP$AVISIT, dataDIABP$AVISITN)
+    
 	getSummaryStatisticsTable(
-		data = dataPFEV1,
+		data = dataDIABP,
 		var = c("AVAL", "CHG", "PCHG"),
 		colVar = c("TRTA"),
 		rowVar = "AVISIT",
@@ -1159,14 +1173,13 @@ with similar types (e.g. all numeric variables).
 
 ```{r summaryTable-layout-varInColumn}
 
-	dataPFEV1 <- subset(dataAll$ADRE, FASFL == "Y" & PARAMCD == "FEV1PP" & AN01FL == "Y")
-	dataPFEV1 <- convertVarToFactor(
-		data = dataPFEV1, 
-		var = c("TRTP", "AVISIT"),
-		varNum = c("TRTPN", "AVISITN")
-	)
+    dataDIABP <- subset(dataAll$ADVS, SAFFL == "Y" & ANL01FL == "Y")
+    dataDIABP <- subset(dataDIABP, PARAMCD == "DIABP" & ATPT == "AFTER LYING DOWN FOR 5 MINUTES")
+    dataDIABP$TRTA <- reorder(dataDIABP$TRTA, dataDIABP$TRTAN)
+    dataDIABP$AVISIT <- reorder(dataDIABP$AVISIT, dataDIABP$AVISITN)
+    
 	getSummaryStatisticsTable(
-		data = dataPFEV1,
+		data = dataDIABP,
 		var = c("AVAL", "CHG", "PCHG"),
 		colVar = c("variable", "TRTA"),
 		rowVar = "AVISIT",
@@ -1213,7 +1226,7 @@ for a variable of interest if this variable contain missing values.
 
 ```{r summaryTable-layout-var-empty}
 
-	dataAEInterestWC <- ddply(dataAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x){
+	dataAEInterestWC <- ddply(dataAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x) {
 		x[which.max(x$AESEVN), ]
 	})
 	dataAEInterestWC[1, "AESEV"] <- NA
@@ -1375,39 +1388,38 @@ with available post-dose measurements **per laboratory parameter**.
 
 ```{r rowVarTotalPerc}
 
-	dataLB <- subset(dataAll$ADLB, FASFL == "Y" & PARAMCD %in% c("BACT", "ALB"))
+	dataLB <- subset(dataAll$ADLBC, SAFFL == "Y" & PARAMCD %in% c("CL", "ALB"))
 	
-	# worst-case scenario with abnormalities
-	dataLBWC <- subset(dataLB, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
+	dataLBWC <- subset(dataLB, AVISIT == "Worst-case post-baseline")
 
 	# data considered for the total
-	dataLBPostBaseline <- subset(dataLB, !AVISIT %in% c("Baseline", "Screening", "Worst-case post-baseline"))
-	
-	# post-baseline measurements  are not available for all subjects 
-	kable(aggregate(USUBJID ~ PARAM + TRTA, data = dataLBPostBaseline, function(x) length(unique(x))))
-	
-	# by default, the same total number of subjects 
-	# per treatment is used across all rows/parameters
-	getSummaryStatisticsTable(
-		data = dataLBWC,
-		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
-		stats = getStats("n (%)"),
-		emptyValue = 0, rowAutoMerge = FALSE,
-		dataTotal = dataLBPostBaseline
-	)
-	
-	# percentage based on total number of subjects with available
-	# post-baseline measurements PER parameter:
-	getSummaryStatisticsTable(
-		data = dataLBWC,
-		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
-		stats = getStats("n (%)"),
-		emptyValue = 0, rowAutoMerge = FALSE,
-		# total for column header
-		dataTotal = dataLBPostBaseline, 
-		dataTotalPerc = dataLBPostBaseline,
-		rowVarTotalPerc = "PARAM"
-	)
+	dataLBPostBaseline <- subset(dataLB, ! grepl("Baseline|End of Treatment", AVISIT))
+#	
+#	# post-baseline measurements  are not available for all subjects 
+#	kable(aggregate(USUBJID ~ PARAM + TRTA, data = dataLBPostBaseline, function(x) length(unique(x))))
+#	
+#	# by default, the same total number of subjects 
+#	# per treatment is used across all rows/parameters
+#	getSummaryStatisticsTable(
+#		data = dataLBWC,
+#		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
+#		stats = getStats("n (%)"),
+#		emptyValue = 0, rowAutoMerge = FALSE,
+#		dataTotal = dataLBPostBaseline
+#	)
+#	
+#	# percentage based on total number of subjects with available
+#	# post-baseline measurements PER parameter:
+#	getSummaryStatisticsTable(
+#		data = dataLBWC,
+#		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
+#		stats = getStats("n (%)"),
+#		emptyValue = 0, rowAutoMerge = FALSE,
+#		# total for column header
+#		dataTotal = dataLBPostBaseline, 
+#		dataTotalPerc = dataLBPostBaseline,
+#		rowVarTotalPerc = "PARAM"
+#	)
 	
 ```
 
@@ -1424,6 +1436,7 @@ For example, to extract the percentage of laboratory
 measurements by reference range and parameter:
 
 ```{r statsPerc}
+
 getSummaryStatisticsTable(
 	data = dataLBWC,
 	colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
@@ -1435,6 +1448,7 @@ getSummaryStatisticsTable(
 	# total for the percentage
 	dataTotalPerc = dataLBPostBaseline
 )
+
 ```
 
 ### Total across columns {#colTotal}
@@ -1598,15 +1612,15 @@ per SOC and across SOCs should count the patient once per severity class.
 
 	dataTEAEInterest <- subset(
 		dataAll$ADAE, 
-		SAFFL == "Y" & TRTEMFL == "Y" &
-		AESOC %in% c("Injury, poisoning and procedural complications", "Nervous system disorders")
+        SAFFL == "Y" & TRTEMFL == "Y" &
+		grepl("Injury, poisoning and procedural complications|Nervous system disorders", AESOC, ignore.case = TRUE)
 	)
 
 	# extract worst-case scenario data (only one record if multiple with same severity)
 	dataTEAEInterestWC <- ddply(dataTEAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x){
 		x[which.max(x$AESEVN), ]
 	})
-	kable(ddply(dataTEAEInterestWC[, c("USUBJID", "TRTA", "AESOC", "AEDECOD", "AESEV", "AESEVN")], "USUBJID"), split.tables = Inf)
+	kable(ddply(dataTEAEInterestWC[, c("USUBJID", "TRTA", "AESOC", "AEDECOD", "AESEV")], "USUBJID"), split.tables = Inf)
 
 	## datasets used for the total: 
 	# for total: compute worst-case across SOC and across AE term
@@ -1653,7 +1667,7 @@ chest injury and fall, but is only counted in the once in the table total.
 ## Labels
 
 If the data is loaded into R with the `read_haven` of the `haven` package,
- or the `loadDataADaMSDTM` function of the `glpgUtilityFct` package, the label
+ or the `loadDataADaMSDTM` function of the `clinUtils` package, the label
  for each variable is stored in the 'label' attribute of the corresponding
  column.
 
@@ -1738,7 +1752,7 @@ in the specified document chunk, providing than:
 
 A `rmarkdown` chunk can contains only one `flextable` object. 
 To include a list of `flextable` in a `rmarkdown` document, 
-the function `knitPrintListObjects` of the `glpgUtilityFct` package can be used.
+the function `knitPrintListObjects` of the `clinUtils` package can be used.
 
 #### Report or presentation
 
@@ -1975,24 +1989,18 @@ are stored as different columns in the data.frame.
 
 ```{r exportSummaryStatisticsTable}
 
-	dataPFEV1 <- subset(dataAll$ADRE, 
-		FASFL == "Y" & PARAMCD == "FEV1PP" &
-		(
-			AVISIT == "Baseline" |
-			# retain only: valid spirometry assessment (CRIT1)
-			(AVISIT %in% c("Day 14", "Day 28", "Follow-up") & CRIT1FL == "Y")
-			)
-	)
+    dataDIABP <- subset(dataAll$ADVS, SAFFL == "Y" & ANL01FL == "Y")
+    dataDIABP <- subset(dataDIABP, PARAMCD == "DIABP" & ATPT == "AFTER LYING DOWN FOR 5 MINUTES")
 	
 	# create example of data.frame containing statistics of interest
 	statsEff <- sapply(c("AVAL", "CHG"), function(var){
 		getStats(
 			type = c("n", "mean (se)", "median (range)"),
-			x = dataPFEV1[[var]]
+			x = dataDIABP[[var]]
 		)
 	}, simplify = FALSE)
 	summaryTable <- computeSummaryStatisticsTable(
-		data = dataPFEV1,
+		data = dataDIABP,
 		colVar = c("TRTP", "AVISIT"),
 		var = c("AVAL", "CHG"), varGeneralLab = "",
 		stats = statsEff,
@@ -2025,15 +2033,14 @@ The pharmacokinetics data is used for demonstration.
 
 ```{r data-ADSL}
 	
-	dataPP <- subset(dataAll$ADPP, SAFFL == "Y")
-	
-	# ensure that order of elements is the one specified in the corresponding numeric variable
-	library(glpgUtilityFct)
-	dataPP <- convertVarToFactor(
-		data = dataPP, 
-		var = c("PARCAT1", "PARAM", "AVISIT", "TRTP"), 
-		varNum = c("PARCAT1N", "PARAMN", "AVISITN", "TRTPN")
-	)
+#	dataPP <- subset(dataAll$ADPP, SAFFL == "Y")
+#	
+#	# ensure that order of elements is the one specified in the corresponding numeric variable
+#	dataPP <- convertVarToFactor(
+#		data = dataPP, 
+#		var = c("PARCAT1", "PARAM", "AVISIT", "TRTP"), 
+#		varNum = c("PARCAT1N", "PARAMN", "AVISITN", "TRTPN")
+#	)
 	
 ```	
 
@@ -2048,32 +2055,32 @@ This is for example useful to reference additional informations in a specific fo
 ```{r summaryTable-PP-rowVarWithLabel-rowVarLab-superscript}
 
 	# format labels with subscript
-	paramLabelPK <- c(
-		CTROUGH = "C_{trough} (ng/mL)", 
-		TLAG = "t_{lag} (h)",
-		TMAX = 't_{max} (h)', 
-		CMAX = "C_{max} (ng/mL)",
-		AUCTAU = "AUC_{0-t} (ng.h/mL)",
-		AUC08H = "AUC_{0-8h} (ng.h/mL)"
-	)
-	dataPP$PARAMRF <- paramLabelPK[dataPP$PARAMCD]
-	
-	getSummaryStatisticsTable(
-		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
-		var = "AVAL",
-		colVar = c("TRTP", "AVISIT"),
-		rowVar = c("PARCAT1", "PARAMRF"),
-		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
-			'PARCAT1' = "" 
-		),
-		stats = list(expression(paste0(roundHalfUpTextFormat(statMean, 1), "\n(", roundHalfUpTextFormat(statSE, 2),")"))),
-		# include the footnote
-		footer = c(
-			"(1) Each compound is labelled according to its Galapagos compound ID.",
-			paste0("AUC_{0-t} represents the ", getLabelParamcd(paramcd = "AUCTAU", data = dataPP), ".")
-		)
-	)	
+#	paramLabelPK <- c(
+#		CTROUGH = "C_{trough} (ng/mL)", 
+#		TLAG = "t_{lag} (h)",
+#		TMAX = 't_{max} (h)', 
+#		CMAX = "C_{max} (ng/mL)",
+#		AUCTAU = "AUC_{0-t} (ng.h/mL)",
+#		AUC08H = "AUC_{0-8h} (ng.h/mL)"
+#	)
+#	dataPP$PARAMRF <- paramLabelPK[dataPP$PARAMCD]
+#	
+#	getSummaryStatisticsTable(
+#		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
+#		var = "AVAL",
+#		colVar = c("TRTP", "AVISIT"),
+#		rowVar = c("PARCAT1", "PARAMRF"),
+#		rowVarLab = c(
+#			'PARAMRF' = "Pharmacokinetics parameter\nfor each compound^{(1)}", # use superscript for the foonote
+#			'PARCAT1' = "" 
+#		),
+#		stats = list(expression(paste0(roundHalfUpTextFormat(statMean, 1), "\n(", roundHalfUpTextFormat(statSE, 2),")"))),
+#		# include the footnote
+#		footer = c(
+#			"(1) Each compound is labelled according to its Galapagos compound ID.",
+#			paste0("AUC_{0-t} represents the ", getLabelParamcd(paramcd = "AUCTAU", data = dataPP), ".")
+#		)
+#	)	
 
 ```
 
@@ -2091,30 +2098,30 @@ Greek letter are included as it is in the table.
 
 ```{r summaryTable-PP-rowVarWithLabel-rowVarLab-bold}
 	
-	getSummaryStatisticsTable(
-		data = subset(dataPP, PARCAT1 == "Lumacaftor"),
-		var = "AVAL",
-		colVar = c("TRTP", "AVISIT"),
-		rowVar = "PARAMRF",
-		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter\nMean (SE*)", 
-			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
-		),
-		labelVars = labelVars,
-		stats = list(
-			expression(paste0(
-				ifelse(statMean > statMedian, 
-					paste0("bold{", roundHalfUpTextFormat(statMean, 1), "}"), 
-					statMean
-				), 
-				"\n(", 
-				roundHalfUpTextFormat(statSE, 2),")")
-			)
-		),
-		# include greek letter
-		footer = "*Standard error is computed as: SE = σ/√n.",
-		file = file.path("tables_CSR", "Table_textCustomization.docx")
-	)	
+#	getSummaryStatisticsTable(
+#		data = subset(dataPP, PARCAT1 == "Lumacaftor"),
+#		var = "AVAL",
+#		colVar = c("TRTP", "AVISIT"),
+#		rowVar = "PARAMRF",
+#		rowVarLab = c(
+#			'PARAMRF' = "Pharmacokinetics parameter\nMean (SE*)", 
+#			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
+#		),
+#		labelVars = labelVars,
+#		stats = list(
+#			expression(paste0(
+#				ifelse(statMean > statMedian, 
+#					paste0("bold{", roundHalfUpTextFormat(statMean, 1), "}"), 
+#					statMean
+#				), 
+#				"\n(", 
+#				roundHalfUpTextFormat(statSE, 2),")")
+#			)
+#		),
+#		# include greek letter
+#		footer = "*Standard error is computed as: SE = σ/√n.",
+#		file = file.path("tables_CSR", "Table_textCustomization.docx")
+#	)	
 
 ```
 
@@ -2132,21 +2139,21 @@ For example, pharmacokinetic tables are created for each compound:
 
 ```{r byVar, results = "asis"}
 
-	summaryTableList <- getSummaryStatisticsTable(
-		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
-		var = "AVAL",
-		colVar = c("TRTP", "AVISIT"),
-		rowVar = "PARAMRF",
-		rowVarLab = c(
-			'PARAMRF' = "Pharmacokinetics parameter", 
-			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
-		),
-		byVar = "PARCAT1", 
-		labelVars = labelVars,
-		stats = list(expression(paste0(roundHalfUpTextFormat(statMean, 1), "\n(", roundHalfUpTextFormat(statSE, 2),")")))
-	)	
-	# print the list of tables in the rmarkdown document
-	glpgUtilityFct::knitPrintListObjects(summaryTableList) 
+#	summaryTableList <- getSummaryStatisticsTable(
+#		data = subset(dataPP, PARCAT1 %in% c("Ivacaftor", "Lumacaftor")),
+#		var = "AVAL",
+#		colVar = c("TRTP", "AVISIT"),
+#		rowVar = "PARAMRF",
+#		rowVarLab = c(
+#			'PARAMRF' = "Pharmacokinetics parameter", 
+#			'PARCAT1' = "Compound^{(1)}" # use superscript for the foonote
+#		),
+#		byVar = "PARCAT1", 
+#		labelVars = labelVars,
+#		stats = list(expression(paste0(roundHalfUpTextFormat(statMean, 1), "\n(", roundHalfUpTextFormat(statSE, 2),")")))
+#	)	
+#	# print the list of tables in the rmarkdown document
+#	clinUtils::knitPrintListObjects(summaryTableList) 
 
 ```
 
@@ -2179,12 +2186,12 @@ a custom filtering functions is specified via the `filterFct` parameter.
 		data = subset(dataAE, TRTEMFL == "Y"),
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		filterFct = function(x)
-			ddply(x, "AEDECOD", function(xTerm){
-				xTermTreatment <- subset(xTerm, grepl("75 mg", TRTP))
-				if(xTermTreatment$statPercN >= 20)	xTerm		
+			ddply(x, "AEDECOD", function(xTerm) {
+				xTermTreatment <- subset(xTerm, grepl("High dose", TRTA))
+#				if(xTermTreatment$statPercN >= 20)	xTerm		
 			}),
 		labelVars = labelVars,
 		title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 20% patients in treatment category"
@@ -2196,26 +2203,26 @@ Note: to help for the creation of this filtering function, the displaying data c
 
 ```{r countTable-AE-filterFct- details}
 
-	x <- computeSummaryStatisticsTable(
-		data = subset(dataAE, TRTEMFL == "Y"),
-		rowVar = c("AESOC", "AEDECOD"),
-		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
-		colVar = "TRTP",
-		stats = getStats("n (%)"),
-		labelVars = labelVars
-	)
-	head(x)
-	# for specific AEDECOD
-	xTerm <- subset(x, AEDECOD == "Viral upper respiratory tract infection")
-	# identify the record for treated patient:
-	subset(xTerm, grepl("75 mg", TRTP))
-	# keep all records (placebo + treatment) if percentage if higher than 20%:
-	# if no 'else' condition, nothing (NULL) is returned:
-	if(subset(xTerm, grepl("75 mg", TRTP))$statPercN >= 20)	xTerm
-	# across all AE terms:
-	ddply(x, "AEDECOD", function(xTerm)
-		if(subset(xTerm, grepl("75 mg", TRTP))$statPercN >= 20)	xTerm
-	)
+#	x <- computeSummaryStatisticsTable(
+#		data = subset(dataAE, TRTEMFL == "Y"),
+#		rowVar = c("AESOC", "AEDECOD"),
+#		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+#		colVar = "TRTA",
+#		stats = getStats("n (%)"),
+#		labelVars = labelVars
+#	)
+#	head(x)
+#	# for specific AEDECOD
+#	xTerm <- subset(x, AEDECOD == "Viral upper respiratory tract infection")
+#	# identify the record for treated patient:
+#	subset(xTerm, grepl("High dose", TRTA))
+#	# keep all records (placebo + treatment) if percentage if higher than 20%:
+#	# if no 'else' condition, nothing (NULL) is returned:
+#	if(subset(xTerm, grepl("High dose", TRTA))$statPercN >= 20)	xTerm
+#	# across all AE terms:
+#	ddply(x, "AEDECOD", function(xTerm)
+#		if(subset(xTerm, grepl("High dose", TRTP))$statPercN >= 20)	xTerm
+#	)
 	# format it as a function and pass it to the 'filterFct' parameter
 ```
 
@@ -2303,43 +2310,43 @@ or related to the treatment and with high severity.
 ```{r combineVariables}
 
 	# prepare the data: create grouping of interest
-	dataAEGroup <- combineVariables(
-		data = dataAEInterest,
-		newVar = "AEGRP",
-		paramsList = list(
-			# for all screened patients
-			list(var = "SCRNFL", value = "Y"),
-			# only for completers patients
-			list(var = "COMPLFL", value = "Y"),
-			# for high severity
-			list(var = "AESEVN", value = 2, fctTest = ">=", labelExtra = "higher than 2"),
-			# related and with higher severity
-			list(
-				exprs = 'AREL == "Related" & AESEVN >= 2',
-				label = paste(
-					labelVars["AREL"], 
-					"with", labelVars["AESEV"], "higher than 2"
-				)
-			),
-			list(var = "AENDY", label = paste("With adverse events ending date"))
-		),
-		# include also counts for all records
-		includeAll = TRUE, labelAll = "All Adverse events", 
-		labelVars = labelVars
-	)
-	labelVars["AEGRP"] <- "Patient groups of interest"
-	
-	# create the table
-	getSummaryStatisticsTable(
-		data = dataAEGroup,
-		colVar = "TRTA", 
-		rowVar = "AEGRP", 
-		labelVars = labelVars,
-		dataTotal = dataTotalAE,
-		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
-		title = "Table: Adverse events: counts for groups of interest",
-		footer = "Statistics: n (%)"
-	)
+#	dataAEGroup <- combineVariables(
+#		data = dataAEInterest,
+#		newVar = "AEGRP",
+#		paramsList = list(
+#			# for all screened patients
+#			list(var = "SCRNFL", value = "Y"),
+#			# only for completers patients
+#			list(var = "COMPLFL", value = "Y"),
+#			# for high severity
+#			list(var = "AESEVN", value = 2, fctTest = ">=", labelExtra = "higher than 2"),
+#			# related and with higher severity
+#			list(
+#				exprs = 'AREL == "Related" & AESEVN >= 2',
+#				label = paste(
+#					labelVars["AREL"], 
+#					"with", labelVars["AESEV"], "higher than 2"
+#				)
+#			),
+#			list(var = "AENDY", label = paste("With adverse events ending date"))
+#		),
+#		# include also counts for all records
+#		includeAll = TRUE, labelAll = "All Adverse events", 
+#		labelVars = labelVars
+#	)
+#	labelVars["AEGRP"] <- "Patient groups of interest"
+#	
+#	# create the table
+#	getSummaryStatisticsTable(
+#		data = dataAEGroup,
+#		colVar = "TRTA", 
+#		rowVar = "AEGRP", 
+#		labelVars = labelVars,
+#		dataTotal = dataTotalAE,
+#		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
+#		title = "Table: Adverse events: counts for groups of interest",
+#		footer = "Statistics: n (%)"
+#	)
 
 ```
 
@@ -2354,12 +2361,12 @@ Summary statistics can be visualized via **error bars** by:
   
 ```{r visualization-extractData}
 
-	summaryTableDf <- computeSummaryStatisticsTable(
-		data = dataPP,
-		var = "AVAL",
-		rowVar = c("PARCAT1", "PARAM"),
-		colVar = c("TRTP", "AVISIT")
-	)
+#	summaryTableDf <- computeSummaryStatisticsTable(
+#		data = dataPP,
+#		var = "AVAL",
+#		rowVar = c("PARCAT1", "PARAM"),
+#		colVar = c("TRTP", "AVISIT")
+#	)
 
 ```
 
@@ -2368,16 +2375,16 @@ Summary statistics can be visualized via **error bars** by:
 ```{r visualization-table}
 
 	# create the plot
-	subjectProfileSummaryPlot(
-		data = subset(summaryTableDf, !isTotal & 
-			PARCAT1 == "Ivacaftor" & grepl("Ctrough", PARAM)
-		),
-		xVar = "AVISIT",
-		colorVar = "TRTP",
-		labelVars = labelVars,
-		useLinetype = TRUE,
-		tableText = "statN"
-	)
+#	subjectProfileSummaryPlot(
+#		data = subset(summaryTableDf, !isTotal & 
+#			PARCAT1 == "Ivacaftor" & grepl("Ctrough", PARAM)
+#		),
+#		xVar = "AVISIT",
+#		colorVar = "TRTP",
+#		labelVars = labelVars,
+#		useLinetype = TRUE,
+#		tableText = "statN"
+#	)
 
 ```
 
@@ -2386,14 +2393,14 @@ Summary statistics can be visualized via **error bars** by:
 ```{r visualization-facets, out.width = "100%", fig.height = 15, fig.width = 15}
 
 	# create the plot
-	subjectProfileSummaryPlot(
-		data = subset(summaryTableDf, !isTotal),
-		xVar = "AVISIT",
-		colorVar = "TRTP",
-		labelVars = labelVars,
-		facetVar = c("PARCAT1", "PARAM"),
-		useLinetype = TRUE
-	)
+#	subjectProfileSummaryPlot(
+#		data = subset(summaryTableDf, !isTotal),
+#		xVar = "AVISIT",
+#		colorVar = "TRTP",
+#		labelVars = labelVars,
+#		facetVar = c("PARCAT1", "PARAM"),
+#		useLinetype = TRUE
+#	)
 
 ```
 

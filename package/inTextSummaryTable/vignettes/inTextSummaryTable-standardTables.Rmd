@@ -2,7 +2,12 @@
 title: "Creation of standard in-text tables with the `inTextSummaryTable` package"
 author: "Laure Cougnaud"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-output: glpgStyle::html_report
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    number_sections: true
 vignette: >
   %\VignetteIndexEntry{Creation of standard in-text summary tables}
   %\VignetteEngine{knitr::rmarkdown}
@@ -29,7 +34,7 @@ vignette: >
 
 ```{r loadPackages, warning = FALSE}
 
-	library(glpgUtilityFct)
+	library(clinUtils)
 	library(tools)# toTitleCase
 	library(plyr) # for ddply
 	library(pander) # for session info
@@ -40,25 +45,25 @@ vignette: >
 ## Data format
 
 A phase 2 example dataset: the _Pelican_ study is used as demonstration.
-The function `loadDataADaMSDTM` of the `glpgUtilityFct` package might be used to load the data 
-into a similar format into R.
+The function `loadDataADaMSDTM` of the `clinUtils` package might be used to load
+the data into a similar format into R.
 
 ```{r loadData}	
 
 	# load example data
-	data(ADaMDataPelican)
-	data(labelVarsADaMPelican)
-	
-	dataAll <- ADaMDataPelican
-	labelVars <- labelVarsADaMPelican
+    library(clinUtils)
+
+    # load example data
+    data(dataADaMCDISCP01)
+
+    dataAll <- dataADaMCDISCP01
+    labelVars <- attr(dataAll, "labelVars")
 
 ```
 
-Typical in-text table for the CSR are included in the following sections, based
-on the standard _Statistical Analysis Plan_ and Mock TLFs for phase 2 and 3 (25/07/2019).
+Typical in-text table for the CSR are included in the following sections.
 Please note that the content or formatting (e.g. number of decimals)
-of the table might depends of the study and dataset 
-(refer to the specific study _Standard Analysis Plan_), and be subject to change.
+of the table might depends of the study and dataset, and be subject to change.
 
 # Subject information
 
@@ -95,14 +100,14 @@ of the table might depends of the study and dataset
 ```{r table-demography}
 
 	# data of interest
-	dataDM <- subset(dataAll$ADSL, FASFL == "Y")
+	dataDM <- subset(dataAll$ADSL, SAFFL == "Y")
 	
 	# variables of interest
 	# Note: if available: ethnicity is included
 	varsDM <- c(
 		"SEXC", "AGE", "AGEC",
 		"RACE", #"ETHNIC"
-		"HEIGHT", "WEIGHTBL", 
+		"HEIGHTBL", "WEIGHTBL", 
 		"BMIBL", "BMIBLGR1"
 	)
 	
