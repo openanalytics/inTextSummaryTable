@@ -37,19 +37,25 @@ vignette: >
 The package `inTextSummaryTable` contains functionalities to **create
 complex table of summary statistics or counts of variables of interest**.
 
-This table can be formatted to static **in-text table** for a **Clinical Study Report**, a
-**topline presentation** or an **interactive table**, 
-e.g. to be used inside the **medical monitoring report**.
+This table can be formatted to static
 
-These tables can be included into a `rmarkdown` document, to be
+* **in-text table** for a **Clinical Study Report**,
+* a **topline presentation**
+* an **interactive table**, e.g. to be used inside the **medical
+  monitoring report**.
+
+These tables can be included into a `rmarkdown` document which can be
 converted into `html`, `docx` and `pptx`.
 Each table can be separately exported into a `text`, `docx` or `html `document.
+
+We start the guidance to the functionalities of the `inTextSummaryTable`, via
+loading the following packages.
 
 ```{r loadPackages}
 
 	library(inTextSummaryTable)
 	library(pander)
-	library(tools)# toTitleCase
+	library(tools) # toTitleCase
 
 ```
 
@@ -58,13 +64,12 @@ Each table can be separately exported into a `text`, `docx` or `html `document.
 The input data for the creation of summary table should be a **data.frame**,
 usually loaded from a _SAS_ data file (`sas7bdat` format).
 The label of the variables stored in the `SAS` datasets is also used
-for the title/captions. 
+for the title or the caption. 
 
 Note that the `loadDataADaMSDTM` function of the `clinUtils` package 
 can be used to import your study-specific dataset(s) of interest into R.
 
-For this vignette, ADaM datasets from the _CDISC_ study,
- included in the `clinUtils` package are used.
+For this vignette, ADaM datasets included in the `clinUtils` package are used.
 
 ```{r loadData}	
 	
@@ -92,7 +97,10 @@ For this vignette, ADaM datasets from the _CDISC_ study,
 
 ```
 
-# Table components
+# Create your tables
+
+A dedicated vignette on how to create your in-text table is available
+[here](inTextSummaryTable-createTables.html).
 
 This section explains how to build your in-text table.
 
