@@ -272,7 +272,14 @@ test_that("summary statistics for empty dataset with categorical variable", {
 	# if variable should not be filtered & total should be included, 0 counts are returned
 	expect_equal(
 		computeSummaryStatistics(data = emptyData, var = "x", filterEmptyVar = FALSE, varTotalInclude = TRUE), 
-		data.frame(variableGroup = c("a", "b", "Total"), statN = c(0, 0, 0), statm = c(0, 0, 0))
+		data.frame(
+			variableGroup = factor(
+				c("a", "b", "Total"), 
+				levels = c(c("a", "b", "Total"))
+			),
+			statN = c(0, 0, 0), 
+			statm = c(0, 0, 0)
+		)
 	)
 	
 	# if only total should be included

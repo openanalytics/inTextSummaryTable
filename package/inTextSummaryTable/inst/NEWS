@@ -8,6 +8,8 @@
   o rename 'roundCustom' to 'roundUp'
   o add function 'roundCustom'
   o add function 'getFlextable'
+2.22.1
+  o unit tests 
 2.22.0
   o add fontface parameter in 'subjectProfileSummaryTable'
   o getStats: supports 'mean (sd)' and '(min, max)'
