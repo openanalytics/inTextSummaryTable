@@ -2,7 +2,7 @@
 % Please edit documentation in R/flextable-getFlextable.R
 \name{getFlextable}
 \alias{getFlextable}
-\title{Format or create flextable to fulfill GLPG style.}
+\title{Format or create flextable for listings.}
 \usage{
 getFlextable(
   data,
@@ -82,7 +82,7 @@ These dimensions should include the margins.}
 rownames are included in the \code{\link[flextable]{flextable}} object.}
 }
 \value{
-\code{\link[flextable]{flextable}} with GLPG style.
+\code{\link[flextable]{flextable}} with style.
 }
 \description{
 Flextable version >= 0.4.7 and pandoc >= 2.4

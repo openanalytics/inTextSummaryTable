@@ -1,5 +1,7 @@
 context("Get set of statistics")
 
+library(clinUtils)
+
 test_that("output format of base and combined stats is correct", {	
 			
 	type <- c(

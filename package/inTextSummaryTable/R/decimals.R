@@ -170,6 +170,7 @@ getMaxNDecimalsData <- function(x)
 #' xPerc <- c(NA, 0, 100, 99.95, 0.012, 34.768)
 #' formatPercentage(x = xPerc)
 #' @family decimals
+#' @importFrom clinUtils roundHalfUpTextFormat
 #' @export
 formatPercentage <- function(x, nDec = 1){
 	

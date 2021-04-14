@@ -173,6 +173,7 @@ getStatsData <- function(
 #' getStats(type = "count", formatPercentage = function(x) round(x, 2))
 #' @seealso \link{getStatsData}
 #' @author Laure Cougnaud
+#' @importFrom clinUtils roundHalfUpTextFormat
 #' @export
 getStats <- function(
 	type = "summary",
