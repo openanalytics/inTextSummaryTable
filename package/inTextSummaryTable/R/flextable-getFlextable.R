@@ -1,4 +1,4 @@
-#' Format or create flextable to fulfill GLPG style.
+#' Format or create flextable for listings.
 #' 
 #' Flextable version >= 0.4.7 and pandoc >= 2.4
 #' is required to included such table in a Rmarkdown document.
@@ -44,7 +44,7 @@
 #' getFlextable(data = head(mtcars), style = "presentation", highlight = c(2, 4))
 #' @inheritParams glpgStyle::getDimPage
 #' @inheritParams createFlextableWithHeader
-#' @return \code{\link[flextable]{flextable}} with GLPG style.
+#' @return \code{\link[flextable]{flextable}} with style.
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom magrittr "%>%"
