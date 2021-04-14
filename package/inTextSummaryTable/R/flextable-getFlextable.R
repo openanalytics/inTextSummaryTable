@@ -28,7 +28,7 @@
 #' @param align Logical, if TRUE (by default), 
 #' default alignment is set ('center' in all table).
 #' @param colorTable Named character vector with color for the table,
-#' see output of \code{\link[glpgStyle]{getColorTable}} for required elements.
+#' see output of \code{\link{getDefaultTableColors}} for required elements.
 #' @examples
 #' # style: report or presentation
 #' getFlextable(data = head(mtcars), style = "report")
@@ -48,7 +48,7 @@
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom magrittr "%>%"
-#' @importFrom glpgStyle getColorTable getDimPage
+#' @importFrom glpgStyle getDimPage
 #' @export
 getFlextable <- function(
     data, ft, 
@@ -61,7 +61,7 @@ getFlextable <- function(
     style = "report",
     margin = 1,
     adjustWidth = TRUE,
-    colorTable = getColorTable(style = style),
+    colorTable = getDefaultTableColors(style = style),
     align = TRUE,
     title = NULL,
     pageDim = NULL,

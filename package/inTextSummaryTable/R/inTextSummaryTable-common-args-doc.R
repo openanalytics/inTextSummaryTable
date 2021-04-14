@@ -130,7 +130,7 @@ NULL
 #' This is used to specify the width of the table, from:
 #' [\code{pageDim[1]} - 2 * margin].
 #' @param colorTable (flextable output) Named character vector with color for the table background/body/text/line,
-#' e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.
+#' e.g. created with the \code{\link{getColorTable}} function.
 #' @param landscape (flextable output) Logical, if TRUE the file is in landscape format.\cr
 #' By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.
 #' @param footer (flextable output) Character vector with footer(s) for the table.

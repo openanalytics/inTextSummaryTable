@@ -64,7 +64,7 @@ getSummaryStatisticsTable(
   outputType = "flextable",
   statsLayout = ifelse("DT" \%in\% outputType, "col", "row"),
   style = "report",
-  colorTable = getColorTable(style = style),
+  colorTable = getDefaultTableColors(style = style),
   byVar = NULL,
   byVarLab = NULL,
   colHeaderTotalInclude = TRUE,
@@ -468,7 +468,7 @@ This parameter affects the fontsize, font family, color of the text and backgrou
 and table dimensions of the table.}
 
 \item{colorTable}{(flextable output) Named character vector with color for the table background/body/text/line,
-e.g. created with the \code{\link[glpgStyle]{getColorTable}} function.}
+e.g. created with the \code{\link{getColorTable}} function.}
 
 \item{byVar}{Variable(s) of \code{data} for which separated table(s)
 should be created.}

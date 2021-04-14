@@ -4,7 +4,6 @@
 #' @inheritParams inTextSummaryTable-common-args
 #' @inherit exportSummaryStatisticsTable return
 #' @author Laure Cougnaud
-#' @importFrom glpgStyle getColorTable
 #' @export
 getSummaryStatisticsTable <- function(
 	data, 
@@ -58,7 +57,7 @@ getSummaryStatisticsTable <- function(
 	outputType = "flextable",
 	statsLayout = ifelse("DT" %in% outputType, "col", "row"),
 	style = "report", 
-	colorTable = getColorTable(style = style),
+	colorTable = getDefaultTableColors(style = style),
 	byVar = NULL, byVarLab = NULL,
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),

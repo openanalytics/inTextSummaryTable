@@ -52,7 +52,6 @@
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom clinUtils getLabelVar
-#' @importFrom glpgStyle getColorTable
 #' @importFrom tools file_ext
 #' @export
 exportSummaryStatisticsTable <- function(
@@ -89,7 +88,8 @@ exportSummaryStatisticsTable <- function(
 	landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 14.4,
 	footer = NULL,
-	style = "report", colorTable = getColorTable(style = style),
+	style = "report",
+    colorTable = getDefaultTableColors(style = style),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none", hline = "auto", 

@@ -16,7 +16,7 @@ getFlextable(
   style = "report",
   margin = 1,
   adjustWidth = TRUE,
-  colorTable = getColorTable(style = style),
+  colorTable = getDefaultTableColors(style = style),
   align = TRUE,
   title = NULL,
   pageDim = NULL,
@@ -63,7 +63,7 @@ to comply to specification of \code{landscape},
 are pre-set with the specified \code{ft}).}
 
 \item{colorTable}{Named character vector with color for the table,
-see output of \code{\link[glpgStyle]{getColorTable}} for required elements.}
+see output of \code{\link{getDefaultTableColors}} for required elements.}
 
 \item{align}{Logical, if TRUE (by default), 
 default alignment is set ('center' in all table).}

@@ -7,7 +7,7 @@
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
-#' @importFrom glpgStyle getColorTable getDimPage
+#' @importFrom glpgStyle getDimPage
 #' @author Laure Cougnaud
 #' @export
 convertSummaryStatisticsTableToFlextable <- function(
@@ -17,7 +17,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	title = NULL, 
 	footer = NULL,
 	style = "report",
-	colorTable = getColorTable(style = style),
+	colorTable = getDefaultTableColors(style = style),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	file = NULL, pageDim = NULL
