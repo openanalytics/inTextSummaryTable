@@ -34,7 +34,7 @@ exportSummaryStatisticsTable(
   rowPadBase = 14.4,
   footer = NULL,
   style = "report",
-  colorTable = getDefaultTableColors(style = style),
+  colorTable = getTableColorsOptions(style = style),
   fontsize = switch(style, report = 8, presentation = 10),
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   vline = "none",

@@ -64,7 +64,7 @@ getSummaryStatisticsTable(
   outputType = "flextable",
   statsLayout = ifelse("DT" \%in\% outputType, "col", "row"),
   style = "report",
-  colorTable = getDefaultTableColors(style = style),
+  colorTable = getTableColorsOptions(style = style),
   byVar = NULL,
   byVarLab = NULL,
   colHeaderTotalInclude = TRUE,

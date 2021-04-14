@@ -16,6 +16,17 @@ getDefaultTableColors <- function(style = c("report", "presentation")){
   
 }
 
+getTableColorsOptions <- function(style = c("report", "presentation")) {
+  
+  style <- match.arg(style)
+  
+  switch(style,
+      'report' = getOption("inTextSummaryTable.reportColors"),
+      'presentation' = getOption("inTextSummaryTable.presentationColors")
+  )
+}
+
+
 getTableColorsReport <- function() {
   
   c(    

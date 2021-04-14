@@ -30,7 +30,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 	title = NULL, 
 	footer = NULL,
 	style = "report",
-	colorTable = getDefaultTableColors(style = style),
+	colorTable = getTableColorsOptions(style = style),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	file = NULL, pageDim = NULL,

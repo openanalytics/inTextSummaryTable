@@ -61,7 +61,7 @@ getFlextable <- function(
     style = "report",
     margin = 1,
     adjustWidth = TRUE,
-    colorTable = getDefaultTableColors(style = style),
+    colorTable = getTableColorsOptions(style = style),
     align = TRUE,
     title = NULL,
     pageDim = NULL,
