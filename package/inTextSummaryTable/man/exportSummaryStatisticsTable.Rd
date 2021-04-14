@@ -202,7 +202,7 @@ This parameter affects the fontsize, font family, color of the text and backgrou
 and table dimensions of the table.}
 
 \item{colorTable}{(flextable output) Named character vector with color for the table background/body/text/line,
-e.g. created with the \code{\link{getColorTable}} function.}
+e.g. created with the \code{\link{getDefaultTableColors}} function.}
 
 \item{fontsize}{(flextable output) Integer with font size, by default:
 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}

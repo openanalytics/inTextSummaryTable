@@ -1595,7 +1595,7 @@ test_that("style is set for exported table", {
 			fontname = "Times", fontsize = 8,
 			landscape = FALSE,
 			pageDim = glpgStyle::getDimPage(style = "report", margin = 0),
-			colorTable = glpgStyle::getColorTable(style = "report")
+			colorTable = getDefaultTableColors(style = "report")
 		)
 	)
 	
@@ -1612,7 +1612,7 @@ test_that("style is set for exported table", {
 				style = "presentation", margin = 0,
 				landscape = FALSE
 			),
-			colorTable = glpgStyle::getColorTable(style = "presentation")
+			colorTable = getDefaultTableColors(style = "presentation")
 		)
 	)
 			
