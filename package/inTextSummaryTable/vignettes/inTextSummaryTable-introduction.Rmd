@@ -104,8 +104,8 @@ A dedicated vignette on how to create your in-text table is available
 
 This section explains how to build your in-text table.
 
-The **`getSummaryStatisticsTable`** creates an
-in-text table of summary statistics for variable(s) of interest.
+The **`getSummaryStatisticsTable`** creates an in-text table of summary
+statistics for variable(s) of interest.
 
 The _Demographic_ data (`ADSL` dataset) is used as example for the summary
 statistics table.
@@ -116,17 +116,15 @@ statistics table.
 
 ```
 
-## Variable(s) to summarize
+# Variable(s) to summarize
 
-Variable(s) to summarize in the table are specified
-via the **`var` parameter**.
+Variable(s) to summarize in the table are specified via the **`var` parameter**.
 
-Different set of
-statistics are reported depending on the type of variable:
+Different set of statistics are reported depending on the type of variable:
 [Categorical variable] or [Continuous variable].
 
-See the documentation in section _Base statistics_ for more details 
-on the statistics included by default for each type, via:
+See the documentation in section _Base statistics_ for more details on the
+statistics included by default for each type, via:
 
 ```{r getHelp, eval = FALSE}
 
@@ -134,15 +132,16 @@ on the statistics included by default for each type, via:
 
 ```
 
-### Categorical variable
+## Categorical variable
 
-For a **discrete/categorical variable**, the in-text table can display the **counts/percentages
-of the number of subjects or records for each category** of the variable.
+For a **discrete/categorical variable**, the in-text table can display the
+**counts/percentages of the number of subjects or records for each category** of
+the variable.
 
-#### Counts of the entire dataset
+### Counts of the entire dataset
 
-If **no variable is specified** (via the `var` parameter), the counts
-are displayed for the **entire dataset**.
+If **no variable is specified** (via the `var` parameter), the counts are
+displayed for the **entire dataset**.
 
 ```{r count-simple}
 
@@ -152,10 +151,10 @@ are displayed for the **entire dataset**.
 
 Please note that this is equivalent of setting (`var = 'all'`).
 
-#### Counts of variable categories
+### Counts of categories
 
-If a **variable is specified** (via the `var` parameter), the 
-counts are displayed **for each category**.
+If a **variable is specified** (via the `var` parameter), the counts are
+displayed **for each category**.
 
 ```{r count-categories}
 
@@ -163,9 +162,11 @@ counts are displayed **for each category**.
 
 ```
 
-#### Sort categories
+### Sort categories
 
-The categories of the variable are sorted alphabetically by default. To sort the categories in a specific order, the variable should be formatted as **`factor`**, whose ordered categories are included in its **`levels`**.
+The categories of the variable are sorted alphabetically by default. To sort the
+categories in a specific order, the variable should be formatted as
+**`factor`**, whose ordered categories are included in its **`levels`**.
 
 ```{r count-categories-order}
 
@@ -180,10 +181,10 @@ The categories of the variable are sorted alphabetically by default. To sort the
 	
 ```
 
-#### Inclusion of categories not available in the data
+### Inclusion of categories not available in the data
 
-By default, the table only includes the categories present in the input data,
-to ensure a compact table for CSR export.
+By default, the table only includes the categories present in the input data, to
+ensure a compact table for CSR export.
 
 ```{r count-categories-empty-1}
 
@@ -195,13 +196,13 @@ to ensure a compact table for CSR export.
 	
 ```	
 
-If extra categories should be represented in the table, the categorical 
-variable should be **formatted as a factor**, whose **levels contain
-all categories** to be displayed in the table.
+If extra categories should be represented in the table, the categorical variable
+should be **formatted as a factor**, whose **levels contain all categories** to
+be displayed in the table.
 
-Furthermore, the parameter: `varInclude0` should be set to `TRUE` 
-or to the specific variable (in case multiple variables are specified)
-to indicate that categories with 0 counts should be included.
+Furthermore, the parameter: `varInclude0` should be set to `TRUE` or to the
+specific variable (in case multiple variables are specified) to indicate that
+categories with 0 counts should be included.
 
 ```{r count-categories-empty-2}
 
@@ -216,61 +217,65 @@ to indicate that categories with 0 counts should be included.
 	dataSLExample$SEX <- factor("M", levels = c("F", "M"))
 	getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = TRUE)
 	# or:
- 	getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = "SEX")
+    getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = "SEX")
 
 ```
 
 
-#### Count table for 'flag'-variables
+### Count table for 'flag'-variables
 
-A specific type of categorical variable is a **flag variable**,
-which indicates if a record fulfillss a specific criteria.
+A specific type of categorical variable is a **flag variable**, which indicates
+if a record fulfillss a specific criteria.
 
 Such variable typically includes in the data: 
 
-* 'Y' if the criteria is fulfilled for the specific record
+* 'Y' if the criteria is met for the specific record
 * 'N' if the criteria is not fulfilled for the specific record
 * '' if the criteria is missing for this record
 
-The name of such variable typically ends with **'FL'** in CDISC-compliant
-_ADaM_ or _SDTM_ dataset.
+The name of such variable typically ends with **'FL'** in CDISC-compliant _ADaM_
+or _SDTM_ dataset.
 
 For example, the subject-level dataset contains the following flag variables:
 
 ```{r flag-variables}
-labelVars[grep("FL$", colnames(dataSL), value = TRUE)]
-# does the subject belong to the full analysis set?
-dataSL$FASFL
+
+    labelVars[grep("FL$", colnames(dataSL), value = TRUE)]
+    # does the subject belong to the safety analysis set?
+    dataSL$SAFFL
+
 ```
 
-If this variable is specified in `var`, the counts for each category is reported:
+If this variable is specified in `var`, the counts for each category is
+reported:
 
 ```{r count-flag-var}
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "FASFL"
-)
+
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "SAFFL"
+    )
+
 ```
 
-However, the interest is often to only reports the counts 
-for the records fulfilling the criteria (records with 'Y').
-This is the case if the variable is specified via the `varFlag` parameter too.
+However, the interest is often to only reports the counts for the records
+fulfilling the criteria (records with 'Y'). This is the case if the variable is
+specified via the `varFlag` parameter too.
 
 ```{r count-flag-varFlag}
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = "FASFL",
-		varFlag = "FASFL"
+		var = "SAFFL",
+		varFlag = "SAFFL"
 	)
 
 ```
 
-#### Inclusion of total across categories
+### Inclusion of total across categories
 
-To include the total counts across categories,
-the `varTotalInclude` parameter should be set to `TRUE`
-(or to the specific variable).
+To include the total counts across categories, the `varTotalInclude` parameter
+should be set to `TRUE` (or to the specific variable).
 
 ```{r count-varTotalInclude}
 
@@ -282,14 +287,14 @@ the `varTotalInclude` parameter should be set to `TRUE`
 
 ```
 
-### Continuous variable
+## Continuous variable
 
-For a **continuous variable**, the in-text table displays
-**standard distribution statistics** of the variable.
+For a **continuous variable**, the in-text table displays **standard
+distribution statistics** of the variable.
   
-Please note that **missing records for the variable are filtered**, so 
-the **count statistics** (number of subjects, records, percentage) are
-based **only on the non missing records**.
+Please note that **missing records for the variable are filtered**, so the
+**count statistics** (number of subjects, records, percentage) are based **only
+on the non missing records**.
   
 For a continuous variable, the presence of different values for the same subject 
 (and across row/column variables) are checked and an appropriate error message
@@ -301,7 +306,7 @@ is returned if multiple different values are available.
 
 ```
 
-### Mixed table
+## Continuous and categorical variables in the table
 
 The table can contain a mix of categorical and continuous variables.
 
@@ -314,23 +319,27 @@ The table can contain a mix of categorical and continuous variables.
 
 ```
 
-## Statistics of interest
+# Statistics of interest
 
-Statistics of interest and their format are specified
-via the **`stats` parameter**.
+Statistics of interest and their format are specified via the **`stats`
+parameter**.
 
-If an unique statistic expression is specified, the 'Statistic' column doesn't appear 
-in the table. In case multiple statistics are specified, these are included as separated row.
+If an unique statistic expression is specified, the 'Statistic' column doesn't
+appear in the table. In case multiple statistics are specified, these are
+included as separated row.
 
-### Standard statistic set
+## Standard statistic set
 
-A standard set of statistics is specified via specific tags to be
-passed to the `stats` function.
+A standard set of statistics is specified via specific tags to be passed to the
+`stats` function.
 
-The list of available statistics is mentioned in the section 
-_Formatted statistics_ in:
-```{r eval = FALSE}
-? `inTextSummaryTable-stats` 
+The list of available statistics is mentioned in the section _Formatted
+statistics_ in:
+
+```{r getHelpStats, eval = FALSE}
+
+    ? `inTextSummaryTable-stats` 
+
 ```
 
 Please see below examples of commonly used statistics:
@@ -392,20 +401,23 @@ Please see below examples of commonly used statistics:
 
 ```
 
-### Custom statistics formatting (Advanced)
+## Custom statistics formatting (Advanced)
 
-To change the formatting of the statistics,
-the `stats` parameter should contain a language
-object (e.g. `expression` or `call`)
-of the default base set of statistics.
+To change the formatting of the statistics, the `stats` parameter should contain
+a language object (e.g. `expression` or `call`) of the default base set of
+statistics.
 
-See the documentation in section _Base statistics_ for more details 
-on the base statistics included by default, via:
-```{r eval = FALSE}
+See the documentation in section _Base statistics_ for more details on the base
+statistics included by default, via:
+
+```{r getHelpStats2, eval = FALSE}
+
 ? `inTextSummaryTable-stats` 
+
 ```
 
-For example, the following count table is restricted to the number of subjects per categories:
+For example, the following count table is restricted to the number of subjects
+per categories:
 
 ```{r stats-N}
 
@@ -425,7 +437,7 @@ The summary statistics table is restricted to the median and range:
 		data = dataSL,
 		var = c("AGE", "HEIGHTBL", "WEIGHTBL", "BMIBL"),
 		varGeneralLab = "Parameter", statsGeneralLab = "",
-		colVar = "ACTARM",
+		colVar = "TRT01P",
 		stats = list(
 			`median` = expression(statMedian),
 			`(min, max)` = expression(paste0("(", statMin, ",", statMax, ")"))
@@ -434,42 +446,43 @@ The summary statistics table is restricted to the median and range:
 
 ```
 
-Note that the [Standard statistics set] is formatted internally via 
-the `getStatsData` (and `getStats`) functions, which creates consistently
-a list of `language` objects.
+Note that the [Standard statistics set] is formatted internally via the
+`getStatsData` (and `getStats`) functions, which creates consistently a list of
+`language` objects.
 
 ```{r getStatsData}
-# this count table:
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "SEX",
-	stats = "count"
-)
-# ... is equivalent to:
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "SEX",
-	stats = getStatsData(type = "count")
-)
 
-# this summary table...
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "AGE",
-	stats = "mean (se)"
-)
-# ... is equivalent to:
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "AGE",
-	stats = getStatsData(type = "mean (se)", var = "AGE", data = dataSL)[["AGE"]]
-)
+    # this count table:
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "SEX",
+	    stats = "count"
+    )
+    # ... is equivalent to:
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "SEX",
+	    stats = getStatsData(type = "count")
+    )
+
+    # this summary table...
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "AGE",
+	    stats = "mean (se)"
+    )
+    # ... is equivalent to:
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "AGE",
+	    stats = getStatsData(type = "mean (se)", var = "AGE", data = dataSL)[["AGE"]]
+    )
 ```
 
-### Statistics by variable/group
+## Statistics by variable/group
 
-The statistics can also be provided for each variable separately,
-if `stats` is named by variable:
+The statistics can also be provided for each variable separately, if `stats` is
+named by variable:
 
 ```{r statExtra-EachVariable}
 		
@@ -484,13 +497,13 @@ if `stats` is named by variable:
 
 ```
 
-### Extra statistics
+## Extra statistics
 
-Extra statistics (not available in the default set of statistics) should 
-be specified via the `statsExtra` parameter.
+Extra statistics (not available in the default set of statistics) should be
+specified via the `statsExtra` parameter.
 
-A set of extra utility functions to compute common extra statistics are 
-also available in the package:
+A set of extra utility functions to compute common extra statistics are also
+available in the package:
 
 * coefficient of variation with the `cv` function
 * geometric mean with the `geomMean` function
@@ -513,9 +526,8 @@ also available in the package:
 
 ```
 
-Full customized statistics can also be provided.
-For example, if you would like to specify your own formula
-for the coefficient of variation:
+Full customized statistics can also be provided. For example, if you would like
+to specify your own formula for the coefficient of variation:
 
 ```{r statsExtra}
 
@@ -542,30 +554,28 @@ These statistics are then available for customization via the `stats` parameter.
 
 ```
 
-### Number of decimals
+## Number of decimals
 
-By default, the number of decimals is based on the rules 
-specified in the _Mock Standard SAP **Phase 2/3**_ (version 1.0)
+By default, the number of decimals is based on the rules specified in the _Mock
+Standard SAP **Phase 2/3**_ (version 1.0)
 
 The detailed rules are available in the section _Statistics formatting_ in:
 
-```{r getHelpStats, eval = FALSE}
+```{r getHelpStats3, eval = FALSE}
 
-? `inTextSummaryTable-stats` 
+    ? `inTextSummaryTable-stats` 
 
 ```
 
-To specify fixed amounts of digits for the statistics to be displayed in the table, 
-the statistics are formatted in the `stats` parameter.
+To specify fixed amounts of digits for the statistics to be displayed in the
+table, the statistics are formatted in the `stats` parameter.
 
-#### Default number of decimals
+### Default number of decimals
 
-##### Categorical variable
+#### Categorical variable
 
-According to the Mock SAP, the counts of number of subjects is reported
-without decimals.
-The number of decimals for the percentages
-is specified below:
+According to the Mock SAP, the counts of number of subjects is reported without
+decimals. The number of decimals for the percentages is specified below:
 
 ```{r nDecimals-catVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables<br>"}
 
@@ -573,7 +583,8 @@ include_graphics("./images/nDecimals_catVar_SAP_phase23.png")
 
 ```
 
-By default, the counts for a categorical variables are formatted as specified above:
+By default, the counts for a categorical variables are formatted as specified
+above:
 
 * the number of subjects is displayed with 0 digits (`nDecN` is set to 0)
 * the frequency percentage is implemented in the `formatPercentage` function
@@ -588,10 +599,11 @@ By default, the counts for a categorical variables are formatted as specified ab
 
 ```
 
-##### Continuous variable {#numberDecimalsContinuousVariable}
+#### Continuous variable {#numberDecimalsContinuousVariable}
 
-The number of decimals for individual values is based on the Mock SAP (see tables below)
-unless the number of digits in the database is lower. In this case, the resolution of the specified values is used.
+The number of decimals for individual values is based on the Mock SAP (see
+tables below) unless the number of digits in the database is lower. In this
+case, the resolution of the specified values is used.
 
 ```{r nDecimals-numVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables<br>"}
 
@@ -601,31 +613,35 @@ include_graphics("./images/nDecimals_numVar_SAP_phase23.png")
 
 In the package: 'Very small values' are considered values below 1.
 
-When specifying the default set of available statistics with the `getStats` function,
-and **only if the variable is specified** (`x` parameter),
-the number of decimals for a continuous variable is determined by:
+When specifying the default set of available statistics with the `getStats`
+function, and **only if the variable is specified** (`x` parameter), the number
+of decimals for a continuous variable is determined by:
 
 1. Extracting the number of decimals for individual values based on:
-    + **pre-defined rules** based on the number of decimals of the individual values (`getNDecimalsRule` function)
-    + the number of decimals **available in the input data** via the `getNDecimalsData` function
+    + **pre-defined rules** based on the number of decimals of the individual
+      values (`getNDecimalsRule` function)
+    + the number of decimals **available in the input data** via the
+      `getNDecimalsData` function
     + taking the **minimum of these two criterias** (`getNDecimals` function), 
-    such as the number of decimals according
-    the rule won't be higher that the actual number of decimals available in the data
-2. Taking the **maximum number of decimals** across all individual values via the `getMaxNDecimals` function, 
-which is used as 'base' number of decimals considered for the summary statistics
-3. The actual number of decimals for each statistic is extracted (based on the Mock TLFs) by adding
-to the 'base' number of decimals:
+    such as the number of decimals according  the rule won't be higher that the
+      actual number of decimals available in the data
+2. Taking the **maximum number of decimals** across all individual values via
+   the `getMaxNDecimals` function, which is used as 'base' number of decimals
+   considered for the summary statistics
+3. The actual number of decimals for each statistic is extracted (based on the
+   Mock TLFs) by adding to the 'base' number of decimals:
     + **0 extra decimal for the minimum, maximum**
     + **1 extra decimal for the mean, median, sd**
     + **2 extra decimals for SE**
 
 Please note that if a different framework than implemented in steps 1 and 2
-should be used for the extraction of the number of decimals for a specific variable,
-the number of decimals of interest can be fixed via the `nDecCont` parameter.
+should be used for the extraction of the number of decimals for a specific
+variable, the number of decimals of interest can be fixed via the `nDecCont`
+parameter.
 
 ```{r getMaxNDecimals}
 
-	# %FEV1 at baseline
+	# Duration of Disease (Months)
 	print(dataSL$DURDIS)
 	
 	## Extract the number of decimals for each value:
@@ -660,12 +676,14 @@ the number of decimals of interest can be fixed via the `nDecCont` parameter.
 
 ```
 
-Notes: by default the `round` function in R rounds the number to the even number in case of 0.5. 
-The `roundHalfUpTextFormat` function rounds to the closest digit.
+Notes: by default the `round` function in R rounds the number to the even number
+in case of 0.5. The `roundHalfUpTextFormat` function rounds to the closest
+digit.
 
-#### Custom `stats` function (Advanced)
+### Custom `stats` function (Advanced)
 
-A  custom function can be created to create custom statistics with fixed number of digits.
+A  custom function can be created to create custom statistics with fixed number
+of digits.
 
 For example, the AGE is displayed with 1 digit and the height with two digits:
 
@@ -682,8 +700,8 @@ For example, the AGE is displayed with 1 digit and the height with two digits:
 
 ```
 
-To create the `stats` parameter for a specific number of digits,
-a custom function can be created:
+To create the `stats` parameter for a specific number of digits, a custom
+function can be created:
 
 ```{r stats-digits-complex}
 
@@ -714,12 +732,11 @@ a custom function can be created:
 
 ```
 
-### Statistics layout
+## Statistics layout
 
 The layout of the statistics is specified via the `statsLayout` parameter.  
 
-By default, the statistics are included in rows within each
-variable.
+By default, the statistics are included in rows within each variable.
 
 ```{r statsLayoutRow}
 
@@ -745,7 +762,8 @@ The statistics can also be included in columns.
 
 ```
 
-The statistics can also be specified in different rows, but in a separated column.
+The statistics can also be specified in different rows, but in a separated
+column.
 
 ```{r summaryTable-PP-medianMinMax-statsLayoutRowVarInSepCol}
 
@@ -758,10 +776,9 @@ The statistics can also be specified in different rows, but in a separated colum
 
 ```
 
-By default, if only one statistic is available in the table,
-the name of the statistic is not included in the rows/columns,
-as the statistic is generally described in this case in the title
-of the table.
+By default, if only one statistic is available in the table, the name of the
+statistic is not included in the rows/columns, as the statistic is generally
+described in this case in the title of the table.
 
 ```{r summaryTable-statsLayout-onlyOneStat}
 
@@ -773,8 +790,8 @@ of the table.
 
 ```
 
-To include even in this case the name of the statistic, the 
-parameter `statsLabInclude` should be set to `TRUE`.
+To include even in this case the name of the statistic, the parameter
+`statsLabInclude` should be set to `TRUE`.
 
 ```{r summaryTable-statsLayout-onlyOneStat-statsLabInclude}
 
@@ -787,14 +804,14 @@ parameter `statsLabInclude` should be set to `TRUE`.
 
 ```
 
-## Table layout
+# Table layout
 
-The general table layout is driven by the specification
-of variables to be displayed in rows (in the vertical direction) or
-in columns (in the horizontal direction).
+The general table layout is driven by the specification of variables to be
+displayed in rows (in the vertical direction) or in columns (in the horizontal
+direction).
 
-If no variables are specified in `var`, counts across row/column variable
-are displayed.
+If no variables are specified in `var`, counts across row/column variable are
+displayed.
 
 The adverse events dataset is used for demonstration.
 
@@ -814,7 +831,7 @@ The adverse events dataset is used for demonstration.
 
 ```
 
-### Row and column variables
+## Row and column variables
 
 Specific grouping variable(s) for the columns can be specified via the
 **`colVar`** parameter and for the rows via the **`rowVar`** parameter.
@@ -843,7 +860,7 @@ hierarchical order.
 	# unique column variable
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
@@ -852,7 +869,7 @@ hierarchical order.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		colHeaderTotalInclude = FALSE
@@ -860,19 +877,17 @@ hierarchical order.
 
 ```
 
-### Row variable
+## Row variable
 
-By default (when `outputType` is set to: 'flextable'), if multiple row variables are specified, 
-they are considered nested
-and displayed in the first column of the final table.
-Each sub-category is indicated with a specific indent (customizable with
-`rowVarPadBase`).
+By default (when `outputType` is set to: 'flextable'), if multiple row variables
+are specified, they are considered nested and displayed in the first column of
+the final table. Each sub-category is indicated with a specific indent
+(customizable with `rowVarPadBase`).
 
-#### Variable in separated column
+### Variable in separated column
 
-**Row variables** that should be included as a **separated column** 
-should be specified via the
-`rowVarInSepCol` parameter.
+**Row variables** that should be included as a **separated column** should be
+specified via the `rowVarInSepCol` parameter.
 
 ```{r rowVarInSepCol}
 
@@ -880,14 +895,14 @@ should be specified via the
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD", "AESEV"),
 		rowVarInSepCol = "AESEV",
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
 	
 ```
 
-#### Row ordering
+### Row ordering
 
 The **categories in the row variables can be ordered** based on the
 **`rowOrder`** variable. 
@@ -896,13 +911,13 @@ This variable is either:
 
 * a string with the name of an implemented method to order the rows, among:
      + `alphabetical`: categories are ordered **alphabetically**
-     + `auto`: categories are ordered based on the **levels** if the input variable is a factor, 
-     alphabetically otherwise
-     + `total`: categories are ordered based on the 'total' column (see section \@ref(colTotal)) 
-     (if the total column is not included in the table)
+     + `auto`: categories are ordered based on the **levels** if the input
+       variable is a factor,    alphabetically otherwise
+     + `total`: categories are ordered based on the 'total' column (see section
+       \@ref(colTotal))    (if the total column is not included in the table)
 * a custom ordering function to apply in the data to order the rows
 
-##### Common order for all row variables
+#### Common order for all row variables
 
 ```{r rowOrder-common}
 
@@ -919,7 +934,7 @@ This variable is either:
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", colTotalInclude = TRUE,
+		colVar = "TRTA", colTotalInclude = TRUE,
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
@@ -930,7 +945,7 @@ This variable is either:
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", colTotalInclude = TRUE, colTotalLab = "Number of subjects",
+		colVar = "TRTA", colTotalInclude = TRUE, colTotalLab = "Number of subjects",
 		rowOrder = "total",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
@@ -941,7 +956,7 @@ This variable is either:
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", 
+		colVar = "TRTA", 
 		rowOrder = "total", 
 		stats = getStats("n (%)"),
 		labelVars = labelVars
@@ -949,7 +964,7 @@ This variable is either:
 
 ```
 
-##### Different orders for each row variable
+#### Different orders for each row variable
 
 In case the order should be different for each row variable, a named list is
 provided for the `rowVar` parameter.
@@ -961,7 +976,7 @@ provided for the `rowVar` parameter.
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", #colTotalInclude = TRUE,
+		colVar = "TRTA", #colTotalInclude = TRUE,
 		rowOrder = c(AESOC = "alphabetical", AEDECOD = "total"),
 		stats = getStats("n (%)"),
 		labelVars = labelVars
@@ -969,7 +984,7 @@ provided for the `rowVar` parameter.
 
 ```
 
-##### Row order based on the total of a column category
+#### Row order based on the total of a column category
 
 If the row categories should be **ordered by total counts for a specific
 category of the column variable(s)**, a function **`rowOrderTotalFilterFct`** is
@@ -994,10 +1009,10 @@ The adverse events are sorted based on the incidence in the treated group.
 
 ```
 
-##### Row order based on a custom specified function
+#### Row order based on a custom specified function
 
-If the method to order the rows is more complex, the `rowOrder` parameter specifies
-a function taking the summary table as input and returning the order
+If the method to order the rows is more complex, the `rowOrder` parameter
+specifies a function taking the summary table as input and returning the order
 levels of the elements in the row variable.
 
 For example, the adverse event table is sorted based on the counts of patient
@@ -1030,7 +1045,8 @@ the counts of treated-patients presenting this event.
 ```
 
 The adverse event table is now ordered based on the counts in the placebo, then
-treated-patients column, for the organ class and the adverse event term separately.
+treated-patients column, for the organ class and the adverse event term
+separately.
 
 ```{r rowOrder-functionExample2}
 
@@ -1062,9 +1078,9 @@ treated-patients column, for the organ class and the adverse event term separate
 
 ```
 
-#### Row variable labels
+### Row variable labels
 
-##### Based on dataset
+#### Based on dataset
 
 The **labels used for the variables parameter** (row variables) **are
 automatically extracted from the labels** contained in the _SAS_ dataset, by
@@ -1083,10 +1099,10 @@ specifying the `labelVars` parameter.
 	
 ```
 
-##### Custom
+#### Custom
 
-The label can also be specified directly via the `rowVarLab` parameter,
-for each variable in `rowVar`.
+The label can also be specified directly via the `rowVarLab` parameter, for each
+variable in `rowVar`.
 
 If an unique row label should be used (even if multiple row variables are
 specified), `rowVarLab` is set to this unique label.
@@ -1106,20 +1122,19 @@ specified), `rowVarLab` is set to this unique label.
 	
 ```
 
-#### Inclusion of row/column categories not available in the data
+### Inclusion of row/column categories not available in the data
 
-As for the variable to summarize, to include categories in the 
-row or column variables not
-available in the data, these variables should be formatted
-as a factor with categories specified in its levels.
+As for the variable to summarize, to include categories in the row or column
+variables not available in the data, these variables should be formatted as a
+factor with categories specified in its levels.
 
-Furthermore, the parameters `rowInclude0` and `colInclude0` should be set to TRUE to 
-include counts for empty categories within the row/column. 
+Furthermore, the parameters `rowInclude0` and `colInclude0` should be set to
+TRUE to include counts for empty categories within the row/column. 
 
 ```{r countTable-emptyVars}
 
-	## only consider White blood cell adverse events
-	dataAESubset <- subset(dataAE, AEHLT == "Viral infections NEC")
+	## only consider a subset of adverse events
+	dataAESubset <- subset(dataAE, AEHLT == "HLT_0617")
 	
 	## create dummy categories for:
 	# treatment
@@ -1147,12 +1162,12 @@ include counts for empty categories within the row/column.
 ```
 
 
-### Variable(s) to summarize
+## Variable(s) to summarize
 
-#### Default
+### Default
 
-The **variable(s) used for the summary statistics** 
-(`var`) are included **by default in rows**.
+The **variable(s) used for the summary statistics** (`var`) are included **by
+default in rows**.
 
 ```{r summaryTable-layout-var}
 
@@ -1172,12 +1187,12 @@ The **variable(s) used for the summary statistics**
 
 ```
 
-#### Summary variable in columns
+### Summary variable in columns
 
-In case multiple variables are to be summarized, the different variables can be included in 
-different columns by including the specific label: 'variable' in `colVar`.
-Beware that such layout only makes sense for variables
-with similar types (e.g. all numeric variables).
+In case multiple variables are to be summarized, the different variables can be
+included in different columns by including the specific label: 'variable' in
+`colVar`. Beware that such layout only makes sense for variables with similar
+types (e.g. all numeric variables).
 
 ```{r summaryTable-layout-varInColumn}
 
@@ -1197,10 +1212,10 @@ with similar types (e.g. all numeric variables).
 
 ```
 
-#### Inclusion of summary variables in case one variable is specified
+### Inclusion of summary variables in case one variable is specified
 
-By default, the variable label is not included if only one summary
-statistic variable is specified.
+By default, the variable label is not included if only one summary statistic
+variable is specified.
 
 ```{r summaryTable-layout-var-oneLabel-default}
 		
@@ -1208,8 +1223,8 @@ statistic variable is specified.
 
 ```
 
-To include the label in case only one summary statistic variable
-is specified, the parameter `varLabInclude` should be set to TRUE.
+To include the label in case only one summary statistic variable is specified,
+the parameter `varLabInclude` should be set to TRUE.
 
 ```{r summaryTable-layout-var-oneLabel-varLabInclude}
 		
@@ -1222,18 +1237,18 @@ is specified, the parameter `varLabInclude` should be set to TRUE.
 
 ```
 
-### Inclusion of the count per group in case of missing values
+## Inclusion of the count per group in case of missing values
 
-It might be of interest to display the counts of all subjects per
-row/column variable in association of the summary statistic 
-of a variable of interest.
+It might be of interest to display the counts of all subjects per row/column
+variable in association of the summary statistic of a variable of interest.
 
-For example it could be of interest to report the total number of subjects
-per group, which could differ from the total number of subjects 
-for a variable of interest if this variable contain missing values.
+For example it could be of interest to report the total number of subjects per
+group, which could differ from the total number of subjects for a variable of
+interest if this variable contain missing values.
 
 ```{r summaryTable-layout-var-empty}
 
+    dataAEInterest$AESEVN <- ifelse(dataAEInterest$AESEV == "MILD", 1, 2)
 	dataAEInterestWC <- ddply(dataAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x) {
 		x[which.max(x$AESEVN), ]
 	})
@@ -1249,46 +1264,47 @@ for a variable of interest if this variable contain missing values.
 
 ```
 
-## Total
+# Total
 
 The summary table contains **different types of total**:
 
-* total used for the **percentage computation**
-displayed in the table.  
+* total used for the **percentage computation** displayed in the table.  
 For example: report percentage of subjects with specific adverse event.
-* total reported in the **column header**
-Typically: total number of subjects for a specific treatment arm.
+* total reported in the **column header** Typically: total number of subjects
+  for a specific treatment arm.
 * **total across rows**, reported in the row header   
-For example: to report percentage
-of subjects with adverse events in a specific body system 
-(across adverse events).
+For example: to report percentage of subjects with adverse events in a specific
+  body system (across adverse events).
 * **total across columns**, reported in a separated column  
-For example: to report summary statistics
-across all treatments arms.
+For example: to report summary statistics across all treatments arms.
 
-By default, the totals are extracted based on the input data, but 
-separated datasets can be specified for the header,
- percentage computation, row or column total.
+By default, the totals are extracted based on the input data, but separated
+datasets can be specified for the header,  percentage computation, row or column
+total.
 
-### Summary
+## Summary
 
 The different types of total of the summary table are summarized below:
 
 | Type | Inclusion in the table |  Dataset: parameter name | Dataset: default | 
-|---|---|---|---| 
-| Total in the column header | Yes by default <br/> removed if `colHeaderTotalInclude = FALSE`| `dataTotal` | `data` for table content <br/> `dataTotalCol` for total column| 
-| Total for the percentage | Only if percentage requested in `stats` | `dataTotalPerc` | `dataTotal` for table content <br/> `dataTotalCol` for total column <br/> (for 'total' if specified as a list)| 
-| Total across rows | Not by default <br/> for specified row variable with `rowVarTotalInclude` | `dataTotalRow`  | `data` for table content <br/> `dataTotalCol` for total column <br/> (for 'total' if specified as a list) | 
-| Total across columns | Not by default <br/> only if `colTotalInclude = TRUE` | `dataTotalCol` | `data` |
+|---|---|---|---| | Total in the column header | Yes by default <br/> removed if
+`colHeaderTotalInclude = FALSE`| `dataTotal` | `data` for table content <br/>
+`dataTotalCol` for total column| | Total for the percentage | Only if percentage
+requested in `stats` | `dataTotalPerc` | `dataTotal` for table content <br/>
+`dataTotalCol` for total column <br/> (for 'total' if specified as a list)| |
+Total across rows | Not by default <br/> for specified row variable with
+`rowVarTotalInclude` | `dataTotalRow`  | `data` for table content <br/>
+`dataTotalCol` for total column <br/> (for 'total' if specified as a list) | |
+Total across columns | Not by default <br/> only if `colTotalInclude = TRUE` |
+`dataTotalCol` | `data` |
 
-### Total for the column header
+## Total for the column header
 
-By default, the total reported in the total header is extracted 
-from the **available number of subjects** 
-in the input `data`.
+By default, the total reported in the total header is extracted from the
+**available number of subjects** in the input `data`.
 
-For example, the total number of patients per treatment arm is extracted from the 
-subject-level (`ADSL`) dataset. 
+For example, the total number of patients per treatment arm is extracted from
+the subject-level (`ADSL`) dataset. 
 
 ```{r header-total-default}
 	
@@ -1306,17 +1322,16 @@ subject-level (`ADSL`) dataset.
 	
 ```
 
-#### Dataset
+### Dataset
 
- If the total should be extracted from a **different dataset**, 
- it should be specified via the **`dataTotal`** variable.
- Please note that by default `dataTotal` is also used for
- the computation of the percentage.
+ If the total should be extracted from a **different dataset**,  it should be
+specified via the **`dataTotal`** variable.  Please note that by default
+`dataTotal` is also used for  the computation of the percentage.
 
 ```{r header-total-dataTotal}	
 	
 	# dataset used to extract the 'Total'
-	dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Screen Failure")
+	dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Placebo")
 	# should contain columns specified in 'colVar'
 	dataTotalAE$TRTA <- dataTotalAE$TRT01A 
 
@@ -1334,10 +1349,10 @@ subject-level (`ADSL`) dataset.
 
 ```
 
-### Remove total in column header
+## Remove total in column header
 
-The total number of subjects in each column is by default included. 
-This is not displayed if `colHeaderTotalInclude` is set to FALSE.
+The total number of subjects in each column is by default included. This is not
+displayed if `colHeaderTotalInclude` is set to FALSE.
 
 ```{r header-total-colHeaderTotalInclude}
 
@@ -1358,41 +1373,43 @@ This is not displayed if `colHeaderTotalInclude` is set to FALSE.
 
 ```
 
-### Percentage
+## Percentage
 
-#### Dataset
+### Dataset
 
 A different dataset used for the computation of the percentage can be specified
 via the **`dataTotalPerc`** parameter.  
 
 ```{r dataTotalPerc}
 
-getSummaryStatisticsTable(
-	data = dataAEInterest,
-	rowVar = c("AESOC", "AEDECOD"),
-	colVar = "TRTA",
-	stats = getStats("n (%)"),
-	rowVarLab = c(
-		'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
-	),
-	dataTotalPerc = dataTotalAE,
-	labelVars = labelVars
-)
+    getSummaryStatisticsTable(
+	    data = dataAEInterest,
+	    rowVar = c("AESOC", "AEDECOD"),
+	    colVar = "TRTA",
+	    stats = getStats("n (%)"),
+	    rowVarLab = c(
+		    'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
+	    ),
+	    dataTotalPerc = dataTotalAE,
+	    labelVars = labelVars
+    )
 
 ```
 
-Please note that by default, if `dataTotalPerc` is specified,
-but not `dataTotal`, counts
-reported in the column header are still extracted from `data`.
+Please note that by default, if `dataTotalPerc` is specified, but not
+`dataTotal`, counts reported in the column header are still extracted from
+`data`.
 
-#### Variables to compute percentage by
+### Variables to compute percentage by
 
-If the total number of subjects differ between the components of the table, 
-the extra row/column(s) variable(s) are specified via `colVarTotalPerc`/`rowVarTotalPerc`.
+If the total number of subjects differ between the components of the table, the
+extra row/column(s) variable(s) are specified via
+`colVarTotalPerc`/`rowVarTotalPerc`.
 
-For example, in the table of shift of worst-case laboratory abnormalities: the total number
-of subjects for the computation of the percentage are extracted based on the number of subjects 
-with available post-dose measurements **per laboratory parameter**.
+For example, in the table of shift of worst-case laboratory abnormalities: the
+total number of subjects for the computation of the percentage are extracted
+based on the number of subjects with available post-dose measurements **per
+laboratory parameter**.
 
 ```{r rowVarTotalPerc}
 
@@ -1431,40 +1448,38 @@ with available post-dose measurements **per laboratory parameter**.
 	
 ```
 
-#### Percentage of the number of records
+### Percentage of the number of records
 
-By default, the percentage is based on the 
-number of subjects.  
+By default, the percentage is based on the number of subjects.  
 
-If the percentage should be computed based on the number of records instead, 
-the parameter: `statsPerc`
-should be set to `statm` (`statN` by default).
+If the percentage should be computed based on the number of records instead, the
+parameter: `statsPerc` should be set to `statm` (`statN` by default).
 
-For example, to extract the percentage of laboratory
-measurements by reference range and parameter:
+For example, to extract the percentage of laboratory measurements by reference
+range and parameter:
 
 ```{r statsPerc}
 
-getSummaryStatisticsTable(
-	data = dataLBWC,
-	colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
-	stats = getStats("m (%)"), statsPerc = "statm",
-	emptyValue = 0, rowAutoMerge = FALSE,
-	rowVarTotalPerc = "PARAM",
-	# total for column header
-	dataTotal = dataLBPostBaseline,
-	# total for the percentage
-	dataTotalPerc = dataLBPostBaseline
-)
+#getSummaryStatisticsTable(
+#	data = dataLBWC,
+#	colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
+#	stats = getStats("m (%)"), statsPerc = "statm",
+#	emptyValue = 0, rowAutoMerge = FALSE,
+#	rowVarTotalPerc = "PARAM",
+#	# total for column header
+#	dataTotal = dataLBPostBaseline,
+#	# total for the percentage
+#	dataTotalPerc = dataLBPostBaseline
+#)
 
 ```
 
-### Total across columns {#colTotal}
+## Total across columns {#colTotal}
 
-#### Inclusion
+### Inclusion
 
-The total **across all columns** is included 
-if the `colTotalInclude` is set to TRUE.
+The total **across all columns** is included if the `colTotalInclude` is set to
+TRUE.
 
 ```{r colTotalInclude}
 
@@ -1483,12 +1498,12 @@ if the `colTotalInclude` is set to TRUE.
 
 ```
 
-By default, the total number of subjects is extracted based on the
-input dataset across columns: subjects presenting the 
-**same event in multiple column(s) are counted once**
-in the column total (e.g. for adverse event table in a context of cross-over experiment).
+By default, the total number of subjects is extracted based on the input dataset
+across columns: subjects presenting the **same event in multiple column(s) are
+counted once** in the column total (e.g. for adverse event table in a context of
+cross-over experiment).
 
-#### Label
+### Label
 
 This column is by default labelled 'Total', but this can be customized with the
 `colTotalLab` parameter.
@@ -1510,34 +1525,35 @@ This column is by default labelled 'Total', but this can be customized with the
 
 ```
 
-#### Dataset
+### Dataset
 
-A different dataset for the total column can also be specified via the `dataTotalCol` parameter.
+A different dataset for the total column can also be specified via the
+`dataTotalCol` parameter.
 
-For example, the table is restricted to only the treatment arm,
-but both arms are considered in the total column:
+For example, the table is restricted to only the treatment arm, but both arms
+are considered in the total column:
 
 ```{r dataTotalCol}
 
-	getSummaryStatisticsTable(
-		data = subset(dataAEInterest, grepl("75 mg", TRTA)),
-		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTA",
-		colTotalInclude = TRUE, colTotalLab = "Placebo and treatment arm",
-		dataTotalCol = dataAEInterest,
-		stats = getStats("n (%)"),
-		rowVarLab = c(
-			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
-		),
-		dataTotal = dataTotalAE,
-		labelVars = labelVars
-	)
+#	getSummaryStatisticsTable(
+#		data = subset(dataAEInterest, grepl("High dose", TRTA)),
+#		rowVar = c("AESOC", "AEDECOD"),
+#		colVar = "TRTA",
+#		colTotalInclude = TRUE, colTotalLab = "Placebo and treatment arm",
+#		dataTotalCol = dataAEInterest,
+#		stats = getStats("n (%)"),
+#		rowVarLab = c(
+#			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
+#		),
+#		dataTotal = dataTotalAE,
+#		labelVars = labelVars
+#	)
 
 ```
 
-### Total across rows
+## Total across rows
 
-#### Inclusion
+### Inclusion
 
 If the total should be included across elements of specific `rowVar`
 variable(s), this(these) variable(s) should be included in `rowVarTotalInclude`.
@@ -1566,10 +1582,11 @@ variable(s), this(these) variable(s) should be included in `rowVarTotalInclude`.
 
 ```
 
-In case multiple row variables are specified, the total can also be included for each of this variable. In this case, the 
-total is by default included in the header of each category of this variable.
+In case multiple row variables are specified, the total can also be included for
+each of this variable. In this case, the total is by default included in the
+header of each category of this variable.
 
-#### Label
+### Label
 
 For the first row variable, the total is included in the first row of the table,
 with the label specified in `rowTotalLab`.
@@ -1587,10 +1604,10 @@ with the label specified in `rowTotalLab`.
 
 ```
 
-#### Inclusion as separated category
+### Inclusion as separated category
 
-The row total can also be included as a separated category ('Total') in the table, if this
-variable is additionally specified in `rowVarTotalInSepRow`.
+The row total can also be included as a separated category ('Total') in the
+table, if this variable is additionally specified in `rowVarTotalInSepRow`.
 
 ```{r rowVarTotalInclude-rowVarTotalInSepRow}
 
@@ -1606,15 +1623,16 @@ variable is additionally specified in `rowVarTotalInSepRow`.
 
 ```
 
-#### Dataset
+### Dataset
 
 A different dataset considered for the row total is specified via the 
 `dataTotalRow` parameter.
 
-Different datasets can also be specified for each row variable separately (via a named list).
+Different datasets can also be specified for each row variable separately (via a
+named list).
 
-For example, in the worst-case treatment-emergent adverse events table, the total
-per SOC and across SOCs should count the patient once per severity class.
+For example, in the worst-case treatment-emergent adverse events table, the
+total per SOC and across SOCs should count the patient once per severity class.
 
 ```{r dataTotalRow}
 
@@ -1644,51 +1662,50 @@ per SOC and across SOCs should count the patient once per severity class.
 		})
 	)
 
-	getSummaryStatisticsTable(
-		data = dataTEAEInterestWC,
-		## row variables:
-		rowVar = c("AESOC", "AEDECOD", "AESEV"), rowVarInSepCol = "AESEV",
-		# include total across SOC and across AEDECOD
-		dataTotal = dataTotalAE, # total for column header and denominator
-		rowVarTotalInclude = c("AESOC", "AEDECOD"), 
-		dataTotalRow = dataTotalRow, # data for total row
-		rowVarTotalByVar = "AESEV", # count for each severity category for the total
-		rowTotalLab = "Any TEAE", 
-		rowVarLab = c(AESOC = "Subjects with, n(%):", AESEV = "Worst-case scenario"),
-		# sort per total in the total column
-		rowOrder = "total", 
-		## column variables
-		colVar = "TRTA", 
-		stats = getStats("n (%)"),
-		emptyValue = "0",
-		labelVars = labelVars
-	)
+#	getSummaryStatisticsTable(
+#		data = dataTEAEInterestWC,
+#		## row variables:
+#		rowVar = c("AESOC", "AEDECOD", "AESEV"), rowVarInSepCol = "AESEV",
+#		# include total across SOC and across AEDECOD
+#		dataTotal = dataTotalAE, # total for column header and denominator
+#		rowVarTotalInclude = c("AESOC", "AEDECOD"), 
+#		dataTotalRow = dataTotalRow, # data for total row
+#		rowVarTotalByVar = "AESEV", # count for each severity category for the total
+#		rowTotalLab = "Any TEAE", 
+#		rowVarLab = c(AESOC = "Subjects with, n(%):", AESEV = "Worst-case scenario"),
+#		# sort per total in the total column
+#		rowOrder = "total", 
+#		## column variables
+#		colVar = "TRTA", 
+#		stats = getStats("n (%)"),
+#		emptyValue = "0",
+#		labelVars = labelVars
+#	)
 
 ```
 
-For example, the patient: '202-4903-03' present a moderate severity for headache, 
-and mild severity for the 
-chest injury and fall, but is only counted in the once in the table total.
+For example, the patient: '202-4903-03' present a moderate severity for
+headache, and mild severity for the chest injury and fall, but is only counted
+in the once in the table total.
 
 
 
-## Labels
+# Labels
 
-If the data is loaded into R with the `read_haven` of the `haven` package,
- or the `loadDataADaMSDTM` function of the `clinUtils` package, the label
- for each variable is stored in the 'label' attribute of the corresponding
- column.
+If the data is loaded into R with the `read_haven` of the `haven` package,  or
+the `loadDataADaMSDTM` function of the `clinUtils` package, the label  for each
+variable is stored in the 'label' attribute of the corresponding  column.
 
-However, if this label is lost (e.g. if the object is subsetted), 
-labels can be specified via the `labelVars` parameter for all variables at once, 
-or via specific `[parameter]Lab` parameter, as `rowVarLab`/`colVarLab`/`varLab`
-for the row/column/variable to summarize respectively.
+However, if this label is lost (e.g. if the object is subsetted), labels can be
+specified via the `labelVars` parameter for all variables at once, or via
+specific `[parameter]Lab` parameter, as `rowVarLab`/`colVarLab`/`varLab` for the
+row/column/variable to summarize respectively.
 
-## Title and footnote
+# Title and footnote
 
-Title and footnote are specified via the corresponding `title` and `footer` parameters.
-The convenient function `toTitleCase` from the `tools` package
-is used to set title case for the title of the summary statistics table.
+Title and footnote are specified via the corresponding `title` and `footer`
+parameters. The convenient function `toTitleCase` from the `tools` package is
+used to set title case for the title of the summary statistics table.
 
 ```{r titleAndFooter}
 
@@ -1707,7 +1724,6 @@ is used to set title case for the title of the summary statistics table.
 	)
 
 ```
-
 
 
 # Table formatting/export

@@ -36,7 +36,7 @@ vignette: >
 This vignette focuses on how to create in-text tables with the
 `inTextSummaryTable` package.
 
-In this vignette we assume you have already the `data.frame`(s) to create the
+In this vignette we assume you have ready the `data.frame`(s) to create the
 tables. If you have doubts on the data format, please look the introductory
 vignette at the section "data format".
 
@@ -112,7 +112,7 @@ displayed for the **entire dataset**.
 
 Please note that this is equivalent of setting (`var = 'all'`).
 
-### Counts of variable categories
+### Counts of categories
 
 If a **variable is specified** (via the `var` parameter), the counts are
 displayed **for each category**.
@@ -178,7 +178,7 @@ categories with 0 counts should be included.
 	dataSLExample$SEX <- factor("M", levels = c("F", "M"))
 	getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = TRUE)
 	# or:
- 	getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = "SEX")
+    getSummaryStatisticsTable(data = dataSLExample, var = "SEX", varInclude0 = "SEX")
 
 ```
 
@@ -190,7 +190,7 @@ if a record fulfillss a specific criteria.
 
 Such variable typically includes in the data: 
 
-* 'Y' if the criteria is fulfilled for the specific record
+* 'Y' if the criteria is met for the specific record
 * 'N' if the criteria is not fulfilled for the specific record
 * '' if the criteria is missing for this record
 
@@ -200,19 +200,23 @@ or _SDTM_ dataset.
 For example, the subject-level dataset contains the following flag variables:
 
 ```{r flag-variables}
-labelVars[grep("FL$", colnames(dataSL), value = TRUE)]
-# does the subject belong to the full analysis set?
-dataSL$FASFL
+
+    labelVars[grep("FL$", colnames(dataSL), value = TRUE)]
+    # does the subject belong to the safety analysis set?
+    dataSL$SAFFL
+
 ```
 
 If this variable is specified in `var`, the counts for each category is
 reported:
 
 ```{r count-flag-var}
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "FASFL"
-)
+
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "SAFFL"
+    )
+
 ```
 
 However, the interest is often to only reports the counts for the records
@@ -223,8 +227,8 @@ specified via the `varFlag` parameter too.
 
 	getSummaryStatisticsTable(
 		data = dataSL,
-		var = "FASFL",
-		varFlag = "FASFL"
+		var = "SAFFL",
+		varFlag = "SAFFL"
 	)
 
 ```
@@ -263,7 +267,7 @@ is returned if multiple different values are available.
 
 ```
 
-## Mixed table
+## Continuous and categorical variables in the table
 
 The table can contain a mix of categorical and continuous variables.
 
@@ -292,8 +296,11 @@ A standard set of statistics is specified via specific tags to be passed to the
 
 The list of available statistics is mentioned in the section _Formatted
 statistics_ in:
-```{r eval = FALSE}
-? `inTextSummaryTable-stats` 
+
+```{r getHelpStats, eval = FALSE}
+
+    ? `inTextSummaryTable-stats` 
+
 ```
 
 Please see below examples of commonly used statistics:
@@ -363,8 +370,11 @@ statistics.
 
 See the documentation in section _Base statistics_ for more details on the base
 statistics included by default, via:
-```{r eval = FALSE}
+
+```{r getHelpStats2, eval = FALSE}
+
 ? `inTextSummaryTable-stats` 
+
 ```
 
 For example, the following count table is restricted to the number of subjects
@@ -388,7 +398,7 @@ The summary statistics table is restricted to the median and range:
 		data = dataSL,
 		var = c("AGE", "HEIGHTBL", "WEIGHTBL", "BMIBL"),
 		varGeneralLab = "Parameter", statsGeneralLab = "",
-		colVar = "ACTARM",
+		colVar = "TRT01P",
 		stats = list(
 			`median` = expression(statMedian),
 			`(min, max)` = expression(paste0("(", statMin, ",", statMax, ")"))
@@ -402,31 +412,32 @@ Note that the [Standard statistics set] is formatted internally via the
 `language` objects.
 
 ```{r getStatsData}
-# this count table:
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "SEX",
-	stats = "count"
-)
-# ... is equivalent to:
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "SEX",
-	stats = getStatsData(type = "count")
-)
 
-# this summary table...
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "AGE",
-	stats = "mean (se)"
-)
-# ... is equivalent to:
-getSummaryStatisticsTable(
-	data = dataSL,
-	var = "AGE",
-	stats = getStatsData(type = "mean (se)", var = "AGE", data = dataSL)[["AGE"]]
-)
+    # this count table:
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "SEX",
+	    stats = "count"
+    )
+    # ... is equivalent to:
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "SEX",
+	    stats = getStatsData(type = "count")
+    )
+
+    # this summary table...
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "AGE",
+	    stats = "mean (se)"
+    )
+    # ... is equivalent to:
+    getSummaryStatisticsTable(
+	    data = dataSL,
+	    var = "AGE",
+	    stats = getStatsData(type = "mean (se)", var = "AGE", data = dataSL)[["AGE"]]
+    )
 ```
 
 ## Statistics by variable/group
@@ -511,9 +522,9 @@ Standard SAP **Phase 2/3**_ (version 1.0)
 
 The detailed rules are available in the section _Statistics formatting_ in:
 
-```{r getHelpStats, eval = FALSE}
+```{r getHelpStats3, eval = FALSE}
 
-? `inTextSummaryTable-stats` 
+    ? `inTextSummaryTable-stats` 
 
 ```
 
@@ -591,7 +602,7 @@ parameter.
 
 ```{r getMaxNDecimals}
 
-	# %FEV1 at baseline
+	# Duration of Disease (Months)
 	print(dataSL$DURDIS)
 	
 	## Extract the number of decimals for each value:
@@ -810,7 +821,7 @@ hierarchical order.
 	# unique column variable
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
@@ -819,7 +830,7 @@ hierarchical order.
 	getSummaryStatisticsTable(
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		colHeaderTotalInclude = FALSE
@@ -845,7 +856,7 @@ specified via the `rowVarInSepCol` parameter.
 		data = dataAEInterest,
 		rowVar = c("AESOC", "AEDECOD", "AESEV"),
 		rowVarInSepCol = "AESEV",
-		colVar = "TRTP",
+		colVar = "TRTA",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
@@ -884,7 +895,7 @@ This variable is either:
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", colTotalInclude = TRUE,
+		colVar = "TRTA", colTotalInclude = TRUE,
 		stats = getStats("n (%)"),
 		labelVars = labelVars
 	)
@@ -895,7 +906,7 @@ This variable is either:
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", colTotalInclude = TRUE, colTotalLab = "Number of subjects",
+		colVar = "TRTA", colTotalInclude = TRUE, colTotalLab = "Number of subjects",
 		rowOrder = "total",
 		stats = getStats("n (%)"),
 		labelVars = labelVars
@@ -906,7 +917,7 @@ This variable is either:
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", 
+		colVar = "TRTA", 
 		rowOrder = "total", 
 		stats = getStats("n (%)"),
 		labelVars = labelVars
@@ -926,7 +937,7 @@ provided for the `rowVar` parameter.
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarLab = labelVars[c("AEDECOD")],
 		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTP", #colTotalInclude = TRUE,
+		colVar = "TRTA", #colTotalInclude = TRUE,
 		rowOrder = c(AESOC = "alphabetical", AEDECOD = "total"),
 		stats = getStats("n (%)"),
 		labelVars = labelVars
@@ -1083,8 +1094,8 @@ TRUE to include counts for empty categories within the row/column.
 
 ```{r countTable-emptyVars}
 
-	## only consider White blood cell adverse events
-	dataAESubset <- subset(dataAE, AEHLT == "Viral infections NEC")
+	## only consider a subset of adverse events
+	dataAESubset <- subset(dataAE, AEHLT == "HLT_0617")
 	
 	## create dummy categories for:
 	# treatment
@@ -1198,6 +1209,7 @@ interest if this variable contain missing values.
 
 ```{r summaryTable-layout-var-empty}
 
+    dataAEInterest$AESEVN <- ifelse(dataAEInterest$AESEV == "MILD", 1, 2)
 	dataAEInterestWC <- ddply(dataAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x) {
 		x[which.max(x$AESEVN), ]
 	})
@@ -1280,7 +1292,7 @@ specified via the **`dataTotal`** variable.  Please note that by default
 ```{r header-total-dataTotal}	
 	
 	# dataset used to extract the 'Total'
-	dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Screen Failure")
+	dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Placebo")
 	# should contain columns specified in 'colVar'
 	dataTotalAE$TRTA <- dataTotalAE$TRT01A 
 
@@ -1331,17 +1343,17 @@ via the **`dataTotalPerc`** parameter.
 
 ```{r dataTotalPerc}
 
-getSummaryStatisticsTable(
-	data = dataAEInterest,
-	rowVar = c("AESOC", "AEDECOD"),
-	colVar = "TRTA",
-	stats = getStats("n (%)"),
-	rowVarLab = c(
-		'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
-	),
-	dataTotalPerc = dataTotalAE,
-	labelVars = labelVars
-)
+    getSummaryStatisticsTable(
+	    data = dataAEInterest,
+	    rowVar = c("AESOC", "AEDECOD"),
+	    colVar = "TRTA",
+	    stats = getStats("n (%)"),
+	    rowVarLab = c(
+		    'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
+	    ),
+	    dataTotalPerc = dataTotalAE,
+	    labelVars = labelVars
+    )
 
 ```
 
@@ -1409,17 +1421,17 @@ range and parameter:
 
 ```{r statsPerc}
 
-getSummaryStatisticsTable(
-	data = dataLBWC,
-	colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
-	stats = getStats("m (%)"), statsPerc = "statm",
-	emptyValue = 0, rowAutoMerge = FALSE,
-	rowVarTotalPerc = "PARAM",
-	# total for column header
-	dataTotal = dataLBPostBaseline,
-	# total for the percentage
-	dataTotalPerc = dataLBPostBaseline
-)
+#getSummaryStatisticsTable(
+#	data = dataLBWC,
+#	colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
+#	stats = getStats("m (%)"), statsPerc = "statm",
+#	emptyValue = 0, rowAutoMerge = FALSE,
+#	rowVarTotalPerc = "PARAM",
+#	# total for column header
+#	dataTotal = dataLBPostBaseline,
+#	# total for the percentage
+#	dataTotalPerc = dataLBPostBaseline
+#)
 
 ```
 
@@ -1484,19 +1496,19 @@ are considered in the total column:
 
 ```{r dataTotalCol}
 
-	getSummaryStatisticsTable(
-		data = subset(dataAEInterest, grepl("75 mg", TRTA)),
-		rowVar = c("AESOC", "AEDECOD"),
-		colVar = "TRTA",
-		colTotalInclude = TRUE, colTotalLab = "Placebo and treatment arm",
-		dataTotalCol = dataAEInterest,
-		stats = getStats("n (%)"),
-		rowVarLab = c(
-			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
-		),
-		dataTotal = dataTotalAE,
-		labelVars = labelVars
-	)
+#	getSummaryStatisticsTable(
+#		data = subset(dataAEInterest, grepl("High dose", TRTA)),
+#		rowVar = c("AESOC", "AEDECOD"),
+#		colVar = "TRTA",
+#		colTotalInclude = TRUE, colTotalLab = "Placebo and treatment arm",
+#		dataTotalCol = dataAEInterest,
+#		stats = getStats("n (%)"),
+#		rowVarLab = c(
+#			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
+#		),
+#		dataTotal = dataTotalAE,
+#		labelVars = labelVars
+#	)
 
 ```
 
@@ -1611,25 +1623,25 @@ total per SOC and across SOCs should count the patient once per severity class.
 		})
 	)
 
-	getSummaryStatisticsTable(
-		data = dataTEAEInterestWC,
-		## row variables:
-		rowVar = c("AESOC", "AEDECOD", "AESEV"), rowVarInSepCol = "AESEV",
-		# include total across SOC and across AEDECOD
-		dataTotal = dataTotalAE, # total for column header and denominator
-		rowVarTotalInclude = c("AESOC", "AEDECOD"), 
-		dataTotalRow = dataTotalRow, # data for total row
-		rowVarTotalByVar = "AESEV", # count for each severity category for the total
-		rowTotalLab = "Any TEAE", 
-		rowVarLab = c(AESOC = "Subjects with, n(%):", AESEV = "Worst-case scenario"),
-		# sort per total in the total column
-		rowOrder = "total", 
-		## column variables
-		colVar = "TRTA", 
-		stats = getStats("n (%)"),
-		emptyValue = "0",
-		labelVars = labelVars
-	)
+#	getSummaryStatisticsTable(
+#		data = dataTEAEInterestWC,
+#		## row variables:
+#		rowVar = c("AESOC", "AEDECOD", "AESEV"), rowVarInSepCol = "AESEV",
+#		# include total across SOC and across AEDECOD
+#		dataTotal = dataTotalAE, # total for column header and denominator
+#		rowVarTotalInclude = c("AESOC", "AEDECOD"), 
+#		dataTotalRow = dataTotalRow, # data for total row
+#		rowVarTotalByVar = "AESEV", # count for each severity category for the total
+#		rowTotalLab = "Any TEAE", 
+#		rowVarLab = c(AESOC = "Subjects with, n(%):", AESEV = "Worst-case scenario"),
+#		# sort per total in the total column
+#		rowOrder = "total", 
+#		## column variables
+#		colVar = "TRTA", 
+#		stats = getStats("n (%)"),
+#		emptyValue = "0",
+#		labelVars = labelVars
+#	)
 
 ```
 
