@@ -108,8 +108,8 @@
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
 #' @author Laure Cougnaud
-#' @importFrom glpgStyle getGLPGShapePalette getGLPGLinetypePalette
-#' @importFrom clinUtils getColorPalette
+#' @importFrom glpgStyle getGLPGLinetypePalette
+#' @importFrom clinUtils getColorPalette getShapePalette
 #' @importFrom clinUtils getLabelVar
 #' @import ggplot2
 #' @import cowplot
@@ -499,7 +499,10 @@ subjectProfileSummaryPlot <- function(data,
   
   if(useShape){
     if(is.null(shapePalette))
-      shapePalette <- getGLPGShapePalette(x = data[, colorVar])
+      shapePalette <- getShapePalette(
+          x = data[, colorVar],
+          defaultSettings = getOption("inTextSummaryTable.plotShapes")
+    )
     gg <- gg + scale_shape_manual(name = colorLab, values = shapePalette)			
   }	
   
@@ -671,8 +674,8 @@ subjectProfileSummaryPlot <- function(data,
 #' NULL by default.
 #' @return \code{\link[ggplot2]{ggplot}} object
 #' @import ggplot2
-#' @importFrom utils packageVersion
-#' @importFrom clinUtils getLabelVar
+#' @importFrom utils packageVersion 
+#' @importFrom clinUtils getLabelVar getColorPalette
 #' @author Laure Cougnaud and Michela Pasetto
 #' @export
 subjectProfileSummaryTable <- function(
@@ -770,7 +773,10 @@ subjectProfileSummaryTable <- function(
   # color palette
   if(!is.null(colorVar)){
     if(is.null(colorPalette))
-      colorPalette <- getGLPGColorPalette(x = data[, colorVar])
+      colorPalette <- getColorPalette(
+          x = data[, colorVar],
+          defaultSettings = getOption("inTextSummaryTable.plotColors")
+      )
     ggTable <- ggTable + scale_color_manual(name = colorLab, values = colorPalette)
   }
   
