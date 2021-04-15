@@ -1,4 +1,5 @@
 2.22.0.999
+  o get palettes from 'clinUtils'
   o rename 'getFlextable' into 'getListingTable'
   o add 'getDimPage'
   o remove 'roundHalfUp' functionality
