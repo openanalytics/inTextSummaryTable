@@ -1,3 +1,87 @@
+#' Get dimension of the page available for content 
+#' for standard Word report or PowerPoint presentation.
+#' 
+#' Report is in A4 and presentation dimensions extracted from
+#' PowerPoint.
+#' The returned dimensions are the page dimensions without the margins.
+#' @param type Character vector with dimension of interest, among: 
+#' 'width', 'height', multiple are possible.
+#' By default: \code{c("width", "height")}
+#' @param landscape Logical, if TRUE the table is presented in landscape
+#' format. \cr
+#' By default: TRUE for \code{style}: 'report',
+#' FALSE for \code{style}: 'presentation'.
+#' @param margin Margin in the document in inches, 1 by default.
+#' @param style String with table style, either 'report' (by default, a4 format) 
+#' or 'presentation'
+#' @param pageDim (optional) Numeric vector of length 2 with 
+#' page width and height in inches in portrait format,
+#' in case page dimensions differ from the default
+#' implemented report/presentation.
+#' These dimensions should include the margins.
+#' @examples 
+#' ## get part of the page available for content
+#' # report A4 portrait format:
+#' getDimPage(type = "width")
+#' getDimPage(type = "height")
+#' # report A4 landscape format:
+#' getDimPage(type = "width", landscape = TRUE)
+#' getDimPage(type = "height", landscape = TRUE)
+#' # Note that the layout is by default set to 'landscape'
+#' getDimPage(type = "width", style = "presentation")
+#' getDimPage(type = "height", style = "presentation")
+#' # custom dimensions: A3 format
+#' getDimPage(type = "width", pageDim = c(11.7, 16.5))
+#' # increase margin
+#' getDimPage(type = "width", margin = 1.5)
+#' # get both dimensions at once
+#' getDimPage(type = c("width", "height"))
+#' # get dimensions of the full page (including margins)
+#' getDimPage(type = c("width", "height"), style = "report", margin = 0)
+#' getDimPage(type = c("width", "height"), style = "presentation", margin = 0)
+#' @return numeric vector with dimension of interest,
+#' in the same order as specified via the \code{type}
+#' parameter.
+#' @author Laure Cougnaud
+#' @export
+getDimPage <- function(
+    type = c("width", "height"), 
+    landscape = (style == "presentation"), 
+    margin = 1,
+    pageDim = NULL,
+    style = "report")
+{
+  
+  # landscape: 29.7 * 21 cm ~ 11 * 8 inches ~ 2138.4 * 1512 ptx
+  type <- match.arg(type, several.ok = TRUE)
+  
+  style <- match.arg(style, choices = c("report", "presentation"))
+  
+  pageDimPortrait <- 	if(is.null(pageDim)){
+        switch(style,
+            'report' = c(21, 29.7)/2.54,
+            'presentation' = c(7.5, 13.32)
+        )
+      } else {
+        if(!is.numeric(pageDim))
+          stop("'pageDim' should be a numeric vector.")
+        if(length(pageDim) != 2)
+          stop("'pageDim' should be of length 2.")
+        pageDim
+      }
+  
+  typeDim <- numeric()
+  for(i in seq_along(type)) {
+    typeDim[i] <- switch(type[i],
+        'width' = ifelse(landscape, pageDimPortrait[2], pageDimPortrait[1]),
+        'height' = ifelse(landscape, pageDimPortrait[1], pageDimPortrait[2])
+    )
+  }
+  dimPage <- typeDim - 2 * margin
+  
+  return(dimPage)
+}
+
 
 #' Get specific attribute from a summaryTable or a list of summaryTables
 #' @param name String with attribute name.

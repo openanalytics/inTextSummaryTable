@@ -7,7 +7,6 @@
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
-#' @importFrom glpgStyle getDimPage
 #' @author Laure Cougnaud
 #' @export
 convertSummaryStatisticsTableToFlextable <- function(

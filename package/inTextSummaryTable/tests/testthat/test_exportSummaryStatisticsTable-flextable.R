@@ -2,7 +2,6 @@ context("Export summary statistics table to flextable")
 
 library(flextable)
 library(officer)
-library(glpgStyle)
 
 test_that("row variable is specified", {
 			
@@ -1594,7 +1593,7 @@ test_that("style is set for exported table", {
 			summaryTable = summaryTable, 
 			fontname = "Times", fontsize = 8,
 			landscape = FALSE,
-			pageDim = glpgStyle::getDimPage(style = "report", margin = 0),
+			pageDim = getDimPage(style = "report", margin = 0),
 			colorTable = getDefaultTableColors(style = "report")
 		)
 	)
@@ -1608,7 +1607,7 @@ test_that("style is set for exported table", {
 			summaryTable = summaryTable, 
 			fontname = "Tahoma", fontsize = 10,
 			landscape = TRUE,
-			pageDim = glpgStyle::getDimPage(
+			pageDim = getDimPage(
 				style = "presentation", margin = 0,
 				landscape = FALSE
 			),

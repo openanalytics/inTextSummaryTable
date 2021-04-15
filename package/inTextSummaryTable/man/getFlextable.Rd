@@ -52,7 +52,7 @@ By default: TRUE for \code{style}: 'report',
 FALSE for \code{style}: 'presentation'.}
 
 \item{style}{String with table style, either 'report' (by default, a4 format) 
-or 'presentation' (GLPG master template format)}
+or 'presentation'}
 
 \item{margin}{Margin in the document in inches, 1 by default.}
 

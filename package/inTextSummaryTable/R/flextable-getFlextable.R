@@ -42,13 +42,12 @@
 #' getFlextable(data = head(mtcars), style = "presentation", highlight = 0)
 #' # specific columns
 #' getFlextable(data = head(mtcars), style = "presentation", highlight = c(2, 4))
-#' @inheritParams glpgStyle::getDimPage
+#' @inheritParams getDimPage
 #' @inheritParams createFlextableWithHeader
 #' @return \code{\link[flextable]{flextable}} with style.
 #' @import flextable
 #' @importFrom officer fp_border
 #' @importFrom magrittr "%>%"
-#' @importFrom glpgStyle getDimPage
 #' @export
 getFlextable <- function(
     data, ft, 

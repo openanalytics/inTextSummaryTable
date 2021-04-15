@@ -1,0 +1,41 @@
+---
+title: "Aesthetics"
+author: "Michela Pasetto and Laure Cougnaud"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Aesthetics}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r loadPackages}
+
+    library(inTextSummaryTable)
+
+```
+
+# Set up specific palettes
+
+# Page dimensions in report/presentation 
+
+The function `getDimPage` extracts dimensions available for a content in a
+report/presentation, e.g. to specify the maximal width of a figure in a4 report
+or for a GLPG presentation.
+
+```{r getDimPage}
+
+    # a4 format with one 1 inch margin
+    getDimPage(type = "width", style = "report")
+    getDimPage(type = "height", style = "report")
+
+    # Presentation format (according to template) with one 1 inch margin
+    getDimPage(type = "width", style = "presentation")
+    getDimPage(type = "height", style = "presentation")
+
+```
