@@ -1806,7 +1806,6 @@ By default, the table is styled for a CSR report.
 ```
 
 The table can also be styled for a presentation.
-In this case, the color/style follows _Galapagos_ style guidelines.
 
 ```{r style-presentation}
 
@@ -2101,7 +2100,7 @@ This is for example useful to reference additional informations in a specific fo
 #		stats = list(expression(paste0(roundHalfUpTextFormat(statMean, 1), "\n(", roundHalfUpTextFormat(statSE, 2),")"))),
 #		# include the footnote
 #		footer = c(
-#			"(1) Each compound is labelled according to its Galapagos compound ID.",
+#			"(1) Each compound is labelled according to its compound ID.",
 #			paste0("AUC_{0-t} represents the ", getLabelParamcd(paramcd = "AUCTAU", data = dataPP), ".")
 #		)
 #	)	
