@@ -31,17 +31,17 @@
 #' see output of \code{\link{getDefaultTableColors}} for required elements.
 #' @examples
 #' # style: report or presentation
-#' getFlextable(data = head(mtcars), style = "report")
-#' getFlextable(data = head(mtcars), style = "presentation")
+#' getListingTable(data = head(mtcars), style = "report")
+#' getListingTable(data = head(mtcars), style = "presentation")
 #' # remove rownames (included by default)
-#' getFlextable(data = head(mtcars), style = "presentation", includeRownames = FALSE)
+#' getListingTable(data = head(mtcars), style = "presentation", includeRownames = FALSE)
 #' # highlight:
 #' #  all columns
-#' getFlextable(data = head(mtcars), style = "presentation", highlight = seq_along(mtcars))
+#' getListingTable(data = head(mtcars), style = "presentation", highlight = seq_along(mtcars))
 #' # rownames
-#' getFlextable(data = head(mtcars), style = "presentation", highlight = 0)
+#' getListingTable(data = head(mtcars), style = "presentation", highlight = 0)
 #' # specific columns
-#' getFlextable(data = head(mtcars), style = "presentation", highlight = c(2, 4))
+#' getListingTable(data = head(mtcars), style = "presentation", highlight = c(2, 4))
 #' @inheritParams getDimPage
 #' @inheritParams createFlextableWithHeader
 #' @return \code{\link[flextable]{flextable}} with style.
@@ -49,7 +49,7 @@
 #' @importFrom officer fp_border
 #' @importFrom magrittr "%>%"
 #' @export
-getFlextable <- function(
+getListingTable <- function(
     data, ft, 
     border = TRUE,
     highlight = integer(),
