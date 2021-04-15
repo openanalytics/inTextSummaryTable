@@ -1,4 +1,4 @@
-#' @importFrom clinUtils getColorPalette getShapePalette
+#' @importFrom clinUtils getColorPalette getShapePalette getLinetypePalette
 .onAttach <- function(libname, pkgname) {
   
   # color scheme for tables
@@ -8,5 +8,6 @@
   # color scheme for plots
   options(inTextSummaryTable.plotColors = clinUtils::getColorPalette)
   options(inTextSummaryTable.plotShapes = clinUtils::getShapePalette)
+  options(inTextSummaryTable.plotLinetypes = getLinetypePalette)
   
 }

@@ -108,8 +108,7 @@
 #' @return \code{\link[ggplot2]{ggplot}} object or list of such
 #' objects of \code{byVar} is specified.
 #' @author Laure Cougnaud
-#' @importFrom glpgStyle getGLPGLinetypePalette
-#' @importFrom clinUtils getColorPalette getShapePalette
+#' @importFrom clinUtils getColorPalette getShapePalette getLinetypePalette
 #' @importFrom clinUtils getLabelVar
 #' @import ggplot2
 #' @import cowplot
@@ -492,8 +491,11 @@ subjectProfileSummaryPlot <- function(data,
   }
   
   if(useLinetype){
-    if(is.null(linetypePalette))
-      linetypePalette <- getGLPGLinetypePalette(x = data[, colorVar])
+    if(is.null(linetypePalette))     
+      linetypePalette <- getLinetypePalette(
+          x = data[, colorVar],
+          defaultSettings = getOption("inTextSummaryTable.plotLinetypes")
+      )
     gg <- gg + scale_linetype_manual(name = colorLab, values = linetypePalette)			
   }
   
@@ -502,7 +504,7 @@ subjectProfileSummaryPlot <- function(data,
       shapePalette <- getShapePalette(
           x = data[, colorVar],
           defaultSettings = getOption("inTextSummaryTable.plotShapes")
-    )
+      )
     gg <- gg + scale_shape_manual(name = colorLab, values = shapePalette)			
   }	
   
