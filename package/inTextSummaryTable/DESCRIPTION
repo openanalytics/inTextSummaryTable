@@ -23,8 +23,7 @@ Imports:
   reshape2 (>= 1.4),
   scales,
   stats,
-  utils,
-  glpgStyle (>= 2.2.0)     
+  utils    
 Suggests:
   htmltools,
   knitr,
