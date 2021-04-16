@@ -192,7 +192,7 @@ test_that("shape is used", {
 	)		
 	
 	shapes <- with(ggDataPointWithInput, tapply(shape, TRT, unique, incomparable = NA_character_))
-	expect_type(shapes, "double")
+	expect_type(shapes, "integer")
 	expect_length(shapes, 2)
 	expect_length(unique(shapes), 2)
 	
