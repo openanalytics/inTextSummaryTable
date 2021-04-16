@@ -229,7 +229,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 		)
 	
 	# set style
-	ft <- getListingTable(
+	ft <- getListing(
 		data = summaryTable, ft = ft, 
 		border = FALSE, adjustWidth = FALSE, align = FALSE,
 		style = style,

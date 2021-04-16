@@ -1,6 +1,6 @@
 2.22.0.999
   o get palettes from 'clinUtils'
-  o rename 'getFlextable' into 'getListingTable'
+  o rename 'getFlextable' into 'getListing'
   o add 'getDimPage'
   o remove 'roundHalfUp' functionality
   o add color-blind palette

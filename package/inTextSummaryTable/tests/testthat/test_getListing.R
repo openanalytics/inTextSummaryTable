@@ -6,7 +6,7 @@
 #library(xml2)
 #
 ## export table and get JSON table
-#exportAndGetListingTableXML <- function(ft, label) {
+#exportAndGetListingXML <- function(ft, label) {
 #  file <- paste0("table-", label, ".html")
 #  flextable::save_as_html(ft, path = file)
 #  tableXML <- xml2::read_xml(file)
@@ -16,17 +16,17 @@
 #
 #test_that("a data or flextable object should be specified", {
 #      
-#      expect_error(ft <- getListingTable())
+#      expect_error(ft <- getListing())
 #      
 #    })
 #
 #test_that("a flextable is created from data", {
 #      
-#      expect_silent(ft <- getListingTable(data = data))
+#      expect_silent(ft <- getListing(data = data))
 #      
 #      expect_is(ft, "flextable")
 #      
-#      tableXML <- exportAndGetListingTableXML(ft, label = "default")
+#      tableXML <- exportAndGetListingXML(ft, label = "default")
 #      tableCells <- xml_find_all(tableXML, './/p') # extract paragraphs
 #      tableCellsCntStyle <- sapply(tableCells, function(x) xml_attr(xml_contents(x), "style"))
 #      
@@ -40,12 +40,12 @@
 #
 #test_that("table is created in presentation style", {
 #      
-#      expect_silent(ftPres <- getListingTable(
+#      expect_silent(ftPres <- getListing(
 #              data = data, style = "presentation")
 #      )
 #      expect_is(ftPres, "flextable")
 #      
-#      tableXML <- exportAndGetListingTableXML(ftPres, label = "presentation")
+#      tableXML <- exportAndGetListingXML(ftPres, label = "presentation")
 #      tableCells <- xml_find_all(tableXML, './/p') # extract paragraphs
 #      tableCellsCntStyle <- sapply(tableCells, function(x) xml_attr(xml_contents(x), "style"))
 #      
@@ -65,7 +65,7 @@
 #      
 #      # missing color
 #      expect_warning(
-#          ftHighlight <- getListingTable(
+#          ftHighlight <- getListing(
 #              data = data, 
 #              highlight = idxHighlight, 
 #              style = "presentation",
@@ -75,7 +75,7 @@
 #      
 #      # correct spec
 #      expect_silent(
-#          ftHighlight <- getListingTable(
+#          ftHighlight <- getListing(
 #              data = data, 
 #              highlight = idxHighlight, 
 #              style = "presentation",
@@ -83,7 +83,7 @@
 #          )
 #      )
 #      
-#      tableXML <- exportAndGetListingTableXML(ftHighlight, label = "highlight")
+#      tableXML <- exportAndGetListingXML(ftHighlight, label = "highlight")
 #      
 #      # utility wrappers
 #      getBgColors <- function(x){
@@ -121,7 +121,7 @@
 #      dataNoRn <- data
 #      rownames(dataNoRn) <- NULL
 #      expect_warning(
-#          ftHighlight <- getListingTable(
+#          ftHighlight <- getListing(
 #              data = dataNoRn, 
 #              highlight = 0, 
 #              style = "presentation",
@@ -133,14 +133,14 @@
 #      dataWithRn <- data
 #      rownames(dataWithRn) <- seq_len(nrow(dataWithRn))
 #      expect_silent(
-#          ftHighlight <- getListingTable(
+#          ftHighlight <- getListing(
 #              data = dataWithRn, 
 #              highlight = 0, 
 #              style = "presentation",
 #              includeRownames = TRUE
 #          )
 #      )
-#      tableXML <- exportAndGetListingTableXML(ftHighlight, label = "highlight")
+#      tableXML <- exportAndGetListingXML(ftHighlight, label = "highlight")
 #      body <- xml_find_first(tableXML, ".//tbody")
 #      body <- xml_children(body)
 #      bodyTd <- lapply(body, xml_find_all, xpath = ".//td")
@@ -157,9 +157,9 @@
 #      tableWidths <- numeric()
 #      for(lay in layouts){
 #        
-#        ft <- getListingTable(data = data, landscape = (lay == "landscape"))
+#        ft <- getListing(data = data, landscape = (lay == "landscape"))
 #        
-#        tableXML <- exportAndGetListingTableXML(ft, label = lay)
+#        tableXML <- exportAndGetListingXML(ft, label = lay)
 #        
 #        header <- xml_find_first(tableXML, ".//thead")
 #        headerStyle <- lapply(xml_find_all(header, ".//td"), xml_attr, "style")
@@ -182,12 +182,12 @@
 #      tableWidths <- numeric()
 #      for(wid in widths){
 #        
-#        ft <- getListingTable(
+#        ft <- getListing(
 #            data = data, 
 #            pageDim = c(wid, 50), margin = 0,
 #            adjustWidth = TRUE
 #        )
-#        tableXML <- exportAndGetListingTableXML(ft, label = as.character(wid))
+#        tableXML <- exportAndGetListingXML(ft, label = as.character(wid))
 #        
 #        header <- xml_find_first(tableXML, ".//thead")
 #        headerStyle <- lapply(xml_find_all(header, ".//td"), xml_attr, "style")
@@ -204,7 +204,7 @@
 #test_that("a title is specified", {
 #      
 #      title <- "Subset of the cars dataset"
-#      ft <- getListingTable(data = data, title = title)
+#      ft <- getListing(data = data, title = title)
 #      expect_setequal(
 #          ft$header$dataset[1, ],
 #          title
