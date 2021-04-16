@@ -517,7 +517,7 @@ which shouldn't be escaped in the table (e.g. containing URLs).}
 that should be represented as a bar.}
 
 \item{...}{(DT output) Extra parameters passed to the 
-\code{\link[clinUtils]{toDTGLPG}}}
+\code{\link[clinUtils]{getClinDT}}}
 }
 \value{
 Depending on the \code{outputType}:

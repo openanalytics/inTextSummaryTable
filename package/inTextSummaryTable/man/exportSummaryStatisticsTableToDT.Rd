@@ -101,7 +101,7 @@ If \code{byVar} is specified, each table is exported to a separated
 file with the suffix: 'file_[i].docx' with i the index of the file.}
 
 \item{...}{(DT output) Extra parameters passed to the 
-\code{\link[clinUtils]{toDTGLPG}}}
+\code{\link[clinUtils]{getClinDT}}}
 }
 \value{
 \code{\link[DT]{datatable}} object.

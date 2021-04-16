@@ -6,7 +6,7 @@
 #' @inheritParams inTextSummaryTable-flextable-args
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
-#' @importFrom clinUtils getLabelVar toDTGLPG
+#' @importFrom clinUtils getLabelVar
 #' @export
 exportSummaryStatisticsTableToFlextable <- function(
 	# for 'format' function

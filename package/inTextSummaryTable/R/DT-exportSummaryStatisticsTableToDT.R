@@ -3,14 +3,13 @@
 #' @param summaryTable Summary table as provided by the 
 #' \code{\link{formatSummaryStatisticsTable}}.
 #' @param ... (DT output) Extra parameters passed to the 
-#' \code{\link[clinUtils]{toDTGLPG}}
+#' \code{\link[clinUtils]{getClinDT}}
 #' @inheritParams inTextSummaryTable-common-args
 #' @inheritParams inTextSummaryTable-DT-args
-#' @inherit clinUtils::toDTGLPG return
+#' @inherit clinUtils::getClinDT return
 #' @author Laure Cougnaud
 #' @importFrom utils head
-#' @importFrom clinUtils getLabelVar
-#' @importFrom clinUtils toDTGLPG
+#' @importFrom clinUtils getLabelVar getClinDT
 #' @importFrom tools file_path_sans_ext file_ext
 #' @export
 exportSummaryStatisticsTableToDT <- function(
@@ -181,7 +180,7 @@ exportSummaryStatisticsTableToDT <- function(
 		if(length(colnamesDT) > 0)	list(colnames = colnamesDT)
 	)
 	
-	# check if extra parameters for the 'toDTGLPG' function 
+	# check if extra parameters for the 'getClinDT' function 
 	# specified by the user are not already specified in this function
 	argsDTExtra <- list(...)
 	isArgsDupl <- names(argsDTExtra) %in% names(argsDT)
@@ -194,7 +193,7 @@ exportSummaryStatisticsTableToDT <- function(
 	argsDT <- c(argsDT, argsDTExtra[!isArgsDupl])
 	
 	# create DT
-	res <- do.call(toDTGLPG, argsDT)
+	res <- do.call(getClinDT, argsDT)
 	
 	return(res)
 	
