@@ -57,7 +57,7 @@ getSummaryStatisticsTable <- function(
 	outputType = "flextable",
 	statsLayout = ifelse("DT" %in% outputType, "col", "row"),
 	style = "report", 
-	colorTable = getTableColorsOptions(style = style),
+	colorTable = getColorPaletteTable(style = style),
 	byVar = NULL, byVarLab = NULL,
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),

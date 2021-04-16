@@ -1,66 +1,60 @@
-
-#' Get the default colors of the table
+#' Get color palette for the tables
 #' 
-#' @param style style
+#' This function get the color palettes for the tables 
+#' specified as global options.
+#' 
+#' By default, the function returns the palette of the package. 
+#' The user can specify a custom palette by setting the global options.
+#' @param style String with style of report. Either 'report' or
+#' 'presentation'. By default, the style is 'report'.
+#' @return A named vector with hex colors.
+#' @examples 
+#' # report style (the default)
+#' getColorPaletteTable()
+#' # presentation style
+#' getColorPaletteTable(style = "presentation")
+#' # custom palette
+#' customColorTable <- c('header' = "#FFFFFF",'headerBackground' = "#3F4788FF", 'body' = "#000000", 'bodyBackground1' = "#D9D9D9", 'bodyBackground2' = "#D9D9D9", 'footer' = "#000000", 'footerBackground' = "#FFFFFF",'line' = "#FFFFFF")
+#' options(inTextSummaryTable.colors.table.presentations = customColorTable)
+#' getColorPaletteTable("presentation")
 #' @export 
-getDefaultTableColors <- function(style = c("report", "presentation")){
-  
-  style <- match.arg(style)
-    
-  colorTable <- switch(style,
-      'report' = getTableColorsReport(),
-      'presentation' = getTableColorsPresentation()
-  )
-  
-  return(colorTable)
-  
-}
-
-getTableColorsOptions <- function(style = c("report", "presentation")) {
+getColorPaletteTable <- function(style = c("report", "presentation")) {
   
   style <- match.arg(style)
   
   switch(style,
-      'report' = getOption("inTextSummaryTable.reportColors"),
-      'presentation' = getOption("inTextSummaryTable.presentationColors")
+      'report' = getOption("inTextSummaryTable.colors.table.report"),
+      'presentation' = getOption("inTextSummaryTable.colors.table.presentations")
   )
 }
 
 
-getTableColorsReport <- function() {
-  
-  c(    
-      'header'           = "#000000", # black      
-      'headerBackground' = "#FFFFFF", # white 
-      'body' 			 = "#000000", 
-      'bodyBackground'   = "#FFFFFF",
-      'footer' 			 = "#000000",
-      'footerBackground' = "#FFFFFF",
-      'line' 			 = "#000000"
-  )
-  
-}
+tableColorsReport <- c(    
+    'header'           = "#000000", # black      
+    'headerBackground' = "#FFFFFF", # white 
+    'body' 			   = "#000000", 
+    'bodyBackground'   = "#FFFFFF",
+    'footer' 		   = "#000000",
+    'footerBackground' = "#FFFFFF",
+    'line' 			   = "#000000"
+)
 
-getTableColorsPresentation <- function() {
-  
-  c(     
-      # header:
-      'header' 					  = "#FFFFFF",    # white text
-      'headerBackground' 		  = "#32648EFF",  # lightblue
-      'headerBackgroundHighlight' = "#287D8EFF",  # lighter blue
-      
-      # body black with alternated background color
-      'body' 					 = "#000000",   # black text
-      'bodyBackground1' 		 = "#D9D9D9",   # grey
-      'bodyBackground2' 		 = "#D9D9D9",   # grey
-      'bodyBackgroundHighlight1' = "#DCE318FF", # yellowish
-      'bodyBackgroundHighlight2' = "#DCE318FF", # yellowish
-      
-      # footer: black on white
-      'footer' 					 = "#000000",   # black text
-      'footerBackground' 		 = "#FFFFFF",   # white background
-      # line color
-      'line' 					 = "#FFFFFF"    # white
-  )
-  
-}
+tableColorsPresentation <- c(     
+    # header:
+    'header' 					= "#FFFFFF",    # white text
+    'headerBackground' 		    = "#32648EFF",  # lightblue
+    'headerBackgroundHighlight' = "#287D8EFF",  # lighter blue
+    
+    # body black with alternated background color
+    'body' 					 	= "#000000",   # black text
+    'bodyBackground1' 		 	= "#D9D9D9",   # grey
+    'bodyBackground2' 		 	= "#D9D9D9",   # grey
+    'bodyBackgroundHighlight1' 	= "#DCE318FF", # yellowish
+    'bodyBackgroundHighlight2' 	= "#DCE318FF", # yellowish
+    
+    # footer: black on white
+    'footer' 					= "#000000",   # black text
+    'footerBackground' 		 	= "#FFFFFF",   # white background
+    # line color
+    'line' 					 	= "#FFFFFF"    # white
+)

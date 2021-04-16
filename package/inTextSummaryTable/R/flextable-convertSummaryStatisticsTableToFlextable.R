@@ -16,7 +16,7 @@ convertSummaryStatisticsTableToFlextable <- function(
 	title = NULL, 
 	footer = NULL,
 	style = "report",
-	colorTable = getTableColorsOptions(style = style),
+	colorTable = getColorPaletteTable(style = style),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	file = NULL, pageDim = NULL

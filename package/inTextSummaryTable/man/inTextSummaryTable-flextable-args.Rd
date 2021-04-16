@@ -36,7 +36,7 @@ This is used to specify the width of the table, from:
 [\code{pageDim[1]} - 2 * margin].}
 
 \item{colorTable}{(flextable output) Named character vector with color for the table background/body/text/line,
-e.g. created with the \code{\link{getDefaultTableColors}} function.}
+e.g. created with the \code{\link{getColorPaletteTable}} function.}
 
 \item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
 By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}

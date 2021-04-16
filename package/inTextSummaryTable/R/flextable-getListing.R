@@ -28,7 +28,7 @@
 #' @param align Logical, if TRUE (by default), 
 #' default alignment is set ('center' in all table).
 #' @param colorTable Named character vector with color for the table,
-#' see output of \code{\link{getDefaultTableColors}} for required elements.
+#' see output of \code{\link{getColorPaletteTable}} for required elements.
 #' @examples
 #' # style: report or presentation
 #' getListing(data = head(mtcars), style = "report")
@@ -60,7 +60,7 @@ getListing <- function(
     style = "report",
     margin = 1,
     adjustWidth = TRUE,
-    colorTable = getTableColorsOptions(style = style),
+    colorTable = getColorPaletteTable(style = style),
     align = TRUE,
     title = NULL,
     pageDim = NULL,

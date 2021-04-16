@@ -13,7 +13,7 @@ convertSummaryStatisticsTableToFlextable(
   title = NULL,
   footer = NULL,
   style = "report",
-  colorTable = getTableColorsOptions(style = style),
+  colorTable = getColorPaletteTable(style = style),
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   fontsize = switch(style, report = 8, presentation = 10),
   file = NULL,
@@ -48,7 +48,7 @@ This parameter affects the fontsize, font family, color of the text and backgrou
 and table dimensions of the table.}
 
 \item{colorTable}{(flextable output) Named character vector with color for the table background/body/text/line,
-e.g. created with the \code{\link{getDefaultTableColors}} function.}
+e.g. created with the \code{\link{getColorPaletteTable}} function.}
 
 \item{fontname}{(flextable output) String with font name, by default:
 'Times' if \code{style} is 'report' and 'Tahoma' if \code{style} is 'presentation'.}

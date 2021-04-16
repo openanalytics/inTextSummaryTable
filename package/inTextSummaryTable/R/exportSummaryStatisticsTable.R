@@ -89,7 +89,7 @@ exportSummaryStatisticsTable <- function(
 	margin = 1, rowPadBase = 14.4,
 	footer = NULL,
 	style = "report",
-    colorTable = getTableColorsOptions(style = style),
+    colorTable = getColorPaletteTable(style = style),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none", hline = "auto", 

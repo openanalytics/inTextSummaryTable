@@ -2,12 +2,12 @@
 .onAttach <- function(libname, pkgname) {
   
   # color scheme for tables
-  options(inTextSummaryTable.reportColors = getDefaultTableColors("report"))
-  options(inTextSummaryTable.presentationColors = getDefaultTableColors("presentation"))
+  options(inTextSummaryTable.colors.table.report = tableColorsReport)
+  options(inTextSummaryTable.colors.table.presentations = tableColorsPresentation)
   
   # color scheme for plots
-  options(inTextSummaryTable.plotColors = clinUtils::getColorPalette)
-  options(inTextSummaryTable.plotShapes = clinUtils::getShapePalette)
-  options(inTextSummaryTable.plotLinetypes = getLinetypePalette)
+  options(inTextSummaryTable.colors.plot = getColorPalette)
+  options(inTextSummaryTable.shapes.plot = getShapePalette)
+  options(inTextSummaryTable.linetypes.plot = getLinetypePalette)
   
 }

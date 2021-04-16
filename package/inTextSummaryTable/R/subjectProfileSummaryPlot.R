@@ -485,7 +485,7 @@ subjectProfileSummaryPlot <- function(data,
       
       colorPalette <- getColorPalette(
           x = data[, colorVar],
-          palette = getOption("inTextSummaryTable.plotColors")
+          palette = getOption("inTextSummaryTable.colors.plot")
       )
     gg <- gg + scale_color_manual(name = colorLab, values = colorPalette)
   }
@@ -494,7 +494,7 @@ subjectProfileSummaryPlot <- function(data,
     if(is.null(linetypePalette))     
       linetypePalette <- getLinetypePalette(
           x = data[, colorVar],
-          palette = getOption("inTextSummaryTable.plotLinetypes")
+          palette = getOption("inTextSummaryTable.linetypes.plot")
       )
     gg <- gg + scale_linetype_manual(name = colorLab, values = linetypePalette)			
   }
@@ -503,7 +503,7 @@ subjectProfileSummaryPlot <- function(data,
     if(is.null(shapePalette))
       shapePalette <- getShapePalette(
           x = data[, colorVar],
-          palette = getOption("inTextSummaryTable.plotShapes")
+          palette = getOption("inTextSummaryTable.shapes.plot")
       )
     gg <- gg + scale_shape_manual(name = colorLab, values = shapePalette)			
   }	
@@ -777,7 +777,7 @@ subjectProfileSummaryTable <- function(
     if(is.null(colorPalette))
       colorPalette <- getColorPalette(
           x = data[, colorVar],
-          palette = getOption("inTextSummaryTable.plotColors")
+          palette = getOption("inTextSummaryTable.colors.plot")
       )
     ggTable <- ggTable + scale_color_manual(name = colorLab, values = colorPalette)
   }

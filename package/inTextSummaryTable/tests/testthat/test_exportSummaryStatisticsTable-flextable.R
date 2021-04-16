@@ -1594,7 +1594,7 @@ test_that("style is set for exported table", {
 			fontname = "Times", fontsize = 8,
 			landscape = FALSE,
 			pageDim = getDimPage(style = "report", margin = 0),
-			colorTable = getDefaultTableColors(style = "report")
+			colorTable = getColorPaletteTable(style = "report")
 		)
 	)
 	
@@ -1611,7 +1611,7 @@ test_that("style is set for exported table", {
 				style = "presentation", margin = 0,
 				landscape = FALSE
 			),
-			colorTable = getDefaultTableColors(style = "presentation")
+			colorTable = getColorPaletteTable(style = "presentation")
 		)
 	)
 			
