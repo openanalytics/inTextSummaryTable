@@ -36,7 +36,7 @@ vignette: >
 
 	library(clinUtils)
 	library(tools)# toTitleCase
-	library(plyr) # for ddply
+	library(plyr) # for ddply, rbind.fill
 	library(pander) # for session info
 	library(inTextSummaryTable)
 
@@ -44,9 +44,8 @@ vignette: >
 
 ## Data format
 
-A phase 2 example dataset: the _Pelican_ study is used as demonstration.
-The function `loadDataADaMSDTM` of the `clinUtils` package might be used to load
-the data into a similar format into R.
+The package is demonstrated with a subset of the ADaM datasets 
+from the CDISC Pilot 01 dataset, available in the `clinUtils` package.
 
 ```{r loadData}	
 
@@ -62,8 +61,9 @@ the data into a similar format into R.
 ```
 
 Typical in-text table for the CSR are included in the following sections.
-Please note that the content or formatting (e.g. number of decimals)
-of the table might depends of the study and dataset, and be subject to change.
+
+Please note that the **table content** e.g. variables, statistics of interest
+**depends strongly on the study at hand and personal preferences**.
 
 # Subject information
 
@@ -86,10 +86,7 @@ of the table might depends of the study and dataset, and be subject to change.
 		labelVars = labelVars,
 		colTotalInclude = TRUE, colTotalLab = "All subjects",
 		varInclude0 = TRUE,
-		# remove 'Screen Failure' column
-		filterFct = function(x)
-			subset(x, isTotal | !grepl("Screen Failure", TRT01P)),
-		title = toTitleCase("Table: subject disposition (full analysis set)"),
+		title = toTitleCase("Table: subject disposition"),
 		file = file.path("tables_CSR", "Table_subjectDisposition.docx")
 	)
 
@@ -105,55 +102,16 @@ of the table might depends of the study and dataset, and be subject to change.
 	# variables of interest
 	# Note: if available: ethnicity is included
 	varsDM <- c(
-		"SEXC", "AGE", "AGEC",
-		"RACE", #"ETHNIC"
+		"SEX", "AGE", "AGEGR1",
+		"RACE", "ETHNIC",
 		"HEIGHTBL", "WEIGHTBL", 
 		"BMIBL", "BMIBLGR1"
 	)
-	
-	# Add missing variables:
-	# Note: add droplevels to filter categories not occuring in the data
-	dataDM$AGEC <- droplevels(cut(dataDM$AGE, 
-		breaks = c(-Inf, 18, 65, 85, Inf), 
-		labels = c("<18", "[18,65[", "[65,85[", ">=85"),
-		right = FALSE
-	))
-	labelVars["AGEC"] <- labelVars["AGE"]
-	dataDM$DIAGDURYC <- droplevels(cut(
-		dataDM$DIAGDURY, 
-		breaks = c(-Inf, 1, 2, 5, 10, 20, Inf), 
-		labels = c("<1", "[1, 2[", "[2,5[", "[5,10[", "[10,20[", ">=20"),
-		right = FALSE
-	))
-	# Ethnicity should be available in the ADaM
 
 	# Sort variables according to corresponding numeric variable
-	dataDM <- convertVarToFactor(
-		data = dataDM,
-		var = c("BMIBLGR1", "RACE", "SEXC", "TRT01P"),
-		varNum = c("BMIBLG1N", "RACEN", "SEXN", "TRT01PN")
-	)
-	
-	## Reformat labels:
-	labelsDM <- labelVars[varsDM]
-	# add unit for age
-	labelsDM["AGEC"] <- labelsDM["AGE"] <- "Age (years)"
-	# for sex: gender instead of sex
-	labelsDM["SEXC"] <- "Gender"
-	# set unit at the end of the label
-	labelsDM <- sub("(.*)( \\(.+\\))(.*)", "\\1\\3\\2", labelsDM)
-	labelsDM["BMIBLGR1"] <- sub(" group", "", labelsDM["BMIBLGR1"])
-	labelsDM <- sub("kg/m2", "kg/m^{2}", labelsDM)
-	
-	# set Race in lower-case (if not already in ADaM)
-	dataDM$RACE <- factor(dataDM$RACE, 
-		levels = levels(dataDM$RACE), 
-		labels = simpleCap(tolower(levels(dataDM$RACE)))
-	) 
-	
-	# Add details count stat for categorical variable:
-	idxDMCat <- !colwise(is.numeric)(dataDM[, varsDM])
-	labelsDM[idxDMCat] <- paste0(labelsDM[idxDMCat], ", n (%)")
+	dataDM$AGEGR1 <- with(dataDM, reorder(AGEGR1, AGEGR1N))
+	dataDM$RACE <- with(dataDM, reorder(RACE, RACEN))
+	dataDM$TRT01P <- with(dataDM, reorder(TRT01P, TRT01PN))
 	
 	## Define set of statistics of interest:
 	statsDM <- getStatsData(
@@ -170,7 +128,7 @@ of the table might depends of the study and dataset, and be subject to change.
 	getSummaryStatisticsTable(
 		data = dataDM, 
 		# variables to summarize
-		var = varsDM, varLab = labelsDM,
+		var = varsDM, 
 		varGeneralLab = "Parameter",
 		# column
 		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
@@ -181,7 +139,7 @@ of the table might depends of the study and dataset, and be subject to change.
 		# if only one category, should be included in separated row (e.g. RACE: White)
 		rowAutoMerge = FALSE,
 		rowInclude0 = FALSE, emptyValue = 0,
-		title = toTitleCase("Table: Demographic Data (Full Analysis Set)"),
+		title = toTitleCase("Table: Demographic Data (safety Analysis Set)"),
 		file = file.path("tables_CSR", "Table_demographicData.docx")
 	)
 	
@@ -194,46 +152,17 @@ Please note that the content of the table strongly depends on the study.
 ```{r table-baselineDiseaseCharacteristics}
 
 	# data of interest
-	dataBDC <- subset(dataAll$ADSL, FASFL == "Y")
-
-	# variables of interest
-	varsBDC <- c("ORKTDURW", "SWBL", "PFEVBL", "PFEVGR1", "F508DYN", "SMOKE")
-	
-	# sort variable according to corresponding numeric variables
-	dataBDC <- convertVarToFactor(
-		data = dataBDC, 
-		var = c("TRT01P", "PFEVGR1"),
-		varNum = c("TRT01PN", "PFEVGR1N")
-	)
-	
-	# statistics
-	stats <- sapply(varsBDC, function(var){
-		if(is.numeric(dataBDC[, var])){
-			getStats(type = "mean (range)", x = dataBDC[, var])
-		}else getStats("n (%)", includeName = FALSE)
-	}, simplify = FALSE)
-
-	dataBDC$SMOKE <- factor(dataBDC$SMOKE, labels = simpleCap(tolower(unique(dataBDC$SMOKE))))
-	
-	# format labels (if needed)
-	labelsBDC <- labelVars[varsBDC]
-	labelsBDC <- sub(" group", "", sub("%FEV1", "pFEV_{1} (%)", labelsBDC))
-	# add 'n (%)' in label for categorical variables
-	idxBDCCat <- !colwise(is.numeric)(dataBDC[, varsBDC])
-	labelsBDC[idxBDCCat] <- paste0(labelsBDC[idxBDCCat], ", n (%)")
-	dataBDC$PFEVGR1 <- factor(dataBDC$PFEVGR1, 
-		labels = sub("Baseline %FEV1 ", "",levels(dataBDC$PFEVGR1))
-	)
+	dataBDC <- subset(dataAll$ADSL, SAFFL == "Y")
 	
 	# create table
 	getSummaryStatisticsTable(
 		data = dataBDC,
-		var = varsBDC, varGeneralLab = "Parameter", varLab = labelsBDC,
+		var = c("DURDIS", "EDUCLVL"), varGeneralLab = "Parameter", 
 		colVar = "TRT01P", colTotalInclude = TRUE, colTotalLab = "All subjects",
-		stats = stats, statsGeneralLab = "",
+		stats = getStats("median\n(range)"), statsGeneralLab = "",
 		rowAutoMerge = FALSE,
 		labelVars = labelVars,
-		title = toTitleCase("Table: Baseline Disease Characteristics (full analysis set)"),
+		title = toTitleCase("Table: Baseline Disease Characteristics (safety analysis set)"),
 		file = file.path("tables_CSR", "Table_BaselineCharacteristics.docx")
 	)
 
@@ -243,42 +172,29 @@ Please note that the content of the table strongly depends on the study.
 
 ```{r table-MH}
 
-	dataCM <- subset(dataAll$ADCM, FASFL == "Y" & PRICONFL == "Y")
+	dataCM <- subset(dataAll$ADCM, SAFFL == "Y")
 
 	# sort variable according to corresponding numeric variables
-	dataCM <- convertVarToFactor(
-		data = dataCM, 
-		var = c("TRTP"),
-		varNum = c("TRTPN")
-	)
+	dataCM$TRTA <- with(dataCM, reorder(TRTA, TRTAN))
 	
 	# Terms should be in lower-case
 	dataCM$CMDECOD <- simpleCap(tolower(dataCM$CMDECOD))
-	dataCM$ATC4NME <- simpleCap(tolower(dataCM$ATC4NME))
-	# if missing ATC4 class, set it to: 'Other'
-	dataCM$ATC4NME[dataCM$ATC4NME %in% c("", ".")] <- "Other"
-	
+	dataCM$CMCLAS <- simpleCap(tolower(dataCM$CMCLAS))
+			
 	getSummaryStatisticsTable(
 		data = dataCM,
-		colVar = "TRTP", colTotalInclude = TRUE, colTotalLab = "All subjects",
-		rowVar = c("ATC4NME", "CMDECOD"), 
-		rowVarLab = c(ATC4NME = "ATC class", CMDECOD = "Generic term, n(%)"),
+		colVar = "TRTA", colTotalInclude = TRUE, colTotalLab = "All subjects",
+		rowVar = c("CMCLAS", "CMDECOD"), 
 		# include total across generic terms and across ATC4 classes
-		rowVarTotalInclude = c("ATC4NME", "CMDECOD"), 
+		rowVarTotalInclude = c("CMCLAS", "CMDECOD"), 
 		rowTotalLab = "Any prior and concomitant medication",
 		stats = getStats("n (%)"),
-		# sort rows based on counts of subjects in the total column and then treatment if ties
+		# sort rows based on counts of subjects in the total column 
 		rowOrder = "total",
-		filterFct = function(summaryTable){
-			ddply(summaryTable, "ATC4NME", function(xATC4)
-				ddply(xATC4, "CMDECOD", function(xTerm)
-					if(subset(xTerm, grepl("All subjects", TRTP))$statN >= 2)	xTerm
-				)
-			)
-		},
+		labelVars = labelVars,
 		emptyValue = 0,
-		title = toTitleCase(paste("Prior and concomitant therapies reported in at least",
-			"2 subjects overall by ATC class (level 4) and generic term (full analyis set)"
+		title = toTitleCase(paste("Prior and concomitant therapies",
+			"by medication class and generic term (safety analyis set)"
 		)),
 		file = file.path("tables_CSR", "Table_CM.docx")
 	)
@@ -287,39 +203,40 @@ Please note that the content of the table strongly depends on the study.
 
 # Efficacy Analyses
 
-```{r table-spirometry}
+The example dataset has has two primary endpoints:
 
-	dataPFEV1 <- subset(dataAll$ADRE, 
-		FASFL == "Y" & PARAMCD == "FEV1PP" &
-		(
-			AVISIT == "Baseline" |
-			# retain only: valid spirometry assessment (CRIT1)
-			(AVISIT %in% c("Day 14", "Day 28", "Follow-up") & CRIT1FL == "Y")
-		)
-	)
+* ADAS-Cog (11), a.k.a Alzheimer's Disease Assessment Scale - Cognitive Subscale
+a metric containing 11 items, available in the `ADQSADAS` dataset
+* CIBIC+ score a.k.a Video-referenced Clinician's Interview-based Impression of Change
+ available in the `ADQSCIBC` dataset
+ 
+```{r table-efficacy}
+
+	dataAdasCog11 <- subset(dataAll$ADQSADAS, PARAMCD == "ACTOT")
+	dataCIBIC <- subset(dataAll$ADQSCIBC, PARAMCD == "CIBICVAL")
 	
-	dataPFEV1 <- convertVarToFactor(dataPFEV1, 
-		var = c("TRTP", "AVISIT"), 
-		varNum = c("TRTPN", "AVISITN")
+	dataEfficacy <- plyr::rbind.fill(dataAdasCog11, dataCIBIC)
+	
+	dataEfficacy$TRTP <- with(dataEfficacy, reorder(TRTP, TRTPN))
+	dataEfficacy$AVISIT <- with(dataEfficacy, reorder(AVISIT, AVISITN))
+	
+	stats <- getStatsData(
+		data = dataEfficacy, 
+		var = c("AVAL", "CHG"), 
+		type = c("n", "mean (se)", "median (range)")
 	)
-
-	statsEff <- sapply(c("AVAL", "CHG"), function(var){
-		getStats(
-			type = c("n", "mean (se)", "median (range)"),
-			x = dataPFEV1[[var]]
-		)
-	}, simplify = FALSE)
 	
 	getSummaryStatisticsTable(
-		data = dataPFEV1,
+		data = dataEfficacy,
+		rowVar = "PARAM",
 		colVar = c("TRTP", "AVISIT"),
-		var = c("AVAL", "CHG"), varGeneralLab = "",
-		stats = statsEff,
+		var = c("AVAL", "CHG"), 
+		stats = stats,
 		labelVars = labelVars,
-		title = paste("Table: %pFEV_{1}", 
-			toTitleCase("actual value and changes from baseline per time point (full analysis set)"				
+		title = paste("Table: efficacy endpoints", 
+			toTitleCase("actual value and changes from baseline per time point"				
 		)),
-		file = file.path("tables_CSR", "Table_pFEV1ChangeFromBaseline.docx")
+		file = file.path("tables_CSR", "Table_efficacy.docx")
 	)
 	
 ```
@@ -332,70 +249,37 @@ Please note that the content of the table strongly depends on the study.
 
 ```{r table-summaryTable}
 
-	# consider only safety analysis set AND TREATMENT-EMERGENT!
+	## data of interest: safety analysis set and treatment-emergent
 	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
 	
 	# order treatment and severity categories
-	dataTEAE <- convertVarToFactor(
-		data = dataTEAE,
-		var = c("TRTA"),
-		varNum = c("TRTAN")
-	)
+	dataTEAE$TRTA <- with(dataTEAE, reorder(TRTA, TRTAN))
 	
-	# data considered for the total
+	## data considered for the total
 	dataTotalAE <- subset(dataAll$ADSL, SAFFL == "Y")
-	dataTotalAE <- convertVarToFactor(dataTotalAE, var = "TRT01A", varNum = "TRT01AN")
-	colnames(dataTotalAE)[colnames(dataTotalAE) == "TRT01A"] <- "TRTA"
-
-	## build flags of interest (if not already available)
-
-	# treatment emergent: 'TRTEMFL'
-	
-	# serious TEAE adverse event
-	dataTEAE$TEAESER <- with(dataTEAE, ifelse(AESER == "Y", "Y", "N"))
-	
-	# TEAE leading to death 
-	dataTEAE$TEAED <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AESDTH == "Y", "Y", "N"))
+	dataTotalAE$TRTA <- with(dataTotalAE, reorder(TRT01A, TRT01AN))
 	
 	# TEAE with worst intensity
-
 	# build worst-case scenario
+	dataTEAE$AESEV <- factor(dataTEAE$AESEV, levels = c("MILD", "MODERATE", "SEVERE"))
+	dataTEAE$AESEVN <- as.numeric(dataTEAE$AESEV)
 	dataTEAE <- ddply(dataTEAE, c("USUBJID", "TRTA"), function(x)
 		cbind.data.frame(x, 
-			WORSTINT = with(x, ifelse(AESEVN == max(AESEVN), simpleCap(tolower(AESEV)), NA_character_))
+			WORSTINT = with(x, ifelse(AESEVN == max(AESEVN), as.character(AESEV), NA_character_))
 	))
-
-
-	# study-drug related TEAE
-	dataTEAE$TEAEREL <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AREL == "Related", "Y", "N"))
-	
-	# study-drug temporarily stopped
-	dataTEAE$TEAETS <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AEACN == "TEMPORARILY STOPPED", "Y", "N"))
-	
-	# study-drug permanently stopped
-	# (Note: in this dataset, specific variable: AEINTFL == Treatment stopped Flag)
-	dataTEAE$TEAEPS <- with(dataTEAE, ifelse(TRTEMFL == "Y" & AEACN == "DRUG WITHDRAWN", "Y", "N"))
+	dataTEAE$WORSTINT <- factor(dataTEAE$WORSTINT, levels = levels(dataTEAE$AESEV))
 	
 	## specify labels for each variable:
-	varAESummaryLabels <- c(
-		TRTEMFL = "TEAE", AESER = "Serious TEAE", 
-		TEAED = "TEAE leading to death",
-		WORSTINT = "TEAE with worst severity:",
-		TEAEREL = "Study drug-related TEAE",
-		TEAETS = "Study drug temporarily stopped",
-		TEAEPS = "Study drug permanently stopped"
-	)
-	varAESummary <- names(varAESummaryLabels)
-	varAESummaryFlag <- setdiff(varAESummary, "WORSTINT")
+	varsAE <- c("TRTEMFL", "AESER", "AESDTH", "AEREL")
 	
 	# create the table
 	getSummaryStatisticsTable(
 		data = dataTEAE,
 		colVar = "TRTA",
 		# define variables to compute statistics on
-		varFlag = varAESummaryFlag,
-		var = varAESummary,
-		varLab = varAESummaryLabels,
+		var = c("TRTEMFL", "AESER", "WORSTINT", "AESDTH", "AEREL"), 
+		varFlag = c("TRTEMFL", "AESER", "AESDTH"),
+		varLab = c(TRTEMFL = "Treatment-Emergent", WORSTINT = "Worst-case severity:"),
 		varGeneralLab = "Subjects with, n(%):",
 		# force the inclusion of lines for variable without count:
 		varInclude0 = TRUE,
@@ -403,6 +287,7 @@ Please note that the content of the table strongly depends on the study.
 		varTotalInclude = "WORSTINT",
 		# statistics:
 		stats = getStats('n (%)'),
+		emptyValue = "0",
 		labelVars = labelVars,
 		# dataset used for the total in the header column (and for percentage as default)
 		dataTotal = dataTotalAE,
@@ -421,15 +306,12 @@ Please note that the content of the table strongly depends on the study.
 
 	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
 	
-	dataTEAE <- convertVarToFactor(
-		data = dataTEAE,
-		var = c("TRTA"),
-		varNum = c("TRTAN")
-	)
-
+	# order treatment and severity categories
+	dataTEAE$TRTA <- with(dataTEAE, reorder(TRTA, TRTAN))
+	
+	## data considered for the total
 	dataTotalAE <- subset(dataAll$ADSL, SAFFL == "Y")
-	dataTotalAE <- convertVarToFactor(dataTotalAE, var = "TRT01A", varNum = "TRT01AN")
-	colnames(dataTotalAE)[colnames(dataTotalAE) == "TRT01A"] <- "TRTA"
+	dataTotalAE$TRTA <- with(dataTotalAE, reorder(TRT01A, TRT01AN))
 	
 	getSummaryStatisticsTable(
 		data = dataTEAE,
@@ -454,9 +336,9 @@ Please note that the content of the table strongly depends on the study.
 
 ```
 
-#### Events occuring in at least 25% of the subjects
+#### Events occuring in at least 25% of all subjects
 
-```{r table-TEAE-inAtLease25Percent}
+```{r table-TEAE-inAtLeast25Percent}
 
 	getSummaryStatisticsTable(
 		data = dataTEAE,
@@ -481,9 +363,10 @@ Please note that the content of the table strongly depends on the study.
 		# include only events occuring in at least 25% for at least one preferred term:
 		filterFct = function(x)
 			ddply(x, "AESOC", function(x){ # per AESOC to include the total
-				ddply(x, "AEDECOD", function(y)
-					if(any(y$statPercN >= 25))	y
-				)
+				ddply(x, "AEDECOD", function(y){
+					yTotal <- subset(y, grepl("Total", TRTA))
+					if(any(yTotal$statPercN >= 25))	y
+				})
 			})
 	)
 
@@ -494,15 +377,20 @@ Please note that the content of the table strongly depends on the study.
 ```{r tableTEAE-worstCase}
 
 	dataTEAE <- subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
-
-	# order treatment and severity based on corresponding numeric variables
-	dataTEAE <- convertVarToFactor(
-		data = dataTEAE,
-		var = c("TRTA", "AESEV"), varNum = c("TRTAN", "AESEVN")
-	)
+	
+	# order treatment and severity categories
+	dataTEAE$TRTA <- with(dataTEAE, reorder(TRTA, TRTAN))
+	
+	## data considered for the total
+	dataTotalAE <- subset(dataAll$ADSL, SAFFL == "Y")
+	dataTotalAE$TRTA <- with(dataTotalAE, reorder(TRT01A, TRT01AN))
+	
+	# TEAE with worst intensity
+	dataTEAE$AESEV <- factor(dataTEAE$AESEV, levels = c("MILD", "MODERATE", "SEVERE"))
+	dataTEAE$AESEVN <- as.numeric(dataTEAE$AESEV)
 	
 	# extract worst-case scenario data (only one record if multiple with same severity)
-	dataAEWC <- ddply(dataTEAE, c("AEDECOD", "USUBJID", "TRTA"), function(x){
+	dataAEWC <- ddply(dataTEAE, c("AESOC", "AEDECOD", "USUBJID", "TRTA"), function(x){
 		x[which.max(x$AESEVN), ]
 	})
 	# worst-case scenario in lower case
@@ -554,39 +442,27 @@ Please note that the content of the table strongly depends on the study.
 
 ```{r tableLab}
 
-	# The analysis of abnormalities will focus on assessments reported during the treatment period.
-	dataLB <- subset(dataAll$ADLB, SAFFL == "Y")
-	# (in this dataset, worst-case also flagged with 'DTYPE' == "WOC")
+	dataLBAbn <- subset(dataAll$ADLBC, SAFFL == "Y" & LBNRIND != "NORMAL")
 	
-	dataLBWCWithAbn <- subset(dataLB, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
+	dataLBAbn$PARAM <- with(dataLBAbn, reorder(PARAM, PARAMN))
+	dataLBAbn$TRTA <- with(dataLBAbn, reorder(TRTA, TRTAN))
+	dataLBAbn$LBNRIND <- factor(dataLBAbn$LBNRIND, levels = c("LOW", "HIGH"))
 
-	# Total based on available post-dose records
-	dataLBPostBaseline <- subset(dataLB, !AVISIT %in% c("Screening", "Worst-case post-baseline", "Baseline"))
+	dataLBAbnTotal <- subset(dataAll$ADSL, SAFFL == "Y")
+	dataLBAbnTotal$TRTA <- with(dataLBAbnTotal, reorder(TRT01A, TRT01AN))
 	
-	# order treatments and lab parameters
-	
-	# convert factors
-	dataLBWCWithAbn <- convertVarToFactor(
-		data = dataLBWCWithAbn,
-		var = c("PARCAT1", "PARAM", "TRTA", "SHIFT1"),
-		varNum = c("PARCAT1N", "PARAMN", "TRTAN", "SHIFT1N")
-	)
-	# convert category to lower case
-	dataLBWCWithAbn$PARCAT1 <- factor(dataLBWCWithAbn$PARCAT1, 
-		labels = simpleCap(tolower(levels(dataLBWCWithAbn$PARCAT1)))
-	)
-
-	# shift table or QC versus baseline
 	getSummaryStatisticsTable(
-		data = dataLBWCWithAbn,
+		data = dataLBAbn,
 		rowVar = c("PARCAT1", "PARAM"), 
-		colVar = "TRTA",
-		var = "SHIFT1", rowVarInSepCol = "variableGroup", varSubgroupLab = "Shift of Worst Case Abnormality",
+		rowVarTotalInclude = c("PARCAT1", "PARAM"),
+		colVar = "TRTA", 
+		var = "LBNRIND", 
+		rowVarInSepCol = "variableGroup", varSubgroupLab = "Abnormality",
 		rowVarLab = c('PARCAT1' = "Laboratory Parameter\nn (%)"),
 		stats = getStats("n (%)"),
 		labelVars = labelVars,
 		rowOrder = c("PARCAT1" = "total", "PARAM" = "total", "variableGroup" = "auto"),
-		dataTotal = dataLBPostBaseline, rowVarTotalPerc = "PARAM",
+		dataTotal = dataLBAbnTotal, 
 		title = toTitleCase(paste("Table: Treatment-emergent",
 			"Worst-case Laboratory Abnormalities (safety analysis set)"
 		)),
@@ -598,16 +474,26 @@ Please note that the content of the table strongly depends on the study.
 
 ## Electrocardiogram
 
-```{r ECG-formatData}
+Please note that there is no ECG dataset in the CDISC Pilot dataset
+used for the examples, so this table is not effectively created
+in the vignette.
+
+Nevertheless, an example code is provided below to create a standard
+table of summary statistics for the ECG parameters.
+
+```{r ECG-formatData, eval = FALSE}
 
 	# data of interest
 	paramsECG <- c("QT", "QTCF", "QRS", "PR", "RR", "EGHR")
 
 	dataECG <- subset(dataAll$ADEG, SAFFL == "Y" & PARAMCD %in% paramsECG)
-	dataECG <- convertVarToFactor(dataECG, var = c("TRTA", "PARAM"), varNum = c("TRTAN", "PARAMN"))
+	dataECG$TRTA <- with(dataECG, reorder(TRTA, TRTAN))
+	dataECG$PARAM <- with(dataECG, reorder(PARAM, PARAMN))
 	
 	# consider all non-missing post-baseline records
-	dataECGPostBaseline <- subset(dataECG, AVISIT %in% c("Screening", "Baseline", "Worst-case post-baseline"))
+	dataECGPostBaseline <- subset(dataECG, 
+		AVISIT %in% c("Screening", "Baseline", "Worst-case post-baseline")
+	)
 	
 	# worst-case scenario:
 	dataECGWC <- subset(dataECG, AVISIT == "Worst-case post-baseline")
@@ -618,11 +504,6 @@ Please note that the content of the table strongly depends on the study.
 		var = c("AVALCAT1", "CHGCAT1"), 
 		varNum = c("AVALCA1N", "CHGCAT1N")
 	)
-	
-	# treatment-emergent if abnormality is worse compared to baseline
-	# (abnormal category for change from baseline is always treatment-emergent)
-#	idxTEAVAL <- with(dataECGWC, AVALCAT1 == "" | AVALCA1N > BASECA1N)
-#	dataECGWC[which(!idxTEAVAL), "AVALCAT1"] <- NA_character_
 	
 	# create the table
 	getSummaryStatisticsTable(
@@ -664,56 +545,53 @@ Please note that the content of the table strongly depends on the study.
 ```{r tableVitalSigns}
 
 	# analyis set and parameters of interest
-	paramVS <- c("HR", "DIABP", "SYSBP", "TEMP", "RESP")
-	dataVS <- subset(dataAll$ADVS, SAFFL == "Y" & PARAMCD %in% paramVS)
-	
-	dataVS <- convertVarToFactor(
-		data = dataVS,
-		var = c("PARAM", "ANRIND", "TRTA", "SHIFT1"),
-		varNum = c("PARAMN", "ANRINDN", "TRTAN", "SHIFT1N")
+	dataVS <- subset(dataAll$ADVS, 
+		SAFFL == "Y" & ANL01FL == "Y" & VISIT != "BASELINE"
 	)
 	
-	dataVSWCWithAbn <- subset(dataVS, AVISIT == "Worst-case post-baseline" & SHIFT1 != "")
-	dataVSWCWithAbn$SHIFT1 <- droplevels(dataVSWCWithAbn$SHIFT1)
-	
-	dataVSPostBaseline <- subset(dataVS,AVISIT != "Worst-case post-baseline")
-		
+	dataVS$PARAM <- with(dataVS, reorder(PARAM, PARAMN))
+	dataVS$ANRIND <- with(dataVS, reorder(PARAM, PARAMN))
+	dataVS$TRTA <- with(dataVS, reorder(TRTA, TRTAN))
+	dataVS$SHIFT1 <- with(dataVS, factor(ifelse(SHIFT1 == "", NA_character_, SHIFT1)))
+			
 	getSummaryStatisticsTable(
-		data = dataVSWCWithAbn,
-		rowVar = "PARAM", rowVarLab = c(PARAM = "Vital Signs Parameter, n(%)"),
+		data = dataVS,
+		rowVar = "PARAM", 
+		rowVarInSepCol = "variableGroup", 
+		rowVarInclude0 = TRUE,
 		colVar = "TRTA", 
-		var = "SHIFT1", rowVarInSepCol = "variableGroup", varSubgroupLab = "Worst Case Post-Baseline",
-#		varInclude0 = TRUE,
+		var = "SHIFT1", varTotalInclude = TRUE,
+		emptyValue = 0,
 		stats = getStats("n (%)"),
-		dataTotal = dataVSPostBaseline, colVarTotalPerc = c("TRTA", "PARAM"),
+		colVarTotalPerc = c("TRTA", "PARAM"),
 		labelVars = labelVars,
 		title = toTitleCase(paste("Table: Treatment-emergent Worst-case",
 			"Vital Sign Abnormalities (Safety Analysis Set)"
 		)),
-		file = file.path("tables_CSR", "Table_VitalSigns_Severity.docx"),
-		emptyValue = 0
+		file = file.path("tables_CSR", "Table_VitalSigns_Severity.docx")
 	)
 
 ```
 
 # Pharmacokinetics analysis
 
+Please note that this example pharmacodynamics dataset contains different
+subjects than the other datasets used in the vignette.
+
 ```{r PK}
 
-	dataPK <- subset(dataAll$ADPP, PKFL == "Y")
+	paramcdPK <- c("AUCINFO", "CMAX", "TMAX")
+	dataPK <- subset(dataAll$ADPP, PKFL == "Y" & PARAMCD %in% paramcdPK)
 	
-	dataPK <- convertVarToFactor(data = dataPK, 
-		var = c("TRTA", "PARAMCD", "PARCAT1"), 
-		varNum = c("TRTAN", "PARAMN", "PARCAT1N")
-	)
+	dataPK$PARCAT1 <- with(dataPK, reorder(PARCAT1, PARCAT1N))
+	dataPK$PARAMCD <- with(dataPK, reorder(PARAMCD, PARAMN))
+	dataPK$TRTA <- with(dataPK, reorder(TRTA, TRTAN))
+	dataPK$PARAMCD <- with(dataPK, reorder(PARAMCD, PARAMN))
 	
-	# build labels
+	# build pretty labels
 	labelsPK <- c(
-		AUC08H = "AUC_{0-8h}\n(ng*h/mL)",
-		AUCTAU = "AUC_{0-t}\n(ng*h/mL)",
+		AUCINFO = "AUC_{Inf,obs}\n(h*ng/mL)",
 		CMAX = "C_{max}\n(ng/mL)",
-		CTROUGH = "Ctrough\n(ng/mL)",
-		TLAG = "t_{lag}\n(h)",
 		TMAX = "t_{max}\n(h)"
 	)
 	dataPK$PARAM <- factor(dataPK$PARAMCD, 
@@ -721,31 +599,25 @@ Please note that the content of the table strongly depends on the study.
 		labels = labelsPK[levels(dataPK$PARAMCD)]
 	)
 	
-	# build statistics of interest
-	statsPK <- dlply(dataPK, "PARAM", function(dataParam)
-		# median (min-max) for tmax:
-		if(all(dataParam$PARAMCD == "TMAX")){
-			getStats("median\n(range)", x = dataParam$AVAL, includeName = FALSE)
-		# mean (CV %) for others
-		}else{
-			nDecBase <- getMaxNDecimals(dataParam$AVAL)
-			list(bquote(paste0(
-				roundHalfUpTextFormat(statMean, .(nDecBase + 1)), 
-				" (", roundHalfUpTextFormat(statCV, .(nDecBase + 1)), ")"
-			)))
-		}
-	)
+	statsPK <- dlply(dataPK, "PARAM", function(dataParam){
+		getStatsData(
+			data = dataParam,
+			var = "AVAL",
+			type = "median\n(range)",
+			includeName = FALSE
+		)[[1]]
+	})
 	
 	getSummaryStatisticsTable(
 		data = dataPK,
-		rowVar = c("PARCAT1", "PARAM"), colVar = c("TRTA", "AVISIT"),
+		rowVar = c("PARCAT1", "PARAM"), colVar = "TRTA",
 		var = "AVAL",
-		rowVarLab = c('PARCAT1' = "PK parameters"),
-		statsExtra = list(statCV = cv), stats = statsPK, statsVarBy = "PARAM",
+#		rowVarLab = c('PARCAT1' = "PK parameters"),
+		stats = statsPK, statsVarBy = "PARAM",
 		emptyValue = "-",
 		title = toTitleCase("Table: Summary of PK parameters (pharmacokinetics analysis set)"),
 		file = file.path("tables_CSR", "Table_PK_Parameters.docx"),
-		footer = "Values are arithmetic means (CV%) except median (min-max) for tmax."
+		labelVars = labelVars
 	)
 
 ```
