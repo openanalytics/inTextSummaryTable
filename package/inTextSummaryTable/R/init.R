@@ -3,7 +3,7 @@
   
   # color scheme for tables
   options(inTextSummaryTable.colors.table.report = tableColorsReport)
-  options(inTextSummaryTable.colors.table.presentations = tableColorsPresentation)
+  options(inTextSummaryTable.colors.table.presentation = tableColorsPresentation)
   
   # color scheme for plots
   options(inTextSummaryTable.colors.plot = clinColors)
