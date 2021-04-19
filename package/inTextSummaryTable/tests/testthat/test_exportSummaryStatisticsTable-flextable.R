@@ -1563,7 +1563,7 @@ test_that("table is exported in a landscape format", {
 	summaryTable <- data.frame(n = 9)	
 	
 	# Note: landscape mode results in setting the width
-	# of the table, with the glpgUtilityFct:::getDimPage function
+	# of the table, with the getDimPage function
 	# see unit tests for this function directly
 	ftLandscape <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable, 

@@ -26,7 +26,7 @@ vignette: >
 
 The function `getDimPage` extracts dimensions available for a content in a
 report/presentation, e.g. to specify the maximal width of a figure in a4 report
-or for a GLPG presentation.
+or for a presentation.
 
 ```{r getDimPage}
 

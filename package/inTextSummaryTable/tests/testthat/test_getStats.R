@@ -11,7 +11,7 @@ test_that("output format of base and combined stats is correct", {
 		"n (%)", "n/N (%)", "m (%)"
 	)
 	statName <- sapply(type, identity)
-	statName[grep("^median|mean", type)] <- glpgUtilityFct::simpleCap(statName[grep("^median|mean", type)])
+	statName[grep("^median|mean", type)] <- clinUtils::simpleCap(statName[grep("^median|mean", type)])
 	statName["mean (se)"] <- "Mean (SE)"
 	
 	for(type in type){
