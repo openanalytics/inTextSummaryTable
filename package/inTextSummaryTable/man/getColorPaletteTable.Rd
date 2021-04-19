@@ -28,6 +28,6 @@ getColorPaletteTable()
 getColorPaletteTable(style = "presentation")
 # custom palette
 customColorTable <- c('header' = "#FFFFFF",'headerBackground' = "#3F4788FF", 'body' = "#000000", 'bodyBackground1' = "#D9D9D9", 'bodyBackground2' = "#D9D9D9", 'footer' = "#000000", 'footerBackground' = "#FFFFFF",'line' = "#FFFFFF")
-options(inTextSummaryTable.colors.table.presentations = customColorTable)
+options(inTextSummaryTable.colors.table.presentation = customColorTable)
 getColorPaletteTable("presentation")
 }
