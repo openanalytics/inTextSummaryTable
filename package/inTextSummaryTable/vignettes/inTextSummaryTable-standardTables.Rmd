@@ -563,7 +563,7 @@ table of summary statistics for the ECG parameters.
 		var = "SHIFT1", varTotalInclude = TRUE,
 		emptyValue = 0,
 		stats = getStats("n (%)"),
-		colVarTotalPerc = c("TRTA", "PARAM"),
+		rowVarTotalPerc = "PARAM",
 		labelVars = labelVars,
 		title = toTitleCase(paste("Table: Treatment-emergent Worst-case",
 			"Vital Sign Abnormalities (Safety Analysis Set)"
