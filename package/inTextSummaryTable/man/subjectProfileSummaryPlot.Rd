@@ -45,6 +45,7 @@ subjectProfileSummaryPlot(
   tableTextFontface = 1,
   tableHeight = 0.1,
   tableYAxisLabs = !is.null(colorVar),
+  tablePlotMargin = unit(0, "pt"),
   label = FALSE,
   labelPadding = unit(1, "lines"),
   byVar = NULL,
@@ -172,6 +173,9 @@ in the table.}
 \item{tableYAxisLabs}{Logical, if TRUE (by default)
 the labels of the \code{colorVar} are included
 in the y-axis of the table.}
+
+\item{tablePlotMargin}{Margin between the plot and the table,
+expressed as \code{\link[grid]{unit}}, 0 by default.}
 
 \item{label}{Logical or expression or list of expression.
 Points are labelled with \code{meanVar} if set to TRUE,
