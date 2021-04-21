@@ -223,6 +223,51 @@ test_that("height is specified for the table", {
 	
 })
 
+test_that("height is specified for the table", {
+			
+			summaryTable <- data.frame(
+					visit = c(1, 2), 
+					statMean = rnorm(2),
+					n = c(10, 20)
+			)
+			
+			# error
+			expect_error(
+					subjectProfileSummaryPlot(
+							data = summaryTable, 
+							xVar = "visit",
+							tableText = "n",
+							tableHeight = 1.5
+					),
+					"Table height should be between 0 and 1."
+			)
+			
+			# correct specification:
+			tableHeight <- 0.45
+			gg <- subjectProfileSummaryPlot(
+					data = summaryTable, 
+					xVar = "visit",
+					tableText = "n",
+					tableHeight = tableHeight
+			)
+			
+			ggData <- ggplot_build(gg)$data
+			ggData <- do.call(rbind.fill, ggData)
+			
+			# 2 panels are created
+			expect_equal(nrow(ggData), 2)
+			
+			# check that created panels have correct height:
+			gDataYCoord <- as.list(as.data.frame(t(ggData[, c("ymin", "ymax")])))
+			gDataYCoord <- gDataYCoord[order(sapply(gDataYCoord, min))]
+			expect_setequal(
+					gDataYCoord,
+					list(c(0, 0.45), c(0.45, 1))
+			)
+			
+		})
+
+
 
 test_that("facetting and text variable are not compatible", {
 			

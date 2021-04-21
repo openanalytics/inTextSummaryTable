@@ -101,6 +101,8 @@
 #' @param legendPosition String with legend position.
 #' By default, 'bottom' of \code{tableText} is not specified,
 #' 'none' otherwise.
+#' @param tablePlotMargin Margin between the plot and the table,
+#' expressed as \code{\link[grid]{unit}}, 0 by default.
 #' @param ... Additional parameters for \code{\link[ggrepel]{geom_text_repel}} or
 #' \code{\link[ggplot2]{geom_text}}
 #' used for the \code{label}.
@@ -151,6 +153,7 @@ subjectProfileSummaryPlot <- function(data,
     tableText = NULL, tableTextFontface = 1,
     tableHeight = 0.1, 
     tableYAxisLabs = !is.null(colorVar),
+    tablePlotMargin = unit(0, "pt"),
     label = FALSE, labelPadding = unit(1, "lines"), 
     byVar = NULL,
     hLine = NULL, hLineColor = "black", hLineLty = "solid",
@@ -614,9 +617,13 @@ subjectProfileSummaryPlot <- function(data,
         
         # remove legend and title x-axis for base plot (will be included in table plot)
         plotMargin <- themeFct()$plot.margin
-        plotMargin <- margin(t = plotMargin[1], r = plotMargin[2], b = 0, l = plotMargin[4]) # remove bottom margin
-        gg <- gg + theme(legend.position = "none", axis.title.x = element_blank(), plot.margin = plotMargin)
-        
+		plotMargin[3] <- tablePlotMargin # set bottom margin
+		gg <- gg + theme(
+			legend.position = "none", 
+			axis.title.x = element_blank(),
+			plot.margin = plotMargin
+		)  
+		
         # combine base and table plot
         if(tableHeight > 1 | tableHeight < 0)
           stop("Table height should be between 0 and 1.")
@@ -628,7 +635,9 @@ subjectProfileSummaryPlot <- function(data,
       }else gg
   
   return(res)
-  
+		
+
+	
 }
 
 #' Plot a table with \code{ggplot} of a text variable of interest.
