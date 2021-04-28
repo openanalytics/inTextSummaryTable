@@ -39,3 +39,13 @@ or for a presentation.
     getDimPage(type = "height", style = "presentation")
 
 ```
+
+# Appendix
+
+## Session information
+
+```{r includeSessionInfo, echo = FALSE}
+
+	pander(sessionInfo())
+
+```

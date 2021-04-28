@@ -1,0 +1,216 @@
+---
+title: "Advanced user in-text tables"
+author: "Laure Cougnaud"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Advanced user of in-text tables}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r options, echo = FALSE}
+
+library(knitr)
+opts_chunk$set(
+    echo = TRUE, results = 'markup', warning = FALSE, 
+    # stop document execution if error (not the default)
+    error = FALSE, 
+    message = FALSE, cache = FALSE,
+    fig.width = 8, fig.height = 7,
+    fig.path = "./figures_vignette/",
+    fig.align = 'center')
+options(width = 170)
+# instead of warn = 0 by default
+# include warnings when they occur in the document
+options(warn = 1)
+
+```
+
+```{r loadPackages}
+
+library(inTextSummaryTable)
+library(pander)
+library(tools) # toTitleCase
+
+```
+
+```{r loadData}	
+
+library(clinUtils)
+
+# load example data
+data(dataADaMCDISCP01)
+
+dataAll <- dataADaMCDISCP01
+labelVars <- attr(dataAll, "labelVars")
+
+```
+
+
+```{r}
+
+dataAE <-  subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
+dataAEInterest <- subset(dataAE, AESOC %in% c(
+        "INFECTIONS AND INFESTATIONS",
+        "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
+    )
+)
+
+# ensure that order of elements is the one specified in 
+# the corresponding numeric variable
+dataAEInterest$TRTA <- reorder(dataAEInterest$TRTA, dataAEInterest$TRTAN)
+dataAEInterest$AESEV <- factor(dataAEInterest$AESEV, levels = c("MILD", "MODERATE"))
+
+dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Placebo")
+# should contain columns specified in 'colVar'
+dataTotalAE$TRTA <- dataTotalAE$TRT01A 
+
+
+```
+
+
+
+# Detailed framework of the creation of the in-text table
+
+The `getSummaryStatisticsTable` consists of the following framework:
+
+* computation of the summary statistics table with the
+  `computeSummaryStatisticsTable` function
+* export of the table to the required format (`outputType` parameter)
+
+## Computation of the summary statistics
+
+The supporting data for the summary statistics table, including the entire set
+of statistics (as numeric) and combined statistic set is accessed via the
+`computeSummaryStatisticsTable`.
+
+This is equivalent of the table output by the `getSummaryStatisticsTable`
+function, with the `outputType` set to 'data.frame-base'.
+
+```{r computeSummaryStatisticsTable}
+
+	summaryTable <- computeSummaryStatisticsTable(
+		data = dataAEInterest,
+		rowVar = c("AESOC", "AEDECOD"),
+		rowVarTotalInclude = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		stats = getStats("n (%)"),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars,
+		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
+	)
+	pander(summaryTable)
+	
+```	
+
+Please note the presence of the `isTotal` column, which flags the records
+containing the number of subjects reported in the table header.
+
+```{r computeSummaryStatisticsTable-isTotal}
+
+	pander(subset(summaryTable, isTotal))
+	
+```	
+
+## Export table to the requested format
+
+The table is exported with the requested format (by default `flextable`) with
+the function `exportSummaryStatisticsTable`:
+
+* `flextable` format:
+```{r exportSummaryStatisticsTable-flextable}
+
+	exportSummaryStatisticsTable(summaryTable = summaryTable)
+	
+```	
+* `DT` format:
+```{r exportSummaryStatisticsTable-DT}
+
+	exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "DT")
+	
+```	
+* `data.frame` output
+```{r exportSummaryStatisticsTable-data.frame}
+
+	pander(
+		exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "data.frame")
+	)
+	
+```	
+
+
+# Data pre-processing
+
+The variables used for the row and columns of the summary statistics tables
+should be present in a long format in the input data for the
+`getSummaryStatisticsTable` function.
+
+In case the grouping of the rows/columns is more complex and no grouping
+variable is yet available in the data, the function `combineVariables` offers
+simpler functionalities to create the input data.
+
+The label for the grouping is extracted from the SAS dataset labels if
+`labelVars` is specified, or can be customized (`label` parameter).
+
+For example, the adverse events are counted for different population set:
+screened population, completer population, only events with high severity, or
+related to the treatment and with high severity.
+
+```{r combineVariables}
+
+	# prepare the data: create grouping of interest
+#	dataAEGroup <- combineVariables(
+#		data = dataAEInterest,
+#		newVar = "AEGRP",
+#		paramsList = list(
+#			# for all screened patients
+#			list(var = "SCRNFL", value = "Y"),
+#			# only for completers patients
+#			list(var = "COMPLFL", value = "Y"),
+#			# for high severity
+#			list(var = "AESEVN", value = 2, fctTest = ">=", labelExtra = "higher than 2"),
+#			# related and with higher severity
+#			list(
+#				exprs = 'AREL == "Related" & AESEVN >= 2',
+#				label = paste(
+#					labelVars["AREL"], 
+#					"with", labelVars["AESEV"], "higher than 2"
+#				)
+#			),
+#			list(var = "AENDY", label = paste("With adverse events ending date"))
+#		),
+#		# include also counts for all records
+#		includeAll = TRUE, labelAll = "All Adverse events", 
+#		labelVars = labelVars
+#	)
+#	labelVars["AEGRP"] <- "Patient groups of interest"
+#	
+#	# create the table
+#	getSummaryStatisticsTable(
+#		data = dataAEGroup,
+#		colVar = "TRTA", 
+#		rowVar = "AEGRP", 
+#		labelVars = labelVars,
+#		dataTotal = dataTotalAE,
+#		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
+#		title = "Table: Adverse events: counts for groups of interest",
+#		footer = "Statistics: n (%)"
+#	)
+
+```
+
+# Appendix
+
+## Session information
+
+```{r includeSessionInfo, echo = FALSE}
+
+	pander(sessionInfo())
+
+```

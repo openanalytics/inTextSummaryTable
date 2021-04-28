@@ -1,0 +1,96 @@
+---
+title: "Visualization functionalities"
+author: "Laure Cougnaud"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Visualization functionalities}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r options, echo = FALSE}
+
+library(knitr)
+opts_chunk$set(
+    echo = TRUE, results = 'markup', warning = FALSE, 
+    # stop document execution if error (not the default)
+    error = FALSE, 
+    message = FALSE, cache = FALSE,
+    fig.width = 8, fig.height = 7,
+    fig.path = "./figures_vignette/",
+    fig.align = 'center')
+options(width = 170)
+# instead of warn = 0 by default
+# include warnings when they occur in the document
+options(warn = 1)
+
+```
+
+Summary statistics can be visualized via **error bars** by:
+
+* extracting the summary statistics table with the
+  `computeSummaryStatisticsTable` function (used for `getSummaryStatistics`
+  function)
+* visualizing the summary statistics via the `subjectProfileSummaryPlot`
+  function
+  
+```{r visualization-extractData}
+
+#	summaryTableDf <- computeSummaryStatisticsTable(
+#		data = dataPP,
+#		var = "AVAL",
+#		rowVar = c("PARCAT1", "PARAM"),
+#		colVar = c("TRTP", "AVISIT")
+#	)
+
+```
+
+## With table
+
+```{r visualization-table}
+
+	# create the plot
+#	subjectProfileSummaryPlot(
+#		data = subset(summaryTableDf, !isTotal & 
+#			PARCAT1 == "Ivacaftor" & grepl("Ctrough", PARAM)
+#		),
+#		xVar = "AVISIT",
+#		colorVar = "TRTP",
+#		labelVars = labelVars,
+#		useLinetype = TRUE,
+#		tableText = "statN"
+#	)
+
+```
+
+## By facets
+
+```{r visualization-facets, out.width = "100%", fig.height = 15, fig.width = 15}
+
+	# create the plot
+#	subjectProfileSummaryPlot(
+#		data = subset(summaryTableDf, !isTotal),
+#		xVar = "AVISIT",
+#		colorVar = "TRTP",
+#		labelVars = labelVars,
+#		facetVar = c("PARCAT1", "PARAM"),
+#		useLinetype = TRUE
+#	)
+
+```
+
+# Appendix
+
+## Session information
+
+```{r includeSessionInfo, echo = FALSE}
+
+	pander(sessionInfo())
+
+```

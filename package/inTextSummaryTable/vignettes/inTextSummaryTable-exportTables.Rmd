@@ -1,0 +1,670 @@
+---
+title: "Exporting in-text tables"
+author: "Laure Cougnaud"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  rmarkdown::html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Exporting in-text tables}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r options, echo = FALSE}
+
+library(knitr)
+opts_chunk$set(
+    echo = TRUE, results = 'markup', warning = FALSE, 
+    # stop document execution if error (not the default)
+    error = FALSE, 
+    message = FALSE, cache = FALSE,
+    fig.width = 8, fig.height = 7,
+    fig.path = "./figures_vignette/",
+    fig.align = 'center')
+options(width = 170)
+# instead of warn = 0 by default
+# include warnings when they occur in the document
+options(warn = 1)
+
+```
+
+In this vignette we focus on exporting tables created with the
+`inTextSummaryTable` package.
+
+In particular, we will cover
+
+* how to **export tables for specific formats as Word/PowerPoint/Html/R object**
+* how to **save tables into separated documents**
+* how to set specific **text formatting** (e.g. superscripts/subscripts)
+* how to **filter and split** exported tables.
+
+
+We assume you are already familiar on how to create tables, otherwise we advice
+to first check out the dedicated vignette on how to make tables, available
+[here](../doc/inTextSummaryTable-createTables.html)) or accessible with the
+commands below.
+
+```{r getVignette, eval = FALSE}
+
+vignette("inTextSummaryTable-createTables", "inTextSummaryTable")
+
+```
+
+We will first create example data sets to show how the exporting functionalities
+work. The data sets used are available in the `clinUtils` package.
+
+
+# Load packages and data
+
+
+```{r loadPackages}
+
+library(inTextSummaryTable)
+library(clinUtils)
+library(pander)
+library(tools) # toTitleCase
+
+```
+
+```{r loadData}	
+
+# load example data
+data(dataADaMCDISCP01)
+
+dataAll <- dataADaMCDISCP01
+labelVars <- attr(dataAll, "labelVars")
+
+```
+
+# Create in-text table
+
+This section creates example data sets used below.
+
+```{r createExampleData}
+
+dataAE <-  subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
+dataAEInterest <- subset(dataAE, AESOC %in% c(
+        "INFECTIONS AND INFESTATIONS",
+        "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
+    )
+)
+
+# ensure that order of elements is the one specified in 
+# the corresponding numeric variable
+dataAEInterest$TRTA <- reorder(dataAEInterest$TRTA, dataAEInterest$TRTAN)
+dataAEInterest$AESEV <- factor(dataAEInterest$AESEV, levels = c("MILD", "MODERATE"))
+
+dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Placebo")
+# should contain columns specified in 'colVar'
+dataTotalAE$TRTA <- dataTotalAE$TRT01A 
+
+
+```
+
+# Output formats {#outputFormat}
+
+The `outputType` parameter specifies the output format of the summary statistics
+table.
+
+By default, the output type is a _flextable_. However, possible options for
+exporting are
+
+* interactive table, from the `DT` package
+* a data frame in wide or long format.
+
+For exporting into Microsoft Office, we recommend to use _flextable_ output.
+
+## Static table for Word/PowerPoint
+
+### General format
+
+To get the table in a format **suitable for _Word_/_PowerPoint_** documents, the
+**outputType** parameter should be set to **'flextable'** (the default).
+
+```{r outputType-flextable}
+
+summaryTableFt <- getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    title = "Table: Adverse Events by System Organ Class and Preferred Term",
+    footer = c(
+        "N = number of subjects in the data; n = number of subjects with observation",
+        paste("Denominator for percentage calculations is the total number of subjects",
+            "per treatment group in the safety population"
+        )
+    ),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    outputType = "flextable"
+)
+class(summaryTableFt)
+summaryTableFt
+
+```
+
+The object `summaryTableFt` is a **flextable object**.
+
+This is available through the [`flextable` R
+package](https://cran.r-project.org/package=flextable) (see `?flextable`).
+
+When printed into the R console, a flextable object is displayed in the
+internet browser. However, the
+`summaryTableFt` object can be inserted within a `rmarkdown` document by
+printing it in the specified document chunk, providing that the following
+system requirement are satisfied:
+
+* `flextable` version >= 0.4.7
+* for a `docx` document (`output_type`):
+  [pandoc](https://pandoc.org/installing.html) version >= 2.0 (see [`rmarkdown`
+  documentation for
+  Word](https://bookdown.org/yihui/rmarkdown/word-document.html))
+* for `pptx` document: [pandoc](https://pandoc.org/installing.html) version >=
+  2.4 (see [`rmarkdown` documentation for
+  PowerPoint](https://bookdown.org/yihui/rmarkdown/powerpoint-presentation.html))
+
+A `rmarkdown` chunk can contains only one `flextable` object. To include a list
+of `flextable` in a `rmarkdown` document, the function `knitPrintListObjects` of
+the `clinUtils` package can be used.
+
+### Style: report or presentation
+
+The table can be styled via the **`style`** parameter. This parameter affects
+the fontsize, font family, color of the text and background, dimensions of the
+table.
+
+Other specific parameters can be used to export the table as landscape
+(`landscape`), specify custom margins (`margin`), row indent (`rowVarPadBase`),
+font size and family (`fontsize` and `font`).
+
+By default, the table is styled for a **CSR report**.
+
+```{r style-report}
+
+getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    title = "Table: Adverse Events by System Organ Class and Preferred Term",
+    footer = c(
+        "N = number of subjects with data; n = number of subjects with this observation",
+        paste("Denominator for percentage calculations is the total number of subjects",
+            "per treatment group in the safety population"
+        )
+    ),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
+)
+
+```
+
+The table can also be styled for a **presentation**.
+
+```{r style-presentation}
+
+getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    title = "Table: Adverse Events by System Organ Class and Preferred Term",
+    footer = c(
+        "N = number of subjects with data; n = number of subjects with this observation",
+        paste("Denominator for percentage calculations is the total number of subjects",
+            "per treatment group in the safety population"
+        )
+    ),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    style = "presentation"
+)
+
+```
+
+
+## Interactive table for html
+
+The summary statistics table is exported as an interactive table by setting the
+parameter: **`outputType`** to **'DT'**.
+
+A `datatable` object, created with the
+[DT](https://CRAN.R-project.org/package=DT) R package is created.
+
+Interactivity includes the functionalities to:
+
+* filter the table
+* order columns
+* export the table (or a subset of this)
+* include custom interactivity e.g. the possibility to have expandable
+  rows/columns, see patient profiles inclusion in the medical monitoring report
+
+Such table can be included in a _html_ `rmarkdown` report.
+
+```{r outputType-DT}
+
+getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    title = "Table: Adverse Events by System Organ Class and Preferred Term",
+    footer = c(
+        "N = number of subjects in the data; n = number of subjects with observation",
+        paste("Denominator for percentage calculations is the total number of subjects",
+            "per treatment group in the safety population"
+        )
+    ),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    outputType = "DT"
+)
+
+```
+
+## Data frames for R
+
+### Final table
+
+The summary statistics data displayed in the final table object can be exported
+as an R `data.frame`.
+
+In this case the **`outputType`** should be set to **`data.frame`**.
+
+```{r outputType-dataframe}
+
+summaryTable <- getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    title = "Table: Adverse Events by System Organ Class and Preferred Term",
+    footer = c(
+        "N = number of subjects in the data; n = number of subjects with observation",
+        paste("Denominator for percentage calculations is the total number of subjects",
+            "per treatment group in the safety population"
+        )
+    ),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    style = "presentation",
+    outputType = "data.frame"
+)
+pander(summaryTable, split.table = Inf)
+
+```
+
+### Full table in long format
+
+The table with all the computed summary statistics, the specified set of
+statistics of interest and all row/column variables stored in a long format is
+available by using the **`outputType`** parameter to **'data.frame-base'**.
+
+This format is typically of interest to run quality checks of the computed
+summary statistics in comparison with e.g. Table/Listing/Figures, or to compare
+the statistics computed between batches of the data.
+
+```{r outputType-dataframe-base}
+
+summaryTableAll <- getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    title = "Table: Adverse Events by System Organ Class and Preferred Term",
+    footer = c(
+        "N = number of subjects in the data; n = number of subjects with observation",
+        paste("Denominator for percentage calculations is the total number of subjects",
+            "per treatment group in the safety population"
+        )
+    ),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    style = "presentation",
+    outputType = "data.frame-base"
+)
+pander(summaryTableAll, split.table = Inf)
+
+```
+
+## Differences between the format
+
+Most of the functionalities and default parameters are the same between the
+`flextable` and `DT` format, at the exception of:
+ 
+* for the `DT` format, by default the variables and statistics are included
+      in different columns: `rowVarInSepCol` is `rowVar` and `statsLayout` is
+      set to 'col'
+* for the `flextable` format, by default the row variables and statistics
+      are nested:   `rowVarInSepCol` is set to: 'NULL' and the `statsLayout` is
+      set to 'row'
+
+# Export table to a separated file
+
+The table can be exported to a different file by specifying a file name in the
+**`file`** parameter. 
+
+Possible formats are:
+
+* **txt**: the raw base table is exported to a text file. This format can be
+  used e.g. to run quality checks with reference Table/Listings/Figures.
+* **docx**: the formatted table is exported to a Word document. Such format is
+  typically of interest to share the tables to medical writers, to be
+  imported directly into a Statistical Analysis Plan (if `style = 'report'`).
+* **html**: an interactive table is exported to the specified html file
+
+```{r file, eval = FALSE}
+
+# export table to a Word document
+summaryTableFt <- getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    file = file.path("tables_CSR", "summaryTable-AEs.docx")
+)
+
+# export interactive table to a html document
+summaryTableFt <- getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    file = file.path("tables_CSR", "summaryTable-AEs.html")
+)
+
+# export table in raw format to a text file
+summaryTableFt <- getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    file = file.path("tables_CSR", "summaryTable-AEs.txt")
+)
+
+# export to multiple formats at once
+summaryTableFt <- getSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    file = file.path("tables_CSR",
+        c("summaryTable.txt", "summaryTable.docx", "summaryTable.html")
+    )
+)
+
+```
+
+# Export table of pre-computed summary statistics
+
+To create a table in a similar format as the in-text tables created by the
+package, from pre-computed summary statistics (e.g. from CRO or from a different
+software as _SAS_) the function **`exportSummaryStatisticsTable`** can be used.
+
+This function takes as input a **`data.frame` in long format** that should
+contain the summary statistics.
+
+The long format should be such that the
+
+* statistic value (`statsVar`)
+* statistic type (if multiple), grouping row and columns (`rowVar` and `colVar`)
+
+are both stored as different columns in the `data.frame`.
+
+If the column headers should contain total number of subjects, the corresponding
+counts should be stored in records with the column `isTotal` set to TRUE.
+
+```{r exportSummaryStatisticsTable}
+
+dataDIABP <- subset(dataAll$ADVS, SAFFL == "Y" & ANL01FL == "Y")
+dataDIABP <- subset(dataDIABP, PARAMCD == "DIABP" & ATPT == "AFTER LYING DOWN FOR 5 MINUTES")
+
+# create example of data.frame containing statistics of interest
+statsEff <- sapply(c("AVAL", "CHG"), function(var) {
+      
+      getStats(
+          type = c("n", "mean (se)", "median (range)"),
+          x = dataDIABP[[var]]
+      )
+      
+    }, simplify = FALSE)
+
+summaryTable <- computeSummaryStatisticsTable(
+    data = dataDIABP,
+    colVar = c("TRTP", "AVISIT"),
+    var = c("AVAL", "CHG"), varGeneralLab = "",
+    stats = statsEff,
+    labelVars = labelVars
+)
+
+# format df with statistics to in-text tables format
+exportSummaryStatisticsTable(
+    summaryTable = summaryTable,
+    statsVar = c("Mean (SE)", "Median (range)"),
+    rowVar = "variable", rowVarLab = "Statistic",
+    colVar = c("TRTP", "AVISIT"),
+    colHeaderTotalInclude = TRUE,
+    labelVars = simpleCap(tolower(labelVars[c("AVAL", "CHG")])),
+    title = toTitleCase(
+        paste(
+            "Table: Sweat chloride inferential statistics of the changes",
+            "from baseline per time point",
+            "(pharmacodynamics analysis Set, Mean Value from both arms)"
+        )
+    ),
+    file = file.path("tables_CSR", "Table_SweatChlorideChangeFromBaseline_inferential.docx")
+)
+
+```
+
+# Text formatting
+
+Specific formatted text can be specified for the `flextable` output type only.
+
+## Superscript/subscript
+
+Superscript and subscript are specified via the special text pattern as `a^{b}`
+and `a_{b}` respectively.
+
+To use a superscript or a subscript in the table, the text should be formatted
+as: `text^{superscript}` or `text_{subscript}`.
+
+This is for example useful to reference additional informations in a specific
+footnote or specify custom variable labels.
+
+```{r summaryTable-PP-rowVarWithLabel-rowVarLab-superscript}
+
+dataSL <- dataAll$ADSL
+
+varsSL <- c("AGE", "WEIGHTBL", "BMIBL")
+labelVars[varsSL] <- c(
+    "Age",
+    "Weight_{t}",
+    "BMI (kg/m^{2})"
+)
+
+getSummaryStatisticsTable(
+    data = dataSL, 
+    var = varsSL,  
+    stats = getStats("n (%"),
+    labelVars = labelVars,
+    fontsize = 16,
+    title = toTitleCase("Demographic data (Safety Analysis Set)")
+)
+
+```
+
+## Bold and greek letters
+
+Specific cells of the table can be highlight in bold by using the syntax:
+`bold{}` in the `stats` or `statsExtra` function.
+
+This highlighting may depend:
+
+* on a additional variable via the `statsExtra` parameter:  
+for example:
+  `statsExtra <- function(data)   with(data, ifelse(ANRIND != "N", paste0("bold{", toString(AVAL), "}"), toString(AVAL))`
+* on the values of computed statistics, via the `stats` parameter
+
+Greek letters are included as they are in the table.
+
+```{r summaryTable-PP-rowVarWithLabel-rowVarLab-bold}
+
+getSummaryStatisticsTable(
+    data = dataSL, 
+    var = varsSL,  
+    stats = list(
+        expression(paste0(
+                ifelse(statMean > statMedian, 
+                    paste0("bold{", roundHalfUpTextFormat(statMean, 1), "}"), 
+                    roundHalfUpTextFormat(statMean, 1)
+                ), 
+                "\n(", 
+                roundHalfUpTextFormat(statSE, 2),")")
+        )
+    ),
+    labelVars = labelVars,
+    fontsize = 12,
+    title = toTitleCase("Demographic data (Safety Analysis Set)")
+)
+
+```
+
+# Create multiple tables by a variable
+
+Multiple tables can be created for each element of a variable in the dataset  by
+specifying the name of the variable in the argument **`byVar`**.  
+ 
+A list of final summary table can be included into a `rmarkdown`  document with
+the `knitPrintListObjects`. 
+
+Please note that the following chunk option should be used:
+**`results = 'asis'`**.
+
+For example, AE tables are created for each treatment:
+
+```{r byVar, results = "asis"}
+
+summaryTableList <- getSummaryStatisticsTable(
+    data = subset(dataAE, TRTEMFL == "Y"),
+    rowVar = c("AESOC", "AEDECOD"),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    colVar = "TRTA",
+    byVar = "TRTA",
+    stats = getStats("n (%)"),
+    labelVars = labelVars,
+    title = paste(
+        "Table: Adverse Events by System Organ Class and",
+        "Preferred Term with at least 2 patients in System Organ Class"
+    )
+)
+
+# print the list of tables in the rmarkdown document
+clinUtils::knitPrintListObjects(summaryTableList) 
+
+```
+
+# Filter records in a table
+
+If only a subset of the records should be displayed in the final table, a custom
+filtering functions is specified via the **`filterFct`** parameter.
+
+```{r countTable-AE-filterFct}
+
+library(plyr)
+
+# SOC with AE terms with at least 2 subjects
+getSummaryStatisticsTable(
+    data = subset(dataAE, TRTEMFL == "Y"),
+    rowVar = c("AESOC", "AEDECOD"),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    filterFct = function(x)
+      ddply(x, "AESOC", function(y)
+            if(any(y$statN >= 2))	y			
+      ),
+    labelVars = labelVars,
+    title = paste(
+        "Table: Adverse Events by System Organ Class and",
+        "Preferred Term with at least 2 patients in System Organ Class"
+    )
+)
+
+# AE term with at least one term with more than 70% in the treatment
+getSummaryStatisticsTable(
+    data = subset(dataAE, TRTEMFL == "Y"),
+    rowVar = c("AESOC", "AEDECOD"),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    filterFct = function(x)
+      ddply(x, "AEDECOD", function(xTerm) {
+            if(any(xTerm$statPercN >= 70))	xTerm		
+          }),
+    labelVars = labelVars,
+    title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 20% patients in treatment category"
+)
+
+```
+
+Note: to help the creation of this filtering function, the displaying data
+could be extracted first via the `computeSummaryStatisticsTable` function
+(instead of creating directly the in-text table via the
+`getSummaryStatisticsTable`), and then used to define the `filterFct` parameter.
+
+```{r countTable-AE-filterFct- details}
+
+x <- computeSummaryStatisticsTable(
+    data = subset(dataAE, TRTEMFL == "Y"),
+    rowVar = c("AESOC", "AEDECOD"),
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    labelVars = labelVars
+)
+head(x)
+
+# for specific AEDECOD
+xTerm <- subset(x, AEDECOD == "MYOCARDIAL INFARCTION")
+# identify the record for treated patient:
+subset(xTerm, grepl("Placebo", TRTA))
+# keep all records (placebo + treatment) if percentage if higher than 20%:
+# if no 'else' condition, nothing (NULL) is returned:
+if(subset(xTerm, grepl("Placebo", TRTA))$statPercN >= 20)	xTerm
+# across all AE terms:
+ddply(x, "AEDECOD", function(xTerm)
+      if(subset(xTerm, grepl("Placebo", TRTA))$statPercN >= 20)	xTerm
+)
+
+# format it as a function and pass it to the 'filterFct' parameter
+```
+
+# Appendix
+
+## Session information
+
+```{r includeSessionInfo, echo = FALSE}
+
+pander(sessionInfo())
+
+```

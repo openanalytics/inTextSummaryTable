@@ -1688,6 +1688,12 @@ used to set title case for the title of the summary statistics table.
 
 # Appendix
 
-## Session info
+## Session information
+
+```{r includeSessionInfo, echo = FALSE}
+
+	pander(sessionInfo())
+
+```
 
 
