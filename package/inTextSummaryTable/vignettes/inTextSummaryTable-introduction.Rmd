@@ -124,8 +124,16 @@ vignette("inTextSummaryTable-exportTables", "inTextSummaryTable")
 
 # Advanced users
 
-For who likes to know more about the package
-[here](../doc/inTextSummaryTable-advanced.html)).
+If you are familiar with the creation and export of the tables, and you want to
+know more on the functionalities less exposed to the users, you can check out
+the vignette for advanced users, which is
+available [here](../doc/inTextSummaryTable-advanced.html)) and with
+
+```{r getVignetteAdvanced, eval = FALSE}
+
+vignette("inTextSummaryTable-advanced", "inTextSummaryTable")
+
+```
 
 # Visualization
 
