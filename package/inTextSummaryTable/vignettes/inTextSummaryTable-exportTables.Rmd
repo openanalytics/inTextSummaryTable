@@ -37,7 +37,7 @@ In this vignette we focus on exporting tables created with the
 
 In particular, we will cover
 
-* how to **export tables for specific formats as Word/PowerPoint/Html/R object**
+* how to **export tables for specific formats as Word/Powerpoint/Html/R object**
 * how to **save tables into separated documents**
 * how to set specific **text formatting** (e.g. superscripts/subscripts)
 * how to **filter and split** exported tables.
@@ -118,11 +118,11 @@ exporting are
 
 For exporting into Microsoft Office, we recommend to use _flextable_ output.
 
-## Static table for Word/PowerPoint
+## Static table for Word/Powerpoint
 
 ### General format
 
-To get the table in a format **suitable for _Word_/_PowerPoint_** documents, the
+To get the table in a format **suitable for _Word_/_Powerpoint_** documents, the
 **outputType** parameter should be set to **'flextable'** (the default).
 
 ```{r outputType-flextable}
@@ -167,7 +167,7 @@ system requirement are satisfied:
   Word](https://bookdown.org/yihui/rmarkdown/word-document.html))
 * for `pptx` document: [pandoc](https://pandoc.org/installing.html) version >=
   2.4 (see [`rmarkdown` documentation for
-  PowerPoint](https://bookdown.org/yihui/rmarkdown/powerpoint-presentation.html))
+  Powerpoint](https://bookdown.org/yihui/rmarkdown/powerpoint-presentation.html))
 
 A `rmarkdown` chunk can contains only one `flextable` object. To include a list
 of `flextable` in a `rmarkdown` document, the function `knitPrintListObjects` of
