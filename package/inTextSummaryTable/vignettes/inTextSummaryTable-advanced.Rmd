@@ -14,6 +14,25 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
+In this vignette we focus on providing more explanation on how
+the `inTextSummaryTable` package actually works. We would describe some of the
+functionalities less exposed to the users.
+
+We assume you are already familiar on how to create and export tables, otherwise
+we advice to first check out the dedicated vignettes for creating and
+exporting tables. The vignettes are accessible with the commands below.
+
+```{r getVignette, eval = FALSE}
+
+vignette("inTextSummaryTable-createTables", "inTextSummaryTable")
+vignette("inTextSummaryTable-exportTables", "inTextSummaryTable")
+
+```
+
+We will first create example data sets to show how the exporting functionalities
+work. The data sets used are available in the `clinUtils` package.
+
+
 ```{r options, echo = FALSE}
 
 library(knitr)
@@ -35,14 +54,13 @@ options(warn = 1)
 ```{r loadPackages}
 
 library(inTextSummaryTable)
+library(clinUtils)
 library(pander)
 library(tools) # toTitleCase
 
 ```
 
 ```{r loadData}	
-
-library(clinUtils)
 
 # load example data
 data(dataADaMCDISCP01)
@@ -74,74 +92,98 @@ dataTotalAE$TRTA <- dataTotalAE$TRT01A
 
 ```
 
-
-
 # Detailed framework of the creation of the in-text table
 
 The `getSummaryStatisticsTable` consists of the following framework:
 
-* computation of the summary statistics table with the
-  `computeSummaryStatisticsTable` function
-* export of the table to the required format (`outputType` parameter)
+* **computation of the summary statistics** table with the
+  **`computeSummaryStatisticsTable`** function
+* **export of the table** to the required format with the **`outputType`**
+  parameter
 
 ## Computation of the summary statistics
 
-The supporting data for the summary statistics table, including the entire set
-of statistics (as numeric) and combined statistic set is accessed via the
-`computeSummaryStatisticsTable`.
+The supporting data for the summary statistics table, is accessed via the
+**`computeSummaryStatisticsTable`**. This includes the entire set of
+statistics (as numeric) and combined statistic set.
 
-This is equivalent of the table output by the `getSummaryStatisticsTable`
-function, with the `outputType` set to 'data.frame-base'.
+The output from the `computeSummaryStatisticsTable` is equivalent of the table
+output by the `getSummaryStatisticsTable` function when the `outputType` is set
+to 'data.frame-base'.
 
 ```{r computeSummaryStatisticsTable}
 
-	summaryTable <- computeSummaryStatisticsTable(
-		data = dataAEInterest,
-		rowVar = c("AESOC", "AEDECOD"),
-		rowVarTotalInclude = c("AESOC", "AEDECOD"),
-		colVar = "TRTA",
-		stats = getStats("n (%)"),
-		dataTotal = dataTotalAE,
-		labelVars = labelVars,
-		rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
-	)
-	pander(summaryTable)
-	
+summaryTable <- computeSummaryStatisticsTable(
+    data = dataAEInterest,
+    rowVar = c("AESOC", "AEDECOD"),
+    rowVarTotalInclude = c("AESOC", "AEDECOD"),
+    colVar = "TRTA",
+    stats = getStats("n (%)"),
+    dataTotal = dataTotalAE,
+    labelVars = labelVars,
+    rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
+)
+
+pander(head(summaryTable, 3))
+
 ```	
 
-Please note the presence of the `isTotal` column, which flags the records
+Please note the presence of the **`isTotal` column**, which flags the records
 containing the number of subjects reported in the table header.
 
 ```{r computeSummaryStatisticsTable-isTotal}
 
-	pander(subset(summaryTable, isTotal))
-	
+pander(subset(summaryTable, isTotal))
+
 ```	
 
 ## Export table to the requested format
 
-The table is exported with the requested format (by default `flextable`) with
-the function `exportSummaryStatisticsTable`:
+The table is exported to the requested format with
+the function **`exportSummaryStatisticsTable`**.
 
-* `flextable` format:
+The default exported format is **`flextable`**, which is **suitable for
+Word/PowerPoint** documents.
+
+Alternatevely, a table can be exported as **datatables interactive table for
+html reports**, or as a **data frame in R**.
+
+### Static table for Word/PowerPoint: `flextable` format
+
+By default, the output is a `flextable` object.
+
 ```{r exportSummaryStatisticsTable-flextable}
 
-	exportSummaryStatisticsTable(summaryTable = summaryTable)
-	
+exportSummaryStatisticsTable(summaryTable = summaryTable)
+
 ```	
-* `DT` format:
+
+### Interactive table for html: `DT` format
+
+If the table will be placed in an html document, the `outputType` should be
+equal to `'DT'`.
+
 ```{r exportSummaryStatisticsTable-DT}
 
-	exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "DT")
-	
+exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "DT")
+
 ```	
-* `data.frame` output
+
+### Data frames for R: `data.frame`
+
+If the table should be stored as R object, the the `outputType` may be set
+to `'data.frame'`.
+
+Please note that the exported `data.frame` contains _attributes_ that indicate
+which statistics are used, which row variables/column variables are to be shown
+and how etc.
+
 ```{r exportSummaryStatisticsTable-data.frame}
 
-	pander(
-		exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "data.frame")
-	)
-	
+pander(
+    exportSummaryStatisticsTable(summaryTable = summaryTable, outputType = "data.frame")
+)
+
 ```	
 
 
@@ -164,44 +206,35 @@ related to the treatment and with high severity.
 
 ```{r combineVariables}
 
-	# prepare the data: create grouping of interest
-#	dataAEGroup <- combineVariables(
-#		data = dataAEInterest,
-#		newVar = "AEGRP",
-#		paramsList = list(
-#			# for all screened patients
-#			list(var = "SCRNFL", value = "Y"),
-#			# only for completers patients
-#			list(var = "COMPLFL", value = "Y"),
-#			# for high severity
-#			list(var = "AESEVN", value = 2, fctTest = ">=", labelExtra = "higher than 2"),
-#			# related and with higher severity
-#			list(
-#				exprs = 'AREL == "Related" & AESEVN >= 2',
-#				label = paste(
-#					labelVars["AREL"], 
-#					"with", labelVars["AESEV"], "higher than 2"
-#				)
-#			),
-#			list(var = "AENDY", label = paste("With adverse events ending date"))
-#		),
-#		# include also counts for all records
-#		includeAll = TRUE, labelAll = "All Adverse events", 
-#		labelVars = labelVars
-#	)
-#	labelVars["AEGRP"] <- "Patient groups of interest"
-#	
-#	# create the table
-#	getSummaryStatisticsTable(
-#		data = dataAEGroup,
-#		colVar = "TRTA", 
-#		rowVar = "AEGRP", 
-#		labelVars = labelVars,
-#		dataTotal = dataTotalAE,
-#		stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
-#		title = "Table: Adverse events: counts for groups of interest",
-#		footer = "Statistics: n (%)"
-#	)
+# prepare the data: create grouping of interest
+dataAEGroup <- combineVariables(
+    data = dataAEInterest,
+    newVar = "AEGRP",
+    paramsList = list(
+        # for all screened patients
+        list(var = "TRTA", value = "Xanomeline High Dose"),
+        # for moderate severity
+        list(var = "AESEV", value = "MODERATE", labelExtra = "Moderate"),
+        list(var = "AENDY", label = paste("With adverse events ending date"))
+    ),
+    # include also counts for all records
+    includeAll = TRUE,
+    labelAll = "All Adverse events", 
+    labelVars = labelVars
+)
+labelVars["AEGRP"] <- "Patient groups of interest"
+
+# create the table
+getSummaryStatisticsTable(
+    data = dataAEGroup,
+    colVar = "TRTA", 
+    rowVar = "AEGRP", 
+    labelVars = labelVars,
+    dataTotal = dataTotalAE,
+    stats = list(expression(paste0(statN, " (", round(statPercN, 1), ")"))),
+    title = "Table: Adverse events: counts for groups of interest",
+    footer = "Statistics: n (%)"
+)
 
 ```
 
@@ -211,6 +244,6 @@ related to the treatment and with high severity.
 
 ```{r includeSessionInfo, echo = FALSE}
 
-	pander(sessionInfo())
+pander(sessionInfo())
 
 ```

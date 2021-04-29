@@ -273,6 +273,12 @@ getSummaryStatisticsTable(
 
 ## Data frames for R
 
+The summary statistics table can be stored as R objects.
+
+Note that the exported `data.frame`s contains _attributes_ that indicate which
+statistics are used, which row variables/column variables are to be shown and
+how etc.
+
 ### Final table
 
 The summary statistics data displayed in the final table object can be exported
