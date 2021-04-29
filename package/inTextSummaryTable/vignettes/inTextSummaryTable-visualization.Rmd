@@ -14,6 +14,40 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
+<style>
+.zoomDiv {
+  opacity: 0;
+  position:fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 50;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 50px #888888;
+  max-height:100%; 
+  overflow: scroll;
+}
+
+.zoomImg {
+  width: 100%;
+}
+</style>
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').prepend("<div class=\"zoomDiv\"><img src=\"\" class=\"zoomImg\"></div>");
+    // onClick function for all plots (img's)
+    $('img:not(.zoomImg)').click(function() {
+      $('.zoomImg').attr('src', $(this).attr('src'));
+      $('.zoomDiv').css({opacity: '1', width: '60%'});
+    });
+    // onClick function for zoomImg
+    $('img.zoomImg').click(function() {
+      $('.zoomDiv').css({opacity: '0', width: '0%'});
+    });
+  });
+</script>
+
 ```{r options, echo = FALSE}
 
 library(knitr)
@@ -34,6 +68,9 @@ options(warn = 1)
 
 This vignette focuses on the visualization functionalities available within the
 `inTextSummaryTable` package.
+
+If you need to see figures bigger, just click on a graphic, and it will pop up
+more readable.
 
 Summary statistics can be visualized by:
 
@@ -115,7 +152,8 @@ for `computeSummaryStatisticsTable`.
 dataPlot <- subset(
     summaryTableDf, 
     !isTotal &
-        PARAM == "Alanine Aminotransferase (U/L)"
+        PARAM == "Alanine Aminotransferase (U/L)" &
+        TRTP != "Placebo"
 )
 
 subjectProfileSummaryPlot(
@@ -216,7 +254,6 @@ subjectProfileSummaryPlot(
 
 # custom color palette by setting a named vector of colors
 customColorPalette <- c(
-    Placebo = "grey",
     `Xanomeline Low Dose` = "green",
     `Xanomeline High Dose` = "red"
 )
@@ -301,7 +338,7 @@ Color palettes can be set up with the `inTextSummaryTable.colors.plot` option.
 ```{r visualization-customColorFromOptions}
 
 # custom color palette by setting a simple vector of colors
-customColorPalette <- c("blue", "green", "red")
+customColorPalette <- c("blue", "green")
 options(inTextSummaryTable.colors.plot = customColorPalette)
 
 subjectProfileSummaryPlot(
@@ -316,7 +353,6 @@ subjectProfileSummaryPlot(
 
 # custom color palette by setting a named vector of colors
 customColorPalette <- c(
-    Placebo = "grey",
     `Xanomeline Low Dose` = "green",
     `Xanomeline High Dose` = "red"
 )
@@ -343,7 +379,7 @@ palettes. In this case, the global options are called
 ```{r visualization-customShapeFromOptions}
 
 # custom shape palette
-customShapePalette <- c(15, 17, 19)
+customShapePalette <- c(17, 19)
 options(inTextSummaryTable.shapes.plot = customShapePalette)
 
 subjectProfileSummaryPlot(
@@ -357,7 +393,7 @@ subjectProfileSummaryPlot(
 )
 
 # custom linetype palette
-customLinetypePalette <- c("twodash", "dotted", "longdash")
+customLinetypePalette <- c("dotted", "longdash")
 options(inTextSummaryTable.linetypes.plot = customLinetypePalette)
 
 subjectProfileSummaryPlot(
@@ -434,6 +470,55 @@ subjectProfileSummaryPlot(
     labelVars = labelVars,
     facetVar = c("PARCAT1", "PARAM"),
     useLinetype = TRUE
+)
+
+```
+
+# Other inputs
+
+The `subjectProfileSummaryPlot` has many options! A non-exaustive demonstration
+is presented below.
+
+```{r visualization-otherInputs}
+
+# plot the median instead of mean
+# no error bars
+subjectProfileSummaryPlot(
+    data = dataPlot,
+    xVar = "AVISIT",
+    meanVar = "statMedian",
+    seVar = NULL,
+    colorVar = "TRTP",
+    labelVars = labelVars,
+    useLinetype = TRUE,
+    tableText = "statN",
+    style = "presentation"
+)
+
+# plot the mean with standard deviation
+subjectProfileSummaryPlot(
+    data = dataPlot,
+    xVar = "AVISIT",
+    seVar = "statSD",
+    colorVar = "TRTP",
+    labelVars = labelVars,
+    useLinetype = TRUE,
+    tableText = "statN",
+    style = "presentation"
+)
+
+# change labels
+subjectProfileSummaryPlot(
+    data = dataPlot,
+    xVar = "AVISIT",
+    xLab = "Time points",
+    yLab = "Mean and Standard Errors",
+    title = "Title of the plot",
+    colorVar = "TRTP",
+    labelVars = labelVars,
+    useLinetype = TRUE,
+    tableText = "statN",
+    style = "presentation"
 )
 
 ```

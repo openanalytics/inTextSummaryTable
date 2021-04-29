@@ -137,7 +137,15 @@ vignette("inTextSummaryTable-advanced", "inTextSummaryTable")
 
 # Visualization
 
-[here](../doc/inTextSummaryTable-visualization.html)).
+The `inTextSummaryTable` has also visualization functionalities based on the
+computation of summary statistics. The vignette for visualization is available
+at [this](../doc/inTextSummaryTable-visualization.html)) link or through
+
+```{r getVignetteVisualization, eval = FALSE}
+
+vignette("inTextSummaryTable-visualization", "inTextSummaryTable")
+
+``` 
 
 # Aesthetics
 
