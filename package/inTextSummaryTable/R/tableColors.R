@@ -29,6 +29,11 @@ getColorPaletteTable <- function(style = c("report", "presentation")) {
 }
 
 
+#' Colors for tables in a report style
+#' 
+#' Default colors are black text on a white background.
+#' }
+#' @export
 tableColorsReport <- c(    
     'header'           = "#000000", # black      
     'headerBackground' = "#FFFFFF", # white 
@@ -39,6 +44,15 @@ tableColorsReport <- c(
     'line' 			   = "#000000"
 )
 
+#' Colors for tables in a presentation style
+#' 
+#' Default colors are
+#' \item{
+#' \itemize{header: }{white text on a blue background}
+#' \itemize{body: }{black text on a grey background}
+#' \itemize{footer: }{black text on a white background.}
+#' }
+#' @export
 tableColorsPresentation <- c(     
     # header:
     'header' 					= "#FFFFFF",    # white text
