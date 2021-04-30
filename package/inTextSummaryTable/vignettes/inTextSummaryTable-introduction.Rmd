@@ -149,6 +149,19 @@ vignette("inTextSummaryTable-visualization", "inTextSummaryTable")
 
 # Aesthetics
 
+The `inTextSummaryTable` package allow the user to set global options for the
+color schemes of tables and visualization. The main advantage is that if
+you wish to change the default palettes, it is possible to set your preferences
+only once at the beginning of the R script or Rmd document.
+
+The vignette is available
+via [this](../doc/inTextSummaryTable-visualization.html)) link or
+
+```{r getVignetteAesthetics, eval = FALSE}
+
+vignette("inTextSummaryTable-aesthetics", "inTextSummaryTable")
+
+```
 
 # Appendix
 

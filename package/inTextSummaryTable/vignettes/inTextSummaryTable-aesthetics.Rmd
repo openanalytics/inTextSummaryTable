@@ -14,9 +14,214 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-```{r loadPackages}
+The `inTextSummaryTable` contains functionalities to set palettes up.
 
-    library(inTextSummaryTable)
+The **palettes for visualization are retrieved from the `clinUtils`**
+package, whereas the **palettes for the tables are defined in the
+`inTextSummaryTable`** itself.
+
+Morevoer, **palettes are set through global options**.
+
+This has the main advantage that if you wish to change the default palettes, it
+is possible to set your preferences only once at the beginning of the R script
+or Rmd document.
+
+When loading the package, the global options for palettes get
+automatically defined into the R session. If you wish to change the default
+color scheme, you can apply your preferences by changing the global
+options. 
+
+Below, we present what options are available and how to customize them.
+
+# Available options
+
+The `inTextSummaryTable` package has the following options:
+
+* **`inTextSummaryTable.colors.table.report`**
+
+* **`inTextSummaryTable.colors.table.presentation`**
+
+* **`inTextSummaryTable.colors.plot`**
+
+* **`inTextSummaryTable.shapes.plot`**
+
+* **`inTextSummaryTable.linetypes.plot`**
+
+The options with the wording _table.report_ or _table.presentation_ define the
+color scheme for tables in report or presentation style, respectively.
+
+Instead, the options with _colors.plot_, _shapes.plot_ and
+_linetype.plot_ set up the palettes for the visualization functionalities.
+
+Note that **the options have to be defined after loading the package**. This
+because when loading the package, the default global options for palettes will
+overwrite the custom palettes.
+
+In this way, you can see how the options are visible after loading the package:
+
+```{r aesthetics-showOptions}
+
+library(inTextSummaryTable)
+
+# options for color scheme in reports
+options("inTextSummaryTable.colors.table.report")
+
+# options for color scheme in in presentations
+options("inTextSummaryTable.colors.table.presentation")
+
+# options for colors in plots: viridis palette
+options("inTextSummaryTable.colors.plot")
+
+# options for shapes in plots
+options("inTextSummaryTable.shapes.plot")
+
+# options for linetypes in plots
+options("inTextSummaryTable.linetypes.plot")
+
+```
+
+
+# Options for reporting
+
+By default, the reporting format makes tables with a black text on a white
+background.
+
+On the contrary, the presentation format creates tables with a blue header and
+white text, whereas the body is grey with black text.
+
+Below a demonstration for a dummy data set.
+
+```{r aesthetics-defaultsReporting}
+
+# default report style
+getSummaryStatisticsTable(
+    data = data.frame(USUBJID = c(1, 2)),
+    style = "report" 
+)
+
+# default presentation style
+getSummaryStatisticsTable(
+    data = data.frame(USUBJID = c(1, 2)),
+    style = "presentation" 
+)
+
+```
+
+If you wish to define a personal color scheme, a named vector can be created and
+passed to the `options`, as shown below.
+
+Colors can be provided in hexadecimals or in `rgb` specification. In the
+example we use hexadecimals just for convenience.
+
+Note that the `bodyBackground1` and `bodyBackground2` allow to have alternating
+row colors.
+
+```{r aesthetics-changeReportingOptions}
+
+# create named vector
+customColorTable <- c(
+    # black text in the header
+    'header' = "#000000",
+    # green background in the header
+    'headerBackground' = "#74D055FF",
+    # black text in the body
+    'body' = "#000000", 
+    # yellow background for all rows
+    'bodyBackground1' = "#FDE725FF",
+    'bodyBackground2' = "#FDE725FF",
+    # black footer
+    'footer' = "#000000",
+    # white footer background
+    'footerBackground' = "#FFFFFF",
+    # black line for footer
+    'line' = "#000000"
+)
+# set options
+options(inTextSummaryTable.colors.table.presentation = customColorTable)
+# create the table
+getSummaryStatisticsTable(
+    data = data.frame(USUBJID = c(1, 2)),
+    style = "presentation" 
+)
+
+```
+
+# Options for visualization
+
+The defaults palettes for visualization are retrieved from the `clinUtils`
+package.
+
+If you wish to know more about those palettes, we refer to the vignette of
+`clinUtils` available with 
+
+```{r getVignetteClinUtils, eval = FALSE}
+
+vignette("clinUtils-vignette", "clinUtils")
+
+```
+
+Below a demonstration with a dummy data set.
+
+```{r aesthetics-defaultsVisualization}
+
+# default colors, shapes and linetypes
+summaryTable <- data.frame(
+    visit = c(1, 2, 1, 2), 
+    TRT = c("A", "A", "B", "B"),
+    statMean = rnorm(4)
+)    
+subjectProfileSummaryPlot(
+    data = summaryTable,
+    xVar = "visit", 
+    colorVar = "TRT" 
+)
+
+```
+
+For the visualization, the same spirit of the tables applies. The user can
+specify a vector of colors, shapes or linetypes. The vector do not necessarly
+have to be named.
+
+```{r aesthetics-changeVisualizationOptions}
+
+# specify colors
+options(inTextSummaryTable.colors.plot = c("red", "green"))
+subjectProfileSummaryPlot(
+    data = summaryTable,
+    xVar = "visit", 
+    colorVar = "TRT" 
+)
+
+# specify shape
+options(inTextSummaryTable.shapes.plot = c("circle", "square"))
+subjectProfileSummaryPlot(
+    data = summaryTable,
+    xVar = "visit", 
+    colorVar = "TRT" 
+)
+
+# specify linetypes
+options(inTextSummaryTable.linetypes.plot = c("dotdash", "longdash"))
+subjectProfileSummaryPlot(
+    data = summaryTable,
+    xVar = "visit", 
+    colorVar = "TRT" 
+)
+
+```
+
+# Set back default palettes
+
+There is always to possibility to switch back to the default palettes of the
+package:
+
+```{r aesthetics-backDefaultPalettes}
+
+options(inTextSummaryTable.colors.table.report = tableColorsReport)
+options(inTextSummaryTable.colors.table.presentation = tableColorsPresentation)
+options(inTextSummaryTable.colors.plot = clinUtils::clinColors)
+options(inTextSummaryTable.shapes.plot = clinUtils::clinShapes)
+options(inTextSummaryTable.linetypes.plot = clinUtils::clinLinetypes)
 
 ```
 
@@ -24,19 +229,19 @@ vignette: >
 
 # Page dimensions in report/presentation 
 
-The function `getDimPage` extracts dimensions available for a content in a
-report/presentation, e.g. to specify the maximal width of a figure in a4 report
-or for a presentation.
+The function **`getDimPage`** extracts dimensions available for a content in a
+report or presentation, e.g. to specify the maximal width of a figure in A4
+report or for a presentation.
 
-```{r getDimPage}
+```{r aesthetics-getDimPage}
 
-    # a4 format with one 1 inch margin
-    getDimPage(type = "width", style = "report")
-    getDimPage(type = "height", style = "report")
+# a4 format with one 1 inch margin
+getDimPage(type = "width", style = "report")
+getDimPage(type = "height", style = "report")
 
-    # Presentation format (according to template) with one 1 inch margin
-    getDimPage(type = "width", style = "presentation")
-    getDimPage(type = "height", style = "presentation")
+# Presentation format (according to template) with one 1 inch margin
+getDimPage(type = "width", style = "presentation")
+getDimPage(type = "height", style = "presentation")
 
 ```
 
@@ -46,6 +251,7 @@ or for a presentation.
 
 ```{r includeSessionInfo, echo = FALSE}
 
-	pander(sessionInfo())
+library(pander)
+pander(sessionInfo())
 
 ```

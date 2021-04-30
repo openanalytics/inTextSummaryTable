@@ -38,6 +38,7 @@ In this vignette we focus on exporting tables created with the
 In particular, we will cover
 
 * how to **export tables for specific formats as Word/Powerpoint/Html/R object**
+* how to **make your custom aesthetics**
 * how to **save tables into separated documents**
 * how to set specific **text formatting** (e.g. superscripts/subscripts)
 * how to **filter and split** exported tables.
@@ -355,6 +356,99 @@ Most of the functionalities and default parameters are the same between the
 * for the `flextable` format, by default the row variables and statistics
       are nested:   `rowVarInSepCol` is set to: 'NULL' and the `statsLayout` is
       set to 'row'
+
+# Create custom aesthetics
+
+The `inTextSummaryTable` contains functionalities to set the aesthetics of the
+tables.
+
+Those **aesthetics are set through global options**.
+
+This has the main advantage that if you wish to change the default color scheme,
+it is possible to set your preferences only once at the beginning of the R
+script or Rmd document.
+
+When loading the package, the global options for palettes get automatically
+defined into the R session. If you wish to change the default colors, you
+can apply your preferences by changing the global options. 
+
+The `inTextSummaryTable` package has the following options for table aesthetics:
+
+* **`inTextSummaryTable.colors.table.report`**
+
+* **`inTextSummaryTable.colors.table.presentation`**
+
+Note that **the options have to be defined after loading the package**. This
+because when loading the package, the default global options for palettes will
+overwrite the custom palettes.
+
+As you may have already noticed if you have read the vignette till here, by
+default, the reporting format makes tables with a black text on a white
+background. On the contrary, the presentation format creates tables with a blue
+header and white text, whereas the body is grey with black text.
+
+If you wish to define a personal color scheme, a named vector can be created and
+passed to the `options`, as shown below.
+
+Colors can be provided in hexadecimals or in `rgb` specification. In the example
+we use hexadecimals just for convenience.
+
+Note that the `bodyBackground1` and `bodyBackground2` allow to have alternating
+row colors.
+
+```{r aesthetics-changeReportingOptions}
+
+# create named vector
+customColorTable <- c(
+    # black text in the header
+    'header' = "#000000",
+    # green background in the header
+    'headerBackground' = "#74D055FF",
+    # black text in the body
+    'body' = "#000000", 
+    # yellow background for all rows
+    'bodyBackground1' = "#FDE725FF",
+    'bodyBackground2' = "#FDE725FF",
+    # black footer
+    'footer' = "#000000",
+    # white footer background
+    'footerBackground' = "#FFFFFF",
+    # black line for footer
+    'line' = "#000000"
+)
+# set options
+options(inTextSummaryTable.colors.table.presentation = customColorTable)
+# create the table on a dummy data set
+getSummaryStatisticsTable(
+    data = data.frame(USUBJID = c(1, 2)),
+    style = "presentation" 
+)
+
+```
+
+## Further info on asthetics
+
+For further information about the aesthetics settings of
+the package, a dedicated vignette is available at 
+
+```{r getVignetteAesthetics, eval = FALSE}
+
+vignette("inTextSummaryTable-aesthetics", "inTextSummaryTable")
+
+```
+
+## Set back default palettes
+
+There is always to possibility to switch back to the default palettes of the
+package:
+
+```{r aesthetics-backDefaultPalettes}
+
+options(inTextSummaryTable.colors.table.report = tableColorsReport)
+options(inTextSummaryTable.colors.table.presentation = tableColorsPresentation)
+
+```
+
 
 # Export table to a separated file
 
