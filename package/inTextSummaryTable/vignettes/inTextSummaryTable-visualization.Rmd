@@ -314,7 +314,7 @@ As mentioned above, setting the global options is convenient because the
 palettes have to be set only once in the R script or Rmd document.
 
 Please note that the global options have to be set **after** loading the
-package. This is because when loading the package, the default global options
+package. This because when loading the package, the default global options
 for palettes will overwrite the custom palettes.
 
 Here in practice:
