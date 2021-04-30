@@ -82,9 +82,7 @@ This variable is a factor whose levels are ordered based on the order
 of the condition specified in \code{paramsList}.
 }
 \description{
-This typically converts the data from a wide to a long format,
-a.k.a multiple variables available in multiple columns of the data
-are included into one single column.
+This typically converts the data from a wide to a long format.
 For each variable, a subset of interest based on a condition can be specified.
 }
 \author{

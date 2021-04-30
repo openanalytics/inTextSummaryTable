@@ -1,8 +1,6 @@
 #' Create a data.frame combining a set of records from same or multiple variables.
 #' 
-#' This typically converts the data from a wide to a long format,
-#' a.k.a multiple variables available in multiple columns of the data
-#' are included into one single column.
+#' This typically converts the data from a wide to a long format.
 #' For each variable, a subset of interest based on a condition can be specified.
 #' @param paramsList nested list of parameters, 
 #' specifying how the records of interest should be selected.\cr
