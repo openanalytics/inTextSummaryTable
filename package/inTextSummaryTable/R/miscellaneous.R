@@ -60,7 +60,7 @@ getDimPage <- function(
   pageDimPortrait <- 	if(is.null(pageDim)){
         switch(style,
             'report' = c(21, 29.7)/2.54,
-            'presentation' = c(7.5, 13.32)
+            'presentation' = getOption("inTextSummaryTable.pageDim.presentation")
         )
       } else {
         if(!is.numeric(pageDim))
@@ -82,6 +82,10 @@ getDimPage <- function(
   return(dimPage)
 }
 
+
+#' Page dimension for powerpoints
+#' @export 
+pageDimPresentation <- c(7.5, 10)
 
 #' Get specific attribute from a summaryTable or a list of summaryTables
 #' @param name String with attribute name.
