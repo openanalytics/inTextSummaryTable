@@ -209,6 +209,12 @@ getSummaryStatisticsTable(
 
 The table can also be styled for a **presentation**.
 
+Note that the default dimension of a table printed in a Powerpoint document
+follows the standard 4:3 size (7.5 x 10 inches).
+
+If you wish to set the dimension for a Widescreen document, it is possible to
+set a global option for this. Please, check out the section "Custom aesthetics".
+
 ```{r style-presentation}
 
 getSummaryStatisticsTable(
@@ -357,7 +363,7 @@ Most of the functionalities and default parameters are the same between the
       are nested:   `rowVarInSepCol` is set to: 'NULL' and the `statsLayout` is
       set to 'row'
 
-# Create custom aesthetics
+# Custom aesthetics
 
 The `inTextSummaryTable` contains functionalities to set the aesthetics of the
 tables.
@@ -376,9 +382,16 @@ The `inTextSummaryTable` package has the following options for table aesthetics:
 
 * **`inTextSummaryTable.colors.table.presentation`**
 
+* **`inTextSummaryTable.pageDim.presentation`**
+
+The first option sets custom colors for a table in a presentation mode, the
+last one defines the page dimension of a Powerpoint when exporting a table.
+
 Note that **the options have to be defined after loading the package**. This
 because when loading the package, the default global options for palettes will
 overwrite the custom palettes.
+
+## Colors
 
 As you may have already noticed if you have read the vignette till here, by
 default, the reporting format makes tables with a black text on a white
@@ -421,6 +434,26 @@ getSummaryStatisticsTable(
     data = data.frame(USUBJID = c(1, 2)),
     style = "presentation" 
 )
+
+```
+
+## Dimension of the page
+
+By default, the `inTextSummaryTable` ships with a default PowerPoint in the
+standard 4:3 size (7.5 x 10 inches).
+
+However, it is often common to create a PowerPoint template with **Widescreen
+size** of 16:9 which consistts of 7.50 x 13.32 inches.
+
+Therefore, it possible to accomodate such widescreen size by providing
+
+```{r aesthetics-changeDimPageOptions}
+
+# set custom dimension of page for presentation
+# in this example, the dimension is the widescreen size
+pageDimCustom <- c(7.5, 13.32)
+options(inTextSummaryTable.pageDim.presentation = pageDimCustom)
+getOption("inTextSummaryTable.pageDim.presentation")
 
 ```
 

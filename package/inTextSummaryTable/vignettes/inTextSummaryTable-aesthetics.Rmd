@@ -39,14 +39,17 @@ The `inTextSummaryTable` package has the following options:
 
 * **`inTextSummaryTable.colors.table.presentation`**
 
+* **`inTextSummaryTable.pageDim.presentation`**
+
 * **`inTextSummaryTable.colors.plot`**
 
 * **`inTextSummaryTable.shapes.plot`**
 
 * **`inTextSummaryTable.linetypes.plot`**
 
-The options with the wording _table.report_ or _table.presentation_ define the
-color scheme for tables in report or presentation style, respectively.
+The options with the wording _colors.table.presentation_ and
+_pageDim.presentation_ define the color scheme for tables and
+the dimensions of the page in a presentation, respectively.
 
 Instead, the options with _colors.plot_, _shapes.plot_ and
 _linetype.plot_ set up the palettes for the visualization functionalities.
@@ -77,6 +80,12 @@ options("inTextSummaryTable.linetypes.plot")
 
 
 # Options for reporting
+
+In this section we discuss the options for reporting, namely the
+`inTextSummaryTable.colors.table.presentation` and
+`inTextSummaryTable.pageDim.presentation`.
+
+## Colors
 
 By default, the reporting format makes tables with a black text on a white
 background.
@@ -138,6 +147,29 @@ getSummaryStatisticsTable(
     data = data.frame(USUBJID = c(1, 2)),
     style = "presentation" 
 )
+
+```
+
+## Dimension of the page
+
+By default, the `inTextSummaryTable` ships with a default PowerPoint in the
+standard 4:3 size (7.5 x 10 inches).
+
+However, it is often common to create a PowerPoint template with **Widescreen
+size** of 16:9 which consistts of 7.50 x 13.32 inches.
+
+Therefore, it possible to accomodate such widescreen size by providing
+
+```{r aesthetics-changeDimPageOptions}
+
+# default page dimension of a powerpoint created with Rmd
+getOption("inTextSummaryTable.pageDim.presentation")
+
+# set custom dimension of page for presentation
+# in this example, the dimension is the widescreen size
+pageDimCustom <- c(7.5, 13.32)
+options(inTextSummaryTable.pageDim.presentation = pageDimCustom)
+getOption("inTextSummaryTable.pageDim.presentation")
 
 ```
 
