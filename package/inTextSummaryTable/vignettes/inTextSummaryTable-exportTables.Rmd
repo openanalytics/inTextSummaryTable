@@ -374,8 +374,6 @@ can apply your preferences by changing the global options.
 
 The `inTextSummaryTable` package has the following options for table aesthetics:
 
-* **`inTextSummaryTable.colors.table.report`**
-
 * **`inTextSummaryTable.colors.table.presentation`**
 
 Note that **the options have to be defined after loading the package**. This
@@ -444,7 +442,6 @@ package:
 
 ```{r aesthetics-backDefaultPalettes}
 
-options(inTextSummaryTable.colors.table.report = tableColorsReport)
 options(inTextSummaryTable.colors.table.presentation = tableColorsPresentation)
 
 ```

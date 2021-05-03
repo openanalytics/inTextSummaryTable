@@ -23,9 +23,12 @@ getColorPaletteTable <- function(style = c("report", "presentation")) {
   style <- match.arg(style)
   
   switch(style,
-      'report' = getOption("inTextSummaryTable.colors.table.report"),
+      'report' = tableColorsReport,
       'presentation' = getOption("inTextSummaryTable.colors.table.presentation")
   )
+  
+  # old 'report' = getOption("inTextSummaryTable.colors.table.report")
+  
 }
 
 

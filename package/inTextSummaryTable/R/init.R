@@ -2,7 +2,6 @@
 .onAttach <- function(libname, pkgname) {
   
   # color scheme for tables
-  options(inTextSummaryTable.colors.table.report = tableColorsReport)
   options(inTextSummaryTable.colors.table.presentation = tableColorsPresentation)
   
   # color scheme for plots

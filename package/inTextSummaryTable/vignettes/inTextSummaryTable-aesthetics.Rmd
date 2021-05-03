@@ -37,8 +37,6 @@ Below, we present what options are available and how to customize them.
 
 The `inTextSummaryTable` package has the following options:
 
-* **`inTextSummaryTable.colors.table.report`**
-
 * **`inTextSummaryTable.colors.table.presentation`**
 
 * **`inTextSummaryTable.colors.plot`**
@@ -62,9 +60,6 @@ In this way, you can see how the options are visible after loading the package:
 ```{r aesthetics-showOptions}
 
 library(inTextSummaryTable)
-
-# options for color scheme in reports
-options("inTextSummaryTable.colors.table.report")
 
 # options for color scheme in in presentations
 options("inTextSummaryTable.colors.table.presentation")
@@ -217,7 +212,6 @@ package:
 
 ```{r aesthetics-backDefaultPalettes}
 
-options(inTextSummaryTable.colors.table.report = tableColorsReport)
 options(inTextSummaryTable.colors.table.presentation = tableColorsPresentation)
 options(inTextSummaryTable.colors.plot = clinUtils::clinColors)
 options(inTextSummaryTable.shapes.plot = clinUtils::clinShapes)
