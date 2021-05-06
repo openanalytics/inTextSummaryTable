@@ -1,5 +1,6 @@
 2.23.0
   o subjectProfileSummaryPlot: new parameter: tablePlotMargin
+  o new fct geomSE
 2.22.1
   o unit tests 
 2.22.0
