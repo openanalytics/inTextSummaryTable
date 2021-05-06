@@ -149,7 +149,7 @@ test_that("Compute geometric standard error of the mean", {
 
 test_that("Compute geometric standard error of the mean with missing value", {
 			
-	x <- exp(c(1, 2, 3))
+	x <- exp(c(1, 2, 3, NA_real_))
 	expect_equal(
 		geomSE(x = x, na.rm = FALSE), 
 		NA_real_
