@@ -32,6 +32,7 @@ Other stats utility functions:
 \code{\link{cv}()},
 \code{\link{geomCV}()},
 \code{\link{geomSD}()},
+\code{\link{geomSE}()},
 \code{\link{se}()}
 }
 \author{

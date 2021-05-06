@@ -27,7 +27,8 @@ Other stats utility functions:
 \code{\link{cv}()},
 \code{\link{geomCV}()},
 \code{\link{geomMean}()},
-\code{\link{geomSD}()}
+\code{\link{geomSD}()},
+\code{\link{geomSE}()}
 }
 \author{
 Laure Cougnaud

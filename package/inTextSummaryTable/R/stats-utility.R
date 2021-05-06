@@ -84,7 +84,7 @@ geomMean <- function(x, na.rm = FALSE){
 #' @author Laure Cougnaud
 #' @importFrom stats sd
 #' @examples
-#' # geometric mean of a sample from log normal distribution:
+#' # geometric standard deviation of a sample from a log normal distribution:
 #' geomSD(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
 #' @family stats utility functions
 #' @export
@@ -108,11 +108,32 @@ geomSD <- function(x, na.rm = FALSE){
 #' @author Laure Cougnaud
 #' @importFrom stats sd
 #' @examples
-#' # Geometric mean of a sample from log normal distribution:
+#' # Geometric coefficient of variation of a sample from a log normal distribution:
 #' geomCV(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
 #' @family stats utility functions
 #' @export
 geomCV <- function(x, na.rm = FALSE){
 	res <- sqrt(exp(sd(log(x), na.rm = na.rm)^2)-1)*100
 	return(res)
+}
+
+#' Compute geometric standard error of the mean.
+#' 
+#' The geometric standard error of the mean is computed as:
+#' \eqn{\exp(\se(log(x)}, with:
+#' \itemize{
+#' \item{log: }{natural logarithm}
+#' \item{\eqn{\se}: }{standard error of the mean, as computed with \code{\link{se}}}
+#' }
+#' @inheritParams inTextSummaryTable-stats-utility
+#' @return Numeric vector of length 1 with 
+#' geometric standard error of the mean.
+#' @author Laure Cougnaud
+#' @examples
+#' # Geometric standard error of the mean of a sample from a log normal distribution:
+#' geomSE(rlnorm(n = 1000, meanlog = 0, sdlog = 1))
+#' @family stats utility functions
+#' @export
+geomSE <- function(x, na.rm = FALSE){
+	exp(se(log(x), na.rm = na.rm))
 }
