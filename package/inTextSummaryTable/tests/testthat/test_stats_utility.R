@@ -138,4 +138,27 @@ test_that("Compute geometric coefficient of variation with negative value", {
 			
 })
 
+test_that("Compute geometric standard error of the mean", {
+			
+	x <- exp(c(1, 2, 3))
+	# geomSE is exp of SE of log (x)
+	expect_equal(geomSE(x = x), exp(1/sqrt(3)))
+			
+})
+
+
+test_that("Compute geometric standard error of the mean with missing value", {
+			
+	x <- exp(c(1, 2, 3, NA_real_))
+	expect_equal(
+		geomSE(x = x, na.rm = FALSE), 
+		NA_real_
+	)
+			
+	expect_equal(
+		geomSE(x = x, na.rm = TRUE), 
+		exp(1/sqrt(3))
+	)
+			
+})
 
