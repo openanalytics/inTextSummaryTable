@@ -50,10 +50,10 @@ tableColorsReport <- c(
 #' Colors for tables in a presentation style
 #' 
 #' Default colors are
-#' \item{
-#' \itemize{header: }{white text on a blue background}
-#' \itemize{body: }{black text on a grey background}
-#' \itemize{footer: }{black text on a white background.}
+#' \itemize{
+#' \item{header: }{white text on a blue background}
+#' \item{body: }{black text on a grey background}
+#' \item{footer: }{black text on a white background.}
 #' }
 #' @export
 tableColorsPresentation <- c(     
