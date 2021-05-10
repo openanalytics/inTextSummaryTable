@@ -44,7 +44,7 @@ test_that("Extraction of page dimensions for presentation is correct", {
       
       expect_equal(
           object = getDimPage(type = "width", style = "presentation", margin = 0),
-          expected = 13.32
+          expected = 10
       )
       expect_equal(
           object = getDimPage(type = "height", style = "presentation", margin = 0),
