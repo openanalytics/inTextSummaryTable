@@ -18,6 +18,20 @@ test_that("Conversion of a flag variable", {
       
     })
 
+test_that("Error in extraction of page dimensions", {
+      
+      expect_error(
+          getDimPage(type = "width", pageDim = "ciao"),
+          "'pageDim' should be a numeric vector."
+      )
+      
+      expect_error(
+          getDimPage(type = "width", pageDim = c(10, 2, 3)),
+          "'pageDim' should be of length 2."
+      )
+      
+    })
+
 test_that("Extraction of page dimensions for report is correct", {
       
       expect_equal(
