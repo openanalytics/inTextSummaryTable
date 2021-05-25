@@ -11,6 +11,6 @@ An object of class \code{character} of length 7.
 tableColorsReport
 }
 \description{
-
+Default colors are black text on a white background.
 }
 \keyword{datasets}

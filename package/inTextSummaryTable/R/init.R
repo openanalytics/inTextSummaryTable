@@ -6,8 +6,8 @@
   options(inTextSummaryTable.colors.table.presentation = tableColorsPresentation)
   
   # palettes for plots
-  options(inTextSummaryTable.colors.plot = clinColors)
-  options(inTextSummaryTable.shapes.plot = clinShapes)
-  options(inTextSummaryTable.linetypes.plot = clinLinetypes)
+  options(inTextSummaryTable.colors.plot = clinUtils::clinColors)
+  options(inTextSummaryTable.shapes.plot = clinUtils::clinShapes)
+  options(inTextSummaryTable.linetypes.plot = clinUtils::clinLinetypes)
   
 }
