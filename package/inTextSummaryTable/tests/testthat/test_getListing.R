@@ -172,7 +172,7 @@ test_that("Alternate background color", {
       )
       expect_identical(
           ft$body$content$content$default[[1]]$`shading.color`,
-          NA
+          NA_character_
       )
       
     })
