@@ -3,8 +3,12 @@ Type: Package
 Title: Creation Of In-Text Summary Table
 Version: 3.0.0
 Date: 2021-05-25
-Author: Laure Cougnaud
-Maintainer: Laure Cougnaud <laure.cougnaud@openanalytics.eu>
+Authors@R: c(
+  person(given = "Laure", family = "Cougnaud", role = c("aut", "cre"),
+  email = "laure.cougnaud@openanalytics.eu"),
+  person(given = "Michela", family = "Pasetto", role = "aut",
+  email = "michela.pasetto@openanalytics.eu")
+  )
 Description: Creation of tables of summary statistics or counts for clinical data (for TLFs). 
   These tables can be exported as in-text table (with flextable) to a Clinical Study Report 
   (Word format) or a topline presentation (PowerPoint format), 
