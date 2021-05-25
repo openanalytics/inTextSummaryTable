@@ -41,8 +41,9 @@ In particular, we will cover
 * how to **make your custom aesthetics**
 * how to **save tables into separated documents**
 * how to set specific **text formatting** (e.g. superscripts/subscripts)
-* how to **filter and split** exported tables.
-
+* how to **create multiple tables** at once based on a variable of interest
+* how to **create a listing**
+* how to **filter and split** exported tables
 
 We assume you are already familiar on how to create tables, otherwise we advice
 to first check out the dedicated vignette on how to make tables, available
@@ -80,8 +81,6 @@ dataAll <- dataADaMCDISCP01
 labelVars <- attr(dataAll, "labelVars")
 
 ```
-
-# Create in-text table
 
 This section creates example data sets used below.
 
@@ -710,6 +709,25 @@ summaryTableList <- getSummaryStatisticsTable(
 
 # print the list of tables in the rmarkdown document
 clinUtils::knitPrintListObjects(summaryTableList) 
+
+```
+
+
+# Listing
+
+Listing in a similar format as the in-text summary table is created via the `getListing` function.
+
+```{r getListing}
+
+varsListing <- c("USUBJID", "AEBODSYS", "AEDECOD", "TRTA", 
+	"AESEV", "AESER", "ASTDY", "AENDY")
+dataListing <- subset(dataAE, TRTEMFL == "Y")[, varsListing]
+colnames(dataListing) <- getLabelVar(var = varsListing, labelVars = labelVars)
+getListing(
+	data = dataListing, 
+	title = "Listing of treatment-emergent severe adverse events",
+	includeRownames = FALSE
+)
 
 ```
 

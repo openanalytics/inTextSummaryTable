@@ -1645,8 +1645,6 @@ For example, the patient: '202-4903-03' present a moderate severity for
 headache, and mild severity for the chest injury and fall, but is only counted
 in the once in the table total.
 
-
-
 # Labels
 
 If the data is loaded into R with the `read_haven` of the `haven` package,  or
