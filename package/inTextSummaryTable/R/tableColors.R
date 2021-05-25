@@ -1,6 +1,6 @@
 #' Get color palette for the tables
 #' 
-#' This function get the color palettes for the tables 
+#' This function gets the color palettes for the tables 
 #' specified as global options.
 #' 
 #' By default, the function returns the palette of the package. 
@@ -35,7 +35,6 @@ getColorPaletteTable <- function(style = c("report", "presentation")) {
 #' Colors for tables in a report style
 #' 
 #' Default colors are black text on a white background.
-#' }
 #' @export
 tableColorsReport <- c(    
     'header'           = "#000000", # black      

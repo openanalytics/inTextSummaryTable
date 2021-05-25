@@ -14,7 +14,7 @@ getColorPaletteTable(style = c("report", "presentation"))
 A named vector with hex colors.
 }
 \description{
-This function get the color palettes for the tables 
+This function gets the color palettes for the tables 
 specified as global options.
 }
 \details{
