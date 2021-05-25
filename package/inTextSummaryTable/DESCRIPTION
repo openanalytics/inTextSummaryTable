@@ -1,6 +1,6 @@
 Package: inTextSummaryTable
 Type: Package
-Title: Creation Of In-Text Summary Table
+Title: Creation of in-Text Summary Table
 Version: 3.0.0
 Date: 2021-05-25
 Authors@R: c(

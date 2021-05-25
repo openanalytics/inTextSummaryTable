@@ -35,14 +35,22 @@
 #' @seealso \link{getStats}
 #' @examples 
 #' # default set of statistics (depending if the variable is continuous or categorical)
-#' exampleData <- data.frame(USUBJID = 1 : 4, WEIGHT = c(67, 78, 83, 61), SEX = c("F", "M", "M", "F"), stringsAsFactors = FALSE)
+#' exampleData <- data.frame(
+#'   USUBJID = 1 : 4, 
+#'   WEIGHT = c(67, 78, 83, 61), 
+#'   SEX = c("F", "M", "M", "F"), 
+#'   stringsAsFactors = FALSE
+#' )
 #' getStatsData(data = exampleData, var = c("WEIGHT", "SEX"))
 #' # all set of statistics (depending if the variable is continuous or categorical)
 #' getStatsData(data = exampleData, var = c("WEIGHT", "SEX"), type = "all")
 #' # custom set of statistics for all variables
 #' getStatsData(data = exampleData, var = c("WEIGHT", "SEX"), type = c("n", "%"))
 #' # custom set of statistics, depending on the type of the variable
-#' getStatsData(data = exampleData, var = c("WEIGHT", "SEX"), type = c(cont = "median (range)", cont = "mean (se)", cat = "n (%)"), args = list(cat = list(includeName = FALSE)))
+#' getStatsData(data = exampleData, var = c("WEIGHT", "SEX"), 
+#'   type = c(cont = "median (range)", cont = "mean (se)", cat = "n (%)"), 
+#'   args = list(cat = list(includeName = FALSE))
+#' )
 #' @author Laure Cougnaud
 #' @export
 getStatsData <- function(
@@ -164,7 +172,12 @@ getStatsData <- function(
 #' getStats(c("summary", "median\n(range)"), includeName = FALSE)
 #' 
 #' ## to extract the number of decimals based on a continuous variable (see ?getMaxNDecimals) 
-#' exampleData <- data.frame(USUBJID = 1 : 4, WEIGHT = c(67, 78, 83, 61), SEX = c("F", "M", "M", "F"), stringsAsFactors = FALSE)
+#' exampleData <- data.frame(
+#'   USUBJID = 1 : 4, 
+#'   WEIGHT = c(67, 78, 83, 61), 
+#'   SEX = c("F", "M", "M", "F"), 
+#'   stringsAsFactors = FALSE
+#' )
 #' getStats(type = c('median (range)', 'mean (se)'), x = exampleData$WEIGHT)
 #' # compare with when 'x' is not specified:
 #' getStats(type = c('median (range)', 'mean (se)'))
