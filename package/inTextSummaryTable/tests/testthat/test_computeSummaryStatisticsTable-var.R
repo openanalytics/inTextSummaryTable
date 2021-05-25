@@ -32,7 +32,7 @@ test_that("continuous var specification is successful", {
 
 test_that("categorical var specification is successful", {
       
-      dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = seq.int(5))
+      dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = seq.int(5), stringsAsFactors = TRUE)
       
       sumTableCat <- computeSummaryStatisticsTable(data = dataCat, var = "x")
       expect_s3_class(sumTableCat, "data.frame")

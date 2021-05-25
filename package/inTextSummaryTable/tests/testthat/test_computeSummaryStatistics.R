@@ -39,7 +39,11 @@ test_that("stats for continuous variable (including missing) is correctly comput
 
 test_that("stats for categorical variable (including missing) is correctly computed", {
 			
-	dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = sample(10, 5))
+	dataCat <- data.frame(
+		x = c(NA_character_, "B", "B", "B", "A"), 
+		USUBJID = sample(10, 5),
+		stringsAsFactors = TRUE
+	)
 	statsCat <- computeSummaryStatistics(data = dataCat, var = "x")
 			
 	expect_s3_class(statsCat, "data.frame")
@@ -266,7 +270,7 @@ test_that("summary statistics for empty dataset with categorical variable", {
 	# if variable should not be filtered, 0 counts are returned
 	expect_equal(
 		computeSummaryStatistics(data = emptyData, var = "x", filterEmptyVar = FALSE), 
-		data.frame(variableGroup = c("a", "b"), statN = c(0, 0), statm = c(0, 0))
+		data.frame(variableGroup = c("a", "b"), statN = c(0, 0), statm = c(0, 0), stringsAsFactors = TRUE)
 	)
 	
 	# if variable should not be filtered & total should be included, 0 counts are returned

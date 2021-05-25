@@ -8,7 +8,8 @@ test_that("color variable is specified", {
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
 		TRT = c("A", "A", "B", "B"),
-		statMean = rnorm(4)
+		statMean = rnorm(4),
+		stringsAsFactors = TRUE
 	)	
 	
 	gg <- subjectProfileSummaryPlot(
@@ -100,7 +101,8 @@ test_that("linetype is used", {
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
 		TRT = c("A", "A", "B", "B"),
-		statMean = rnorm(4)
+		statMean = rnorm(4),
+		stringsAsFactors = TRUE
 	)	
 			
 	gg <- subjectProfileSummaryPlot(
@@ -169,7 +171,8 @@ test_that("shape is used", {
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
 		TRT = c("A", "A", "B", "B"),
-		statMean = rnorm(4)
+		statMean = rnorm(4),
+		stringsAsFactors = TRUE
 	)	
 	
 	gg <- subjectProfileSummaryPlot(

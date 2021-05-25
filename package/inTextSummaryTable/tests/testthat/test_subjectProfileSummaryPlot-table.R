@@ -256,7 +256,8 @@ test_that("a color palette is specified", {
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
 		n = sample.int(4),
-		TRT = c("A", "B", "A", "B")
+		TRT = c("A", "B", "A", "B"),
+		stringsAsFactors = TRUE
 	)	
 			
 	colorPalette <- c(A = "red", B = "yellow")
