@@ -54,7 +54,6 @@ test_that("Get number of decimals", {
 
 	x <- 5.1		
 			
-	# example from the Mock SAP phase 2/3
 	expect_equal(
 		object = getNDecimals(x, 
 			useRule = TRUE, rule = "1", 
@@ -83,7 +82,6 @@ test_that("Get number of decimals", {
 
 test_that("Get maximum number of decimals", {
 	
-	# example from the Mock SAP phase 2/3
 	x <- c(5.1, 6.8, 10.2, 80.0, NA_real_)		
 			
 	# nDec based on rule is taken

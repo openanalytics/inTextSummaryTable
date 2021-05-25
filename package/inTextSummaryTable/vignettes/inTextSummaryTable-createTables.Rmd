@@ -517,10 +517,8 @@ These statistics are then available for customization via the `stats` parameter.
 
 ## Number of decimals
 
-By default, the number of decimals is based on the rules specified in the _Mock
-Standard SAP **Phase 2/3**_ (version 1.0)
-
-The detailed rules are available in the section _Statistics formatting_ in:
+The detailed rules for the number of decimals for the statistics
+are described in the section _Statistics formatting_ in:
 
 ```{r getHelpStats3, eval = FALSE}
 
@@ -535,12 +533,11 @@ table, the statistics are formatted in the `stats` parameter.
 
 #### Categorical variable
 
-According to the Mock SAP, the counts of number of subjects is reported without
-decimals. The number of decimals for the percentages is specified below:
+The percentages are formatted by default as specified in the table below.
 
-```{r nDecimals-catVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables<br>"}
+```{r nDecimals-catVar, echo = FALSE, fig.cap = "Standard Layout for Frequency Tabulations of Categorical Variables<br>"}
 
-include_graphics("./images/nDecimals_catVar_SAP_phase23.png")
+include_graphics("./images/nDecimals_catVar.png")
 
 ```
 
@@ -562,13 +559,12 @@ above:
 
 #### Continuous variable {#numberDecimalsContinuousVariable}
 
-The number of decimals for individual values is based on the Mock SAP (see
-tables below) unless the number of digits in the database is lower. In this
-case, the resolution of the specified values is used.
+The number of decimals for statistics based on a continuous variable is by default
+as specified in the tables below.
 
-```{r nDecimals-numVar-SAP-phase23, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables<br>"}
+```{r nDecimals-numVar, echo = FALSE, fig.cap = "Standard Layout for Descriptive Statistics of Continuous Variables<br>"}
 
-include_graphics("./images/nDecimals_numVar_SAP_phase23.png")
+include_graphics("./images/nDecimals_numVar.png")
 
 ```
 
@@ -589,8 +585,8 @@ of decimals for a continuous variable is determined by:
 2. Taking the **maximum number of decimals** across all individual values via
    the `getMaxNDecimals` function, which is used as 'base' number of decimals
    considered for the summary statistics
-3. The actual number of decimals for each statistic is extracted (based on the
-   Mock TLFs) by adding to the 'base' number of decimals:
+3. The actual number of decimals for each statistic is extracted 
+by adding to the 'base' number of decimals:
     + **0 extra decimal for the minimum, maximum**
     + **1 extra decimal for the mean, median, sd**
     + **2 extra decimals for SE**

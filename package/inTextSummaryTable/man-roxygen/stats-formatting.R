@@ -7,7 +7,7 @@
 #' \itemize{
 #' \item{if the number of decimals (\code{nDecCont}) is specified: }{
 #' \cr statistics are rounded with the following number of decimals,
-#' based on the \emph{Mock Standard SAP Phase 2/3 (version 1.0)}:
+#' based on:
 #' \itemize{
 #' \item{'Min', 'Max': }{\code{nDecCont}}
 #' \item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
