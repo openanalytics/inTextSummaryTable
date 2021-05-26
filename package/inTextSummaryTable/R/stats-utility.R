@@ -120,10 +120,10 @@ geomCV <- function(x, na.rm = FALSE){
 #' Compute geometric standard error of the mean.
 #' 
 #' The geometric standard error of the mean is computed as:
-#' \eqn{\exp(\se(log(x)}, with:
+#' \eqn{\exp(se(log(x)}, with:
 #' \itemize{
 #' \item{log: }{natural logarithm}
-#' \item{\eqn{\se}: }{standard error of the mean, as computed with \code{\link{se}}}
+#' \item{\eqn{se}: }{standard error of the mean, as computed with \code{\link{se}}}
 #' }
 #' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with 
