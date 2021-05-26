@@ -1,6 +1,6 @@
 library(covr)
 pc <- package_coverage(
-    path = "~/git/GLPGInTextSummaryTable/package/inTextSummaryTable",
+    path = "~/git/inTextSummaryTable/package/inTextSummaryTable",
     type = "tests", quiet = FALSE, clean = FALSE
 )
 report(x = pc,
