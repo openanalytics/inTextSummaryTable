@@ -1,4 +1,4 @@
-2.22.0.999
+3.0.0
   o get palettes from 'clinUtils'
   o rename 'getFlextable' into 'getListing'
   o add 'getDimPage'
@@ -72,14 +72,14 @@
   o include unit tests
   o computeSummaryStatisticsTable: fix when dataTotalPerc is specified but not rowVarTotalPerc
   o roundCustomText: remove fix if digits is NA
-  o updates for glpgUtilityFct 2.0.0
+  o updates for utility pck 2.0.0
   o internal functions: convertVarFlag
   o fix error colVar -> colVarTotal in dataTotal
   o extend 'file' parameter to export to all outputType
   o computeSummaryStatistics: fix when no cat group is empty and statsExtra is specified
 2.16.0
-  o change imports of color palette from 'glpgUtilityFct' to 'glpgStyle'
-  o change GLPG flextable from glpgStyle to glpgUtilityFct
+  o change imports of color palette from utility to style pkg
+  o change flextable from style to utility pkg
   o exportSummaryStatisticsTable: specify rowVarLab for DT output
   o getStatsData: type and extra args for getStats for cat or cont variable separately
   o same default for rowVarInSepCol (NULL) for DT and flextable output
@@ -147,7 +147,7 @@
     o rowVarInSepCol default: NULL for flextable, rowVar otherwise
     o outputType: 'data.frame-base'
     o fix when one statistic and statistics in columns
-    o parameters can be passed to the toDTGLPG function
+    o parameters can be passed to the toDT function
     o DT output: numeric column if present (for filter box)
 2.3.1
     o getStatisticsSummaryStatisticsTable: stats: support simple list by variable
@@ -175,7 +175,7 @@
     o subjectProfileSummaryPlot: fix facet specification
     o internal functions
 1.8.0
-    o GLPG flextable functions moved to the glpgStyle package
+    o flextable functions moved to the style pkg
 1.7.0
     o computeSummaryStatisticsTable: varIncludeTotal -> varTotalInclude, possibility to include total only for a variable
     o computeSummaryStatisticsTable: varTotalInSepRow new parameter
@@ -183,7 +183,7 @@
     o getStats: median\n(range) and includeName
     o vignette: update demographic table + add example summary adverse events table
 1.6.0
-    o example datasets moved to the glpgUtilityFct package   
+    o example datasets moved to the utility pkg
     o roundCustom -> roundCustomText 
 1.5.0
     o convertSummaryStatisticsTableToFlextable: title for each element of byVar
@@ -195,7 +195,7 @@
     o computeSummaryStatisticsTable: rowOrderCatLast
     o convertSummaryStatisticsTableToFlextable: doesn't merge rows with different padding (e.g. row header and row content)
     o formatSummaryStatisticsTable: rowVarFormat (to include row variable in bold)
-    o getGLPGFlextable: set top/bottom padding to 0
+    o get[]Flextable: set top/bottom padding to 0
 1.2.1
     o getNDecimals: fix when NA value, new: getMaxNDecimals
     o convertSummaryStatisticsTableToFlextable: format superscript/subscript in title
@@ -253,7 +253,7 @@
     o computeSummaryStatisticsTable: support combine use of colTotalInclude with rowTotalInclude or rowSubtotalInclude
     o new parameter: style
     o convertSummaryStatisticsTableToFlextable: format superscript inside table to flextable
-    o new function: getGLPGFlextable
+    o new function: get[]Flextable
     o subjectProfileSummaryPlot: xAxisLabs, byVar, table, hLine
     o [row|col]VarDataLevels
     o re-label all statistics with 'stat' and attributes in 'summaryTable' slot
