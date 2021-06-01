@@ -9,10 +9,10 @@ Authors@R: c(
   person(given = "Michela", family = "Pasetto", role = "aut",
   email = "michela.pasetto@openanalytics.eu")
   )
-Description: Creation of tables of summary statistics or counts for clinical data (for TLFs). 
-  These tables can be exported as in-text table (with flextable) to a Clinical Study Report 
-  (Word format) or a topline presentation (PowerPoint format), 
-  or as interactive table (with DT::datatable) to an html document for clinical data review.
+Description: Creation of tables of summary statistics or counts for clinical data (for 'TLFs'). 
+  These tables can be exported as in-text table (with the 'flextable' package) for a Clinical Study Report 
+  (Word format) or a 'topline' presentation (PowerPoint format), 
+  or as interactive table (with the 'DT' package) to an html document for clinical data review.
 Imports:
   clinUtils,
   cowplot,
