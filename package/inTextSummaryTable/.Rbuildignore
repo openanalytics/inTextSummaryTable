@@ -1,4 +1,8 @@
 figures_vignette
 man-roxygen
+^tests/testthat/.*\.html
+^tests/testthat/.*\.docx
+tables_CSR
+
 
 

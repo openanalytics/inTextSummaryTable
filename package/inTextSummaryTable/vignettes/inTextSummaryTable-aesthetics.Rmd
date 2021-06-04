@@ -14,13 +14,31 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
+```{r options, echo = FALSE}
+
+library(knitr)
+opts_chunk$set(
+    echo = TRUE, results = 'markup', warning = FALSE, 
+    # stop document execution if error (not the default)
+    error = FALSE, 
+    message = FALSE, cache = FALSE,
+    fig.width = 4, fig.height = 4,
+    fig.path = "./figures_vignette/",
+    fig.align = 'center')
+options(width = 170)
+# instead of warn = 0 by default
+# include warnings when they occur in the document
+options(warn = 1)
+
+```
+
 The `inTextSummaryTable` contains functionalities to set palettes up.
 
 The **palettes for visualization are retrieved from the `clinUtils`**
 package, whereas the **palettes for the tables are defined in the
 `inTextSummaryTable`** itself.
 
-Morevoer, **palettes are set through global options**.
+Moreover, **palettes are set through global options**.
 
 This has the main advantage that if you wish to change the default palettes, it
 is possible to set your preferences only once at the beginning of the R script

@@ -166,12 +166,6 @@ specific variable (in case multiple variables are specified) to indicate that
 categories with 0 counts should be included.
 
 ```{r count-categories-empty-2}
-
-	dataSLExample <- dataSL
-	
-	# 'SEX' formatted as character with only male
-	dataSLExample$SEX <- "M" # only male
-	getSummaryStatisticsTable(data = dataSLExample, var = "SEX")
 	
 	# 'SEX' formatted as factor, to include also female in the table
 	# (even if not available in the data)
@@ -185,16 +179,16 @@ categories with 0 counts should be included.
 
 ### Count table for 'flag'-variables
 
-A specific type of categorical variable is a **flag variable**, which indicates
-if a record fulfillss a specific criteria.
+A specific type of categorical variable is a **'flag variable'**, which indicates
+if a record fulfills a specific criteria.
 
-Such variable typically includes in the data: 
+Such variable is typically formatted in the data as: 
 
 * 'Y' if the criteria is met for the specific record
 * 'N' if the criteria is not fulfilled for the specific record
 * '' if the criteria is missing for this record
 
-The name of such variable typically ends with **'FL'** in CDISC-compliant _ADaM_
+The name of such variable typically ends with **'FL'** in a CDISC-compliant _ADaM_
 or _SDTM_ dataset.
 
 For example, the subject-level dataset contains the following flag variables:
@@ -202,8 +196,8 @@ For example, the subject-level dataset contains the following flag variables:
 ```{r flag-variables}
 
     labelVars[grep("FL$", colnames(dataSL), value = TRUE)]
-    # does the subject belong to the safety analysis set?
-    dataSL$SAFFL
+    # has the subject discontinued from the study?
+    dataSL$DISCONFL
 
 ```
 
@@ -253,7 +247,7 @@ should be set to `TRUE` (or to the specific variable).
 For a **continuous variable**, the in-text table displays **standard
 distribution statistics** of the variable.
   
-Please note that **missing records for the variable are filtered**, so the
+Please note that **missing records (NA) for the variable are filtered**, so the
 **count statistics** (number of subjects, records, percentage) are based **only
 on the non missing records**.
   
@@ -275,7 +269,7 @@ The table can contain a mix of categorical and continuous variables.
 
 	getSummaryStatisticsTable(
 		data = dataSL, 
-		var = c("AGE", "HEIGHTBL", "WEIGHTBL", "BMIBL", "RACE", "SEX")
+		var = c("AGE", "SEX")
 	)
 
 ```
@@ -286,7 +280,8 @@ Statistics of interest and their format are specified via the **`stats`
 parameter**.
 
 If an unique statistic expression is specified, the 'Statistic' column doesn't
-appear in the table. In case multiple statistics are specified, these are
+appear in the table.  
+In case multiple statistics are specified, these are
 included as separated row.
 
 ## Standard statistic set
@@ -294,8 +289,8 @@ included as separated row.
 A standard set of statistics is specified via specific tags to be passed to the
 `stats` function.
 
-The list of available statistics is mentioned in the section _Formatted
-statistics_ in:
+The list of available statistics is mentioned in the section '_Formatted
+statistics_' in:
 
 ```{r getHelpStats, eval = FALSE}
 
@@ -303,11 +298,11 @@ statistics_ in:
 
 ```
 
-Please see below examples of commonly used statistics:
+Please see below examples of commonly used statistics.
 
-```{r stats}
+### Categorical table
 
-	## count table:
+```{r stats-count}
 
 	# count: n, '%' and m
 	getSummaryStatisticsTable(
@@ -329,6 +324,12 @@ Please see below examples of commonly used statistics:
 		var = "SEX",
 		stats = "n/N (%)"
 	)
+	
+```
+
+### Continuous variable
+
+```{r stats-numeric}
 	
 	## continuous variable
 	
@@ -359,6 +360,13 @@ Please see below examples of commonly used statistics:
 		var = "AGE",
 		stats = "mean (se)"
 	)
+	
+	# mean (sd)
+	getSummaryStatisticsTable(
+		data = dataSL,
+		var = "AGE",
+		stats = "mean (sd)"
+	)
 
 ```
 
@@ -368,7 +376,7 @@ To change the formatting of the statistics, the `stats` parameter should contain
 a language object (e.g. `expression` or `call`) of the default base set of
 statistics.
 
-See the documentation in section _Base statistics_ for more details on the base
+See the documentation in section '_Base statistics_' for more details on the base
 statistics included by default, via:
 
 ```{r getHelpStats2, eval = FALSE}
@@ -407,7 +415,7 @@ The summary statistics table is restricted to the median and range:
 
 ```
 
-Note that the [Standard statistics set] is formatted internally via the
+Note that the 'Standard statistics set' is formatted internally via the
 `getStatsData` (and `getStats`) functions, which creates consistently a list of
 `language` objects.
 
@@ -513,7 +521,21 @@ These statistics are then available for customization via the `stats` parameter.
 		stats = list(Mean = expression(statMean), 'CV%' = expression(statCVPerc))
 	)
 
+
 ```
+
+## Rounding strategy
+
+Please note that all statistics are rounded by default 
+in the package based on the 
+**'rounding up' strategy for rounding off a 5**, 
+which **differs from the default rounding strategy in R** (`round` function).
+
+This was a deliberate choice to reproduce summarized statistics 
+created with the SAS software.
+
+Please find more explanations in the documentation of the 
+`? roundHalfUp` and `? roundHalfUpTextFormat` functions.
 
 ## Number of decimals
 
@@ -632,10 +654,6 @@ parameter.
 	)
 
 ```
-
-Notes: by default the `round` function in R rounds the number to the even number
-in case of 0.5. The `roundHalfUpTextFormat` function rounds to the closest
-digit.
 
 ### Custom `stats` function (Advanced)
 
@@ -775,16 +793,20 @@ The adverse events dataset is used for demonstration.
 ```{r countTable-AE-data}
 				
 	dataAE <-  subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
-	dataAEInterest <- subset(dataAE, AESOC %in% c(
-            "INFECTIONS AND INFESTATIONS",
-            "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
-            )
-    )
-
+	
 	# ensure that order of elements is the one specified in 
 	# the corresponding numeric variable
-    dataAEInterest$TRTA <- reorder(dataAEInterest$TRTA, dataAEInterest$TRTAN)
-	dataAEInterest$AESEV <- factor(dataAEInterest$AESEV, levels = c("MILD", "MODERATE"))
+	dataAE$TRTA <- with(dataAE, reorder(TRTA, TRTAN))
+	dataAE$AESEV <- factor(
+		dataAE$AESEV, 
+		levels = c("MILD", "MODERATE", "SEVERE")
+	)
+	
+	dataAEInterest <- subset(dataAE, AESOC %in% c(
+		"INFECTIONS AND INFESTATIONS",
+        "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
+       )
+    )
 
 ```
 
@@ -1128,15 +1150,19 @@ default in rows**.
 
 ```{r summaryTable-layout-var}
 
-	dataDIABP <- subset(dataAll$ADVS, SAFFL == "Y" & ANL01FL == "Y")
-    dataDIABP <- subset(dataDIABP, PARAMCD == "DIABP" & ATPT == "AFTER LYING DOWN FOR 5 MINUTES")
+    dataDIABP <- subset(dataAll$ADVS, 
+		SAFFL == "Y" & ANL01FL == "Y" &
+		PARAMCD == "DIABP" & 
+		AVISIT %in% c("Baseline", "Week 8") &
+		ATPT == "AFTER LYING DOWN FOR 5 MINUTES"
+	)
     dataDIABP$TRTA <- reorder(dataDIABP$TRTA, dataDIABP$TRTAN)
     dataDIABP$AVISIT <- reorder(dataDIABP$AVISIT, dataDIABP$AVISITN)
     
 	getSummaryStatisticsTable(
 		data = dataDIABP,
-		var = c("AVAL", "CHG", "PCHG"),
-		colVar = c("TRTA"),
+		var = c("AVAL", "CHG"),
+		colVar = "TRTA",
 		rowVar = "AVISIT",
 		labelVars = labelVars,
 		stats = getStats("summary-default")
@@ -1152,20 +1178,15 @@ included in different columns by including the specific label: 'variable' in
 types (e.g. all numeric variables).
 
 ```{r summaryTable-layout-varInColumn}
-
-    dataDIABP <- subset(dataAll$ADVS, SAFFL == "Y" & ANL01FL == "Y")
-    dataDIABP <- subset(dataDIABP, PARAMCD == "DIABP" & ATPT == "AFTER LYING DOWN FOR 5 MINUTES")
-    dataDIABP$TRTA <- reorder(dataDIABP$TRTA, dataDIABP$TRTAN)
-    dataDIABP$AVISIT <- reorder(dataDIABP$AVISIT, dataDIABP$AVISITN)
     
-	getSummaryStatisticsTable(
-		data = dataDIABP,
-		var = c("AVAL", "CHG", "PCHG"),
-		colVar = c("variable", "TRTA"),
-		rowVar = "AVISIT",
-		labelVars = labelVars,
-		stats = getStats("summary-default")
-	)
+getSummaryStatisticsTable(
+	data = dataDIABP,
+	var = c("AVAL", "CHG"),
+	colVar = c("variable", "TRTA"),
+	rowVar = "AVISIT",
+	labelVars = labelVars,
+	stats = getStats("summary-default")
+)
 
 ```
 
@@ -1194,7 +1215,7 @@ the parameter `varLabInclude` should be set to TRUE.
 
 ```
 
-## Inclusion of the count per group in case of missing values
+## Inclusion of the counts per group in case of missing values
 
 It might be of interest to display the counts of all subjects per row/column
 variable in association of the summary statistic of a variable of interest.
@@ -1227,7 +1248,8 @@ The summary table contains **different types of total**:
 
 * total used for the **percentage computation** displayed in the table.  
 For example: report percentage of subjects with specific adverse event.
-* total reported in the **column header** Typically: total number of subjects
+* total reported in the **column header**  
+For example: total number of subjects
   for a specific treatment arm.
 * **total across rows**, reported in the row header   
 For example: to report percentage of subjects with adverse events in a specific
@@ -1244,18 +1266,15 @@ total.
 The different types of total of the summary table are summarized below:
 
 | Type | Inclusion in the table |  Dataset: parameter name | Dataset: default | 
-|---|---|---|---| | Total in the column header | Yes by default <br/> removed if
-`colHeaderTotalInclude = FALSE`| `dataTotal` | `data` for table content <br/>
-`dataTotalCol` for total column| | Total for the percentage | Only if percentage
-requested in `stats` | `dataTotalPerc` | `dataTotal` for table content <br/>
-`dataTotalCol` for total column <br/> (for 'total' if specified as a list)| |
-Total across rows | Not by default <br/> for specified row variable with
-`rowVarTotalInclude` | `dataTotalRow`  | `data` for table content <br/>
-`dataTotalCol` for total column <br/> (for 'total' if specified as a list) | |
-Total across columns | Not by default <br/> only if `colTotalInclude = TRUE` |
-`dataTotalCol` | `data` |
+|---|---|---|---| 
+| Total in the column header | Yes by default <br/> removed if `colHeaderTotalInclude = FALSE`| `dataTotal` | `data` for table content <br/>`dataTotalCol` for total column| 
+| Total for the percentage | Only if percentage requested in `stats` | `dataTotalPerc` | `dataTotal` for table content <br/> `dataTotalCol` for total column <br/> (for 'total' if specified as a list)| 
+|Total across rows | Not by default <br/> for specified row variable with `rowVarTotalInclude` | `dataTotalRow`  | `data` for table content <br/> `dataTotalCol` for total column <br/> (for 'total' if specified as a list) | 
+|Total across columns | Not by default <br/> only if `colTotalInclude = TRUE` | `dataTotalCol` | `data` |
 
 ## Total for the column header
+
+### Current datasset
 
 By default, the total reported in the total header is extracted from the
 **available number of subjects** in the input `data`.
@@ -1267,7 +1286,7 @@ the subject-level (`ADSL`) dataset.
 	
 	# by default, total number of subjects extracted from data
 	getSummaryStatisticsTable(
-		data = dataAEInterest,
+		data = subset(dataAEInterest, AESOC == "INFECTIONS AND INFESTATIONS"),
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTA",
 		stats = getStats("n (%)"),
@@ -1279,7 +1298,7 @@ the subject-level (`ADSL`) dataset.
 	
 ```
 
-### Dataset
+### External dataset
 
  If the total should be extracted from a **different dataset**,  it should be
 specified via the **`dataTotal`** variable.  Please note that by default
@@ -1288,12 +1307,12 @@ specified via the **`dataTotal`** variable.  Please note that by default
 ```{r header-total-dataTotal}	
 	
 	# dataset used to extract the 'Total'
-	dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Placebo")
+	dataTotalAE <- subset(dataAll$ADSL, SAFFL == "Y")
 	# should contain columns specified in 'colVar'
 	dataTotalAE$TRTA <- dataTotalAE$TRT01A 
 
 	getSummaryStatisticsTable(
-		data = dataAEInterest,
+		data = subset(dataAEInterest, AESOC == "INFECTIONS AND INFESTATIONS"),
 		rowVar = c("AESOC", "AEDECOD"),
 		colVar = "TRTA",
 		stats = getStats("n (%)"),
@@ -1314,7 +1333,7 @@ displayed if `colHeaderTotalInclude` is set to FALSE.
 ```{r header-total-colHeaderTotalInclude}
 
 	getSummaryStatisticsTable(
-		data = dataAEInterest,
+		data = subset(dataAEInterest, AESOC == "INFECTIONS AND INFESTATIONS"),
 		rowVar = c("AESOC", "AEDECOD"),
 		rowVarTotalInclude = "AEDECOD",
 		rowVarTotalInSepRow = "AEDECOD",
@@ -1340,7 +1359,7 @@ via the **`dataTotalPerc`** parameter.
 ```{r dataTotalPerc}
 
     getSummaryStatisticsTable(
-	    data = dataAEInterest,
+	    data = subset(dataAEInterest, AESOC == "INFECTIONS AND INFESTATIONS"),
 	    rowVar = c("AESOC", "AEDECOD"),
 	    colVar = "TRTA",
 	    stats = getStats("n (%)"),
@@ -1363,47 +1382,47 @@ If the total number of subjects differ between the components of the table, the
 extra row/column(s) variable(s) are specified via
 `colVarTotalPerc`/`rowVarTotalPerc`.
 
-For example, in the table of shift of worst-case laboratory abnormalities: the
+For example, in a table of laboratory measurements per reference range
+(laboratory abnormalities): the
 total number of subjects for the computation of the percentage are extracted
-based on the number of subjects with available post-dose measurements **per
-laboratory parameter**.
+based on the number of subjects with available measurements per visit.
 
 ```{r rowVarTotalPerc}
 
-	dataLB <- subset(dataAll$ADLBC, SAFFL == "Y" & PARAMCD %in% c("CL", "ALB"))
+	dataLB <- subset(dataAll$ADLBC, 
+		SAFFL == "Y" & 
+		PARAMCD %in% c("K", "CHOL") &
+		grepl("(Baseline)|(Week 20)", AVISIT)
+	)
+	dataLB$AVISIT <- with(dataLB, reorder(trimws(AVISIT), AVISITN))
 	
-	dataLBWC <- subset(dataLB, AVISIT == "Worst-case post-baseline")
-
-	# data considered for the total
-	dataLBPostBaseline <- subset(dataLB, ! grepl("Baseline|End of Treatment", AVISIT))
-#	
-#	# post-baseline measurements  are not available for all subjects 
-#	kable(aggregate(USUBJID ~ PARAM + TRTA, data = dataLBPostBaseline, function(x) length(unique(x))))
-#	
-#	# by default, the same total number of subjects 
-#	# per treatment is used across all rows/parameters
-#	getSummaryStatisticsTable(
-#		data = dataLBWC,
-#		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
-#		stats = getStats("n (%)"),
-#		emptyValue = 0, rowAutoMerge = FALSE,
-#		dataTotal = dataLBPostBaseline
-#	)
-#	
-#	# percentage based on total number of subjects with available
-#	# post-baseline measurements PER parameter:
-#	getSummaryStatisticsTable(
-#		data = dataLBWC,
-#		colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
-#		stats = getStats("n (%)"),
-#		emptyValue = 0, rowAutoMerge = FALSE,
-#		# total for column header
-#		dataTotal = dataLBPostBaseline, 
-#		dataTotalPerc = dataLBPostBaseline,
-#		rowVarTotalPerc = "PARAM"
-#	)
+	# counts versus the total per actual treatment arm
+	getSummaryStatisticsTable(
+		data = dataLB,
+		colVar = "TRTA", 
+		rowVar = c("PARAM", "AVISIT"), 
+		var = "LBNRIND",
+		stats = getStats("n (%)"),
+		rowAutoMerge = FALSE, emptyValue = "0",
+	)
+	
+	# percentage based on total number of subjects with available
+	# measurement at specific visit for each parameter
+	getSummaryStatisticsTable(
+		data = dataLB,
+		colVar = "TRTA", 
+		rowVar = c("PARAM", "AVISIT"), 
+		rowVarTotalPerc = c("PARAM", "AVISIT"),
+		var = "LBNRIND",
+		stats = getStats("n (%)"),
+		rowAutoMerge = FALSE, emptyValue = "0",
+	)	
 	
 ```
+
+Please note the different percentage for the number of patients
+with normal cholesterol measurements at week 20 between
+the two tables.
 
 ### Percentage of the number of records
 
@@ -1417,17 +1436,16 @@ range and parameter:
 
 ```{r statsPerc}
 
-#getSummaryStatisticsTable(
-#	data = dataLBWC,
-#	colVar = "TRTA", rowVar = "PARAM", var = "SHIFT1",
-#	stats = getStats("m (%)"), statsPerc = "statm",
-#	emptyValue = 0, rowAutoMerge = FALSE,
-#	rowVarTotalPerc = "PARAM",
-#	# total for column header
-#	dataTotal = dataLBPostBaseline,
-#	# total for the percentage
-#	dataTotalPerc = dataLBPostBaseline
-#)
+getSummaryStatisticsTable(
+	data = dataLB,
+	colVar = "TRTA", 
+	rowVar = c("PARAM", "AVISIT"), 
+	rowVarTotalPerc = c("PARAM", "AVISIT"),
+	var = "LBNRIND", 
+	stats = getStats("m (%)"),
+	statsPerc = "statm",
+	rowAutoMerge = FALSE, emptyValue = "0",
+)
 
 ```
 
@@ -1492,19 +1510,19 @@ are considered in the total column:
 
 ```{r dataTotalCol}
 
-#	getSummaryStatisticsTable(
-#		data = subset(dataAEInterest, grepl("High dose", TRTA)),
-#		rowVar = c("AESOC", "AEDECOD"),
-#		colVar = "TRTA",
-#		colTotalInclude = TRUE, colTotalLab = "Placebo and treatment arm",
-#		dataTotalCol = dataAEInterest,
-#		stats = getStats("n (%)"),
-#		rowVarLab = c(
-#			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
-#		),
-#		dataTotal = dataTotalAE,
-#		labelVars = labelVars
-#	)
+	getSummaryStatisticsTable(
+		data = subset(dataAEInterest, grepl("High Dose", TRTA)),
+		rowVar = c("AESOC", "AEDECOD"),
+		colVar = "TRTA",
+		colTotalInclude = TRUE, colTotalLab = "Placebo and treatment arm",
+		dataTotalCol = dataAEInterest,
+		stats = getStats("n (%)"), emptyValue = "0",
+		rowVarLab = c(
+			'AESOC' = "TEAE by SOC and Preferred Term\nn (%)"
+		),
+		dataTotal = dataTotalAE,
+		labelVars = labelVars
+	)
 
 ```
 
@@ -1588,62 +1606,57 @@ A different dataset considered for the row total is specified via the
 Different datasets can also be specified for each row variable separately (via a
 named list).
 
-For example, in the worst-case treatment-emergent adverse events table, the
-total per SOC and across SOCs should count the patient once per severity class.
+For example, the worst-case severity per adverse event, per and across
+system organ classes are displayed in the table below.
 
 ```{r dataTotalRow}
 
-	dataTEAEInterest <- subset(
-		dataAll$ADAE, 
-        SAFFL == "Y" & TRTEMFL == "Y" &
-		grepl("Injury, poisoning and procedural complications|Nervous system disorders", AESOC, ignore.case = TRUE)
-	)
-
-	# extract worst-case scenario data (only one record if multiple with same severity)
-	dataTEAEInterestWC <- ddply(dataTEAEInterest, c("AEDECOD", "USUBJID", "TRTA"), function(x){
+	dataAEInterest$AESEVN <- as.numeric(dataAEInterest$AESEV)
+	
+	# compute worst-case scenario per subject*AE term*treatment
+	dataAEInterestWC <- ddply(dataAEInterest, c("AESOC", "AEDECOD", "USUBJID", "TRTA"), function(x){
 		x[which.max(x$AESEVN), ]
 	})
-	kable(ddply(dataTEAEInterestWC[, c("USUBJID", "TRTA", "AESOC", "AEDECOD", "AESEV")], "USUBJID"), split.tables = Inf)
 
 	## datasets used for the total: 
 	# for total: compute worst-case across SOC and across AE term
 	# (otherwise patient counted in multiple categories if present different categories for different AEs)
 	dataTotalRow <- list(
-		# within SOC (across AEDECOD)
-		'AEDECOD' = ddply(dataTEAEInterestWC, c("AESOC", "USUBJID", "TRTA"), function(x){	
+		# within visit (across AEDECOD)
+		'AEDECOD' = ddply(dataAEInterest, c("AESOC", "USUBJID", "TRTA"), function(x){	
 			x[which.max(x$AESEVN), ]
 		}),
-		# across SOC
-		'AESOC' = ddply(dataTEAEInterestWC, c("USUBJID", "TRTA"), function(x){	
+		# across visits
+		'AESOC' = ddply(dataAEInterest, c("USUBJID", "TRTA"), function(x){	
 			x[which.max(x$AESEVN), ]
 		})
 	)
 
-#	getSummaryStatisticsTable(
-#		data = dataTEAEInterestWC,
-#		## row variables:
-#		rowVar = c("AESOC", "AEDECOD", "AESEV"), rowVarInSepCol = "AESEV",
-#		# include total across SOC and across AEDECOD
-#		dataTotal = dataTotalAE, # total for column header and denominator
-#		rowVarTotalInclude = c("AESOC", "AEDECOD"), 
-#		dataTotalRow = dataTotalRow, # data for total row
-#		rowVarTotalByVar = "AESEV", # count for each severity category for the total
-#		rowTotalLab = "Any TEAE", 
-#		rowVarLab = c(AESOC = "Subjects with, n(%):", AESEV = "Worst-case scenario"),
-#		# sort per total in the total column
-#		rowOrder = "total", 
-#		## column variables
-#		colVar = "TRTA", 
-#		stats = getStats("n (%)"),
-#		emptyValue = "0",
-#		labelVars = labelVars
-#	)
+	getSummaryStatisticsTable(
+		data = dataAEInterestWC,
+		## row variables:
+		rowVar = c("AESOC", "AEDECOD", "AESEV"), 
+		rowVarInSepCol = "AESEV",
+		# total for column header and denominator
+		dataTotal = dataTotalAE, 
+		# include total across SOC and across AEDECOD
+		rowVarTotalInclude = c("AESOC", "AEDECOD"), 
+		# data for total row
+		dataTotalRow = dataTotalRow, 
+		# count for each severity category for the total
+		rowVarTotalByVar = "AESEV", 
+		rowTotalLab = "Any TEAE", 
+		rowVarLab = c(AESOC = "Subjects with, n(%):", AESEV = "Worst-case scenario"),
+		# sort per total in the total column
+		rowOrder = "total", 
+		## column variables
+		colVar = "TRTA", 
+		stats = getStats("n (%)"),
+		emptyValue = "0",
+		labelVars = labelVars
+	)
 
 ```
-
-For example, the patient: '202-4903-03' present a moderate severity for
-headache, and mild severity for the chest injury and fall, but is only counted
-in the once in the table total.
 
 # Labels
 

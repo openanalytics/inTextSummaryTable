@@ -45,7 +45,7 @@ In particular, we will cover
 * how to **create a listing**
 * how to **filter and split** exported tables
 
-We assume you are already familiar on how to create tables, otherwise we advice
+We assume you are already familiar on how to create tables, otherwise we advise
 to first check out the dedicated vignette on how to make tables, available
 [here](../doc/inTextSummaryTable-createTables.html)) or accessible with the
 commands below.
@@ -107,16 +107,13 @@ dataTotalAE$TRTA <- dataTotalAE$TRT01A
 
 # Output formats {#outputFormat}
 
+The default exported format is **`flextable`**, which is **suitable for Word/PowerPoint** documents.
+
+Alternatively, a table can be exported as **datatable interactive table for html reports**, 
+or as a **data frame in R**.
+
 The `outputType` parameter specifies the output format of the summary statistics
 table.
-
-By default, the output type is a _flextable_. However, possible options for
-exporting are
-
-* interactive table, from the `DT` package
-* a data frame in wide or long format.
-
-For exporting into Microsoft Office, we recommend to use _flextable_ output.
 
 ## Static table for Word/Powerpoint
 
@@ -255,6 +252,9 @@ Interactivity includes the functionalities to:
 
 Such table can be included in a _html_ `rmarkdown` report.
 
+The interactive table can be further customized 
+by setting options specific to this output (see `clinUtils::getClinDT`).
+
 ```{r outputType-DT}
 
 getSummaryStatisticsTable(
@@ -272,14 +272,16 @@ getSummaryStatisticsTable(
         )
     ),
     rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)"),
-    outputType = "DT"
+    outputType = "DT",
+	## DT-specific options
+	buttons = c() # remove all export buttons
 )
 
 ```
 
 ## Data frames for R
 
-The summary statistics table can be stored as R objects.
+The summary statistics table can be stored as a R object.
 
 Note that the exported `data.frame`s contains _attributes_ that indicate which
 statistics are used, which row variables/column variables are to be shown and
@@ -564,8 +566,13 @@ counts should be stored in records with the column `isTotal` set to TRUE.
 
 ```{r exportSummaryStatisticsTable}
 
-dataDIABP <- subset(dataAll$ADVS, SAFFL == "Y" & ANL01FL == "Y")
-dataDIABP <- subset(dataDIABP, PARAMCD == "DIABP" & ATPT == "AFTER LYING DOWN FOR 5 MINUTES")
+dataDIABP <- subset(
+	dataAll$ADVS, 
+	SAFFL == "Y" & ANL01FL == "Y" &
+	PARAMCD == "DIABP" & 
+	AVISIT %in% c("Baseline", "Week 6") &
+	ATPT == "AFTER LYING DOWN FOR 5 MINUTES"
+)
 
 # create example of data.frame containing statistics of interest
 statsEff <- sapply(c("AVAL", "CHG"), function(var) {
@@ -585,22 +592,17 @@ summaryTable <- computeSummaryStatisticsTable(
     labelVars = labelVars
 )
 
-# format df with statistics to in-text tables format
+# format df with statistics to in-text table format
 exportSummaryStatisticsTable(
     summaryTable = summaryTable,
-    statsVar = c("Mean (SE)", "Median (range)"),
+    statsVar = c("n", "Mean (SE)", "Median (range)"),
     rowVar = "variable", rowVarLab = "Statistic",
     colVar = c("TRTP", "AVISIT"),
     colHeaderTotalInclude = TRUE,
     labelVars = simpleCap(tolower(labelVars[c("AVAL", "CHG")])),
     title = toTitleCase(
-        paste(
-            "Table: Sweat chloride inferential statistics of the changes",
-            "from baseline per time point",
-            "(pharmacodynamics analysis Set, Mean Value from both arms)"
-        )
-    ),
-    file = file.path("tables_CSR", "Table_SweatChlorideChangeFromBaseline_inferential.docx")
+		"Table: Diastolic Blood Pressure (mmHg) statistics"
+    )
 )
 
 ```
@@ -622,7 +624,7 @@ footnote or specify custom variable labels.
 
 ```{r summaryTable-PP-rowVarWithLabel-rowVarLab-superscript}
 
-dataSL <- dataAll$ADSL
+dataSL <- subset(dataAll$ADSL, SAFFL == "Y")
 
 varsSL <- c("AGE", "WEIGHTBL", "BMIBL")
 labelVars[varsSL] <- c(
@@ -662,13 +664,13 @@ getSummaryStatisticsTable(
     data = dataSL, 
     var = varsSL,  
     stats = list(
-        expression(paste0(
-                ifelse(statMean > statMedian, 
-                    paste0("bold{", roundHalfUpTextFormat(statMean, 1), "}"), 
-                    roundHalfUpTextFormat(statMean, 1)
-                ), 
-                "\n(", 
-                roundHalfUpTextFormat(statSE, 2),")")
+		expression(paste0(
+			ifelse(statMean > statMedian, 
+				paste0("bold{", roundHalfUpTextFormat(statMean, 1), "}"), 
+				roundHalfUpTextFormat(statMean, 1)
+			), 
+			"\n(", 
+				roundHalfUpTextFormat(statSE, 2),")")
         )
     ),
     labelVars = labelVars,
@@ -701,10 +703,7 @@ summaryTableList <- getSummaryStatisticsTable(
     byVar = "TRTA",
     stats = getStats("n (%)"),
     labelVars = labelVars,
-    title = paste(
-        "Table: Adverse Events by System Organ Class and",
-        "Preferred Term with at least 2 patients in System Organ Class"
-    )
+    title = "Table: Treatment-Emergent adverse events"
 )
 
 # print the list of tables in the rmarkdown document
@@ -719,10 +718,15 @@ Listing in a similar format as the in-text summary table is created via the `get
 
 ```{r getListing}
 
-varsListing <- c("USUBJID", "AEBODSYS", "AEDECOD", "TRTA", 
-	"AESEV", "AESER", "ASTDY", "AENDY")
-dataListing <- subset(dataAE, TRTEMFL == "Y")[, varsListing]
+varsListing <- c(
+	"USUBJID", "AEBODSYS", "AEDECOD", "TRTA", 
+	"AESEV", "AESER", "ASTDY", "AENDY"
+)
+
+dataListing <- subset(dataAE, TRTEMFL == "Y" & AESEV == "SEVERE")
+dataListing <- dataListing[, varsListing]
 colnames(dataListing) <- getLabelVar(var = varsListing, labelVars = labelVars)
+
 getListing(
 	data = dataListing, 
 	title = "Listing of treatment-emergent severe adverse events",
@@ -770,7 +774,7 @@ getSummaryStatisticsTable(
             if(any(xTerm$statPercN >= 70))	xTerm		
           }),
     labelVars = labelVars,
-    title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 20% patients in treatment category"
+    title = "Table: Adverse Events by System Organ Class and Preferred Term with at least 70% patients"
 )
 
 ```

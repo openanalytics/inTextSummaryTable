@@ -126,13 +126,15 @@ Below we compute summary statistics for the laboratory data set.
   
 ```{r visualization-extractData}
 
-dataLB <- dataAll$ADLBC
+dataLB <- subset(dataAll$ADLBC, grepl("Baseline|Week", AVISIT))
+dataLB$AVISIT <- with(dataLB, reorder(trimws(AVISIT), AVISITN))
+dataLB$TRTA <- with(dataLB, reorder(TRTA, TRTAN))
 
 summaryTableDf <- computeSummaryStatisticsTable(
     data = dataLB,
     var = "AVAL",
     rowVar = c("PARCAT1", "PARAM"),
-    colVar = c("TRTP", "AVISIT")
+    colVar = c("TRTA", "AVISIT")
 )
 
 ```
@@ -152,14 +154,13 @@ for `computeSummaryStatisticsTable`.
 dataPlot <- subset(
     summaryTableDf, 
     !isTotal &
-        PARAM == "Alanine Aminotransferase (U/L)" &
-        TRTP != "Placebo"
+     PARAM == "Alanine Aminotransferase (U/L)"
 )
 
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN"
@@ -177,7 +178,7 @@ presentation**, either in Powerpoint or ioslides.
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
@@ -185,6 +186,12 @@ subjectProfileSummaryPlot(
 )
 
 ```
+
+Please note that the default font for presentation is _Tahoma_. 
+
+If you don't have this default font available, 
+the R package [_extrafont_](https://cran.r-project.org/package=extrafont)
+might be useful to register fonts with your R graphics device.
 
 # Palettes
 
@@ -233,34 +240,22 @@ Sections below show below both alternative approaches for setting the palettes.
 In this section we guide on how to set custom palettes via the
 `subjectProfileSummaryPlot` function.
 
-### Coloring palettes
+### Color palette
 
 This section focuses on the possibility to set the `colorPalette` argument.
 
 ```{r visualization-customColorFromArgument}
 
-# custom color palette by setting a simple vector of colors
-customColorPalette <- c("blue", "green", "red")
-subjectProfileSummaryPlot(
-    data = dataPlot,
-    xVar = "AVISIT",
-    colorVar = "TRTP",
-    colorPalette = customColorPalette,
-    labelVars = labelVars,
-    useLinetype = TRUE,
-    tableText = "statN",
-    style = "presentation"
-)
-
 # custom color palette by setting a named vector of colors
 customColorPalette <- c(
     `Xanomeline Low Dose` = "green",
-    `Xanomeline High Dose` = "red"
+    `Xanomeline High Dose` = "red",
+	`Placebo` = "blue"
 )
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     colorPalette = customColorPalette,
     labelVars = labelVars,
     useLinetype = TRUE,
@@ -282,7 +277,7 @@ customShapePalette <- c(15, 17, 19)
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     shapePalette = customShapePalette,
     labelVars = labelVars,
     useLinetype = TRUE,
@@ -295,7 +290,7 @@ customLinetypePalette <- c("twodash", "dotted", "longdash")
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     linetypePalette = customLinetypePalette,
     labelVars = labelVars,
     useLinetype = TRUE,
@@ -338,13 +333,13 @@ Color palettes can be set up with the `inTextSummaryTable.colors.plot` option.
 ```{r visualization-customColorFromOptions}
 
 # custom color palette by setting a simple vector of colors
-customColorPalette <- c("blue", "green")
+customColorPalette <- c("blue", "green", "orange")
 options(inTextSummaryTable.colors.plot = customColorPalette)
 
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
@@ -354,14 +349,15 @@ subjectProfileSummaryPlot(
 # custom color palette by setting a named vector of colors
 customColorPalette <- c(
     `Xanomeline Low Dose` = "green",
-    `Xanomeline High Dose` = "red"
+    `Xanomeline High Dose` = "red",
+	`Placebo` = "purple"
 )
 options(inTextSummaryTable.colors.plot = customColorPalette)
 
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
@@ -379,13 +375,13 @@ palettes. In this case, the global options are called
 ```{r visualization-customShapeFromOptions}
 
 # custom shape palette
-customShapePalette <- c(17, 19)
+customShapePalette <- c(17, 19, 22)
 options(inTextSummaryTable.shapes.plot = customShapePalette)
 
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
@@ -393,13 +389,13 @@ subjectProfileSummaryPlot(
 )
 
 # custom linetype palette
-customLinetypePalette <- c("dotted", "longdash")
+customLinetypePalette <- c("dotted", "longdash", "solid")
 options(inTextSummaryTable.linetypes.plot = customLinetypePalette)
 
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
@@ -431,7 +427,7 @@ The user can decide to remove the table of counts by setting the parameter
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = NULL,
@@ -449,7 +445,7 @@ argument.
 Please note that setting the `facetVar` is not compatible with adding a table
 of counts underneath the plot.
 
-```{r visualization-facets, out.width = "100%", fig.height = 15, fig.width = 15}
+```{r visualization-facets, out.width = "100%", fig.height = 9, fig.width = 9}
 
 # create the plot
 dataPlotFacets <- subset(
@@ -466,7 +462,7 @@ dataPlotFacets <- subset(
 subjectProfileSummaryPlot(
     data = dataPlotFacets,
     xVar = "AVISIT",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     facetVar = c("PARCAT1", "PARAM"),
     useLinetype = TRUE
@@ -474,7 +470,7 @@ subjectProfileSummaryPlot(
 
 ```
 
-# Other inputs
+# Customize your visualization
 
 The `subjectProfileSummaryPlot` has many options! A non-exaustive demonstration
 is presented below.
@@ -488,7 +484,7 @@ subjectProfileSummaryPlot(
     xVar = "AVISIT",
     meanVar = "statMedian",
     seVar = NULL,
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
@@ -500,7 +496,7 @@ subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
     seVar = "statSD",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
@@ -514,7 +510,7 @@ subjectProfileSummaryPlot(
     xLab = "Time points",
     yLab = "Mean and Standard Errors",
     title = "Title of the plot",
-    colorVar = "TRTP",
+    colorVar = "TRTA",
     labelVars = labelVars,
     useLinetype = TRUE,
     tableText = "statN",
