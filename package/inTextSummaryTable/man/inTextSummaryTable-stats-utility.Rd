@@ -9,6 +9,10 @@ of the inTextSummaryTable package.}
 
 \item{na.rm}{Logical, should NA value(s) be removed (FALSE by default)?}
 }
+\value{
+No return value, used for the documentation of 
+stat utility R functions
+}
 \description{
 Common arguments for the for the statistics utility functions
 of the inTextSummaryTable package.

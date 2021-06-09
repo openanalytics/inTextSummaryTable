@@ -104,7 +104,7 @@ file with the suffix: 'file_[i].docx' with i the index of the file.}
 \code{\link[clinUtils]{getClinDT}}}
 }
 \value{
-\code{\link[DT]{datatable}} object.
+A \code{\link[DT]{datatable}} object.
 }
 \description{
 Export summary table to an interactive DT table,

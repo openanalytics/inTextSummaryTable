@@ -3,6 +3,8 @@
 #' @param x Numeric vector.
 #' @param na.rm Logical, should NA value(s) be removed (FALSE by default)?
 #' @name inTextSummaryTable-stats-utility
+#' @return No return value, used for the documentation of 
+#' stat utility R functions
 NULL
 
 #' Compute standard error of the mean.

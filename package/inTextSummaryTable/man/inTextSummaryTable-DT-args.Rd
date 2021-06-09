@@ -24,6 +24,10 @@ If NULL, the summary table is not exported but only returned as output.
 If \code{byVar} is specified, each table is exported to a separated
 file with the suffix: 'file_[i].docx' with i the index of the file.}
 }
+\value{
+No return value, used for the documentation of 
+R functions for 'DT' output
+}
 \description{
 Common arguments for the functionalities of the inTextSummaryTable package
 for DT export.

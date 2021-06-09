@@ -3,6 +3,10 @@
 \name{inTextSummaryTable-stats}
 \alias{inTextSummaryTable-stats}
 \title{Statistics in the in-text table package.}
+\value{
+No return value, used for the documentation of 
+the \code{stats} parameter
+}
 \description{
 In the in-text package, different set of statistics are available.
 }

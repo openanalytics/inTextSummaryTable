@@ -129,6 +129,9 @@ Labels specified via dedicated parameter: e.g.
 \code{rowVarLab}, \code{colVarLab}, \code{varLab}
 have priority on this parameter.}
 }
+\value{
+No return value, used for the documentation of R functions
+}
 \description{
 Arguments used across the functions of the inTextSummaryTable package.
 }

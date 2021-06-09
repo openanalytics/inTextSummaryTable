@@ -10,4 +10,6 @@
 #' @template stats-name-formatted
 #' @template stats-formatting
 #' @name inTextSummaryTable-stats
+#' @return No return value, used for the documentation of 
+#' the \code{stats} parameter
 NULL

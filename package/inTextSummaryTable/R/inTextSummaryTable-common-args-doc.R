@@ -103,6 +103,7 @@
 #' \code{rowVarLab}, \code{colVarLab}, \code{varLab}
 #' have priority on this parameter.
 #' @name inTextSummaryTable-common-args
+#' @return No return value, used for the documentation of R functions
 NULL
 
 #' Common arguments for the functionalities of the inTextSummaryTable package
@@ -153,6 +154,8 @@ NULL
 #' If \code{byVar} is specified, each table is exported to a separated
 #' file with the suffix: 'file_[i].html' with i the index of the file.
 #' @name inTextSummaryTable-flextable-args
+#' @return No return value, used for the documentation of 
+#' R functions for 'flextable' output
 NULL
 
 #' Common arguments for the functionalities of the inTextSummaryTable package
@@ -172,4 +175,6 @@ NULL
 #' If \code{byVar} is specified, each table is exported to a separated
 #' file with the suffix: 'file_[i].docx' with i the index of the file.
 #' @name inTextSummaryTable-DT-args
+#' @return No return value, used for the documentation of 
+#' R functions for 'DT' output
 NULL
