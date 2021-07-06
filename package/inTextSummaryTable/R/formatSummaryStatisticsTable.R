@@ -51,7 +51,10 @@ formatSummaryStatisticsTable <- function(
 			# add total in column header
 			colVarWithCount <- colVar[length(colVar)] 
 			
-			dataWithTotal <- ddply(summaryTable, colVar, function(x){
+			# fix in case 'colVar' contains space(s)
+			colVarQuote <- if(!is.null(colVar))	paste0("`", colVar, "`")
+			
+			dataWithTotal <- ddply(summaryTable, colVarQuote, function(x){
 				idxTotal <- which(x$isTotal)
 				if(length(idxTotal) == 1){
 					# for the total column, include the N in all columns (to be merged afterwards)
@@ -153,16 +156,17 @@ formatSummaryStatisticsTable <- function(
 	
 	# put elements in 'colVar' in different columns (long -> wide format)
 	if(!is.null(colVar) | (statsLayout == "col" & length(statsVar) > 1)){
-		rowVarForm <- c(
-			if(!is.null(rowVar)) paste(rowVar, collapse = " + "), 
+		rowVarFm <- c(
+			if(!is.null(rowVar)) paste(paste0("`", rowVar, "`"), collapse = " + "), 
 			if(statsLabInclude & statsLayout != "col")	"Statistic"
 		)
-		if(is.null(rowVarForm))	rowVarForm <- "."
-		colVarUsed <- c(colVar, if(statsLabInclude & statsLayout == "col")	"Statistic")
+		if(is.null(rowVarFm))	rowVarFm <- "."
+		colVarFm <- c(colVar, if(statsLabInclude & statsLayout == "col")	"Statistic")
+		colVarFm <- if(!is.null(colVarFm))	paste0("`", colVarFm, "`")
 		formulaWithin <- as.formula(paste(
-			paste(rowVarForm, collapse = "+"),
+			paste(rowVarFm, collapse = "+"),
 			"~", 
-			paste(colVarUsed, collapse = " + ")
+			paste(colVarFm, collapse = " + ")
 		))
 		varsFm <- all.vars(formulaWithin)
 		varsFm <- setdiff(varsFm, ".")
@@ -177,7 +181,7 @@ formatSummaryStatisticsTable <- function(
 		dataLong <- dcast(dataLong, formula = formulaWithin, 
 			value.var = statsValueNewName, fill = emptyValue
 		)
-		if(all(rowVarForm == "."))	dataLong["."] <- NULL
+		if(all(rowVarFm == "."))	dataLong["."] <- NULL
 	}else{
 		if(colHeaderTotalInclude)
 			colnames(dataLong)[match(statsValueNewName, colnames(dataLong))] <- 
