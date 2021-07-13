@@ -255,7 +255,9 @@ Such table can be included in a _html_ `rmarkdown` report.
 The interactive table can be further customized 
 by setting options specific to this output (see `clinUtils::getClinDT`).
 
-```{r outputType-DT}
+Please note that the interactive table is only created if Pandoc is available.
+
+```{r outputType-DT, eval = rmarkdown::pandoc_available()}
 
 getSummaryStatisticsTable(
     data = dataAEInterest,

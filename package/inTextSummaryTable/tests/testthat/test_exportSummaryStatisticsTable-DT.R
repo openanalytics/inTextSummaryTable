@@ -1,6 +1,7 @@
 context("Export summary statistics table to DT")
 
 library(htmltools)
+library(rmarkdown)
 
 test_that("table is exported with row variable", {
 			
@@ -482,6 +483,11 @@ test_that("total header should unique in DT export", {
 
 
 test_that("export summary table to a file", {
+	
+	skip_if_not(
+		condition = rmarkdown::pandoc_available(), 
+		message = "pandoc is not available"
+	)
 			
 	summaryTable <- data.frame(n = 10)
 	
@@ -711,6 +717,11 @@ test_that("different titles are specified for a list of summary tables", {
 })
 
 test_that("list of summary tables is exported to file", {
+			
+	skip_if_not(
+		condition = rmarkdown::pandoc_available(), 
+		message = "pandoc is not available"
+	)
 			
 	summaryTables <- list(
 		`PARAM 2` = data.frame(n = 10),

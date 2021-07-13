@@ -2,8 +2,14 @@ context("Export summary statistics table")
 
 library(tools)
 library(officer)
+library(rmarkdown)
 
 test_that("summary table is exported to multiple formats", {
+			
+	skip_if_not(
+		condition = rmarkdown::pandoc_available(), 
+		message = "pandoc is not available"
+	)
 			
 	summaryTable <- data.frame(
 		PARAM = c("A", "B"),

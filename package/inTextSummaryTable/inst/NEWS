@@ -1,5 +1,6 @@
 3.0.1
   o formatSummaryStatisticsTable: fix for column var with space
+  o unit tests/doc: fix for Pandoc (CRAN Solaris) + SystemRequirements
 3.0.0
   o get palettes from 'clinUtils'
   o rename 'getFlextable' into 'getListing'
