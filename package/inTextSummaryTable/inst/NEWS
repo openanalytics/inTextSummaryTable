@@ -1,3 +1,7 @@
+3.1.0
+  o computeSummaryStatisticsTable: output is S3 class: 'summaryTable'
+  o functionality to combine 'summaryTable'
+  o exportSummaryStatisticsTable is now available (as well) via 'export'
 3.0.1
   o formatSummaryStatisticsTable: fix for column var with space
   o unit tests/doc: fix for Pandoc (CRAN Solaris) + SystemRequirements

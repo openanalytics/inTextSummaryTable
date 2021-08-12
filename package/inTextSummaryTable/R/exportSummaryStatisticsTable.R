@@ -1,4 +1,24 @@
-#' Export a summary table in \code{docx} format.
+#' Export an object
+#' @param ... Extra parameters for the corresponding
+#' method.
+#' @seealso \code{\link{export.summaryTable}}
+#' to export \code{\link{summaryTable}} objects.
+#' @export
+export <- function(...) UseMethod("export")
+
+#' @method export summaryTable
+#' @describeIn exportSummaryStatisticsTable export \code{\link{summaryTable}} object
+#' @export
+export.summaryTable <- function(...){
+	exportSummaryStatisticsTable(...)
+}
+
+#' Export a summary table to \code{docx}, \code{pptx} 
+#' or \code{html} format (interactive table)
+#' 
+#' The use of \code{export} is recommended.\cr
+#' \code{exportSummaryStatisticsTable} is retained for
+#' back-compatibility.
 #' @param outputType String with output type:
 #' \itemize{
 #' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for

@@ -1,7 +1,6 @@
 #' Arguments used across the functions of the inTextSummaryTable package.
 #' @param data Data.frame with dataset to consider for the summary table.
-#' @param summaryTable Summary table as provided by the 
-#' \code{\link{computeSummaryStatisticsTable}}.
+#' @param summaryTable A \code{\link{summaryTable}} object.
 #' @param var Character vector with variable(s) of \code{data}, 
 #' to compute statistics on.\cr
 #' If NULL (by default), counts by row/column variable(s) are computed.\cr

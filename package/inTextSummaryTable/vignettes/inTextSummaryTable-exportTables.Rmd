@@ -566,7 +566,7 @@ are both stored as different columns in the `data.frame`.
 If the column headers should contain total number of subjects, the corresponding
 counts should be stored in records with the column `isTotal` set to TRUE.
 
-```{r exportSummaryStatisticsTable}
+```{r export}
 
 dataDIABP <- subset(
 	dataAll$ADVS, 
@@ -595,7 +595,7 @@ summaryTable <- computeSummaryStatisticsTable(
 )
 
 # format df with statistics to in-text table format
-exportSummaryStatisticsTable(
+export(
     summaryTable = summaryTable,
     statsVar = c("n", "Mean (SE)", "Median (range)"),
     rowVar = "variable", rowVarLab = "Statistic",

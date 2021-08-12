@@ -11,7 +11,6 @@
 #' @importFrom clinUtils getLabelVar
 #' @importFrom reshape2 melt dcast
 #' @importFrom plyr colwise
-#' @importFrom dplyr n_distinct
 #' @importFrom stats as.formula
 #' @importFrom utils capture.output
 formatSummaryStatisticsTable <- function(
@@ -127,7 +126,7 @@ formatSummaryStatisticsTable <- function(
 	)
 	
 	# Is the label for the statistic required?
-	isStatsLabRequired <- !(length(statsVar) == 1 && n_distinct(dataLong$Statistic) == 1)
+	isStatsLabRequired <- !(length(statsVar) == 1 && length(unique(dataLong$Statistic)) == 1)
 	if(is.null(statsLabInclude)){
 		statsLabInclude <- isStatsLabRequired
 	}else	if(!statsLabInclude & isStatsLabRequired){
@@ -183,7 +182,7 @@ formatSummaryStatisticsTable <- function(
 		)
 		if(all(rowVarFm == "."))	dataLong["."] <- NULL
 	}else{
-		if(colHeaderTotalInclude)
+		if(colHeaderTotalInclude & length(nTotal) != 0)
 			colnames(dataLong)[match(statsValueNewName, colnames(dataLong))] <- 
 				paste0(statsValueNewName, "\n(N=",  nTotal, ")")
 	}

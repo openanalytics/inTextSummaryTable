@@ -36,7 +36,7 @@ test_that("summary table is exported to multiple formats", {
 		)
 	}
 	
-	# check that output is similar as output for single export
+	# check that output is similar as output for single exportSummaryStatisticsTable
 	for(outputType in names(files)){
 		
 		expect_equal(

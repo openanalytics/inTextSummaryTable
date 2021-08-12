@@ -21,7 +21,7 @@ test_that("table is created with row variables", {
 		rowVar = c("parent", "child"),
 		var = "x"
 	)    
-	expect_s3_class(sumTableRowVar, "data.frame")
+	expect_s3_class(sumTableRowVar, "summaryTable")
 	stats <- c(
 		"statN", "statm",
 		"statMean",
@@ -46,13 +46,14 @@ test_that("table is created with row variables", {
 	rowVarUnique <- unique(data[, c("parent", "child")])
 	statsToCompare <- setdiff(stats , c("statPercTotalN", "statPercN"))
 	for(iRow in seq_len(nrow(rowVarUnique))){
-		expect_identical(
+		expect_equal(
 			object = {
 				dataIRow <- merge(rowVarUnique[!!iRow, ], data)
 				sumTableIRow <- computeSummaryStatisticsTable(dataIRow, var = "x")
 				subset(sumTableIRow, !isTotal)[, statsToCompare]
 			}, 
-			expected = merge(rowVarUnique[!!iRow, ], sumTableRowVar)[, statsToCompare]
+			expected = merge(rowVarUnique[!!iRow, ], sumTableRowVar)[, statsToCompare],
+			check.attributes = FALSE
 		)
 	}
 	

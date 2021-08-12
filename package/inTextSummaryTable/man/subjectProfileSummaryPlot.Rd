@@ -67,7 +67,7 @@ subjectProfileSummaryPlot(
 }
 \arguments{
 \item{data}{Data.frame with summary statistics to represent in the plot,
-e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.}
+e.g. a \code{\link{summaryTable}} object.}
 
 \item{xVar}{String, variable of \code{data} with variable for the x-axis.}
 

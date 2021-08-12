@@ -21,7 +21,7 @@ test_that("Get summary table is identical to computation+export step", {
 		colVar = "TRT",
 		var = "AVAL"
 	)
-	summaryTableOutputSteps <- exportSummaryStatisticsTable(summaryTable)
+	summaryTableOutputSteps <- export(summaryTable)
 			
 	expect_identical(summaryTableOutput, summaryTableOutputSteps)
 			

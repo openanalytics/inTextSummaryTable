@@ -21,8 +21,7 @@ convertSummaryStatisticsTableToFlextable(
 )
 }
 \arguments{
-\item{summaryTable}{Summary table as provided by the 
-\code{\link{computeSummaryStatisticsTable}}.}
+\item{summaryTable}{A \code{\link{summaryTable}} object.}
 
 \item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
 By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}

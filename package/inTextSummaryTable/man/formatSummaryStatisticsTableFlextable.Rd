@@ -27,8 +27,7 @@ formatSummaryStatisticsTableFlextable(
 )
 }
 \arguments{
-\item{summaryTable}{Summary table as provided by the 
-\code{\link{computeSummaryStatisticsTable}}.}
+\item{summaryTable}{A \code{\link{summaryTable}} object.}
 
 \item{rowVar}{Character vector with variable(s)
 to be included in the rows.

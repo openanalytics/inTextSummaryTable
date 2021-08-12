@@ -347,66 +347,9 @@ should be created.}
 of the output list of table(s).}
 }
 \value{
-data.frame of class 'countTable' or 'summaryTable',
-depending on the 'type' parameter; or list of such data.frame if
+An object \code{\link{summaryTable}}
+or list of such objects if
 \code{byVar} is specified.
-The data.frame contains the :
-\itemize{
-\item{row and column variables}
-\item{computed statistics: }{if \code{type} is:
-\itemize{
-\item{'summaryTable': }{
-\itemize{
-\item{'statN': }{number of subjects}
-\item{'statMean': }{mean of \code{var}}
-\item{'statSD': }{standard deviation of \code{var}}
-\item{'statSE': }{standard error of \code{var}}
-\item{'statMedian': }{median of \code{var}}
-\item{'statMin': }{minimum of \code{var}}
-\item{'statMax': }{maximum of \code{var}}
-\item{'statPerc': }{percentage of subjects}
-\item{'statPercTotalN': }{total number of subjects based on \code{dataTotalPerc},
-denominator of \code{statPerc}}
-\item{'statm': }{number of records}
-}
-}
-\item{'countTable': }{
-\itemize{
-\item{'statN': }{number of subjects}
-\item{'statPercN' (or 'statPercm'): }{percentage of subjects
-(or records depending on \code{statsPerc})}
-\item{'statPercTotalN' (or 'statPercTotalm'): }{total number of 
-subjects (or records) based on \code{dataTotalPerc}, and used as
-denominator of \code{statPercN} (or 'statPercm')}
-\item{'statm': }{number of records}
-}}}
-}
-\item{statistics specified by \code{statsVar}.
-(if not named and of length 1 in a column 'Statistic')}
-\item{variables: }{
-\itemize{
-\item{'variable': }{variable name in case \code{var} is of length > 1}
-\item{'variableGroup': }{in case \code{var} is of length > 1 and for variable(s) used for count:
-elements of the variable}
-}
-}
-\item{'isTotal': }{variable with logical flag, TRUE if the record contain the total by column}
-}
-Additionally, the output contains the following attributes:
-\itemize{
-\item{'statsVar': }{column name(s) of summary table with computed statistics
-included in the final table}
-\item{'rowVar': }{column name(s) of summary table with row variable
-included in the final table. This parameter should be mainly used for qualitative variables and 'nests' together different rows in the final output table.}
-\item{'rowVarLab': }{labels corresponding to the 'rowVar' attribute}
-\item{'rowVarTotalInclude': }{row variables whose total will be included:
-\code{rowVarTotalInclude} and 'variableGroup' if the variable total should be included}
-\item{'rowVarTotalInSepRow': }{row variables whose total will be included in a separated row:
-\code{rowVarTotalInSepRow} and 'variableGroup' if \code{varTotalInSepRow}}
-\item{'colVar': }{column name(s) of summary table with column variable
-included in the final table}
-\item{'colTotalLab': }{label for the total}
-}
 }
 \description{
 Compute summary statistics for a specific dataset and variables of interest

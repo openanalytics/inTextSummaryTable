@@ -468,7 +468,7 @@ test_that("no data remains besides total row", {
 			
 })
 
-test_that("total header should unique in DT export", {
+test_that("total header should unique in DT exportSummaryStatisticsTable", {
 			
 	data <- data.frame(
 		isTotal = c(FALSE, TRUE, TRUE),
@@ -482,7 +482,7 @@ test_that("total header should unique in DT export", {
 })
 
 
-test_that("export summary table to a file", {
+test_that("exportSummaryStatisticsTable summary table to a file", {
 	
 	skip_if_not(
 		condition = rmarkdown::pandoc_available(), 

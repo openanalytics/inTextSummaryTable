@@ -106,7 +106,7 @@ computeSummaryStatistics <- function(data,
 				"between summary statistics of", shQuote(var),
 				"and subject counts."
 			))
-		as.integer(n_distinct(x[, subjectVar], na.rm = TRUE))
+		as.integer(length(unique(na.omit(x[, subjectVar]))))
 	}
 	getNRecords <- function(x) nrow(x)
 	

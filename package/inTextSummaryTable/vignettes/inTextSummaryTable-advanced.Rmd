@@ -71,7 +71,7 @@ labelVars <- attr(dataAll, "labelVars")
 ```
 
 
-```{r}
+```{r formatExampleData}
 
 dataAE <-  subset(dataAll$ADAE, SAFFL == "Y" & TRTEMFL == "Y")
 dataAEInterest <- subset(dataAE, AESOC %in% c(
@@ -88,7 +88,6 @@ dataAEInterest$AESEV <- factor(dataAEInterest$AESEV, levels = c("MILD", "MODERAT
 dataTotalAE <- subset(dataAll$ADSL, TRT01A != "Placebo")
 # should contain columns specified in 'colVar'
 dataTotalAE$TRTA <- dataTotalAE$TRT01A 
-
 
 ```
 
@@ -139,9 +138,11 @@ pander(subset(summaryTable, isTotal))
 
 ## Export table to the requested format
 
-```{r exportSummaryStatisticsTable-flextable}
+The summary table is exported to the format of interest with:
 
-exportSummaryStatisticsTable(
+```{r export-flextable}
+
+export(
 	summaryTable = summaryTable,
 	outputType = "flextable"
 )
@@ -150,6 +151,29 @@ exportSummaryStatisticsTable(
 
 Please see the vignette: `inTextSummaryTable-exportTables` for more
 information on the different export types available.
+
+# Combine summary statistics table
+
+Summary statistics tables can be combined with the `combine` function.
+
+```{r combine}
+tableDemoCat <- computeSummaryStatisticsTable(
+	data = dataADaMCDISCP01$ADSL,
+	var = c("SEX", "AGE"), varInclude0 = TRUE,
+	colVar = "TRT01P",
+	stats = getStats("n (%)", includeName = FALSE),
+	labelVars = labelVars
+)
+tableDemoCont <- computeSummaryStatisticsTable(
+	data = dataADaMCDISCP01$ADSL,
+	var = c("HEIGHTBL", "WEIGHTBL"),
+	colVar = "TRT01P",
+	stats = getStats(c("n", "median (range)")),
+	labelVars = labelVars
+)
+tableDemo <- combine(tableDemoCat, tableDemoCont)
+export(tableDemo)
+```
 
 # Data pre-processing
 

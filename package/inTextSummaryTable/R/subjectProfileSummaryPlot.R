@@ -5,7 +5,7 @@
 #' or directly the variables for the minimum and maximum values for the error
 #' bars (\code{minVar}, \code{maxVar}).
 #' @param data Data.frame with summary statistics to represent in the plot,
-#' e.g. produced with the \code{\link{computeSummaryStatisticsTable}}.
+#' e.g. a \code{\link{summaryTable}} object.
 #' @param xLab String with label for the \code{xVar}.
 #' @param xGap (optional) Numeric vector of length 2 for which
 #' a gap should be created in the x-axis.
@@ -244,7 +244,7 @@ subjectProfileSummaryPlot <- function(data,
   if(!is.null(xVar) & is.null(jitter))
     jitter <- if(is.numeric(data[, xVar])){
           # only one element
-          if(n_distinct(data[, xVar]) == 1){
+          if(length(unique(data[, xVar])) == 1){
             0.1
             # multiple element, take 10% of the min diff
           }else{

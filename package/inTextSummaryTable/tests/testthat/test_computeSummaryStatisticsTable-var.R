@@ -5,7 +5,7 @@ test_that("continuous var specification is successful", {
       dataCont <- data.frame(x = c(NA, 1, 3, 6, 10), USUBJID = seq.int(5))
       
       sumTableCont <- computeSummaryStatisticsTable(data = dataCont, var = "x")
-      expect_s3_class(sumTableCont, "data.frame")
+      expect_s3_class(sumTableCont, "summaryTable")
       varsCont <- c(
           "statN", "statm", "statMean", "statSD", "statSE", "statMedian",
           "statMin", "statMax", "statPercTotalN", "statPercN"
@@ -16,7 +16,7 @@ test_that("continuous var specification is successful", {
       # stats computed via 'computeSummaryStatistics':
       sumTableContVar <- subset(sumTableCont, !isTotal)
       statsVar <- computeSummaryStatistics(dataCont, var = "x")
-      expect_equal(sumTableContVar[, colnames(statsVar)], statsVar)
+      expect_equal(sumTableContVar[, colnames(statsVar)], statsVar, check.attributes = FALSE)
       
       # extra total statistics are added
       expect_equal(sumTableContVar$statPercTotalN, 5)
@@ -35,7 +35,7 @@ test_that("categorical var specification is successful", {
       dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = seq.int(5), stringsAsFactors = TRUE)
       
       sumTableCat <- computeSummaryStatisticsTable(data = dataCat, var = "x")
-      expect_s3_class(sumTableCat, "data.frame")
+      expect_s3_class(sumTableCat, "summaryTable")
       varsCat <- c("statN", "statm", "statPercTotalN", "statPercN")
       expect_named(sumTableCat, c("variableGroup", "isTotal", varsCat), ignore.order = TRUE)
       expect_equal(sumTableCat$isTotal, c(FALSE, FALSE, TRUE))
@@ -43,7 +43,7 @@ test_that("categorical var specification is successful", {
       # stats computed via 'computeSummaryStatistics':
       sumTableCatVar <- subset(sumTableCat, !isTotal)
       statsVar <- computeSummaryStatistics(dataCat, var = "x")
-      expect_equal(sumTableCatVar[, colnames(statsVar)], statsVar)
+      expect_equal(sumTableCatVar[, colnames(statsVar)], statsVar, check.attributes = FALSE)
       
       # extra total statistics are added
       expect_equal(sumTableCatVar$statPercTotalN, c(5, 5))
@@ -70,7 +70,7 @@ test_that("flag var specification is successful", {
 		var = c("x", "xFlag"), 
 		varFlag = "xFlag"
 	)
-	expect_s3_class(res, "data.frame")
+	expect_s3_class(res, "summaryTable")
 	expect_true("variable" %in% colnames(res))
 	expect_true("variableGroup" %in% colnames(res))
 	  
@@ -169,7 +169,7 @@ test_that("a variable is properly ignored", {
       res <- computeSummaryStatisticsTable(
           data = data, var = "x", varIgnore = "A"
       )
-      expect_s3_class(res, "data.frame")
+      expect_s3_class(res, "summaryTable")
       expect_identical(levels(res$variableGroup), "B")
       
 })

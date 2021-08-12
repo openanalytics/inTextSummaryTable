@@ -27,7 +27,7 @@ test_that("only data specified", {
 	
 	# no variable specified: a count table is created
 	sumNoVar <- computeSummaryStatisticsTable(dataCont)
-	expect_s3_class(sumNoVar, "data.frame")
+	expect_s3_class(sumNoVar, "summaryTable")
 	expect_named(sumNoVar, c("isTotal", "statN", "statm", "statPercTotalN", "statPercN"), ignore.order = TRUE)
 	expect_equal(
 		unname(unlist(subset(sumNoVar, isTotal)[1, c("statN", "statm", "statPercTotalN", "statPercN")])),

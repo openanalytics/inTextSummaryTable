@@ -18,7 +18,7 @@ test_that("summary table is computed with column variable", {
 			colVar = "TRT"
 		)
 	)
-	expect_s3_class(sumTable, "data.frame")
+	expect_s3_class(sumTable, "summaryTable")
 	expect_true("TRT" %in% colnames(sumTable))
 	expect_identical(levels(sumTable$TRT), unique(data$TRT))
 	
@@ -456,7 +456,7 @@ test_that("more groups in colVar in dataTotalRow than in data to summarize", {
 			dataTotalRow = dataTotalRow
 		)
 	)
-	expect_s3_class(summaryTable, "data.frame")
+	expect_s3_class(summaryTable, "summaryTable")
 	expect_identical(levels(summaryTable$TRT), c("A", "B"))
 	
 	summaryTableGroupOnlyInTotal <- subset(summaryTable, TRT == "B")

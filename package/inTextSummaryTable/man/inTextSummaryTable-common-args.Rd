@@ -6,8 +6,7 @@
 \arguments{
 \item{data}{Data.frame with dataset to consider for the summary table.}
 
-\item{summaryTable}{Summary table as provided by the 
-\code{\link{computeSummaryStatisticsTable}}.}
+\item{summaryTable}{A \code{\link{summaryTable}} object.}
 
 \item{var}{Character vector with variable(s) of \code{data}, 
 to compute statistics on.\cr
