@@ -324,18 +324,14 @@ computeSummaryStatisticsTable <- function(
 	
 	# for flag variable:
 	if(!is.null(varFlag)){
+		
 		# convert them to a format to only retain flagged records
 		data[, varFlag] <- colwise(convertVarFlag)(data[, varFlag, drop = FALSE])
-		# filter the 'non' flagged counts:
-		filterFctFlag <- function(x){
-			isVar <- if("variableInit" %in% colnames(x)){
-				x$variableInit %in% varFlag
-			}else{TRUE}
-			idxKept <- which(x$isTotal | !(isVar & x$variableGroup == "N"))
-			xFiltered <- x[idxKept, ]
-			return(xFiltered)
-		}
-		filterFct <- c(filterFct, list(filterFctFlag))
+		
+		postProcessVarFlagTable <- function(summaryTable)
+			postProcessVarFlag(summaryTable = summaryTable, varFlag = varFlag)
+		filterFct <- c(filterFct, list(postProcessVarFlagTable))
+		
 	}
 	
 	# convert row/column variables to factor
@@ -782,10 +778,10 @@ computeSummaryStatisticsTable <- function(
 	
 	# if only flag variables, remove 'variableGroup'
 	# (otherwise empty line when not specifying 'stats')
-	if("variableGroup" %in% colnames(summaryTable)){
-		uniqueGroup <- all(summaryTable[which(!summaryTable$isTotal), "variableGroup"] == "", na.rm = TRUE)
-		if(uniqueGroup)
-			summaryTable[, which(colnames(summaryTable) == "variableGroup")] <- NULL
+	if("variableGroup" %in% colnames(summaryTable) && 
+		length(var) > 0 &&
+		length(setdiff(var, varFlag)) == 0){
+		summaryTable[, which(colnames(summaryTable) == "variableGroup")] <- NULL
 	}
 	
 	# sort columns

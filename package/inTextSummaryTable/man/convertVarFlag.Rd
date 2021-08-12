@@ -12,13 +12,8 @@ convertVarFlag(x)
 should contain elements: 'Y' and 'N', or '' (for missing value).}
 }
 \value{
-Formatted factor variable:
-\itemize{
-\item{empty string converted to NA}
-\item{'Y' converted to empty string ('')}
-\item{'N' retained as originally}
-}
-The variable has levels: \code{c('', 'N')}.
+Formatted factor variable with levels: 'Y' & 'N'.
+Empty strings have been converted to NA.
 }
 \description{
 Convert flag variable to a format such as only the flagged records are counted

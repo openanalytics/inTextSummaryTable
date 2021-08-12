@@ -159,23 +159,60 @@ interactionCustom <- function(data, var,
 #' in the summary table.
 #' @param x Character or factor variable with flag variable,
 #' should contain elements: 'Y' and 'N', or '' (for missing value).
-#' @return Formatted factor variable:
-#' \itemize{
-#' \item{empty string converted to NA}
-#' \item{'Y' converted to empty string ('')}
-#' \item{'N' retained as originally}
-#' }
-#' The variable has levels: \code{c('', 'N')}.
+#' @return Formatted factor variable with levels: 'Y' & 'N'.
+#' Empty strings have been converted to NA.
 #' @author Laure Cougnaud
 convertVarFlag <- function(x){
 	
 	if(any(!x %in% c("", "Y", "N")))
 		stop("Flag variable should only contain: '', 'Y' or 'N'.")
 	x <- as.character(x)
-	xRF <- factor(ifelse(x == "", NA_character_, ifelse(x == "Y", "", "N")), levels = c("", "N"))
+	x[which(x == "")] <- NA_character_
+	xRF <- factor(x, levels = c("Y", "N"))
 
 	return(xRF)
 
+}
+
+#' Post-process the summary statistics table with variable flag.
+#' 
+#' This function is for internal use within
+#' the \code{\link{computeSummaryStatisticsTable}}
+#' function.
+#' 
+#' This includes:
+#' \itemize{
+#' \item{converting the records from a flag variable
+#' for the 'variableGroup' variable 
+#' from 'Y' to \code{NA_character_}
+#' }
+#' \item{filter records from a flag variable 
+#' with variableGroup set as 'N'}
+#' }
+#' @param summaryTable Summary table as created internally in
+#' \code{\link{computeSummaryStatisticsTable}}.
+#' @inheritParams inTextSummaryTable-common-args
+#' @return Summary table with
+#' @author Laure Cougnaud
+postProcessVarFlag <- function(summaryTable, varFlag){
+	
+	# which records refer to a flag variable?
+	summaryTable$isVarFlag <- if("variableInit" %in% colnames(summaryTable)){
+		summaryTable$variableInit %in% varFlag
+	}else{TRUE}
+	
+	# filter the 'non' flagged counts:
+	idxKept <- with(summaryTable, which(isTotal | !(isVarFlag & variableGroup == "N")))
+	summaryTable <- summaryTable[idxKept, ]
+	
+	# convert '' to NA to indicate that there was no internal subgroup
+	idxFlag <- with(summaryTable, which(isVarFlag & variableGroup == "Y"))
+	summaryTable[idxFlag, "variableGroup"] <- NA_character_
+	
+	summaryTable$isVarFlag <- NULL
+	
+	return(summaryTable)
+	
 }
 
 #' Convert \code{rowVar}, \code{colVar} and character \code{var} in \code{data} to factor
