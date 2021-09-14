@@ -54,19 +54,20 @@ getSummaryStatisticsTable(
   dataTotalRow = NULL,
   dataTotalCol = NULL,
   type = "auto",
+  byVar = NULL,
+  byVarLab = NULL,
+  checkVarDiffBySubj = "error",
   labelVars = NULL,
+  outputType = "flextable",
+  statsLayout = ifelse("DT" \%in\% outputType, "col", "row"),
   landscape = (style == "presentation"),
   margin = 1,
   rowPadBase = 14.4,
   title = NULL,
   footer = NULL,
   file = NULL,
-  outputType = "flextable",
-  statsLayout = ifelse("DT" \%in\% outputType, "col", "row"),
   style = "report",
   colorTable = getColorPaletteTable(style = style),
-  byVar = NULL,
-  byVarLab = NULL,
   colHeaderTotalInclude = TRUE,
   fontsize = switch(style, report = 8, presentation = 10),
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
@@ -392,11 +393,46 @@ By default, \code{data} is used.}
 'countTable' otherwise}
 }}
 
+\item{byVar}{Variable(s) of \code{data} for which separated table(s)
+should be created.}
+
+\item{byVarLab}{String with label for \code{byVar}, used to set the names
+of the output list of table(s).}
+
+\item{checkVarDiffBySubj}{String, 'error' (default) or 'warning'.
+Should an error or a warning be triggered
+if a continuous variable (\code{var}) contains
+different values for the same subject (by row/column)?}
+
 \item{labelVars}{(optional) Named character vector with label for
 the row, column variable(s) or variable(s) to summarize. \cr
 Labels specified via dedicated parameter: e.g. 
 \code{rowVarLab}, \code{colVarLab}, \code{varLab}
 have priority on this parameter.}
+
+\item{outputType}{String with output type:
+\itemize{
+\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
+CSR, compatible with Word/PowerPoint export}
+\item{'DT': }{\code{\link[DT]{datatable}} interactive table,
+compatible with html export}
+\item{'data.frame': }{data.frame in wide format (with elements in 
+\code{colVar} in different columns)}
+\item{'data.frame-base'}{data.frame in long format (with elements in 
+\code{colVar} in different rows), useful for QC}
+}}
+
+\item{statsLayout}{String with layout for the statistics names 
+(in case more than one statistic is included), among:
+\itemize{
+\item{row (by default for 'flextable' output): }{All statistics are
+ included in different rows in the first column of the table (after the row variable(s))}
+\item{'col' (by default for 'DT' output): }{Statistics are included 
+in separated columns (last row of the header).\cr
+This option is not compatible with categorical variable(s).}
+\item{'rowInSepCol': }{Statistics are included in different rows, 
+but in a separated column than the \code{rowVar} variable(s)}
+}}
 
 \item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
 By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}
@@ -438,30 +474,6 @@ If NULL (by default), the summary table is not exported but only returned as out
 If \code{byVar} is specified, each table is exported to a separated
 file with the suffix: 'file_[i].[ext]' with i the index of the file.}
 
-\item{outputType}{String with output type:
-\itemize{
-\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
-CSR, compatible with Word/PowerPoint export}
-\item{'DT': }{\code{\link[DT]{datatable}} interactive table,
-compatible with html export}
-\item{'data.frame': }{data.frame in wide format (with elements in 
-\code{colVar} in different columns)}
-\item{'data.frame-base'}{data.frame in long format (with elements in 
-\code{colVar} in different rows), useful for QC}
-}}
-
-\item{statsLayout}{String with layout for the statistics names 
-(in case more than one statistic is included), among:
-\itemize{
-\item{row (by default for 'flextable' output): }{All statistics are
- included in different rows in the first column of the table (after the row variable(s))}
-\item{'col' (by default for 'DT' output): }{Statistics are included 
-in separated columns (last row of the header).\cr
-This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in different rows, 
-but in a separated column than the \code{rowVar} variable(s)}
-}}
-
 \item{style}{(flextable output) String with table style,
  either 'report' or 'presentation'.
 This parameter affects the fontsize, font family, color of the text and background, 
@@ -469,12 +481,6 @@ and table dimensions of the table.}
 
 \item{colorTable}{(flextable output) Named character vector with color for the table background/body/text/line,
 e.g. created with the \code{\link{getColorPaletteTable}} function.}
-
-\item{byVar}{Variable(s) of \code{data} for which separated table(s)
-should be created.}
-
-\item{byVarLab}{String with label for \code{byVar}, used to set the names
-of the output list of table(s).}
 
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the column header.}

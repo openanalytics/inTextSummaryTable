@@ -21,7 +21,8 @@ computeSummaryStatisticsByRowColVar(
   subjectVar = "USUBJID",
   labelVars = NULL,
   statsExtra = NULL,
-  msgLabel = NULL
+  msgLabel = NULL,
+  checkVarDiffBySubj = "error"
 )
 }
 \arguments{
@@ -128,6 +129,11 @@ the summary statistic on or 'data': the entire dataset}
 }
 For example, to additionally compute the coefficient of variation, this can be set to:
 \code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).}
+
+\item{checkVarDiffBySubj}{String, 'error' (default) or 'warning'.
+Should an error or a warning be triggered
+if a continuous variable (\code{var}) contains
+different values for the same subject (by row/column)?}
 }
 \value{
 data.frame of class 'countTable' or 'summaryTable',

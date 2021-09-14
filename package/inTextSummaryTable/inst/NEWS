@@ -2,9 +2,9 @@
   o computeSummaryStatisticsTable: output is S3 class: 'summaryTable'
   o functionality to combine 'summaryTable'
   o exportSummaryStatisticsTable is now available (as well) via 'export'
-  o ft export: fix empty line for table with flag var, 
-  var with subgroups and multiple stats
+  o ft export: fix empty line for table with flag var, var with subgroups and multiple stats
   o group var (if included) is set to NA for a flag var
+  o option to only warn if diff variable values by subject (checkVarDiffBySubj)
 3.0.1
   o formatSummaryStatisticsTable: fix for column var with space
   o unit tests/doc: fix for Pandoc (CRAN Solaris) + SystemRequirements

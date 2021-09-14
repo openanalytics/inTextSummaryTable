@@ -19,7 +19,8 @@ computeSummaryStatisticsTableTotal(
   colVarLevels = NULL,
   subjectVar = "USUBJID",
   labelVars = NULL,
-  msgLabel = "total"
+  msgLabel = "total",
+  checkVarDiffBySubj = "error"
 )
 }
 \arguments{

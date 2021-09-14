@@ -27,6 +27,10 @@
 #' @param msgVars (optional) Character vector with columns of \code{data}
 #' containing extra variables (besides \code{var} and \code{subjectVar})
 #' that should be included in the message/warning for checks.
+#' @param checkVarDiffBySubj String, 'error' (default) or 'warning'.  
+#' Should an error or a warning be triggered
+#' if a continuous variable (\code{var}) contains
+#' different values for the same subject?
 #' @inheritParams inTextSummaryTable-common-args
 #' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
@@ -62,8 +66,11 @@ computeSummaryStatistics <- function(data,
 	subjectVar = "USUBJID",
 	filterEmptyVar = TRUE,
 	type = "auto",
+	checkVarDiffBySubj = c("error", "warning"),
 	msgLabel = NULL, msgVars = NULL){
 	
+	checkVarDiffBySubj <- match.arg(checkVarDiffBySubj)
+
 	## checks parameters
 	
 	type <- match.arg(type, choices = c("auto", "summaryTable", "countTable"))
@@ -169,13 +176,23 @@ computeSummaryStatistics <- function(data,
 					
 					isDupl <- duplicated(data[, subjectVar])
 					if(any(isDupl)){
-						dataDupl <- merge(data, data[isDupl, subjectVar, drop = FALSE])
+						dataDupl <- merge(data, unique(data[isDupl, subjectVar, drop = FALSE]))
 						dataDupl <- dataDupl[, unique(c(subjectVar, msgVars, var)), drop = FALSE]
-						stop("Extraction of statistics failed for ", var,
+						msgDupl <- paste0(
+							switch(checkVarDiffBySubj,
+								`error` = "Extraction of statistics failed because multiple", 
+								`warning` = "Multiple"
+							),
+							" different records of ", var, 
 							if(!is.null(msgLabel))	paste(" for the", msgLabel), 
-							" because multiple records are available for ",
+							" are available for ",
 							"the same ", subjectVar, ":\n",
 							paste(capture.output(print(dataDupl)), collapse = "\n")
+						)
+						switch(
+							checkVarDiffBySubj,
+							`error` = stop(msgDupl),
+							`warning` = warning(msgDupl)
 						)
 					}
 				}

@@ -97,7 +97,15 @@ test_that("failure if multiple records available per subject", {
 	dataCont <- data.frame(x = seq.int(5), USUBJID = c(1, 1, 2, 2, 2))
 	expect_error(
 		computeSummaryStatistics(data = dataCont, var = "x"),
-		pattern = "Extraction of statistics failed .* because multiple records are available"
+		pattern = "Extraction of statistics failed .* because multiple different records are available"
+	)		
+})
+
+test_that("warning for multiple records available per subject if requested", {
+	dataCont <- data.frame(x = seq.int(5), USUBJID = c(1, 1, 2, 2, 2))
+	expect_warning(
+		computeSummaryStatistics(data = dataCont, var = "x", checkVarDiffBySubj = "warning"),
+		pattern = "multiple different records are available"
 	)		
 })
 
@@ -303,17 +311,17 @@ test_that("check for duplicates in continuous variable correctly done", {
 	)
 	expect_error(
 		computeSummaryStatistics(data = dataCont, var = "x"),
-		"multiple records are available for the same USUBJID"
+		"multiple different records of x are available for the same USUBJID"
 	)
 	
 	expect_error(
 		computeSummaryStatistics(data = dataCont, var = "x", msgVars = "y"),
-		"multiple records are available for the same USUBJID.* USUBJID y x"
+		"multiple different records of x are available for the same USUBJID.* USUBJID y x"
 	)
 	
 	expect_error(
 		computeSummaryStatistics(data = dataCont, var = "x", msgLabel = "test dataset"),
-		"for the test dataset .* multiple records are available for the same USUBJID"
+		"multiple different records of x for the test dataset are available for the same USUBJID"
 	)
 			
 })

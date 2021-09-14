@@ -50,15 +50,16 @@ getSummaryStatisticsTable <- function(
 	dataTotal = NULL, dataTotalPerc = dataTotal, 
 	dataTotalRow = NULL, dataTotalCol = NULL,
 	type = "auto",
+	byVar = NULL, byVarLab = NULL,
+	checkVarDiffBySubj = "error",
 	labelVars = NULL, 
+	outputType = "flextable",
+	statsLayout = ifelse("DT" %in% outputType, "col", "row"),
 	landscape = (style == "presentation"), 	margin = 1, rowPadBase = 14.4, 
 	title = NULL, footer = NULL,
 	file = NULL,
-	outputType = "flextable",
-	statsLayout = ifelse("DT" %in% outputType, "col", "row"),
 	style = "report", 
 	colorTable = getColorPaletteTable(style = style),
-	byVar = NULL, byVarLab = NULL,
 	colHeaderTotalInclude = TRUE,
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
@@ -108,7 +109,8 @@ getSummaryStatisticsTable <- function(
 		dataTotal = dataTotal, dataTotalPerc = dataTotalPerc, 
 		dataTotalRow = dataTotalRow, dataTotalCol = dataTotalCol,
 		labelVars = labelVars,
-		byVar = byVar, byVarLab = byVarLab
+		byVar = byVar, byVarLab = byVarLab,
+		checkVarDiffBySubj = checkVarDiffBySubj
 	)
 
 	if(is.null(summaryTable))	return(invisible())
