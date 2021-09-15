@@ -523,10 +523,12 @@ test_that("table is exported to DT with row variables with expand variables", {
 	
 	# there is a button available:
 	cDefs <- dt$x$options$columnDefs
-	isControlPresent <- which(sapply(cDefs, function(x) "className" %in% names(x)))
-	expect_length(isControlPresent, 1)
-	expect_equal(cDefs[[isControlPresent]]$className, "details-control")
-	expect_equal(cDefs[[isControlPresent]]$targets, 0)
+	isControlPresent <- sapply(cDefs, function(x) 
+		hasName(x, "className") && 
+		x[["className"]] == "details-control"
+	)
+	expect_length(which(isControlPresent), 1)
+	expect_equal(cDefs[[which(isControlPresent)]]$targets, 0)
 	
 	# there is a JS callback defined for this variable:
 	expect_match(dt$x$callback, regexp = "patientProfileLink")
@@ -554,10 +556,12 @@ test_that("one statistical variable is expanded", {
 	
 	# there is a button available:
 	cDefs <- dt$x$options$columnDefs
-	isControlPresent <- which(sapply(cDefs, function(x) "className" %in% names(x)))
-	expect_length(isControlPresent, 1)
-	expect_equal(cDefs[[isControlPresent]]$className, "details-control")
-	expect_equal(cDefs[[isControlPresent]]$targets, 1)
+	isControlPresent <- sapply(cDefs, function(x) 
+		hasName(x, "className") && 
+		x[["className"]] == "details-control"
+	)
+	expect_length(which(isControlPresent), 1)
+	expect_equal(cDefs[[which(isControlPresent)]]$targets, 1)
 	
 	# there is a JS callback defined for this variable:
 	expect_length(dt$x$callback, 1)
