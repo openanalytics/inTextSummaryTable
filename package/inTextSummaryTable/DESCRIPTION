@@ -14,7 +14,7 @@ Description: Creation of tables of summary statistics or counts for clinical dat
   (Word format) or a 'topline' presentation (PowerPoint format), 
   or as interactive table (with the 'DT' package) to an html document for clinical data review.
 Imports:
-  clinUtils,
+  clinUtils (>= 0.1.0),
   cowplot,
   flextable (>= 0.5.5),
   ggplot2,
