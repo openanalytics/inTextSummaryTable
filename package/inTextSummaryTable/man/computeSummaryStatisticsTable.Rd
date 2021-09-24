@@ -346,11 +346,6 @@ should be created.}
 
 \item{byVarLab}{String with label for \code{byVar}, used to set the names
 of the output list of table(s).}
-
-\item{checkVarDiffBySubj}{String, 'error' (default) or 'warning'.
-Should an error or a warning be triggered
-if a continuous variable (\code{var}) contains
-different values for the same subject (by row/column)?}
 }
 \value{
 An object \code{\link{summaryTable}}

@@ -27,8 +27,9 @@
 #' @param msgVars (optional) Character vector with columns of \code{data}
 #' containing extra variables (besides \code{var} and \code{subjectVar})
 #' that should be included in the message/warning for checks.
-#' @param checkVarDiffBySubj String, 'error' (default) or 'warning'.  
-#' Should an error or a warning be triggered
+#' @param checkVarDiffBySubj String, 'error' (default), 'warning',
+#' or 'none'.  
+#' Should an error, a warning, or nothing be produced
 #' if a continuous variable (\code{var}) contains
 #' different values for the same subject?
 #' @inheritParams inTextSummaryTable-common-args
@@ -66,7 +67,7 @@ computeSummaryStatistics <- function(data,
 	subjectVar = "USUBJID",
 	filterEmptyVar = TRUE,
 	type = "auto",
-	checkVarDiffBySubj = c("error", "warning"),
+	checkVarDiffBySubj = c("error", "warning", "none"),
 	msgLabel = NULL, msgVars = NULL){
 	
 	checkVarDiffBySubj <- match.arg(checkVarDiffBySubj)
@@ -175,7 +176,7 @@ computeSummaryStatistics <- function(data,
 					}
 					
 					isDupl <- duplicated(data[, subjectVar])
-					if(any(isDupl)){
+					if(any(isDupl) & checkVarDiffBySubj != "none"){
 						dataDupl <- merge(data, unique(data[isDupl, subjectVar, drop = FALSE]))
 						dataDupl <- dataDupl[, unique(c(subjectVar, msgVars, var)), drop = FALSE]
 						msgDupl <- paste0(

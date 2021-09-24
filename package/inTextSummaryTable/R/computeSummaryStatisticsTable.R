@@ -991,8 +991,9 @@ computeSummaryStatisticsTableTotal <- function(
 #' \item{logical of length 1, if TRUE (FALSE by default) include the total for all categorical \code{var}}
 #' \item{a character vector containing categorical \code{var} for which the total should be included}
 #' }
-#' @param checkVarDiffBySubj String, 'error' (default) or 'warning'.  
-#' Should an error or a warning be triggered
+#' @param #' @param checkVarDiffBySubj String, 'error' (default), 'warning',
+#' or 'none'.  
+#' Should an error, a warning, or nothing be produced
 #' if a continuous variable (\code{var}) contains
 #' different values for the same subject (by row/column)?
 #' @inheritParams inTextSummaryTable-common-args

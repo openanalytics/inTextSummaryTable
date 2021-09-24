@@ -130,8 +130,9 @@ the summary statistic on or 'data': the entire dataset}
 For example, to additionally compute the coefficient of variation, this can be set to:
 \code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).}
 
-\item{checkVarDiffBySubj}{String, 'error' (default) or 'warning'.
-Should an error or a warning be triggered
+\item{#'}{@param checkVarDiffBySubj String, 'error' (default), 'warning',
+or 'none'.  
+Should an error, a warning, or nothing be produced
 if a continuous variable (\code{var}) contains
 different values for the same subject (by row/column)?}
 }

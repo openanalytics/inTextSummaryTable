@@ -109,6 +109,13 @@ test_that("warning for multiple records available per subject if requested", {
 	)		
 })
 
+test_that("no check for multiple records available per subject if requested", {
+	dataCont <- data.frame(x = seq.int(5), USUBJID = c(1, 1, 2, 2, 2))
+	expect_silent(
+		computeSummaryStatistics(data = dataCont, var = "x", checkVarDiffBySubj = "none")
+	)		
+})
+
 test_that("total included if requested", {
 		
 	dataCat <- data.frame(x = c(NA_character_, "B", "B", "B", "A"), USUBJID = sample(10, 5))
