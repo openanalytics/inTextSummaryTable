@@ -9,6 +9,10 @@ postProcessVarFlag(summaryTable, varFlag)
 \arguments{
 \item{summaryTable}{Summary table as created internally in
 \code{\link{computeSummaryStatisticsTable}}.}
+
+\item{varFlag}{Character vector, subset of \code{var} with variable(s) 
+of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
+Only the counts for records flagged (with 'Y') are retained.}
 }
 \value{
 Summary table with

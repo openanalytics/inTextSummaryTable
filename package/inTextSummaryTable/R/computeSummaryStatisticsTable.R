@@ -1,7 +1,4 @@
 #' Compute summary statistics for a specific dataset and variables of interest
-#' @param varFlag Character vector, subset of \code{var} with variable(s) 
-#' of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
-#' Only the counts for records flagged (with 'Y') are retained.
 #' @param rowOrder Specify how the rows should be ordered in the final table, either a:
 #' \itemize{
 #' \item{String among:}{
@@ -991,7 +988,7 @@ computeSummaryStatisticsTableTotal <- function(
 #' \item{logical of length 1, if TRUE (FALSE by default) include the total for all categorical \code{var}}
 #' \item{a character vector containing categorical \code{var} for which the total should be included}
 #' }
-#' @param #' @param checkVarDiffBySubj String, 'error' (default), 'warning',
+#' @param checkVarDiffBySubj String, 'error' (default), 'warning',
 #' or 'none'.  
 #' Should an error, a warning, or nothing be produced
 #' if a continuous variable (\code{var}) contains

@@ -86,7 +86,8 @@ test_that("Summary tables with a variable to summarize, row and column variables
 		PARAM = c("a", "a", "b", "b"),
 		TRT = c("A", "B", "A", "B"),
 		AVAL = c(1, 2 ,3, 4),
-		AVAL2 = c(4, 3 , 2, 1)
+		AVAL2 = c(4, 3 , 2, 1),
+		stringsAsFactors = FALSE
 	)
 	summaryTable1 <- computeSummaryStatisticsTable(
 		data = data, 

@@ -16,6 +16,10 @@ are specified, you can include: 'all' in the \code{var}.\cr
 Missing values, if present, are filtered 
 (also for the report of number of subjects/records).}
 
+\item{varFlag}{Character vector, subset of \code{var} with variable(s) 
+of type 'flag' (with 'Y', 'N' or '' for empty/non specified value).
+Only the counts for records flagged (with 'Y') are retained.}
+
 \item{varLabInclude}{Logical, if TRUE
 the name of the summary statistic variable(s) (\code{var})
 are included in the table.

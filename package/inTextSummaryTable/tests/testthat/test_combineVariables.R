@@ -102,7 +102,8 @@ test_that("The data is extracted correctly based on a comparison function specif
 		dataLongFct,
 		cbind.data.frame(
 			subset(data, AVAL > 2),
-			variable = "AVAL"
+			variable = "AVAL",
+			stringsAsFactors = TRUE
 		)
 	)
 
@@ -121,7 +122,8 @@ test_that("The data is extracted correctly based on a comparison function specif
 		),
 		cbind.data.frame(
 			subset(data, AVAL > 2),
-			variable = "AVAL"
+			variable = "AVAL",
+			stringsAsFactors = TRUE
 		)
 	)
 	
@@ -140,7 +142,8 @@ test_that("The data is extracted correctly based on a comparison function specif
 		),
 		cbind.data.frame(
 			subset(data, AVAL > 2),
-			variable = "AVAL"
+			variable = "AVAL",
+			stringsAsFactors = TRUE
 		)
 	)
 	

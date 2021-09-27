@@ -58,7 +58,7 @@ library(clinUtils)
 data(dataADaMCDISCP01)
 
 dataSL <- dataADaMCDISCP01$ADSL
-labelVars <- attr(dataAll, "labelVars")
+labelVars <- attr(dataADaMCDISCP01, "labelVars")
 
 ## Summary tables can be combined next to each other
 # for example to combine summary tables from multiple

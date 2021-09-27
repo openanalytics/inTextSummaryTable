@@ -399,6 +399,12 @@ should be created.}
 \item{byVarLab}{String with label for \code{byVar}, used to set the names
 of the output list of table(s).}
 
+\item{checkVarDiffBySubj}{String, 'error' (default), 'warning',
+or 'none'.  
+Should an error, a warning, or nothing be produced
+if a continuous variable (\code{var}) contains
+different values for the same subject (by row/column)?}
+
 \item{labelVars}{(optional) Named character vector with label for
 the row, column variable(s) or variable(s) to summarize. \cr
 Labels specified via dedicated parameter: e.g. 

@@ -37,7 +37,8 @@ Suggests:
   pander,
   testthat,
   xml2,
-  tools
+  tools,
+  dplyr
 URL: https://github.com/openanalytics/inTextSummaryTable
 BugReports: https://github.com/openanalytics/inTextSummaryTable/issues
 License: MIT + file LICENSE
