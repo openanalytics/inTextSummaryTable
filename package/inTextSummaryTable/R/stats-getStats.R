@@ -325,8 +325,8 @@ getStats <- function(
 	stats <- unlist(unname(statsList), recursive = FALSE)
 	
 	if(any(duplicated(names(stats))))
-		warning("Returned statistics have duplicated names (you probably included multiple 'type' statistics).",
-			"Be sure to provide only one statistic with the same name to the in-text table functions.")
+		warning("Returned statistics have duplicated names (you probably included multiple 'type' statistics). ",
+			"Make sure to provide only one statistic with the same name to the in-text table functions.")
 	
 	if(!includeName){
 		if(length(stats) == 1){

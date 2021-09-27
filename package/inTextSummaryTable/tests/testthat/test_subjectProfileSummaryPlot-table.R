@@ -1,26 +1,15 @@
-context("Create a subject profile summary plot with table")
+context("Create a subject profile summary plot with a table")
 
 library(ggplot2)
 library(plyr)
 
-test_that("a text variable is specified", {
+test_that("A text variable is correctly set", {
 		
 	summaryTable <- data.frame(
 		visit = c(1, 2),
 		n = c(10, 20)
 	)		
 	
-	# error is variable is not available
-	expect_error(
-		subjectProfileSummaryTable(
-			data = summaryTable,
-			xVar = "visit",
-			text = "n2"
-		),
-		"'n2' should be among the columns of 'data'"
-	)
-	
-	# correct specification
 	gg <- subjectProfileSummaryTable(
 		data = summaryTable,
 		xVar = "visit",
@@ -34,13 +23,31 @@ test_that("a text variable is specified", {
 	ggDataText <- layer_data(gg, which(isGeomText))
 	
 	expect_identical(
-		unname(ggDataText[, c("x", "label")]),
-		unname(summaryTable)
+		object = unname(ggDataText[, c("x", "label")]),
+		expected = unname(summaryTable)
 	)
 				
 })
 
-test_that("an expression is specified as text", {
+test_that("An error is generated if the text variable is not available", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20)
+	)		
+			
+	expect_error(
+		subjectProfileSummaryTable(
+			data = summaryTable,
+			xVar = "visit",
+			text = "n2"
+		),
+		"'n2' should be among the columns of 'data'"
+	)
+	
+})
+
+test_that("A text variable is correctly set as an expression", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2),
@@ -61,13 +68,13 @@ test_that("an expression is specified as text", {
 			
 	summaryTable$label <- with(summaryTable, eval(textExpr))
 	expect_identical(
-		unname(ggDataText[, c("x", "label")]),
-		unname(summaryTable[, c("visit", "label")])
+		object = unname(ggDataText[, c("x", "label")]),
+		expected = unname(summaryTable[, c("visit", "label")])
 	)
 			
 })
 
-test_that("size of text is specified", {
+test_that("The size of the text is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2),
@@ -85,33 +92,34 @@ test_that("size of text is specified", {
 	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomText"))
 	ggDataText <- layer_data(gg, which(isGeomText))
 	
-	expect_setequal(ggDataText$size, textSize)
+	expect_setequal(
+		object = ggDataText$size, 
+		expected = textSize
+	)
 		
 })
 
-
-
-test_that("label is specified for x variable", {
+test_that("The label for the x variable is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		n = c(10, 20)
 	)
 	xLab <- "Study visit"
-	expect_identical({
-		gg <- subjectProfileSummaryTable(
-			data = summaryTable, 
-			xVar = "visit",
-			text = "n",
-			xLab = xLab
-		)
-		gg$labels$x
-		}, xLab
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		xLab = xLab
+	)
+	expect_identical(
+		object = gg$labels$x,
+		expected = xLab
 	)
 			
 })
 
-test_that("x-axis labels are specified for a continuous x variable", {
+test_that("The x-axis labels are correctly set for a continuous x variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -131,11 +139,14 @@ test_that("x-axis labels are specified for a continuous x variable", {
 	isScaleX <- sapply(ggScales, function(x) 
 		"x" %in% x[["aesthetics"]]
 	)
-	expect_equal(gg$scales$scales[[which(isScaleX)]]$limits, xAxisLabs)
+	expect_equal(
+		object = gg$scales$scales[[which(isScaleX)]]$limits, 
+		expected = xAxisLabs
+	)
 	
 })
 
-test_that("x-axis labels are specified for a discrete x variable", {
+test_that("The x-axis labels are correctly set for a categorical x variable", {
 			
 	# Note: these labels are not displayed by default
 	# but still set in the ggplot object
@@ -160,12 +171,15 @@ test_that("x-axis labels are specified for a discrete x variable", {
 	isScaleX <- sapply(ggScales, function(x) 
 		"x" %in% x[["aesthetics"]]
 	)
-	expect_equal(gg$scales$scales[[which(isScaleX)]]$breaks, xAxisLabs)
+	expect_equal(
+		object = gg$scales$scales[[which(isScaleX)]]$breaks, 
+		expected = xAxisLabs
+	)
 			
 })
 
 
-test_that("limit is specified for the x-axis", {
+test_that("The limits are correctly set for the x-axis", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -173,21 +187,20 @@ test_that("limit is specified for the x-axis", {
 	)
 			
 	xLim <- c(1, 10)
-	expect_equal({
-		gg <- subjectProfileSummaryTable(
-			data = summaryTable, 
-			xVar = "visit",
-			text = "n",
-			xLim = xLim
-		)
-		ggplot_build(gg)$layout$coord$limits$x
-		}, 
-		xLim
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable, 
+		xVar = "visit",
+		text = "n",
+		xLim = xLim
+	)
+	expect_equal(
+		object = ggplot_build(gg)$layout$coord$limits$x,
+		expected = xLim
 	)		
 			
 })
 
-test_that("the color variable is displayed in the y-axis", {
+test_that("The labels of the color variable are correctly displayed in the y-axis", {
 		
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
@@ -217,14 +230,14 @@ test_that("the color variable is displayed in the y-axis", {
 	)
 	# check that correct data is displayed (and in the correct order)
 	expect_equal(
-		ggDataText[, c("x", "y", "label")],
-		dataPlotReference,
+		object = ggDataText[, c("x", "y", "label")],
+		expected = dataPlotReference,
 		check.attributes = FALSE
 	)
 	
 })
 	
-test_that("different colors are used based on a variable", {
+test_that("The text and point are colored based on the specified color variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
@@ -251,7 +264,7 @@ test_that("different colors are used based on a variable", {
 			
 })
 
-test_that("a color palette is specified", {
+test_that("A color palette is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
@@ -282,11 +295,14 @@ test_that("a color palette is specified", {
 	)
 			
 	colors <- with(ggDataTextPointWithInput, tapply(colour, TRT, unique))
-	expect_equal(as.vector(colors[names(colorPalette)]), unname(colorPalette))
+	expect_equal(
+		object = as.vector(colors[names(colorPalette)]), 
+		expected = unname(colorPalette)
+	)
 			
 })
 
-test_that("color label is specified", {
+test_that("A label for the color variable is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
@@ -308,12 +324,18 @@ test_that("color label is specified", {
 	isColorAes <- sapply(ggScales, function(x) 
 		all(x[["aesthetics"]] == "colour")
 	)
-	expect_equal(sum(isColorAes), 1)
-	expect_equal(ggScales[[which(isColorAes)]]$name, colorLab)
+	expect_equal(
+		object = sum(isColorAes), 
+		expected = 1
+	)
+	expect_equal(
+		object = ggScales[[which(isColorAes)]]$name, 
+		expected = colorLab
+	)
 			
 })
 
-test_that("size of point is specified", {
+test_that("The size of the points (in the legend) is correctly set", {
 			
 	# Note: this affect the size of the points in the legend
 	summaryTable <- data.frame(
@@ -331,11 +353,14 @@ test_that("size of point is specified", {
 		pointSize = pointSize
 	)
 			
-	expect_equal(gg$guides$colour$override.aes$size, pointSize) 
+	expect_equal(
+		object = gg$guides$colour$override.aes$size, 
+		expected = pointSize
+	) 
 			
 })
 
-test_that("variable labels specified with 'labelVars'", {
+test_that("The variable labels are correctly extracted from the labels of all variables", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -361,17 +386,55 @@ test_that("variable labels specified with 'labelVars'", {
 			
 })
 
-test_that("y-axis labels are included with color var as factor", {
+test_that("The labels of the y-axis are correctly included with a color variable as a factor", {
 	
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		n = c(10, 20),
 		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A", "C", "Z"))
 	)
+	
+	colorPalette <- c(A = "red", B = "blue")
+	
+	# ggplot2: a (expected) warning is created
+	# because of colors specified to text element
+	withCallingHandlers(
+		expr = {
+			gg <- subjectProfileSummaryTable(
+				data = summaryTable, 
+				xVar = "visit",
+				text = "n",
+				colorVar = "TRT",
+				colorPalette = colorPalette,
+				yAxisLabs = TRUE
+			)
+		},
+		warning = function(w){
+			if(grepl("Vectorized input", conditionMessage(w)))
+				invokeRestart("muffleWarning")
+		}
+	)
+	
+	expect_false(inherits(gg$theme$axis.text.y, "element_blank"))
+	# check that color of labels are correct in the y-axis
+	# Warning: labels are set from the lowest y (last level factor) to the highest y (first level factor)
+	expect_equal(
+		object = gg$theme$axis.text.y$colour,
+		expected = c("red", "blue")
+	)
+	
+})
+
+test_that("A warning is generated if the labels for the y-axis are requested but no color variable is specified", {
 			
-	# y-labels only available if color variable is specified:
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		n = c(10, 20),
+		TRT = factor(c("A", "B", "A", "B"), levels = c("B", "A", "C", "Z"))
+	)
+			
 	expect_warning(
-		subjectProfileSummaryTable(
+		gg <- subjectProfileSummaryTable(
 			data = summaryTable, 
 			xVar = "visit",
 			text = "n",
@@ -380,31 +443,10 @@ test_that("y-axis labels are included with color var as factor", {
 		"Labels for the y-axis are not included because color variable is not specified."
 	)
 	
-	# correct spec, with color var as factor:
-	colorPalette <- c(A = "red", B = "blue")
-	expect_warning(
-		gg <- subjectProfileSummaryTable(
-			data = summaryTable, 
-			xVar = "visit",
-			text = "n",
-			colorVar = "TRT",
-			colorPalette = colorPalette,
-			yAxisLabs = TRUE
-		)
-	)
-	expect_false(inherits(gg$theme$axis.text.y, "element_blank"))
-	# check that color of labels are correct in the y-axis
-	# Warning: labels are set from the lowest y (last level factor) to the highest y (first level factor)
-	expect_equal(
-		gg$theme$axis.text.y$colour,
-		c("red", "blue")
-	)
-	
 })
 
-test_that("y-axis labels are included with color var as character", {
+test_that("The labels of the y-axis are correctly included with a color variable as a character", {
 			
-	# not as a factor:
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		n = c(10, 20),
@@ -412,19 +454,31 @@ test_that("y-axis labels are included with color var as character", {
 		stringsAsFactors = FALSE
 	)		
 	colorPalette <- c(A = "red", B = "blue")
-	gg <- subjectProfileSummaryTable(
-		data = summaryTable, 
-		xVar = "visit",
-		text = "n",
-		colorVar = "TRT",
-		colorPalette = colorPalette,
-		yAxisLabs = TRUE
+	
+	# ggplot2: a (expected) warning is created
+	# because of colors specified to text element
+	withCallingHandlers(
+		expr = {
+			gg <- subjectProfileSummaryTable(
+				data = summaryTable, 
+				xVar = "visit",
+				text = "n",
+				colorVar = "TRT",
+				colorPalette = colorPalette,
+				yAxisLabs = TRUE
+			)
+		},
+		warning = function(w){
+			if(grepl("Vectorized input", conditionMessage(w)))
+				invokeRestart("muffleWarning")
+		}
 	)
+
 	# check that color of labels are correct in the y-axis
 	# Warning: labels are set from the lowest y (last level factor) to the highest y (first level factor)
 	expect_equal(
-		gg$theme$axis.text.y$colour,
-		c("blue", "red")
+		object = gg$theme$axis.text.y$colour,
+		expected = c("blue", "red")
 	)
 	
 	# extract data behind the text
@@ -437,7 +491,7 @@ test_that("y-axis labels are included with color var as character", {
 	
 })
 
-test_that("y-axis labels are not included", {
+test_that("The labels of the y-axis are correctly not included", {
 
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -454,11 +508,11 @@ test_that("y-axis labels are not included", {
 	)
 			
 	# check if axis labels have been removed
-	expect_true(inherits(gg$theme$axis.text.y, "element_blank"))
+	expect_s3_class(gg$theme$axis.text.y, "element_blank")
 			
 })
 
-test_that("y-axis labels are included for a non factor variable", {
+test_that("A color palette is correctly set for the labels of the y-axis ", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -467,23 +521,34 @@ test_that("y-axis labels are included for a non factor variable", {
 	)
 	
 	colorPalette <- c(A = "red", B = "blue")
-	gg <- subjectProfileSummaryTable(
-		data = summaryTable, 
-		xVar = "visit",
-		text = "n",
-		colorVar = "TRT",
-		colorPalette = colorPalette,
-		yAxisLabs = TRUE
+	
+	# ggplot2: a (expected) warning is created
+	# because of colors specified to text element
+	withCallingHandlers(
+		expr = {
+			gg <- subjectProfileSummaryTable(
+				data = summaryTable, 
+				xVar = "visit",
+				text = "n",
+				colorVar = "TRT",
+				colorPalette = colorPalette,
+				yAxisLabs = TRUE
+			)
+		},
+		warning = function(w){
+			if(grepl("Vectorized input", conditionMessage(w)))
+				invokeRestart("muffleWarning")
+		}
 	)
 	
 	expect_equal(
-		gg$theme$axis.text.y$colour,
-		c("blue", "red")
+		object = gg$theme$axis.text.y$colour,
+		expected = c("blue", "red")
 	)
 			
 })
 
-test_that("fontsize is specified", {
+test_that("The font size of the text is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2),
@@ -497,29 +562,40 @@ test_that("fontsize is specified", {
 		text = "n",
 		fontsize = fontsize
 	)
-	expect_equal(gg$theme$text$size, fontsize)
+	expect_equal(
+		object = gg$theme$text$size, 
+		expected = fontsize
+	)
 
 })
 
-test_that("fontface is specified", {
+test_that("The font face of the text is correctly set", {
       
-      summaryTable <- data.frame(
-          visit = c(1, 2),
-          n = c(10, 20)
-      )		
+	summaryTable <- data.frame(
+		visit = c(1, 2),
+		n = c(10, 20)
+	)		
       
-      fontface <- 3
-      gg <- subjectProfileSummaryTable(
-          data = summaryTable,
-          xVar = "visit",
-          text = "n",
-          fontface = 2
-      )
-      expect_equal(gg$labels$fontface, "fontface")
+	fontface <- 3
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit",
+		text = "n",
+		fontface = fontface
+	)
+	
+	# extract data behind the text
+	isGeomText <- sapply(gg$layers, function(l) inherits(l$geom, "GeomText"))
+	ggDataText <- layer_data(gg, which(isGeomText))
+	
+	expect_setequal(
+		object = ggDataText$fontface, 
+		expected = fontface
+	)
        
-    })
+})
 
-test_that("fontname is specified", {
+test_that("The font of the text is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2),
@@ -533,12 +609,14 @@ test_that("fontname is specified", {
 		text = "n",
 		fontname = fontname
 	)
-	
-	expect_equal(gg$theme$text$family, fontname)
+	expect_equal(
+		object = gg$theme$text$family, 
+		expected = fontname
+	)
 			
 })
 
-test_that("theme is specified", {
+test_that("A theme is correctly set for the plot", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2),
@@ -549,14 +627,18 @@ test_that("theme is specified", {
 		data = summaryTable,
 		xVar = "visit",
 		text = "n",
-		themeFct = function() theme(base_size = 30)
+		themeFct = function()
+			ggplot2::theme(aspect.ratio = 0.75)
 	)
 			
-	expect_equal(gg$theme$base_size, 30)
+	expect_equal(
+		object = gg$theme$aspect.ratio, 
+		expected = 0.75
+	)
 			
 })
 
-test_that("legend is shown", {
+test_that("A legend is correctly included", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2),
@@ -564,27 +646,35 @@ test_that("legend is shown", {
 		TRT = c("A", "B", "A", "B")
 	)	
 			
-	expect_equal({
-		gg <- subjectProfileSummaryTable(
-			data = summaryTable,
-			xVar = "visit", 
-			text = "n",
-			showLegend = FALSE
-		)
-		gg$theme$legend.position
-		}, 
-		expected = "none"
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit", 
+		text = "n",
+		colorVar = "TRT",
+		showLegend = TRUE
+	)
+	expect_false(gg$theme$legend.position == "none")
+	
+})
+
+test_that("A legend is correctly not included", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 1, 2, 2),
+		n = sample.int(4),
+		TRT = c("A", "B", "A", "B")
 	)
 	
-	expect_false({
-		gg <- subjectProfileSummaryTable(
-			data = summaryTable,
-			xVar = "visit", 
-			text = "n",
-			showLegend = TRUE
-		)
-		(gg$theme$legend.position == "none")
-		}
+	gg <- subjectProfileSummaryTable(
+		data = summaryTable,
+		xVar = "visit", 
+		text = "n",
+		colorVar = "TRT",
+		showLegend = FALSE
+	)
+	expect_equal(
+		object = gg$theme$legend.position,
+		expected = "none"
 	)
 
 })

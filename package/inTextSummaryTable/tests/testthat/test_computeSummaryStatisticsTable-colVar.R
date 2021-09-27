@@ -1,9 +1,9 @@
-context("Compute summary statistics table: col var specification")
+context("Compute summary statistics table with column variable")
 
 library(plyr)
 library(dplyr)
 
-test_that("summary table is computed with column variable", {
+test_that("A summary table is correctly computed for a continuous variable by a column variable", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(7),
@@ -41,7 +41,7 @@ test_that("summary table is computed with column variable", {
 
 })
 
-test_that("correct order of columns", {
+test_that("Column elements are ordered alphabetically if the column variable is a character", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -49,24 +49,31 @@ test_that("correct order of columns", {
 		TRT = rep(c("A", "B"), each = 3),
 		stringsAsFactors = FALSE
 	)
-	
-	# by default columns are ordered based on alphabetical order
 	expect_equal(
 		levels(computeSummaryStatisticsTable(data, var = "AGE", colVar = "TRT")$TRT),
 		c("A", "B")
 	)
 	
-	# or order of levels if colVar is a factor
-	dataColFact <- data
+})
+
+test_that("Column elements are ordered as specified if the column variable is a factor", {
+	
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		AGE = seq(20, 62, length.out = 6),
+		TRT = rep(c("A", "B"), each = 3),
+		stringsAsFactors = FALSE
+	)
 	data$TRT <- factor(data, levels = c("B", "A"))
+	summaryTable <- computeSummaryStatisticsTable(data, var = "AGE", colVar = "TRT")
 	expect_equal(
-		levels(computeSummaryStatisticsTable(data, var = "AGE", colVar = "TRT")$TRT),
+		levels(summaryTable$TRT),
 		c("B", "A")
 	)
 			
 })
 
-test_that("column total and label is extracted", {
+test_that("The column totals are correctly computed", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -95,7 +102,23 @@ test_that("column total and label is extracted", {
 		check.attributes = FALSE # row.names diff
 	)
 	
-	# label specification
+})
+	
+test_that("A label is correctly set to the column totals", {
+				
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		AGE = seq(20, 62, length.out = 6),
+		TRT = rep(c("A", "B"), each = 3),
+		stringsAsFactors = FALSE
+	)
+	
+	sumTableColTotal <- computeSummaryStatisticsTable(
+		data,
+		var = "AGE",
+		colVar = "TRT",
+		colTotalInclude = TRUE
+	)
 	expect_equal(
 		object = {
 			sumTableColTotalLab <- computeSummaryStatisticsTable(
@@ -111,7 +134,7 @@ test_that("column total and label is extracted", {
 	
 })
 
-test_that("column total is extracted from different dataset", {
+test_that("The column totals are correctly extracted from a different dataset", {
 			
 	data <- data.frame(
 		USUBJID = c("1", "1", "2", "3", "2", "3", "3"),
@@ -148,7 +171,7 @@ test_that("column total is extracted from different dataset", {
 	
 })
 
-test_that("column total for row total is correct", {
+test_that("The column totals for row totals are correctly computed", {
 			
 	data <- data.frame(
 		USUBJID = c("1", "1", "2", "3", "2", "3", "3"),
@@ -196,7 +219,7 @@ test_that("column total for row total is correct", {
 	
 })
 
-test_that("column total for row total is extracted from different dataset", {
+test_that("The column totals for row totals are correctly computed from a different dataset", {
 			
 	data <- data.frame(
 		USUBJID = c("1", "1", "2", "3", "2", "3", "3"),
@@ -292,7 +315,7 @@ test_that("column total for row total is extracted from different dataset", {
 			
 })
 
-test_that("columns with 0 counts are included", {
+test_that("Only column elements of the data are included by default", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -319,6 +342,18 @@ test_that("columns with 0 counts are included", {
 		check.attributes = FALSE
 	)
 	
+})
+
+test_that("All combinations of column elements are correctly included when requested", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		AGE = seq(20, 62, length.out = 6),
+		TRT = factor(rep(c("A", "B"), each = 3)),
+		DOSE = factor(rep(c("100", "200"), each = 3)),
+		stringsAsFactors = FALSE
+	)
+	
 	# if colInclude0 is specified, all combinations of columns are included based on levels
 	expect_silent(
 		sumTableInclude0 <- computeSummaryStatisticsTable(
@@ -342,6 +377,11 @@ test_that("columns with 0 counts are included", {
 	# statistics for combinations appearing in the data are identical
 	# than when 'include0' is set to FALSE:
 	colVarInData <- unique(data[, c("DOSE", "TRT")])
+	sumTableBase <- computeSummaryStatisticsTable(
+		data,
+		var = "AGE",
+		colVar = c("TRT", "DOSE")
+	)
 	expect_equal(
 		merge(colVarInData, sumTableInclude0)[, colnames(sumTableBase)],
 		sumTableBase,
@@ -357,7 +397,7 @@ test_that("columns with 0 counts are included", {
 			
 })
 
-test_that("Levels are specified for columns", {
+test_that("Specific combinations of column elements are included when requested", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -418,6 +458,18 @@ test_that("Levels are specified for columns", {
 	expect_true(all(sumTableNotInData[, c("statN", "statm", "statPercTotalN")] == 0))
 	expect_true(all(is.nan(sumTableNotInData[, c("statPercN")])))
 	
+})
+
+test_that("A warning is generated if specified combinations of column elements are not available in the data", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		AGE = seq(20, 62, length.out = 6),
+		TRT = factor(rep(c("A", "B"), each = 3)),
+		DOSE = factor(rep(c("100", "200"), each = 3)),
+		stringsAsFactors = FALSE
+	)
+			
 	## missing groups in colVarDataLevels
 	colVarDataLevels <- data.frame(
 		TRT = factor(c("A", "B")),
@@ -435,7 +487,7 @@ test_that("Levels are specified for columns", {
 	
 })
 
-test_that("more groups in colVar in dataTotalRow than in data to summarize", {
+test_that("Columns in the row total data but not in the data are correctly included", {
 			
 	dataAll <- data.frame(
 		USUBJID = rep(c(1:6), each = 2),
@@ -467,20 +519,16 @@ test_that("more groups in colVar in dataTotalRow than in data to summarize", {
 	
 })
 
-test_that("total per column is computed for different column var", {
+test_that("The column totals are correctly computed for a subset of the columns", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(5),
 		AGE = seq(20, 62, length.out = 5),
-		SEX = c(NA_character_, c("F", "M", "F", "M")),
 		TRT = c("A", "A", "A", "B", "B"),
 		DOSE = c("100", "100", "200", "300", "400"),
 		stringsAsFactors = FALSE
 	)
-			
-	## correct specification
-	
-	# with column variable
+
 	expect_silent(
 		sumTable <- computeSummaryStatisticsTable(
 			data,
@@ -499,6 +547,19 @@ test_that("total per column is computed for different column var", {
 	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN == 2))
 	
 	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
+	
+})
+
+test_that("The column totals are correctly computed by the variable to summarize", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AGE = seq(20, 62, length.out = 5),
+		SEX = c(NA_character_, c("F", "M", "F", "M")),
+		TRT = c("A", "A", "A", "B", "B"),
+		DOSE = c("100", "100", "200", "300", "400"),
+		stringsAsFactors = FALSE
+	)
 	
 	# by variable
 	expect_silent(
@@ -519,12 +580,22 @@ test_that("total per column is computed for different column var", {
 	
 	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
 	
-	# wrong specification
+})
+
+test_that("A warning is generated if the column for the totals is not available in the data", {
+
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AGE = seq(20, 62, length.out = 5),
+		TRT = c("A", "A", "A", "B", "B"),
+		stringsAsFactors = FALSE
+	)
+			
 	expect_warning(
 		computeSummaryStatisticsTable(
 			data,
 			var = "AGE",
-			colVar = c("TRT", "DOSE"),
+			colVar = "TRT",
 			colVarTotal = "TRT2"
 		),
 		"Variable.* in colVarTotal.* ignored because.*not available"
@@ -532,20 +603,16 @@ test_that("total per column is computed for different column var", {
 
 })
 
-test_that("percentage per column is computed for different column var", {
+test_that("Column percentages are correctly computed for a subset of the columns", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(5),
 		AGE = seq(20, 62, length.out = 5),
-		SEX = c(NA_character_, c("F", "M", "F", "M")),
 		TRT = c("A", "A", "A", "B", "B"),
 		DOSE = c("100", "100", "200", "300", "400"),
 		stringsAsFactors = FALSE
 	)
-			
-	## correct specification
 	
-	# with column variable
 	expect_silent(
 		sumTable <- computeSummaryStatisticsTable(
 			data,
@@ -568,6 +635,19 @@ test_that("percentage per column is computed for different column var", {
 	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN == 2))
 	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
 	
+})	
+
+test_that("Column percentages are correctly computed by the variable to summarize", {
+		
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AGE = seq(20, 62, length.out = 5),
+		SEX = c(NA_character_, c("F", "M", "F", "M")),
+		TRT = c("A", "A", "A", "B", "B"),
+		DOSE = c("100", "100", "200", "300", "400"),
+		stringsAsFactors = FALSE
+	)		
+	
 	# by variable
 	expect_silent(
 		sumTable <- computeSummaryStatisticsTable(
@@ -586,12 +666,23 @@ test_that("percentage per column is computed for different column var", {
 	expect_true(all(subset(sumTable, variable == "SEX")$statPercTotalN == 4))
 	expect_equal(sumTable$statPercN, sumTable$statN/sumTable$statPercTotalN*100)
 		
+})
+
+test_that("A warning is generated if the column for the percentages is not available in the data", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		AGE = seq(20, 62, length.out = 5),
+		TRT = c("A", "A", "A", "B", "B"),
+		stringsAsFactors = FALSE
+	)	
+			
 	# wrong specification
 	expect_warning(
 		sumTable <- computeSummaryStatisticsTable(
 			data,
-			var = c("AGE", "SEX"),
-			colVar = c("TRT", "DOSE"),
+			var = "AGE",
+			colVar = "TRT",
 			colVarTotalPerc = "TRT2"
 		),
 		"Variable.* in colVarTotalPerc.* ignored because.*not available"

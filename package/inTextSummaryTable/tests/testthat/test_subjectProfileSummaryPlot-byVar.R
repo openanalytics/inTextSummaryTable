@@ -1,8 +1,8 @@
-context("Create a subject profile summary plot: by a variable")
+context("Create a subject profile summary plot by a variable")
 
 library(ggplot2)
 
-test_that("plot is created by a variable", {
+test_that("A plot is correctly created by a variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -12,18 +12,7 @@ test_that("plot is created by a variable", {
 		),
 		statMean = rnorm(4)
 	)
-			
-	# variable not available
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = summaryTable,
-			xVar = "visit", 
-			byVar = "TRT1"
-		),
-		"'byVar' is not available in the 'data'"
-	)
-			
-	# correct specification
+	
 	res <- subjectProfileSummaryPlot(
 		data = summaryTable,
 		xVar = "visit", 
@@ -55,7 +44,29 @@ test_that("plot is created by a variable", {
 	
 })
 
-test_that("different titles are specified by group variable", {
+test_that("A warning is generated if the 'by' variable is not available in the data", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2, 1, 2), 
+		TRT = factor(
+			c("A", "A", "B", "B"), 
+			levels = c("B", "A")
+		),
+		statMean = rnorm(4)
+	)
+			
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit", 
+			byVar = "TRT1"
+		),
+		"'byVar' is not available in the 'data'"
+	)
+			
+})
+
+test_that("Titles are correctly set by group of a variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -77,7 +88,7 @@ test_that("different titles are specified by group variable", {
 	
 })
 
-test_that("different labels for the y-axis are specified by group variable", {
+test_that("Labels for the y-axis are correctly set by group of a variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -100,7 +111,7 @@ test_that("different labels for the y-axis are specified by group variable", {
 	
 })
 
-test_that("different vertical and horizontal lines are specified by group variable", {
+test_that("Vertical and horizontal lines are correctly set by group of a variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -149,7 +160,7 @@ test_that("different vertical and horizontal lines are specified by group variab
 			
 })
 
-test_that("different ggplot calls are specified by group variable", {
+test_that("Extra ggplot specifications are correctly set by group of a variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 

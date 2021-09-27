@@ -7,7 +7,9 @@ Authors@R: c(
   person(given = "Laure", family = "Cougnaud", role = c("aut", "cre"),
   email = "laure.cougnaud@openanalytics.eu"),
   person(given = "Michela", family = "Pasetto", role = "aut",
-  email = "michela.pasetto@openanalytics.eu")
+  email = "michela.pasetto@openanalytics.eu"),
+  person(given = "Margaux", family = "Faes", 
+  role = "rev", comment = "tests")
   )
 Description: Creation of tables of summary statistics or counts for clinical data (for 'TLFs'). 
   These tables can be exported as in-text table (with the 'flextable' package) for a Clinical Study Report 
@@ -33,7 +35,8 @@ Suggests:
   rmarkdown,
   pander,
   testthat,
-  xml2
+  xml2,
+  tools
 URL: https://github.com/openanalytics/inTextSummaryTable
 BugReports: https://github.com/openanalytics/inTextSummaryTable/issues
 License: MIT + file LICENSE

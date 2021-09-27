@@ -1,6 +1,6 @@
-context("Compute summary statistics table: total specification")
+context("Compute summary statistics table with totals")
 
-test_that("general total is extracted by default from data", {
+test_that("The totals are correctly extracted from the data by default", {
 			
 	# data with different number of subjects/records per treatment
 	data <- data.frame(
@@ -31,7 +31,7 @@ test_that("general total is extracted by default from data", {
 			
 })
 
-test_that("general total is is extracted from specified dataset", {
+test_that("The totals are correctly extracted from a specified dataset", {
 			
 	# data with different number of subjects/records per treatment
 	data <- data.frame(
@@ -56,7 +56,7 @@ test_that("general total is is extracted from specified dataset", {
 		dataTotal = dataTotal
 	)
 			
-	# data total extracted from the specified dataset directly
+	# data total extracted from a specified dataset directly
 	sumTableTotal <- subset(sumTable, isTotal)
 	sumTableTotal <- sumTableTotal[match(c("A", "B"), sumTableTotal$TRT), ]
 			
@@ -70,7 +70,18 @@ test_that("general total is is extracted from specified dataset", {
 		sumTableTotal[match(sumTable$TRT, sumTableTotal$TRT), "statN"]
 	)
 	
-	## wrong spec
+})
+
+test_that("Warnings are generated if the column variable is not available in the dataset for totals", {
+			
+	# data with different number of subjects/records per treatment
+	data <- data.frame(
+		USUBJID = c(1, 1, 2, 3, 4, 4, 5),
+		TRT = rep(c("A", "B"), times = c(4, 3)),
+		ADECOD = c("a", "b", "a", "c", "d", "a", "b"),
+		stringsAsFactors = FALSE
+	)
+
 	dataTotal <- data.frame(
 		USUBJID = c(c(1, seq.int(5)), c(1, seq.int(3)))
 	)
@@ -88,7 +99,7 @@ test_that("general total is is extracted from specified dataset", {
 	
 })
 
-test_that("percentage is extracted from specified dataset", {
+test_that("The percentages are correctly extracted from a specified dataset", {
 
 	# data with different number of subjects/records per treatment
 	data <- data.frame(
@@ -103,8 +114,6 @@ test_that("percentage is extracted from specified dataset", {
 		USUBJID = c(c(1, seq.int(5)), c(1, seq.int(3)))
 	)
 	
-	## correct spec
-	
 	sumTable <- computeSummaryStatisticsTable(
 		data = data,
 		var = "ADECOD",
@@ -112,7 +121,7 @@ test_that("percentage is extracted from specified dataset", {
 		dataTotalPerc = dataTotalPerc
 	)
 	
-	# percentage is computed from the specified dataset
+	# percentage is computed from a specified dataset
 	expect_true(all(subset(sumTable, TRT == "A")$statPercTotalN == 5))
 	expect_true(all(subset(sumTable, TRT == "B")$statPercTotalN == 3))
 	
@@ -126,7 +135,17 @@ test_that("percentage is extracted from specified dataset", {
 	expect_equal(sumTableTotal$statN, c(3, 2))
 	expect_equal(sumTableTotal$statm, c(4, 3))
 	
-	## wrong spec
+})
+
+test_that("A warning is generated if the column variable for percentages is not available in the dataset for percentages", {
+			
+	data <- data.frame(
+		USUBJID = c(1, 1, 2, 3, 4, 4, 5),
+		TRT = rep(c("A", "B"), times = c(4, 3)),
+		ADECOD = c("a", "b", "a", "c", "d", "a", "b"),
+		stringsAsFactors = FALSE
+	)
+
 	dataTotalPerc <- data.frame(
 		USUBJID = c(c(1, seq.int(5)), c(1, seq.int(3)))
 	)
@@ -141,8 +160,73 @@ test_that("percentage is extracted from specified dataset", {
 	)
 })
 
-test_that("a different dataset for the row total is specified", {
+test_that("The row totals are correctly extracted from a specified dataset", {
 			
+	# data
+	data <- data.frame(
+		USUBJID = c(1, 2, 4, 5),
+		TRT = c("A", "A", "B", "B"),
+		ABODSYS = c("AB", "AB", "CD", "AB"),
+		ADECOD = c("a", "b", "d", "a")
+	)
+			
+	# row total dataset: 
+	# add one subject for TRT: B - ABODSYS: CD
+	dataTotalRow <- data.frame(
+		USUBJID = c(1, 2, 4, 5, 6),
+		TRT = c("A", "A", "B", "B", "B"),
+		ABODSYS = c("AB", "AB", "CD", "CD", "AB"),
+		ADECOD = c("a", "b", "d", "e", "a")
+	)
+	
+	# summary table
+	summaryTable <- computeSummaryStatisticsTable(
+		data = data,
+		colVar = "TRT",
+		rowVar = c("ABODSYS", "ADECOD"),
+		rowVarTotalInclude = c("ABODSYS", "ADECOD"),
+		dataTotalRow = dataTotalRow
+	)
+	
+	# row totals across AEBODYS (by column)
+	expect_equal(
+		object = subset(summaryTable, 
+			subset = (ADECOD == "Total" & ABODSYS == "Total"), 
+			select = c("TRT", "statN", "statm"),
+		),
+		expected = subset(
+			computeSummaryStatisticsTable(
+				data = dataTotalRow,
+				colVar = "TRT"
+			),
+			subset = !isTotal,
+			select = c("TRT", "statN", "statm")
+		),
+		check.attributes = FALSE
+	)
+	
+	# row totals across AEDECOD (by column)	
+	expect_equal(
+		object = subset(summaryTable, 
+			subset = (ADECOD == "Total" & ABODSYS != "Total"), 
+			select = c("TRT", "ABODSYS", "statN", "statm")
+		),
+		expected = subset(
+			computeSummaryStatisticsTable(
+				data = dataTotalRow,
+				colVar = "TRT",
+				rowVar = "ABODSYS"
+			),
+			subset = !isTotal,
+			select = c("TRT", "ABODSYS", "statN", "statm")
+		),
+		check.attributes = FALSE
+	)
+	
+})
+
+test_that("An error is generated if the row or column variables are not available in the dataset for percentages", {
+	
 	# data with different number of subjects/records per treatment
 	data <- data.frame(
 		USUBJID = c(1, 1, 2, 3, 4, 4, 5),
@@ -151,11 +235,7 @@ test_that("a different dataset for the row total is specified", {
 		ADECOD = c("a", "b", "a", "c", "d", "a", "b"),
 		stringsAsFactors = FALSE
 	)
-	
-	## TODO: correct spec
-	
-	## incorrect spec
-	
+			
 	# variables (columns, rows) missing in dataTotalRow
 	expect_error(
 		computeSummaryStatisticsTable(
@@ -167,6 +247,20 @@ test_that("a different dataset for the row total is specified", {
 		),
 		"*not available.*dataset for row total"
 	)
+	
+})
+
+test_that("An error is generated if the dataset for percentages is specified only for a subset of the row variables", {
+			
+	# data with different number of subjects/records per treatment
+	data <- data.frame(
+		USUBJID = c(1, 1, 2, 3, 4, 4, 5),
+		TRT = rep(c("A", "B"), times = c(4, 3)),
+		ABODSYS = c("AB", "AB", "AB", "CD", "CD", "AB", "AB"),
+		ADECOD = c("a", "b", "a", "c", "d", "a", "b"),
+		stringsAsFactors = FALSE
+	)
+			
 	
 	# dataset specified as a list but not for all variables
 	expect_error(

@@ -2,7 +2,7 @@ context("Get set of statistics")
 
 library(clinUtils)
 
-test_that("output format of base and combined stats is correct", {	
+test_that("The output format of formatted base and combined statistics is correct", {	
 			
 	type <- c(
 		"n", "m", "%", "%m", 
@@ -25,7 +25,7 @@ test_that("output format of base and combined stats is correct", {
 	
 })
 
-test_that("count/summary base statistics are formatted correctly", {	
+test_that("Base count and summary statistics are correctly formatted", {	
 			
 	typeBase <- c("n", "m", "Mean", "SD", "Median", "SE", "Min", "Max")
 	statBase <- c(n = "statN", `%` = "statPercN", `%m` = "statPercm")
@@ -50,7 +50,7 @@ test_that("count/summary base statistics are formatted correctly", {
 	}
 })
 
-test_that("percentage of subjects/records are formatted correctly", {	
+test_that("Percentage of subjects and records are formatted correctly", {	
 			
 	statPerc <- c(`%` = "statPercN", `%m` = "statPercm")
 	for(type in names(statPerc)){
@@ -69,7 +69,7 @@ test_that("percentage of subjects/records are formatted correctly", {
 	
 })
 
-test_that("number of subjects is formatted with specified number of decimals as number", {
+test_that("The number of subjects is correctly formatted with specified number of decimals as number", {
 	
 	stat <- getStats(type = "n", nDecN = 1)
 	summaryTable <- data.frame(statN = c(13, 100.56))
@@ -80,7 +80,7 @@ test_that("number of subjects is formatted with specified number of decimals as 
 			
 })
 
-test_that("number of records is formatted with specified number of decimals as number", {
+test_that("The number of records is correctly formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "m", nDecN = 2)
 	summaryTable <- data.frame(statm = c(13, 100.567))
@@ -91,7 +91,7 @@ test_that("number of records is formatted with specified number of decimals as n
 			
 })
 
-test_that("mean is formatted with specified number of decimals as number", {
+test_that("The mean is correctly formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Mean", nDecCont = 4)
 	summaryTable <- data.frame(statMean = c(1098, 100.567567))
@@ -102,7 +102,7 @@ test_that("mean is formatted with specified number of decimals as number", {
 			
 })
 
-test_that("mean is formatted with specified number of decimals as function", {
+test_that("The mean is correctly formatted with specified number of decimals as function", {
 			
 	stat <- getStats(
 		type = "Mean", 
@@ -119,7 +119,7 @@ test_that("mean is formatted with specified number of decimals as function", {
 			
 })
 
-test_that("median is formatted with specified number of decimals as number", {
+test_that("The median is correctly formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Median", nDecCont = 4)
 	summaryTable <- data.frame(statMedian = c(1098, 100.567567))
@@ -130,7 +130,7 @@ test_that("median is formatted with specified number of decimals as number", {
 			
 })
 
-test_that("standard deviation is formatted with specified number of decimals as number", {
+test_that("The standard deviation is correctly formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "SD", nDecCont = 4)
 	summaryTable <- data.frame(statSD = c(1098, 100.567567))
@@ -141,7 +141,7 @@ test_that("standard deviation is formatted with specified number of decimals as 
 			
 })
 
-test_that("standard error is formatted with specified number of decimals as number", {
+test_that("The standard error is correctly formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "SE", nDecCont = 4)
 	summaryTable <- data.frame(statSE = c(1098, 100.56756767))
@@ -152,7 +152,7 @@ test_that("standard error is formatted with specified number of decimals as numb
 			
 })
 
-test_that("minimum is formatted with specified number of decimals as number", {
+test_that("The minimum is correctly formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Min", nDecCont = 4)
 	summaryTable <- data.frame(statMin = c(1098, 100.56756767))
@@ -163,7 +163,7 @@ test_that("minimum is formatted with specified number of decimals as number", {
 			
 })
 
-test_that("maximum is formatted with specified number of decimals as number", {
+test_that("The maximum is correctly formatted with specified number of decimals as number", {
 			
 	stat <- getStats(type = "Max", nDecCont = 4)
 	summaryTable <- data.frame(statMax = c(1098, 100.56756767))
@@ -174,7 +174,7 @@ test_that("maximum is formatted with specified number of decimals as number", {
 			
 })
 
-test_that("default set of summary stats is extracted", {
+test_that("The default set of summary statistics is correctly extracted", {
 			
 	statType <- c("statN", "statMean", "statSD", "statSE", "statMedian", "statMin", "statMax")
 	type <- ifelse(statType == "statN", "n", sub("stat", "", statType))
@@ -186,7 +186,7 @@ test_that("default set of summary stats is extracted", {
 			
 })
 
-test_that("entire set of summary stats is extracted", {
+test_that("The entire set of summary statistics is correctly extracted", {
 			
 	statType <- c("statN", "statMean", "statSD", "statSE", "statMedian", 
 		"statMin", "statMax", "statPercN", "statm")
@@ -201,7 +201,7 @@ test_that("entire set of summary stats is extracted", {
 			
 })
 
-test_that("default set of count stats is extracted", {
+test_that("The default set of count statistics is correctly extracted", {
 			
 	statType <- c("statN", "statPercN")
 	type <- c(statN = "n", statm = "%")
@@ -213,7 +213,7 @@ test_that("default set of count stats is extracted", {
 			
 })
 
-test_that("entire set of count stats is extracted", {
+test_that("The entire set of count statistics is correctly extracted", {
 			
 	statType <- c("statN", "statPercN", "statm")
 	type <- c(statN = "n", statm = "%", statm = "m")
@@ -225,7 +225,7 @@ test_that("entire set of count stats is extracted", {
 			
 })
 
-test_that("median (range) is extracted", {
+test_that("The median (range) is correctly extracted", {
 
 	stat <- getStats(type = "median (range)")
 	
@@ -247,7 +247,7 @@ test_that("median (range) is extracted", {
 			
 })
 
-test_that("median\n(range) is extracted", {
+test_that("The median\n(range) is correctly extracted", {
 			
 	stat <- getStats(type = "median\n(range)")
 			
@@ -269,7 +269,7 @@ test_that("median\n(range) is extracted", {
 			
 })
 
-test_that("mean (se) is extracted", {
+test_that("The mean (se) is correctly extracted", {
 			
 	stat <- getStats(type = "mean (se)")
 			
@@ -291,7 +291,7 @@ test_that("mean (se) is extracted", {
 	
 })
 
-test_that("mean (range) is extracted", {
+test_that("The mean (range) is correctly extracted", {
 			
 	stat <- getStats(type = "mean (range)")
 			
@@ -313,7 +313,7 @@ test_that("mean (range) is extracted", {
 	
 })
 
-test_that("n (%) is extracted", {
+test_that("The n (%) is correctly extracted", {
 			
 	stat <- getStats(type = "n (%)")
 			
@@ -335,7 +335,7 @@ test_that("n (%) is extracted", {
 			
 })
 
-test_that("percentage not included in n (%) if 0 counts", {
+test_that("If case of 0 counts, the percentage is not included in n (%)", {
 			
 	stat0 <- eval(
 		expr = getStats(type = "n (%)")[[1]],
@@ -345,7 +345,7 @@ test_that("percentage not included in n (%) if 0 counts", {
 	
 })
 
-test_that("m (%) is extracted", {
+test_that("The m (%) is correctly extracted", {
 			
 	stat <- getStats(type = "m (%)")
 	
@@ -367,7 +367,7 @@ test_that("m (%) is extracted", {
 	
 })
 
-test_that("percentage not included in m (%) if 0 counts", {
+test_that("If case of 0 counts, the percentage is not included in m (%)", {
 			
 	stat0 <- eval(
 		expr = getStats(type = "m (%)")[[1]],
@@ -377,7 +377,7 @@ test_that("percentage not included in m (%) if 0 counts", {
 			
 })
 
-test_that("n/N (%) is extracted", {
+test_that("The n/N (%) is correctly extracted", {
 			
 	stat <- getStats(type = "n/N (%)")
 			
@@ -403,7 +403,7 @@ test_that("n/N (%) is extracted", {
 			
 })
 
-test_that("percentage not included in n/N (%) if 0 counts", {
+test_that("If case of 0 counts, the percentage not included in n/N (%)", {
 			
 	stat0 <- eval(
 		expr = getStats(type = "n/N (%)")[[1]],
@@ -413,7 +413,7 @@ test_that("percentage not included in n/N (%) if 0 counts", {
 			
 })
 
-test_that("stats don't have unique nams", {
+test_that("A warning is generated if the statistics don't have unique nams", {
 			
 	expect_warning(
 		getStats(type = c("count", "n")),
@@ -422,13 +422,17 @@ test_that("stats don't have unique nams", {
 			
 })
 
-test_that("name is included", {
+test_that("The statistic name is included if specified", {
 
 	expect_named(
 		getStats(type = "n", includeName = TRUE),
 		"n"
 	)
 	
+})
+
+test_that("The statistic name is not included if specified", {
+			
 	expect_named(
 		getStats(type = "n", includeName = FALSE),
 		NULL
@@ -436,7 +440,7 @@ test_that("name is included", {
 			
 })
 
-test_that("name is included if multiple stats are requested", {
+test_that("The name is by default included if multiple statistics are requested", {
 		
 	type <- c("n", "m")
 	expect_warning(

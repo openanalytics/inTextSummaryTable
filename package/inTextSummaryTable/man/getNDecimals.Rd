@@ -15,11 +15,11 @@ getNDecimals(x, useRule = TRUE, rule = "1", useData = TRUE)
 the number of parameters.
 Currently only: '1' is implemented.
 \itemize{
-\item{'1': }{Standard rule for the number of 
+\item{'1': }{standard rule for the number of 
 decimals for individual values for a 
-continuous variable is:
+continuous variable:
 \itemize{
-\item{value < 1 ('very small values')}{3}
+\item{value < 1 ('very small values'): }{3}
 \item{value < 10: }{2}
 \item{value in [10, 1000[: }{1}
 \item{value >= 1000: }{0}

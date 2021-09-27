@@ -5,6 +5,7 @@
   o ft export: fix empty line for table with flag var, var with subgroups and multiple stats
   o group var (if included) is set to NA for a flag var
   o option for warning/nothing if diff var values by subject
+  o unit tests: updates based on independent review
 3.0.1
   o formatSummaryStatisticsTable: fix for column var with space
   o unit tests/doc: fix for Pandoc (CRAN Solaris) + SystemRequirements

@@ -1,6 +1,6 @@
-context("Compute summary statistics table: row var specification")
+context("Compute summary statistics table with row variable")
 
-test_that("table is created with row variables", {
+test_that("A summary table is correctly computed for a continuous variable by a row variable", {
 			
 	data <- data.frame(
 		parent = c("A", "A", "A", "A", "B", "B"), 
@@ -9,13 +9,6 @@ test_that("table is created with row variables", {
 		USUBJID = seq.int(6)
 	)
 	
-	# wrong specification
-	expect_warning(
-		computeSummaryStatisticsTable(data, rowVar = "Y"),
-		"Y.* in rowVar.*ignored"
-	)
-	
-	# correct specification
 	sumTableRowVar <- computeSummaryStatisticsTable(
 		data,
 		rowVar = c("parent", "child"),
@@ -59,65 +52,110 @@ test_that("table is created with row variables", {
 	
 })
 
-test_that("row var label is specified", {
+test_that("A warning is generated if the row variable is not available", {
 			
 	data <- data.frame(
 		parent = c("A", "A", "A", "A", "B", "B"), 
 		child = c("a", "a", "a", "b", "c", "c"),
-		x = rnorm(n = 6),
+		USUBJID = seq.int(6)
+	)
+			
+	expect_warning(
+		computeSummaryStatisticsTable(data, rowVar = "Y"),
+		"Y.* in rowVar.*ignored"
+	)
+	
+})
+
+
+test_that("Row variables are labelled with the variable name by default", {
+			
+	data <- data.frame(
+		parent = c("A", "A", "A", "A", "B", "B"), 
+		child = c("a", "a", "a", "b", "c", "c"),
+		USUBJID = seq.int(6)
+	)
+	rowVar <- c("parent", "child")
+
+	summaryTable <- computeSummaryStatisticsTable(data, rowVar = rowVar)
+	expect_identical(
+		object = attr(summaryTable, "summaryTable")$rowVarLab[rowVar],
+		expected = setNames(rowVar, rowVar)
+	)
+	
+})
+
+test_that("The labels of the row variables are correctly extracted from a specified labels", {
+			
+	data <- data.frame(
+		parent = c("A", "A", "A", "A", "B", "B"), 
+		child = c("a", "a", "a", "b", "c", "c"),
 		USUBJID = seq.int(6)
 	)
 	rowVar <- c("parent", "child")
 	rowVarLab <- c(parent = "Parent variable", child = "Child variable")
 			
-	# by default, variable name is used as label:
-	expect_identical(
-		object = {
-			sumTable <- computeSummaryStatisticsTable(data, rowVar = rowVar)
-			attr(sumTable, "summaryTable")$rowVarLab[rowVar]
-		},
-		expected = setNames(rowVar, rowVar)
+	summaryTable <- computeSummaryStatisticsTable(
+		data = data, 
+		rowVar = rowVar, 
+		rowVarLab = rowVarLab
 	)
-			
-	# specify variable labels with 'row varLab'
-	sumTableRowVarLab <- computeSummaryStatisticsTable(data, rowVar = rowVar, rowVarLab = rowVarLab)
 	expect_identical(
-		object = attr(sumTableRowVarLab, "summaryTable")$rowVarLab[rowVar], 
+		object = attr(summaryTable, "summaryTable")$rowVarLab[rowVar], 
 		expected = rowVarLab
 	)
+	
+})
 
-	# specify variable names in 'labelVars'
-	expect_identical(computeSummaryStatisticsTable(data, rowVar = rowVar, labelVars = rowVarLab), sumTableRowVarLab)
+test_that("The labels of the row variables are correctly extracted from the labels of all variables", {
 			
+	data <- data.frame(
+		parent = c("A", "A", "A", "A", "B", "B"), 
+		child = c("a", "a", "a", "b", "c", "c"),
+		USUBJID = seq.int(6)
+	)
+	rowVar <- c("parent", "child")
+
+	labelVars <- c(parent = "Parent variable", child = "Child variable")
+	summaryTable <- computeSummaryStatisticsTable(
+		data = data, 
+		rowVar = rowVar, 
+		labelVars = labelVars
+	)
+	expect_identical(
+		attr(summaryTable, "summaryTable")$rowVarLab[rowVar], 
+		labelVars[rowVar]
+	)
+	
+})
+
+test_that("The labels of the row variables are correctly extracted from the labels of all variables", {
+	
+	data <- data.frame(
+		parent = c("A", "A", "A", "A", "B", "B"), 
+		child = c("a", "a", "a", "b", "c", "c"),
+		USUBJID = seq.int(6)
+	)
+	rowVar <- c("parent", "child")
+	summaryTable <- computeSummaryStatisticsTable(
+		data = data, rowVar = rowVar, 
+		rowVarLab = c(child = "Child variable")
+	)
+	
 	# no errors if labels are not specified for all row variables
 	expect_identical(
-		object = {
-			sumTable <- computeSummaryStatisticsTable(data, rowVar = rowVar, 
-				rowVarLab = c(child = "Child variable"))
-			attr(sumTable, "summaryTable")$rowVarLab[rowVar]
-		}, 
+		object = attr(summaryTable, "summaryTable")$rowVarLab[rowVar], 
 		expected = c(parent = "parent", child = "Child variable")
 	)
 
 })
 
-test_that("row variables are automatically ordered", {
+test_that("Row elements are ordered alphabetically if the row variable is a character", {
 			
-	# from character
 	data <- data.frame(
 		USUBJID = seq.int(6),
 		SEX = rep(c("M", "F"), times = 3),
 		stringsAsFactors = FALSE
-	)
-			
-	# wrong param
-	expect_error(
-		resAuto <- computeSummaryStatisticsTable(
-			data,
-			rowVar = "SEX",
-			rowOrder = "test"
-		),
-		'.*should be one of.*auto.*alphabetical.*total.*'
 	)
 	
 	expect_silent(
@@ -132,17 +170,56 @@ test_that("row variables are automatically ordered", {
 		c("F", "M")
 	)
 	
+})
+
+test_that("Row elements are ordered alphabetically when requested", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = factor(rep(c("M", "F"), times = 3), levels = c("M", "F")),
+		stringsAsFactors = FALSE
+	)
+	
 	expect_silent(
 		resAlphabet <- computeSummaryStatisticsTable(
 			data,
 			rowVar = "SEX",
-			rowOrder = "auto"
+			rowOrder = "alphabetical"
 		)
 	)
-	expect_identical(resAuto, resAlphabet)
+	expect_identical(
+		levels(resAlphabet$SEX),
+		c("F", "M")
+	)
 	
-	# from factor:
-	data$SEX <- factor(data$SEX, levels = c("M", "F"))
+})
+	
+test_that("An error is generated if the order for the rows is not correctly specified", {
+		
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = rep(c("M", "F"), times = 3),
+		stringsAsFactors = FALSE
+	)
+			
+	expect_error(
+		resAuto <- computeSummaryStatisticsTable(
+			data = data,
+			rowVar = "SEX",
+			rowOrder = "test"
+		),
+		'.*should be one of.*auto.*alphabetical.*total.*'
+	)
+	
+})
+
+test_that("Row elements are ordered as specified when the row variable is a factor", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = factor(rep(c("M", "F"), times = 3), levels = c("M", "F")),
+		stringsAsFactors = FALSE
+	)
 	expect_silent(
 		resAuto <- computeSummaryStatisticsTable(
 			data,
@@ -154,26 +231,7 @@ test_that("row variables are automatically ordered", {
 	
 })
 
-test_that("row variables are correctly ordered based on alphabetical order", {
-			
-	data <- data.frame(
-		USUBJID = seq.int(6),
-		TRT = c("B", "B", "B", "B", "A", "A"),
-		stringsAsFactors = FALSE
-	)
-	# Alphabetical
-	expect_silent(
-		resAlphabet <- computeSummaryStatisticsTable(
-			data,
-			rowVar = "TRT",
-			rowOrder = "alphabetical"
-		)
-	)
-	expect_identical(levels(resAlphabet$TRT), c("A", "B"))
-	
-})
-
-test_that("row variables are ordered based on the total without column var", {
+test_that("Row elements are correctly ordered based on the total", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -196,7 +254,7 @@ test_that("row variables are ordered based on the total without column var", {
 	
 })
 
-test_that("row variables are ordered based on the total column with column var", {
+test_that("Row elements are correctly ordered based on the column totals", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -205,7 +263,6 @@ test_that("row variables are ordered based on the total column with column var",
 		stringsAsFactors = FALSE
 	)
 			
-	# Total
 	expect_silent(
 		resTotal <- computeSummaryStatisticsTable(
 			data,
@@ -225,7 +282,7 @@ test_that("row variables are ordered based on the total column with column var",
 			
 })
 
-test_that("row are ordered correctly when different order of row variables are specified", {
+test_that("Row elements are correctly ordered when the order is specified for each row variable", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
@@ -253,180 +310,209 @@ test_that("row are ordered correctly when different order of row variables are s
 	
 })
 
-test_that("row variables are ordered based on function", {
+test_that("Row elements are correctly ordered based on a specified function", {
 			
 	data <- data.frame(
-			USUBJID = seq.int(6),
-			TRT = c("B", "B", "B", "B", "A", "A"),
-			stringsAsFactors = FALSE
+		USUBJID = seq.int(6),
+		TRT = c("B", "B", "B", "B", "A", "A"),
+		stringsAsFactors = FALSE
 	)
 	resFct <- computeSummaryStatisticsTable(
-			data,
-			rowVar = "TRT",
-			rowOrder = function(sumTable){
-				data <- subset(sumTable, !isTotal)
-				data[order(data$statN, decreasing = TRUE), "TRT"]
-			}
+		data,
+		rowVar = "TRT",
+		rowOrder = function(summaryTable){
+			data <- subset(summaryTable, !isTotal)
+			data[order(data$statN, decreasing = TRUE), "TRT"]
+		}
 	)
 	expect_identical(levels(resFct$TRT), c("B", "A"))
 	
-	# if function is wrong, e.g. doesn't return all values in sumTable
+})
+
+test_that("Row elements are correctly ordered when not all elements are returned by a specified function", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		TRT = c("B", "B", "B", "B", "A", "A"),
+		stringsAsFactors = FALSE
+	)
+			
+	# if function is wrong, e.g. doesn't return all values in summaryTable
 	# the remaining values are added anyway
 	expect_silent(
-			resFct <- computeSummaryStatisticsTable(
-					data,
-					rowVar = "TRT",
-					rowOrderTotalFilterFct = function(sumTable){
-						c("")
-					}
-			)
+		resFct <- computeSummaryStatisticsTable(
+			data,
+			rowVar = "TRT",
+			rowOrderTotalFilterFct = function(summaryTable){
+				c("")
+			}
+		)
 	)
 	expect_identical(levels(resFct$TRT), c("A", "B"))
 	
 })
 
-test_that("row variable are ordered based on filtered data total", {
+test_that("Row elements are correctly ordered based on the total of a subset of the data", {
 			
-			# example order based on total would be different than based on specified subset data total
-			data <- data.frame(
-					USUBJID = seq.int(5),
-					TRT = c("B", "B", "B", "A", "A"),
-					SEX = c("M", "M", "F", "F", "F"),
-					stringsAsFactors = FALSE
-			)
+	# example order based on total would be different than based on specified subset data total
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		TRT = c("B", "B", "B", "A", "A"),
+		SEX = c("M", "M", "F", "F", "F"),
+		stringsAsFactors = FALSE
+	)
 			
-			expect_silent(
-					resTotal <- computeSummaryStatisticsTable(
-							data,
-							rowVar = c("TRT", "SEX"),
-							rowOrder = c(SEX = "total", TRT = "auto"),
-							rowOrderTotalFilterFct = function(x) subset(x, TRT == "B")
-					)
-			)
-			expect_identical(levels(resTotal$SEX), c("M", "F"))
+	expect_silent(
+		resTotal <- computeSummaryStatisticsTable(
+			data = data,
+			rowVar = c("TRT", "SEX"),
+			rowOrder = "total",
+			rowOrderTotalFilterFct = function(x) subset(x, TRT == "B")
+		)
+	)
+	expect_identical(levels(resTotal$SEX), c("M", "F"))
 			
-		})
+})
 
-test_that("last category specification for row ordering is correct", {
+test_that("The last element of the rows is correctly set when specified", {
 			
-			data <- data.frame(
-					USUBJID = seq.int(5),
-					TRT = c("Z", "B", "Other", "Y", "M"),
-					catLast = "Other",
-					stringsAsFactors = FALSE
-			)
+	data <- data.frame(
+		USUBJID = seq.int(5),
+		TRT = c("Z", "B", "Other", "Y", "M"),
+		catLast = "Other",
+		stringsAsFactors = FALSE
+	)
 			
-			expect_silent(
-					res <- computeSummaryStatisticsTable(
-							data,
-							rowVar = "TRT",
-							rowOrder = "auto",
-							rowOrderCatLast = "Other"
-					)
-			)
-			expect_identical(levels(res$TRT), c("B", "M", "Y", "Z", "Other"))
+	expect_silent(
+		res <- computeSummaryStatisticsTable(
+			data = data,
+			rowVar = "TRT",
+			rowOrder = "auto",
+			rowOrderCatLast = "Other"
+		)
+	)
+	expect_identical(levels(res$TRT), c("B", "M", "Y", "Z", "Other"))
 			
-		})
+})
 
-test_that("levels for row variables are correctly set if specified", {
+test_that("Specific combinations of row elements are included when requested", {
 			
-			# for example: table of lab abnormalities
-			data <- data.frame(
-					USUBJID = seq.int(7),
-					PARAM = factor(c("A", "A", "A", "B", "B", "B", "B")),
-					AVALC = factor(c(">10", ">10", ">10", "<=2", "]2, 10]", "]2, 10]", "]2, 10]")),
-					stringsAsFactors = FALSE
-			)
+	# for example: table of lab abnormalities
+	data <- data.frame(
+		USUBJID = seq.int(7),
+		PARAM = factor(c("A", "A", "A", "B", "B", "B", "B")),
+		AVALC = factor(c(">10", ">10", ">10", "<=2", "]2, 10]", "]2, 10]", "]2, 10]")),
+		stringsAsFactors = FALSE
+	)
+	
+	avalcFact <- c("<=10", ">10", "<=2", "]2, 10]", "> 10")
+	rowVarDataLevels <- data.frame(
+		PARAM = c(rep("A", 2), rep("B", 3)),
+		AVALC = factor(avalcFact, levels = avalcFact)
+	)
+	expect_silent(
+		resSpecLevels <- computeSummaryStatisticsTable(
+			data,
+			rowVar = c("PARAM", "AVALC"),
+			rowVarDataLevels = rowVarDataLevels
+		)
+	)
+	# all levels specified in rowVarDataLevels are present:
+	expect_identical(levels(resSpecLevels$AVALC), levels(rowVarDataLevels$AVALC))
+	
+	# categories not in the data are also present with a count of 0:
+	avalcNotInData <- setdiff(avalcFact, data$AVALC)
+	expect_true(all(avalcNotInData %in% resSpecLevels$AVALC))
+	expect_identical(
+		subset(resSpecLevels, AVALC %in% avalcNotInData)$statN,
+		as.integer(rep(0, length(avalcNotInData)))
+	)
+	
+})
+	
+test_that("The row totals are correctly computed", {
 			
-			avalcFact <- c("<=10", ">10", "<=2", "]2, 10]", "> 10")
-			rowVarDataLevels <- data.frame(
-					PARAM = c(rep("A", 2), rep("B", 3)),
-					AVALC = factor(avalcFact, levels = avalcFact)
-			)
-			expect_silent(
-					resSpecLevels <- computeSummaryStatisticsTable(
-							data,
-							rowVar = c("PARAM", "AVALC"),
-							rowVarDataLevels = rowVarDataLevels
-					)
-			)
-			# all levels specified in rowVarDataLevels are present:
-			expect_identical(levels(resSpecLevels$AVALC), levels(rowVarDataLevels$AVALC))
+	data <- data.frame(
+		USUBJID = c(1, 2, 3, 4, 5, 6, 6),
+		SEX = c("M", "M", "M", "F", "F", "F", "F"),
+		stringsAsFactors = FALSE
+	)
 			
-			# categories not in the data are also present with a count of 0:
-			avalcNotInData <- setdiff(avalcFact, data$AVALC)
-			expect_true(all(avalcNotInData %in% resSpecLevels$AVALC))
-			expect_identical(
-					subset(resSpecLevels, AVALC %in% avalcNotInData)$statN,
-					as.integer(rep(0, length(avalcNotInData)))
-			)
+	sumTableRowTotal <- computeSummaryStatisticsTable(
+		data = data,
+		rowVar = "SEX",
+		rowVarTotalInclude = "SEX"
+	)
+	expect_true("Total" %in% sumTableRowTotal$SEX)
+	sumTableTotal <- subset(sumTableRowTotal, SEX == "Total")
+	expect_equal(sumTableTotal$statN, 6)
+	expect_equal(sumTableTotal$statm, 7)
 			
-		})
+})
 
-test_that("total per row variables included when requested", {
-			
-			data <- data.frame(
-					USUBJID = c(1, 2, 3, 4, 5, 6, 6),
-					SEX = c("M", "M", "M", "F", "F", "F", "F"),
-					stringsAsFactors = FALSE
-			)
-			
-			# wrong specification
-			sumTableBase <- computeSummaryStatisticsTable(data = data, rowVar = "SEX")
-			expect_warning(
-					sumTableRowTotalWrong <- computeSummaryStatisticsTable(
-							data = data,
-							rowVar = "SEX",
-							rowVarTotalInclude = TRUE
-					),
-					"Variable.*TRUE.* are not available"
-			)
-			expect_identical(sumTableRowTotalWrong, sumTableBase)
-			
-			# correct specification
-			sumTableRowTotal <- computeSummaryStatisticsTable(
-					data = data,
-					rowVar = "SEX",
-					rowVarTotalInclude = "SEX"
-			)
-			expect_true("Total" %in% sumTableRowTotal$SEX)
-			sumTableTotal <- subset(sumTableRowTotal, SEX == "Total")
-			expect_equal(sumTableTotal$statN, 6)
-			expect_equal(sumTableTotal$statm, 7)
-			
-		})
 
-test_that("total in separated row stored in output", {
+test_that("A warning is generated when the variable for row totals is not available", {
 			
-			data <- data.frame(
-					USUBJID = seq.int(6),
-					SEX = rep(c("M", "F"), times = 3),
-					stringsAsFactors = FALSE
-			)
-			expect_silent(
-					sumTable <- computeSummaryStatisticsTable(
-							data = data, 
-							rowVar = "SEX",
-							rowVarTotalInclude = "SEX",
-							rowVarTotalInSepRow = "SEX"
-					)
-			)
-			# inclusion of row var in separated row during export step
-			# currently only stored in the output
-			expect_true("SEX" %in% attr(sumTable, "summaryTable")$rowVarTotalInSepRow)
+	data <- data.frame(
+		USUBJID = c(1, 2, 3, 4, 5, 6, 6),
+		SEX = c("M", "M", "M", "F", "F", "F", "F"),
+		stringsAsFactors = FALSE
+	)
 			
-			expect_warning(
-					sumTable <- computeSummaryStatisticsTable(
-							data = data, 
-							rowVar = "SEX",
-							rowVarTotalInSepRow = "SEX"
-					),
-					"SEX.*in rowVarTotalInSepRow are ignored.*"
-			)
-			
-		})
+	sumTableBase <- computeSummaryStatisticsTable(data = data, rowVar = "SEX")
+	expect_warning(
+		sumTableRowTotalWrong <- computeSummaryStatisticsTable(
+			data = data,
+			rowVar = "SEX",
+			rowVarTotalInclude = TRUE
+		),
+		"Variable.*TRUE.* are not available"
+	)
+	expect_identical(sumTableRowTotalWrong, sumTableBase)
+		
+})
 
-test_that("row total is computed by var", {
+test_that("The row totals are correctly extracted in separated rows when requested", {
+			
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = rep(c("M", "F"), times = 3),
+		stringsAsFactors = FALSE
+	)
+	expect_silent(
+		summaryTable <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "SEX",
+			rowVarTotalInclude = "SEX",
+			rowVarTotalInSepRow = "SEX"
+		)
+	)
+	# inclusion of row var in separated row during export step
+	# currently only stored in the output
+	expect_true("SEX" %in% attr(summaryTable, "summaryTable")$rowVarTotalInSepRow)
+		
+})
+
+test_that("A warning is generated if the variable for row totals to be included in separated rows is not among the row total variables", {
+		
+	data <- data.frame(
+		USUBJID = seq.int(6),
+		SEX = rep(c("M", "F"), times = 3),
+		stringsAsFactors = FALSE
+	)
+			
+	expect_warning(
+		summaryTable <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "SEX",
+			rowVarTotalInSepRow = "SEX"
+		),
+		"SEX.*in rowVarTotalInSepRow are ignored.*"
+	)
+			
+})
+
+test_that("The row totals are correctly computed by variable", {
 			
 	# example where a subject: 'a' has same severity for 2 adverse events
 	# so should be counted only once for the 'Mild' category
@@ -438,18 +524,6 @@ test_that("row total is computed by var", {
 		stringsAsFactors = FALSE
 	)
 	
-	# wrong spec
-	expect_warning(
-		sumTable <- computeSummaryStatisticsTable(
-			data = data, 
-			rowVar = "AEDECOD",
-			rowVarTotalInclude = "AEDECOD",
-			rowVarTotalByVar = "a"
-		),
-		".*rowVarTotalByVar.*ignored"
-	)
-	
-	# correct spec
 	sumTableRVBV <- computeSummaryStatisticsTable(
 		data = data, 
 		rowVar = c("AEDECOD", "AESEV"),
@@ -464,7 +538,20 @@ test_that("row total is computed by var", {
 	# but 3 records are reported
 	expect_equal(subset(sumTableRVBVRowTotal, AESEV == "Mild")$statm, 3)
 	
-	# specification for specific rowVar
+})
+
+test_that("The row totals are correctly computed by variable for only a subset of the variable to summarize", {
+			
+	# example where a subject: 'a' has same severity for 2 adverse events
+	# so should be counted only once for the 'Mild' category
+	data <- data.frame(
+		USUBJID = c("a", "a", "b", "c", "c", "a"),
+		ABODSYS = rep("X", 6),
+		AEDECOD = c("A", "A", "A", "A", "B", "B"),
+		AESEV = c("Mild", "Moderate", "Mild", "Severe", "Moderate", "Mild"),
+		stringsAsFactors = FALSE
+	)
+	
 	expect_silent(
 		sumTableRVBVSpec <- computeSummaryStatisticsTable(
 			data = data, 
@@ -476,9 +563,18 @@ test_that("row total is computed by var", {
 	# if rowVarTotalByVar is not specified, only one total row is included
 	sumTableTotalRowVar1 <- subset(sumTableRVBVSpec, ABODSYS == "Total")
 	expect_length(nrow(sumTableTotalRowVar1), 1)
+	
 	# otherwise, total row(s) for each element in rowVarTotalByVar
 	sumTableTotalRowVar2 <- subset(sumTableRVBVSpec, ABODSYS == "X" & AEDECOD == "Total")
+	
 	# should match stats based on table on ADECOD
+	sumTableRVBV <- computeSummaryStatisticsTable(
+		data = data, 
+		rowVar = c("AEDECOD", "AESEV"),
+		rowVarTotalInclude = "AEDECOD",
+		rowVarTotalByVar = "AESEV"
+	)
+	sumTableRVBVRowTotal <- subset(sumTableRVBV, AEDECOD == "Total")
 	expect_equal(
 		subset(sumTableTotalRowVar2, select = -ABODSYS), 
 		sumTableRVBVRowTotal,
@@ -487,17 +583,36 @@ test_that("row total is computed by var", {
 
 })
 
-test_that("percentage is computed by row variable", {
+test_that("A warning is generated if the variable to compute row totals by is not available", {
+			
+	# example where a subject: 'a' has same severity for 2 adverse events
+	# so should be counted only once for the 'Mild' category
+	data <- data.frame(
+		USUBJID = c("a", "a", "b", "c", "c", "a"),
+		AEDECOD = c("A", "A", "A", "A", "B", "B"),
+		stringsAsFactors = FALSE
+	)
+			
+	expect_warning(
+		summaryTable <- computeSummaryStatisticsTable(
+			data = data, 
+			rowVar = "AEDECOD",
+			rowVarTotalInclude = "AEDECOD",
+			rowVarTotalByVar = "a"
+		),
+		".*rowVarTotalByVar.*ignored"
+	)
+	
+})
+
+test_that("The row percentages are correctly computed by a row variable", {
 	
 	data <- data.frame(
 		USUBJID = c("a", "b", "c", "d", "a", "b"),
 		AEDECOD = c("A", "A", "A", "A", "B", "B"),
 		stringsAsFactors = FALSE
 	)
-	
-	### correct spec
 			
-	## row Var
 	sumTableRVTPerc <- computeSummaryStatisticsTable(
 		data = data, 
 		rowVar = "AEDECOD", 
@@ -511,11 +626,19 @@ test_that("percentage is computed by row variable", {
 		100
 	)
 	
-	### wrong spec
+})
+
+test_that("A warning is generated if the variable to compute row percentages is not available", {
+			
+	data <- data.frame(
+		USUBJID = c("a", "b", "c", "d", "a", "b"),
+		AEDECOD = c("A", "A", "A", "A", "B", "B"),
+		stringsAsFactors = FALSE
+	)
 	
 	# variable not in rowVar
 	expect_warning(
-		sumTable <- computeSummaryStatisticsTable(
+		summaryTable <- computeSummaryStatisticsTable(
 			data = data, 
 			rowVar = "AEDECOD",
 			rowVarTotalPerc = "a"
@@ -525,7 +648,7 @@ test_that("percentage is computed by row variable", {
 	
 })
 	
-test_that("percentage is computed by a variable", {
+test_that("The row percentages are correctly computed by the variable to summarize", {
 				
 	data <- data.frame(
 		USUBJID = c("a", "b", "c", "d", "a", "b"),
@@ -535,7 +658,6 @@ test_that("percentage is computed by a variable", {
 		stringsAsFactors = FALSE
 	)
 
-	### correct spec
 	expect_silent(
 		sumTableRVTPerc <- computeSummaryStatisticsTable(
 			data = data, 
@@ -554,7 +676,17 @@ test_that("percentage is computed by a variable", {
 		2
 	)
 	
-	### wrong spec
+})
+
+test_that("A warning is generated if row percentages should be computed by the variable to summarize but the variable is not included", {
+		
+	data <- data.frame(
+		USUBJID = c("a", "b", "c", "d", "a", "b"),
+		AEDECOD = c("A", "A", "A", "A", "B", "B"),
+		AESEV = c("Mild", "Moderate", "Moderate", "Severe", "Moderate", "Mild"),
+		AESEV2 = c("Mild", "Moderate", NA_character_, NA_character_, "Moderate", "Mild"),
+		stringsAsFactors = FALSE
+	)
 	
 	# variable not included in summary table:
 	expect_warning(

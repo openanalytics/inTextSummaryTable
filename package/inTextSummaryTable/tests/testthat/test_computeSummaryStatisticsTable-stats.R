@@ -1,11 +1,10 @@
-context("Compute summary statistics table: statistics specification")
+context("Compute summary statistics table with custom statistics")
 
-test_that("an unique statistic is specified as expression/name", {
+test_that("A unique statistic specified as an expression is correctly computed", {
 		
 	set.seed(123)
 	data <- data.frame(AVAL = rnorm(5), USUBJID = seq.int(5))
-		
-	# as an expression
+
 	expect_silent(
 		summaryTableExpr <- computeSummaryStatisticsTable(
 			var = "AVAL",
@@ -13,8 +12,22 @@ test_that("an unique statistic is specified as expression/name", {
 			stats = expression(statMean)
 		)
 	)
-	expect_identical(attr(summaryTableExpr, "summaryTable")$statsVar, "Statistic")
-	expect_equal(subset(summaryTableExpr, !isTotal)$Statistic, mean(data$AVAL))
+	
+	expect_identical(
+		attr(summaryTableExpr, "summaryTable")$statsVar, 
+		"Statistic"
+	)
+	expect_equal(
+		subset(summaryTableExpr, !isTotal)$Statistic, 
+		mean(data$AVAL)
+	)
+	
+})
+
+test_that("A unique statistic specified as a name is correctly compute", {
+			
+	set.seed(123)
+	data <- data.frame(AVAL = rnorm(5), USUBJID = seq.int(5))
 	
 	# as a 'name' object
 	expect_silent(
@@ -24,11 +37,18 @@ test_that("an unique statistic is specified as expression/name", {
 			stats = bquote(statMean)
 		)
 	)
-	expect_identical(summaryTableExpr, summaryTableName)
-		
+	expect_identical(
+		attr(summaryTableName, "summaryTable")$statsVar, 
+		"Statistic"
+	)
+	expect_equal(
+		subset(summaryTableName, !isTotal)$Statistic, 
+		mean(data$AVAL)
+	)
+
 })
 
-test_that("statistic is specified as a string among default set", {
+test_that("The statistic of interest is specified as a string from the default set", {
 			
 	set.seed(123)
 	data <- data.frame(AVAL = rnorm(5), USUBJID = seq.int(5))
@@ -50,8 +70,13 @@ test_that("statistic is specified as a string among default set", {
 	)
 	expect_identical(summaryTableString, summaryTableGetStats)
 	
-	
-	# statistic not available in the default set:
+})
+
+test_that("An error is generated if the statistic of interest is not available in the default set", {
+			
+	set.seed(123)
+	data <- data.frame(AVAL = rnorm(5), USUBJID = seq.int(5))	
+			
 	expect_error(
 		computeSummaryStatisticsTable(
 			var = "AVAL",
@@ -63,7 +88,7 @@ test_that("statistic is specified as a string among default set", {
 			
 })
 
-test_that("stats is a copy of default statistic", {
+test_that("The statistic of interest as a copy of a default statistic is correctly computed	", {
 			
 	set.seed(123)
 	data <- data.frame(AVAL = rnorm(5),	USUBJID = seq.int(5))	
@@ -81,7 +106,7 @@ test_that("stats is a copy of default statistic", {
 			
 })
 
-test_that("stats has same name than default statistic", {
+test_that("An error is generated if the statistics has the same name as a default statistic", {
 			
 	data <- data.frame(AVAL = rnorm(5),	USUBJID = seq.int(5))	
 	expect_error(
@@ -94,7 +119,7 @@ test_that("stats has same name than default statistic", {
 			
 })
 
-test_that("unique set of stats are computed by variable", {
+test_that("A unique set of statistics is correctly computed by variable", {
 		
 	set.seed(123)
 	data <- data.frame(
@@ -107,7 +132,10 @@ test_that("unique set of stats are computed by variable", {
 		summaryTable <- computeSummaryStatisticsTable(
 			var = c("AVAL", "CHG"),
 			data = data,
-			stats = list(AVAL = expression(statMean), CHG = expression(statMedian))
+			stats = list(
+				AVAL = expression(statMean), 
+				CHG = expression(statMedian)
+			)
 		)
 	)
 	expect_identical(
@@ -120,7 +148,7 @@ test_that("unique set of stats are computed by variable", {
 			
 })
 
-test_that("multiple sets of stats are computed by variable", {
+test_that("Multiple sets of statistics are correctly computed by variable", {
 		
 	set.seed(123)
 	data <- data.frame(
@@ -154,7 +182,7 @@ test_that("multiple sets of stats are computed by variable", {
 	
 })
 
-test_that("incorrect specification of stats by variable is correctly flagged", {
+test_that("An error is generated if the statistics are not specified for all variables to summarize", {
 		
 	set.seed(123)
 	data <- data.frame(
@@ -173,7 +201,17 @@ test_that("incorrect specification of stats by variable is correctly flagged", {
 		"'stats'.*should be specified for all variables specified in 'var'"
 	)
 	
-	# wrong variable is specified
+})
+
+test_that("An error is generated if the statistics are specified for a variable not available", {
+	
+	set.seed(123)
+	data <- data.frame(
+		AVAL = rnorm(10), 
+		CHG = c(NA_real_, rnorm(9)), 
+		USUBJID = seq.int(10)
+	)	
+	
 	expect_error(
 		computeSummaryStatisticsTable(
 			var = c("AVAL", "CHG"),
@@ -185,7 +223,7 @@ test_that("incorrect specification of stats by variable is correctly flagged", {
 	
 })
 
-test_that("stats are computed by a specified row/column variable", {
+test_that("Statistics are correctly computed by each element of a row variable", {
 			
 	set.seed(123)
 	data <- data.frame(
@@ -223,7 +261,23 @@ test_that("stats are computed by a specified row/column variable", {
 		c(Median = NA_real_, Mean = mean(dataALB$AVAL))
 	)
 	
-	# error if 'statsVarBy' is not specified in row/column variable
+})
+
+	
+test_that("An error is generated if the variable to compute statistics by is not specified as row or column variable", {
+				
+	set.seed(123)
+	data <- data.frame(
+		PARAM = rep(c("ALB", "ALT"), length.out = 10),
+		AVAL = rnorm(10), 
+		USUBJID = seq.int(10)
+	)
+	
+	stats <- list(
+		ALB = list(Mean = expression(statMean)), 
+		ALT = list(Median = expression(statMedian))
+	)
+			
 	expect_error(
 		computeSummaryStatisticsTable(
 			var = "AVAL",
@@ -234,7 +288,22 @@ test_that("stats are computed by a specified row/column variable", {
 		".*not available in.*row or column variables.*"
 	)
 	
-	# error is variable to compute stats by is not specified
+})
+
+test_that("An error is generated if the variable to compute statistics by is not specified but the statistics are specified by group", {
+		
+	set.seed(123)
+	data <- data.frame(
+		PARAM = rep(c("ALB", "ALT"), length.out = 10),
+		AVAL = rnorm(10), 
+		USUBJID = seq.int(10)
+	)
+			
+	stats <- list(
+		ALB = list(Mean = expression(statMean)), 
+		ALT = list(Median = expression(statMedian))
+	)
+	
 	expect_error(
 		computeSummaryStatisticsTable(
 			var = "AVAL",
@@ -246,7 +315,7 @@ test_that("stats are computed by a specified row/column variable", {
 	
 })
 
-test_that("stats are computed by a specified row/column variable and by variable", {
+test_that("Statistics are correctly computed by a specified row/column variable and by each of its element", {
 	
 	set.seed(123)
 	data <- data.frame(
@@ -291,7 +360,7 @@ test_that("stats are computed by a specified row/column variable and by variable
 })
 			
 
-test_that("custom statistics are specified", {
+test_that("Custom statistics are correctly computed", {
 			
 	set.seed(123)
 	data <- data.frame(
@@ -314,25 +383,24 @@ test_that("custom statistics are specified", {
 			
 })
 
-test_that("general label for statistics is specified", {
+test_that("A general label is correctly set for the statistics", {
 
 	set.seed(123)
 	data <- data.frame(USUBJID = seq.int(10))	
 	
 	statLab <- "My custom statistic"
+	
+	summaryTable <- computeSummaryStatisticsTable(data = data, statsGeneralLab = statLab)
 	# general label is stored in table attribute
 	# (and set when the table is formatted)
 	expect_identical(
-		attr(
-			computeSummaryStatisticsTable(data = data, statsGeneralLab = statLab), 
-			"summaryTable"
-		)$rowVarLab,
+		attr(summaryTable, "summaryTable")$rowVarLab,
 		c(Statistic = statLab)
 	)
 			
 })
 
-test_that("percentage is computed on a different statistic", {
+test_that("Percentages are correctly computed on the number of subject by default", {
 			
 	set.seed(123)
 	data <- data.frame(
@@ -340,7 +408,6 @@ test_that("percentage is computed on a different statistic", {
 		AEDECOD = rep("A", 5)
 	)
 	
-	# compute percentage based on the number of subjects:
 	expect_silent(
 		summaryTableStatN <- computeSummaryStatisticsTable(
 			var = "AEDECOD",
@@ -351,7 +418,17 @@ test_that("percentage is computed on a different statistic", {
 	summaryTableStatNGroup <- subset(summaryTableStatN, variableGroup == "A")
 	expect_equal(summaryTableStatNGroup$statPercTotalN, 4)
 	
-	# compute percentage based on the number of records:
+})
+
+
+test_that("Percentages are correctly computed on the number of records when requested", {
+				
+	set.seed(123)
+	data <- data.frame(
+		USUBJID = c("1", "1", "2", "3", "4"),
+		AEDECOD = rep("A", 5)
+	)
+				
 	expect_silent(
 		summaryTableStatm <- computeSummaryStatisticsTable(
 			var = "AEDECOD",
@@ -362,7 +439,16 @@ test_that("percentage is computed on a different statistic", {
 	summaryTableStatmGroup <- subset(summaryTableStatm , variableGroup == "A")
 	expect_equal(summaryTableStatmGroup$statPercTotalm, 5)
 	
-	# statistic not available:
+})
+
+test_that("An error is generated when the statistic specified for percentages is not available", {
+			
+	set.seed(123)
+	data <- data.frame(
+		USUBJID = c("1", "1", "2", "3", "4"),
+		AEDECOD = rep("A", 5)
+	)
+
 	expect_error(
 		computeSummaryStatisticsTable(
 			var = "AEDECOD",

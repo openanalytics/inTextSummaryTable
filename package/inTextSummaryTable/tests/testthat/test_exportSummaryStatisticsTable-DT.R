@@ -1,20 +1,19 @@
-context("Export summary statistics table to DT")
+context("Export summary statistics table to a DataTables")
 
 library(htmltools)
 library(rmarkdown)
+library(tools)
 
-test_that("table is exported with row variable", {
+test_that("A summary table with a row variable is correctly exported to DataTables", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
 	)	
-	expect_silent(
-		dt <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			rowVar = "PARAM",
-			outputType = "DT"
-		)
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = "PARAM",
+		outputType = "DT"
 	)
 	expect_s3_class(dt, "datatables")
 	expect_identical(
@@ -24,7 +23,7 @@ test_that("table is exported with row variable", {
 			
 })
 
-test_that("warning is table is exported with multiple nested row variables", {
+test_that("A warning is generated if a summary table is exported to DataTables with multiple nested row variables", {
 			
 	summaryTable <- data.frame(
 		TRT = rep(c("A", "A", "B", "B"), times = 2),
@@ -45,83 +44,75 @@ test_that("warning is table is exported with multiple nested row variables", {
 })
 
 
-test_that("table is exported with label for row variables", {
+test_that("The specified labels of the row variables are correctly set in a DataTables summary table", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
 	)
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = "PARAM",
+		rowVarLab = c(PARAM = "Parameter"),
+		outputType = "DT"
+	)
 	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				rowVar = "PARAM",
-				rowVarLab = c(PARAM = "Parameter"),
-				outputType = "DT"
-			)
-			attr(dt$x, "colnames")[1]
-		}, 
+		object = attr(dt$x, "colnames")[1], 
 		expected = "Parameter"
 	)
 			
 })
 
-test_that("table is exported with label for row variables extracted from label vars", {
+test_that("The labels of the row variables, extracted from the labels of all variables, are correctly set in a DataTables summary table", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
 	)
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = "PARAM",
+		labelVars = c(PARAM = "Parameter"),
+		outputType = "DT"
+	)
 	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				rowVar = "PARAM",
-				labelVars = c(PARAM = "Parameter"),
-				outputType = "DT"
-			)
-			attr(dt$x, "colnames")[1]
-		}, 
+		object = attr(dt$x, "colnames")[1], 
 		expected = "Parameter"
 	)
 	
 })
 
 
-test_that("table is exported with row variables in a separated column", {
+test_that("A summary table with a row variable in a separated column is correctly exported to DataTables", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
 		PARAM = c("a", "b", "a", "b"),
 		n = 1:4
 	)
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = c("TRT", "PARAM"),
+		rowVarInSepCol = "PARAM",
+		outputType = "DT"
+	)
 	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				rowVar = c("TRT", "PARAM"),
-				rowVarInSepCol = "PARAM",
-				outputType = "DT"
-			)
-			attr(dt$x, "colnames")[1:2]
-		}, 
+		object = attr(dt$x, "colnames")[1:2], 
 		expected = c("TRT", "PARAM")
 	)
 	
 })
 
-test_that("table is exported with column variables", {
+test_that("A summary table with a column variable is correctly exported to DataTables", {
 			
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "B"), levels = c("B", "A")),
 		n = c(9, 10)
 	)
-	expect_silent(
-		dt <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			colVar = "TRT",
-			outputType = "DT"
-		)
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		colVar = "TRT",
+		outputType = "DT"
 	)
 	expect_s3_class(dt, "datatables")
 	expect_identical(
@@ -131,7 +122,7 @@ test_that("table is exported with column variables", {
 	
 })
 
-test_that("table is exported with total in header", {
+test_that("A summary table with totals in the header is correctly exported to DataTables", {
 	
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
@@ -139,45 +130,41 @@ test_that("table is exported with total in header", {
 		isTotal = c(FALSE, TRUE, FALSE, TRUE)
 	)
 	
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		colVar = "TRT",
+		outputType = "DT",
+		colHeaderTotalInclude = TRUE
+	)
 	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				colVar = "TRT",
-				outputType = "DT",
-				colHeaderTotalInclude = TRUE
-			)
-			colnames(dt$x$data)
-		},
+		object = colnames(dt$x$data),
 		expected = c("B\n(N=5)", "A\n(N=4)")
 	)
 	
 })
 	
-test_that("table is exported without total in header", {
+test_that("A summary table without totals in the header is correctly exported to DataTables", {
 		
 	summaryTable <- data.frame(
 		TRT = factor(c("A", "A", "B", "B"), levels = c("B", "A")),
 		statN = c(1, 4, 2, 5),
 		isTotal = c(FALSE, TRUE, FALSE, TRUE)
 	)
-			
+	
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		colVar = "TRT",
+		outputType = "DT",
+		colHeaderTotalInclude = FALSE
+	)
 	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				colVar = "TRT",
-				outputType = "DT",
-				colHeaderTotalInclude = FALSE
-			)
-			colnames(dt$x$data)
-		},
+		object = colnames(dt$x$data),
 		expected = c("B", "A")
 	)
 
 })
 
-test_that("table without rows with col total is exported without total in header", {
+test_that("A summary table without column total is correctly exported to DataTables without totals in header", {
 			
 	# check that no records are filtered
 	summaryTable <- data.frame(
@@ -186,14 +173,12 @@ test_that("table without rows with col total is exported without total in header
 		isTotal = c(FALSE, FALSE)
 	)	
 
-	expect_silent({
-		dt <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			colVar = "TRT",
-			outputType = "DT",
-			colHeaderTotalInclude = FALSE
-		)
-	})
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		colVar = "TRT",
+		outputType = "DT",
+		colHeaderTotalInclude = FALSE
+	)
 	expect_equal(
 		object = dt$x$data, 
 		expected = data.frame(B = 4, A = 1), 
@@ -202,7 +187,7 @@ test_that("table without rows with col total is exported without total in header
 			
 })
 
-test_that("stat layout is specified", {
+test_that("A summary table with statistics in a separated column is correctly exported to DataTables", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
@@ -211,16 +196,14 @@ test_that("stat layout is specified", {
 		stringsAsFactors = FALSE
 	)
 	
-	## stat in the row direction, but in a separated column
-	expect_silent(
-		dtStatRowInSepCol <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			rowVar = "variable",
-			statsVar = c("n", "Mean"),
-			statsLayout = "rowInSepCol",
-			outputType = "DT"
-		)
+	dtStatRowInSepCol <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = "variable",
+		statsVar = c("n", "Mean"),
+		statsLayout = "rowInSepCol",
+		outputType = "DT"
 	)
+
 	dataRefStatRowInSepCol <- data.frame(
 		variable = c("A", "A", "B", "B"),
 		Statistic = c("n", "Mean", "n", "Mean"),
@@ -231,34 +214,57 @@ test_that("stat layout is specified", {
 	dataDTStatRowInSepCol <- as.data.frame(sapply(dtStatRowInSepCol$x$data, as.character), stringsAsFactors = FALSE)
 	expect_identical(dataDTStatRowInSepCol, dataRefStatRowInSepCol)
 	
-	## stat in row
-	expect_silent(
-		dtStatInRow <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			rowVar = "variable",
-			statsVar = c("n", "Mean"),
-			statsLayout = "row",
-			outputType = "DT"
-		)
+})
+
+test_that("A summary table with statistics in rows is correctly exported to DataTables", {
+	
+	summaryTable <- data.frame(
+		variable = c("A", "B"),
+		n = c("1", "2"),
+		Mean = c("0.34", "0.56"),
+		stringsAsFactors = FALSE
 	)
+			
+	dtStatInRow <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = "variable",
+		statsVar = c("n", "Mean"),
+		statsLayout = "row",
+		outputType = "DT"
+	)
+
 	# class of single column differ
 	dataDTStatInRow <- as.data.frame(sapply(dtStatInRow$x$data, as.character), stringsAsFactors = FALSE)
 	# if columns are nested, the internal dataset represents them as separated column:
+	dataRefStatRowInSepCol <- data.frame(
+		variable = c("A", "A", "B", "B"),
+		Statistic = c("n", "Mean", "n", "Mean"),
+		`StatisticValue\n(N=NA)` = c("1", "0.34", "2", "0.56"),
+		check.names = FALSE, stringsAsFactors = FALSE
+	)
 	expect_identical(dataDTStatInRow, dataRefStatRowInSepCol)
 	# but these are specified via the 'rowGroup' option
 	# (in JS column index which starts at 0)
 	expect_identical(dtStatInRow$x$options$rowGroup$dataSrc, 0)
 	
-	## stat in column
-	expect_silent(
-		dtStatInCol <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			rowVar = "variable",
-			statsVar = c("n", "Mean"),
-			statsLayout = "col",
-			outputType = "DT"
-		)		
+})
+
+test_that("A summary table with statistics in columns is correctly exported to DataTables", {
+			
+	summaryTable <- data.frame(
+		variable = c("A", "B"),
+		n = c("1", "2"),
+		Mean = c("0.34", "0.56"),
+		stringsAsFactors = FALSE
 	)
+
+	dtStatInCol <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		rowVar = "variable",
+		statsVar = c("n", "Mean"),
+		statsLayout = "col",
+		outputType = "DT"
+	)		
 	dataRefStatInCol <-data.frame(
 		variable = c("A", "B"),
 		n = c("1", "2"),
@@ -271,24 +277,32 @@ test_that("stat layout is specified", {
 	
 })
 
-test_that("stat value label is specified", {
+test_that("The label for the statistic value is correctly set in a DataTables summary table", {
 			
 	summaryTable <- data.frame(
 		variable = c("A", "B"),
 		Statistic = c("1", "2"),
 		stringsAsFactors = FALSE
 	)
-	expect_match(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable, rowVar = "variable", 
-				statsVar = "Statistic", statsValueLab = "Number of subjects",
-				outputType = "DT"
-			)
-			colnames(dt$x$data)[2]
-		},
-		regexp = "Number of subjects.*" # + (N = )
+	dt <- exportSummaryStatisticsTable(
+		summaryTable, rowVar = "variable", 
+		statsVar = "Statistic", statsValueLab = "Number of subjects",
+		outputType = "DT"
 	)
+	expect_match(
+		object = colnames(dt$x$data)[2],
+		regexp = "Number of subjects.*" 
+	)
+	
+})
+
+test_that("An error is generated if the label for the statistic value is set to the default name in a DataTables summary table", {
+	
+	summaryTable <- data.frame(
+		variable = c("A", "B"),
+		Statistic = c("1", "2"),
+		stringsAsFactors = FALSE
+	)		
 	
 	# error is label is set to 'Statistic' (used as default naming)
 	expect_error(
@@ -302,7 +316,53 @@ test_that("stat value label is specified", {
 			
 })
 
-test_that("stat value label is specified", {
+test_that("A summary table with one statistic is correctly exported to DataTables with the statistic name", {
+			
+	summaryTable <- data.frame(
+		TRT = c("A", "A", "B", "B"),
+		variable = c("a", "b", "a", "b"),
+		n = c("1", "2", "3", "4"),
+		stringsAsFactors = FALSE
+	)
+	
+	dt <- exportSummaryStatisticsTable(
+		summaryTable, 
+		rowVar = "variable", colVar = "TRT",
+		statsVar = "n", 
+		statsLabInclude = TRUE,
+		outputType = "DT"
+	)
+	expect_identical(
+		object = attr(dt$x, "colnames")[2:3],
+		expected = c("A_n", "B_n")
+	)
+	
+})
+
+test_that("A summary table with one statistic is correctly exported to DataTables without the statistic name", {
+			
+	summaryTable <- data.frame(
+		TRT = c("A", "A", "B", "B"),
+		variable = c("a", "b", "a", "b"),
+		n = c("1", "2", "3", "4"),
+		stringsAsFactors = FALSE
+	)
+	
+	dt <- exportSummaryStatisticsTable(
+		summaryTable, 
+		rowVar = "variable", colVar = "TRT",
+		statsVar = "n", 
+		statsLabInclude = FALSE,
+		outputType = "DT"
+	)
+	expect_identical(
+		object = attr(dt$x, "colnames")[2:3],
+		expected = c("A", "B")
+	)
+	
+})
+
+test_that("A warning is generated if a DataTables summary table contain multiple statistics but the names are specified to be not included", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -311,42 +371,6 @@ test_that("stat value label is specified", {
 		Mean = c("0.1", "1.3", "4.5", "6.7"),
 		stringsAsFactors = FALSE
 	)
-	
-	## only one statistic
-	
-	# include statistical variable name
-	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable, 
-				rowVar = "variable", colVar = "TRT",
-				statsVar = "n", 
-				statsLabInclude = TRUE,
-				outputType = "DT"
-			)
-			attr(dt$x, "colnames")[2:3]
-		},
-		expected = c("A_n", "B_n")
-	)
-	
-	# don't include include statistical variable name
-	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable, 
-				rowVar = "variable", colVar = "TRT",
-				statsVar = "n", 
-				statsLabInclude = FALSE,
-				outputType = "DT"
-			)
-			attr(dt$x, "colnames")[2:3]
-		},
-		expected = c("A", "B")
-	)
-	
-	## multiple statistics
-	
-	# the statistical variable name should be included
 	expect_warning(
 		exportSummaryStatisticsTable(
 			summaryTable, 
@@ -360,7 +384,7 @@ test_that("stat value label is specified", {
 	
 })
 
-test_that("a placeholder is specified for empty value", {
+test_that("A placeholder for empty value is correctly included by default in a DataTables summary table", {
 			
 	summaryTable <- data.frame(
 		TRT = c("A", "A", "B", "B"),
@@ -371,16 +395,14 @@ test_that("a placeholder is specified for empty value", {
 	
 	# by default, 'empty' value are set to '-'
 	# Note that 'numeric-like' column to numeric 
+	dt <- exportSummaryStatisticsTable(
+		summaryTable,
+		rowVar = "PARAM", colVar = "TRT",
+		statsVar = "n",
+		outputType = "DT"
+	)
 	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable,
-				rowVar = "PARAM", colVar = "TRT",
-				statsVar = "n",
-				outputType = "DT"
-			)
-			dt$x$data
-		},
+		object = dt$x$data,
 		expected = data.frame(
 			PARAM = c("a", "b"),
 			A = c(1, 2),
@@ -389,18 +411,26 @@ test_that("a placeholder is specified for empty value", {
 		)
 	)
 	
-	# custom placeholder for empty value
+})
+
+test_that("A specified placeholder for empty value is correctly included in a DataTables summary table", {
+			
+	summaryTable <- data.frame(
+		TRT = c("A", "A", "B", "B"),
+		PARAM = c("a", "b", "a", "b"),
+		n = c("1", "2", "3", NA_character_),
+		stringsAsFactors = FALSE
+	)
+		
+	dt <- exportSummaryStatisticsTable(
+		summaryTable,
+		rowVar = "PARAM", colVar = "TRT",
+		statsVar = "n",
+		emptyValue = "0",
+		outputType = "DT"
+	)
 	expect_identical(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable,
-				rowVar = "PARAM", colVar = "TRT",
-				statsVar = "n",
-				emptyValue = "0",
-				outputType = "DT"
-			)
-			dt$x$data
-		},
+		object = dt$x$data,
 		expected = data.frame(
 			PARAM = c("a", "b"),
 			A = c(1, 2),
@@ -411,27 +441,24 @@ test_that("a placeholder is specified for empty value", {
 			
 })
 
-test_that("title is specified", {
+test_that("Multiple titles are correctly included in a DataTables summary table", {
 		
 	summaryTable <- data.frame(n = 10)
 	
-	# multiple titles
 	titles <- c("Title A", "Title B")
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		title = titles,
+		outputType = "DT"
+	)
 	expect_match(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				title = titles,
-				outputType = "DT"
-			)
-			dt$x$caption
-		}, 
+		object = dt$x$caption, 
 		regexp = paste(titles, collapse = " ")
 	)
 			
 })
 
-test_that("title is specified as an HTML string", {
+test_that("Multiple titles are correctly included in HTML format in a DataTables summary table", {
 			
 	summaryTable <- data.frame(n = 10)
 			
@@ -441,12 +468,10 @@ test_that("title is specified as an HTML string", {
 		htmltools::br(),
 		"This is a test caption."
 	)
-	expect_silent(
-		dt <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			title = titles,
-			outputType = "DT"
-		)
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		title = titles,
+		outputType = "DT"
 	)
 	expect_match(
 		object = dt$x$caption, 
@@ -455,7 +480,7 @@ test_that("title is specified as an HTML string", {
 			
 })
 
-test_that("no data remains besides total row", {
+test_that("A warning is generated if no data remain after filtering of the column totals in a DataTables summary table", {
 			
 	data <- data.frame(
 		isTotal = rep(TRUE, 2),
@@ -468,7 +493,7 @@ test_that("no data remains besides total row", {
 			
 })
 
-test_that("total header should unique in DT exportSummaryStatisticsTable", {
+test_that("An error is generated if a DataTables summary table contains multiple values for the column total but no column variables are specified", {
 			
 	data <- data.frame(
 		isTotal = c(FALSE, TRUE, TRUE),
@@ -482,7 +507,7 @@ test_that("total header should unique in DT exportSummaryStatisticsTable", {
 })
 
 
-test_that("exportSummaryStatisticsTable summary table to a file", {
+test_that("A summary table is correctly exported to an html file", {
 	
 	skip_if_not(
 		condition = rmarkdown::pandoc_available(), 
@@ -491,19 +516,18 @@ test_that("exportSummaryStatisticsTable summary table to a file", {
 			
 	summaryTable <- data.frame(n = 10)
 	
-	file <- "table.html" 
-	if(file.exists(file))	tmp <- file.remove(file)
-	
+	file <- tempfile(pattern = "table", fileext = ".html")
 	expect_silent(
 		exportSummaryStatisticsTable(
-			summaryTable, outputType = "DT", file = file
+			summaryTable, 
+			file = file
 		)
 	)
 	expect_true(file.exists(file))
 
 })
 
-test_that("table is exported to DT with row variables with expand variables", {
+test_that("Variables are correctly expanded in a DataTables summary table", {
 			
 	summaryTable <- data.frame(
 		patientProfileLink = "/path/to/patientProfile1.pdf",
@@ -511,15 +535,14 @@ test_that("table is exported to DT with row variables with expand variables", {
 	)
 			
 	## stat in the row direction, but in a separated column
-	expect_silent(
-		dt <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			statsVar = "patientProfileLink",
-			expandVar = "patientProfileLink",
-			outputType = "DT",
-			colHeaderTotalInclude = FALSE
-		)
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		statsVar = "patientProfileLink",
+		expandVar = "patientProfileLink",
+		outputType = "DT",
+		colHeaderTotalInclude = FALSE
 	)
+
 	
 	# there is a button available:
 	cDefs <- dt$x$options$columnDefs
@@ -535,7 +558,7 @@ test_that("table is exported to DT with row variables with expand variables", {
 	
 })
 
-test_that("one statistical variable is expanded", {
+test_that("A subset of the variables are correctly expanded in a DataTables summary table", {
 			
 	summaryTable <- data.frame(
 		patientProfileLink = "/path/to/patientProfile1.pdf",
@@ -568,25 +591,23 @@ test_that("one statistical variable is expanded", {
 			
 })
 
-test_that("page dimension is specified", {
+test_that("Page length is correctly set in a DataTables summary table", {
 			
 	summaryTable <- data.frame(n = 10)
 	
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		pageDim = c(NA, 3),
+		outputType = "DT"
+	)
 	expect_equal(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				pageDim = c(NA, 3),
-				outputType = "DT"
-			)
-			dt$x$options$pageLength
-		},
+		object = dt$x$options$pageLength,
 		expected = 3
 	)
 	
 })
 
-test_that("a stat variable is not escaped", {
+test_that("All variables of a summary table are correctly not (HTML) escaped when exported to DataTables", {
 			
 	summaryTable <- data.frame(
 		patientProfileLink = '<a href="www.google.com">blabla</a>',
@@ -603,26 +624,35 @@ test_that("a stat variable is not escaped", {
 	)	
 	expect_false(grepl("\\d", attr(dt$x$options, "escapeIdx")))
 	
+})
+
+test_that("One variable of a summary table is correctly not (HTML) escaped when exported to DataTables", {
+			
+	summaryTable <- data.frame(
+		patientProfileLink = '<a href="www.google.com">blabla</a>',
+		n = 1,
+		stringsAsFactors = FALSE
+	)
+	
 	# escape only one column
 	# This is checked with 'statsLayout' is 'row'
 	# as in this case: the entire stat value column
-	# should not be escape
-	expect_match({
-		dt <- exportSummaryStatisticsTable(
-			summaryTable = summaryTable,
-			noEscapeVar = "patientProfileLink",
-			statsVar = c("patientProfileLink", "n"),
-			statsLayout = "row",
-			outputType = "DT"
-		)
-		attr(dt$x$options, "escapeIdx")
-		}, 
+	# should not be escaped
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		noEscapeVar = "patientProfileLink",
+		statsVar = c("patientProfileLink", "n"),
+		statsLayout = "row",
+		outputType = "DT"
+	)
+	expect_match(
+		object = attr(dt$x$options, "escapeIdx"), 
 		regexp = "1"
 	)
 			
 })
 
-test_that("parameters are passed to datatable", {
+test_that("A specified parameter is correctly passed to datatable", {
 	
 	summaryTable <- data.frame(
 		patientProfileLink = "www.google.com",
@@ -630,17 +660,24 @@ test_that("parameters are passed to datatable", {
 		stringsAsFactors = FALSE
 	)
 	
-	# pass parameter to data.table
+	dt <- exportSummaryStatisticsTable(
+		summaryTable = summaryTable,
+		outputType = "DT",
+		width = 200
+	)
 	expect_equal(
-		object = {
-			dt <- exportSummaryStatisticsTable(
-				summaryTable = summaryTable,
-				outputType = "DT",
-				width = 200
-			)
-			dt$width
-		},
+		object = dt$width,
 		expected = 200
+	)
+	
+})
+
+test_that("A warning is generated if a datatable parameter is already set via in-text specific parameters in a DataTables summary table", {
+	
+	summaryTable <- data.frame(
+		patientProfileLink = "www.google.com",
+		n = 1,
+		stringsAsFactors = FALSE
 	)
 			
 	# warning in case a parameter is already set
@@ -656,6 +693,16 @@ test_that("parameters are passed to datatable", {
 		"Parameter.+escape.+ are already specified internally"
 	)
 	
+})
+
+test_that("An error is generated if a specified parameter is not a datatable parameter in a DataTables summary table", {
+			
+	summaryTable <- data.frame(
+		patientProfileLink = "www.google.com",
+		n = 1,
+		stringsAsFactors = FALSE
+	)
+	
 	# error if parameter not available
 	expect_error(
 		exportSummaryStatisticsTable(
@@ -668,7 +715,7 @@ test_that("parameters are passed to datatable", {
 			
 })
 
-test_that("list of summary tables is specified", {
+test_that("A list of summary tables is correctly exported to DataTables", {
 			
 	summaryTables <- list(
 		`PARAM 2` = data.frame(n = 10),
@@ -687,8 +734,8 @@ test_that("list of summary tables is specified", {
 		# table content is the same as if the table would have
 		# been created directly
 		expect_identical({
-				dt <- exportSummaryStatisticsTable(summaryTables[[!!group]], outputType = "DT")
-				dt$x$data
+			dt <- exportSummaryStatisticsTable(summaryTables[[!!group]], outputType = "DT")
+			dt$x$data
 			},
 			expected = dts[[!!group]]$x$data
 		)
@@ -700,7 +747,7 @@ test_that("list of summary tables is specified", {
 	
 })
 
-test_that("different titles are specified for a list of summary tables", {
+test_that("A list of summary tables with different titles is correctly exported to DataTables", {
 			
 	summaryTables <- list(
 		`PAR2` = data.frame(n = 10),
@@ -720,7 +767,7 @@ test_that("different titles are specified for a list of summary tables", {
 			
 })
 
-test_that("list of summary tables is exported to file", {
+test_that("A list of summary tables is successfully exported to html files", {
 			
 	skip_if_not(
 		condition = rmarkdown::pandoc_available(), 
@@ -732,23 +779,21 @@ test_that("list of summary tables is exported to file", {
 		`PARAM 1` = data.frame(n = 2)
 	)
 			
-	file <- "table.html" 
-	
-	fileTableOutput <- c("table_1.html", "table_2.html")
-	if(any(file.exists(fileTableOutput)))
-		tmp <- file.remove(fileTableOutput)
-	
+	file <- tempfile(pattern = "table", fileext = ".html")	
 	dts <- exportSummaryStatisticsTable(
 		summaryTables, 
-		outputType = "DT",
 		file = file
+	)
+	fileTableOutput <- paste0(
+		tools::file_path_sans_ext(file),
+		"_", c("1", "2"), ".html"
 	)
 	expect_true(all(file.exists(fileTableOutput)))
 
 })
 
 
-test_that("a variable is visualized as a bar", {
+test_that("A variable is successfully visualized as a colored bar in a DataTables summary table", {
 			
 	summaryTable <- data.frame(
 		n = c(1, 2, 4),

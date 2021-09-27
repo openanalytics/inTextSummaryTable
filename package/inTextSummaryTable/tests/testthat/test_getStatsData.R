@@ -1,6 +1,6 @@
 context("Get set of statistics from data")
 
-test_that("variable is not specified", {
+test_that("Count statistics are extracted by default if the data and type of statistics are not specified", {
 			
 	expect_identical(
 		getStatsData(data.frame()),	
@@ -9,7 +9,7 @@ test_that("variable is not specified", {
 		
 })
 
-test_that("default stats are extracted for a categorical variable", {
+test_that("Count statistics are extracted by default if a categorical variable is specified", {
 		
 	data <- data.frame(group = LETTERS[seq.int(10)])
 	stat <- getStatsData(data, var = "group")
@@ -23,7 +23,7 @@ test_that("default stats are extracted for a categorical variable", {
 			
 })
 
-test_that("all stats are extracted for a categorical variable", {
+test_that("All count statistics are extracted for a categorical variable if specified", {
 			
 	data <- data.frame(group = LETTERS[seq.int(10)])
 	stat <- getStatsData(data, var = "group", type = "all")
@@ -38,7 +38,7 @@ test_that("all stats are extracted for a categorical variable", {
 })
 
 
-test_that("default stats are extracted for a continuous variable", {
+test_that("Summary statistics are extracted by default if a continuous variable is specified", {
 			
 	data <- data.frame(value = rnorm(10))
 	stat <- getStatsData(data, var = "value")
@@ -52,7 +52,7 @@ test_that("default stats are extracted for a continuous variable", {
 			
 })
 
-test_that("all stats are extracted for a continuous variable", {
+test_that("All summary statistics are extracted for a continuous variable if specified", {
 			
 	data <- data.frame(value = rnorm(10))
 	stat <- getStatsData(data, var = "value", type = "all")
@@ -66,7 +66,7 @@ test_that("all stats are extracted for a continuous variable", {
 	
 })
 
-test_that("default stats are extracted for both cat and cont variables", {
+test_that("Default statistics are correctly extracted if categorical and continuous variables are specified", {
 	
 	data <- data.frame(
 		value = rnorm(10),
@@ -81,7 +81,7 @@ test_that("default stats are extracted for both cat and cont variables", {
 			
 })
 
-test_that("custom stats are specified for both cat and cont variables", {
+test_that("Statistics are correctly extracted when specified separately for categorical and continuous variables", {
 			
 	data <- data.frame(
 		value = rnorm(10),
@@ -99,7 +99,7 @@ test_that("custom stats are specified for both cat and cont variables", {
 	
 })
 
-test_that("args are passed to getStats for cat and cont variables separately", {
+test_that("Parameters are correctly passed for categorical and continuous variables separately", {
 
 	data <- data.frame(
 		value = rnorm(10),
@@ -126,7 +126,7 @@ test_that("args are passed to getStats for cat and cont variables separately", {
 			
 })
 
-test_that("extra custom stat is specified as a function of var", {
+test_that("An extra custom statistic as a function of the variable is correctly extracted", {
 			
 	data <- data.frame(
 		value = rnorm(10)
@@ -148,7 +148,7 @@ test_that("extra custom stat is specified as a function of var", {
 			
 })
 
-test_that("extra custom stat is specified", {
+test_that("An extra custom statistic as an expression is correctly extracted", {
 			
 	data <- data.frame(value = rnorm(10))
 	myCustomStat <- bquote(mean(x))
@@ -166,7 +166,7 @@ test_that("extra custom stat is specified", {
 			
 })
 
-test_that("general args are passed to getStats", {
+test_that("General parameters are correctly passed to the generic statistic extraction function", {
 			
 	data <- data.frame(value = rnorm(10))
 	stat <- getStatsData(

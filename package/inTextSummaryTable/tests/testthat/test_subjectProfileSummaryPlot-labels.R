@@ -1,55 +1,61 @@
-context("Create a subject profile summary plot: specify labels")
+context("Create a subject profile summary plot with labels")
 
 library(ggplot2)
 
-test_that("label is specified for x variable", {
+test_that("A label is correctly specified for a x variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = rnorm(2)
 	)
 	xLab <- "Study visit"
-	expect_identical({
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, xVar = "visit",
-			xLab = xLab
-		)
-		gg$labels$x
-		}, xLab
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, xVar = "visit",
+		xLab = xLab
+	)
+	expect_identical(
+		object = gg$labels$x,
+		expected = xLab
 	)
 	
 })
 
-test_that("label is specified for y variable", {
+test_that("The label for the y variable is correctly set by default", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = rnorm(2)
 	)
-	yLab <- "Study visit"
-			
 	# by default: X is used as a title from xVar = stat[X] 
-	expect_identical(
-		subjectProfileSummaryPlot(
-			data = summaryTable, xVar = "visit"
-		)$labels$y, 
-		"Mean"
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, xVar = "visit"
 	)
-	
-	# custom label
+	expect_identical(
+		object = gg$labels$y, 
+		expected = "Mean"
+	)
+
+})
+
+test_that("A label is correctly set for a y variable", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
 	yLab <- "Mean of the actual values"
-	expect_identical({
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, xVar = "visit",
-			yLab = yLab
-		)
-		gg$labels$y
-		}, yLab
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, xVar = "visit",
+		yLab = yLab
+	)
+	expect_identical(
+		object = gg$labels$y, 
+		expected = yLab
 	)
 	
 })
 
-test_that("title is specified", {
+test_that("A title is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -57,18 +63,19 @@ test_that("title is specified", {
 	)	
 			
 	title <- "Example of summary plot"
-	expect_equal({
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			title = title
-		)
-		gg$labels$title
-	}, title)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		title = title
+	)
+	expect_equal(
+		object = gg$labels$title,
+		expected = title
+	)
 			
 })
 
-test_that("caption is specified", {
+test_that("A caption is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -76,19 +83,19 @@ test_that("caption is specified", {
 	)	
 	
 	caption <- "This plot has been created by the in-text package."
-	expect_equal({
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			caption = caption
-		)
-		gg$labels$caption
-		}, caption
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		caption = caption
+	)
+	expect_equal(
+		object = gg$labels$caption,
+		expected = caption
 	)
 	
 })
 
-test_that("variable labels specified with 'labelVars'", {
+test_that("The variable labels are correctly extracted from the labels of all variables", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2), 
@@ -98,14 +105,12 @@ test_that("variable labels specified with 'labelVars'", {
 	
 	labelVars <- c(visit = "Study visit", TRT = "Study treatment")
 	
-	expect_silent({
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			colorVar = "TRT",
-			labelVars = labelVars
-		)
-	})
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		colorVar = "TRT",
+		labelVars = labelVars
+	)
 	
 	expect_equal(gg$labels$x, labelVars["visit"])
 	

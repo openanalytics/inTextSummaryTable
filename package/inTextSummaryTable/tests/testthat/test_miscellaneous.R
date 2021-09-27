@@ -1,110 +1,150 @@
 context("Test miscellaneous functions")
 
-test_that("Conversion of a flag variable", {
+test_that("A variable is correctly converted to a flag variable", {
       
-      x <- c("Y", "N", '')	
-      xFL <- inTextSummaryTable:::convertVarFlag(x)
-      expect_is(xFL, "factor")
+	x <- c("Y", "N", '')	
+	xFL <- inTextSummaryTable:::convertVarFlag(x)
+	expect_is(xFL, "factor")
       
-      # correct levels
-      expect_equivalent(levels(xFL), c("Y", "N"))
+	# correct levels
+	expect_equivalent(levels(xFL), c("Y", "N"))
       
-      # correct conversions
-      expect_equal(as.character(xFL), c("Y", "N", NA_character_))
-      
-      # wrong input
-      expect_error(inTextSummaryTable:::convertVarFlag(c(NA_character_, x)), pattern = "*should only contain*")
-      expect_error(inTextSummaryTable:::convertVarFlag(c("blabla", x)), , pattern = "*should only contain*")
-      
-    })
+	# correct conversions
+	expect_equal(as.character(xFL), c("Y", "N", NA_character_))
+	
+})
 
-test_that("Error in extraction of page dimensions", {
+test_that("An error is generated if a flag variable contains missing values", {
       
-      expect_error(
-          getDimPage(type = "width", pageDim = "ciao"),
-          "'pageDim' should be a numeric vector."
-      )
-      
-      expect_error(
-          getDimPage(type = "width", pageDim = c(10, 2, 3)),
-          "'pageDim' should be of length 2."
-      )
-      
-    })
+	x <- c("Y", "N", '')
+	expect_error(
+		inTextSummaryTable:::convertVarFlag(c(NA_character_, x)), 
+		pattern = "*should only contain*"
+	)
+	
+})
 
-test_that("Extraction of page dimensions for report is correct", {
-      
-      expect_equal(
-          object = getDimPage(type = "width", style = "report", margin = 0),
-          expected = 21/2.54
-      )
-      expect_equal(
-          object = getDimPage(type = "height", style = "report", margin = 0),
-          expected = 29.7/2.54
-      )
-      
-    })
+test_that("An error is generated if a flag variable contains unexpected elements", {
+			
+	expect_error(
+		object = inTextSummaryTable:::convertVarFlag(c("blabla", x)), 
+		pattern = "*should only contain*"
+	)
 
-test_that("Extraction of page dimensions for multiple dimensions is successful (and in correct order)", {
-      
-      expect_equal(
-          object = getDimPage(type = c("height", "width"), style = "report"),
-          expected = rev(getDimPage(type = c("width", "height"), style = "report"))
-      )
-      
-    })
+})
 
-test_that("Extraction of page dimensions for presentation is correct", {
+test_that("An error is generated if the specified page dimensions are not a numeric", {
       
-      expect_equal(
-          object = getDimPage(type = "width", style = "presentation", margin = 0),
-          expected = 10
-      )
-      expect_equal(
-          object = getDimPage(type = "height", style = "presentation", margin = 0),
-          expected = 7.5
-      )
+	expect_error(
+		getDimPage(type = "width", pageDim = "ciao"),
+		"'pageDim' should be a numeric vector."
+	)
+	
+})
       
-    })
+test_that("An error is generated if the specified page dimensions are not of correct length", {
+			
+	expect_error(
+		getDimPage(type = "width", pageDim = c(10, 2, 3)),
+		"'pageDim' should be of length 2."
+	)
+      
+})
 
-test_that("Dimensions in portrait and landscape match", {
+test_that("The page width is correctly extracted for a report", {
       
-      expect_equal(
-          object = getDimPage(type = "width", style = "report", margin = 0, landscape = FALSE),
-          expected = getDimPage(type = "height", style = "report", margin = 0, landscape = TRUE)
-      )
-      expect_equal(
-          object = getDimPage(type = "height", style = "report", margin = 0, landscape = FALSE),
-          expected = getDimPage(type = "width", style = "report", margin = 0, landscape = TRUE)
-      )
-      
-    })
+	expect_equal(
+		object = getDimPage(type = "width", style = "report", margin = 0),
+		expected = 21/2.54
+	)
+	
+})
 
-test_that("Dimensions are correctly extracted with margins", {
+test_that("The page height is correctly extracted for a report", {
+			
+	expect_equal(
+		object = getDimPage(type = "height", style = "report", margin = 0),
+		expected = 29.7/2.54
+	)
       
-      widthPageNoMargin <- getDimPage(type = "width", style = "report", margin = 0)
-      expect_equal(
-          getDimPage(type = "width", style = "report", margin = 3),
-          expected = widthPageNoMargin-3*2
-      )
-      heightPageNoMargin <- getDimPage(type = "height", style = "report", margin = 0)
-      expect_equal(
-          getDimPage(type = "height", style = "report", margin = 3),
-          expected = heightPageNoMargin-3*2
-      )
-      
-    })
+})
 
-test_that("Specified page dimensions are correctly used", {
+test_that("The page dimensions are correctly extracted (and in correct order) if multiple dimensions are specified", {
       
-      pageDimSpecified <- c(10, 20)
-      expect_equal(
-          getDimPage(type = "width", style = "report", margin = 0, pageDim = pageDimSpecified),
-          expected = pageDimSpecified[1]
-      )
-      expect_equal(
-          getDimPage(type = "height", style = "report", margin = 0, pageDim = pageDimSpecified),
-          expected = pageDimSpecified[2]
-      )	
+	expect_equal(
+		object = getDimPage(type = c("height", "width"), style = "report"),
+		expected = rev(getDimPage(type = c("width", "height"), style = "report"))
+	)
       
-    })
+})
+
+test_that("The page width is correctly extracted for a presentation", {
+      
+	expect_equal(
+		object = getDimPage(type = "width", style = "presentation", margin = 0),
+		expected = 10
+	)
+	
+})
+
+test_that("The page height is correctly extracted for a presentation", {
+			
+	expect_equal(
+		object = getDimPage(type = "height", style = "presentation", margin = 0),
+		expected = 7.5
+	)
+      
+})
+
+test_that("The dimensions in portrait and landscape match", {
+      
+	expect_equal(
+		object = getDimPage(type = "width", style = "report", margin = 0, landscape = FALSE),
+		expected = getDimPage(type = "height", style = "report", margin = 0, landscape = TRUE)
+	)
+	expect_equal(
+		object = getDimPage(type = "height", style = "report", margin = 0, landscape = FALSE),
+		expected = getDimPage(type = "width", style = "report", margin = 0, landscape = TRUE)
+	)
+      
+})
+
+test_that("The page width is correctly set if a margin is specified", {
+      
+	widthPageNoMargin <- getDimPage(type = "width", style = "report", margin = 0)
+	expect_equal(
+		getDimPage(type = "width", style = "report", margin = 3),
+		expected = widthPageNoMargin-3*2
+	)
+	
+})
+
+test_that("The page height is correctly set if a margin is specified", {
+			
+	heightPageNoMargin <- getDimPage(type = "height", style = "report", margin = 0)
+	expect_equal(
+		getDimPage(type = "height", style = "report", margin = 3),
+		expected = heightPageNoMargin-3*2
+	)
+      
+})
+
+test_that("The page width is correctly set when page dimensions are specified", {
+      
+	pageDimSpecified <- c(10, 20)
+	expect_equal(
+		getDimPage(type = "width", style = "report", margin = 0, pageDim = pageDimSpecified),
+		expected = pageDimSpecified[1]
+	)
+	
+})
+
+test_that("The page height is correctly set when page dimensions are specified", {
+			
+	pageDimSpecified <- c(10, 20)
+	expect_equal(
+		getDimPage(type = "height", style = "report", margin = 0, pageDim = pageDimSpecified),
+		expected = pageDimSpecified[2]
+	)	
+      
+})

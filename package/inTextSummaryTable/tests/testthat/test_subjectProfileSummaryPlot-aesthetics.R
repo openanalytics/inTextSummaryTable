@@ -1,9 +1,9 @@
-context("Create a subject profile summary plot: specify aesthetics")
+context("Create a subject profile summary plot with aesthetics")
 
 library(ggplot2)
 library(plyr)
 
-test_that("color variable is specified", {
+test_that("A color variable is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -36,7 +36,7 @@ test_that("color variable is specified", {
 	
 })
 
-test_that("color palette is specified", {
+test_that("A color palette is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -70,7 +70,7 @@ test_that("color palette is specified", {
 	
 })
 
-test_that("color label is specified", {
+test_that("A label for the color variable is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -96,7 +96,7 @@ test_that("color label is specified", {
 		
 })
 
-test_that("linetype is used", {
+test_that("Line types are correctly used to differenciate the groups of the color variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -131,7 +131,7 @@ test_that("linetype is used", {
 	
 })
 
-test_that("linetype palette is specified", {
+test_that("A linetype palette is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -166,7 +166,7 @@ test_that("linetype palette is specified", {
 	
 })
 
-test_that("shape is used", {
+test_that("Shapes are correctly used to differenciate the groups of the color variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -201,7 +201,7 @@ test_that("shape is used", {
 	
 })
 
-test_that("shape palette is specified", {
+test_that("A shape palette is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
@@ -236,7 +236,7 @@ test_that("shape palette is specified", {
 	
 })
 
-test_that("points are labelled with the y-variable", {
+test_that("Points are correctly labelled with the y-variable values", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -266,7 +266,7 @@ test_that("points are labelled with the y-variable", {
 	
 })
 
-test_that("points are labelled with an expression", {
+test_that("Points are correctly labelled with an expression of the data variables", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -301,15 +301,13 @@ test_that("points are labelled with an expression", {
 	))
 	
 })
-
-test_that("points are labelled with specified justification", {
-			
+test_that("An error is generated if the label for the points is not correctly specified", {
+	
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = c(4, 5)
 	)	
-	
-	# label should be specified as a list with 'textLabel'
+			
 	expect_error(
 		subjectProfileSummaryPlot(
 			data = summaryTable, 
@@ -318,8 +316,15 @@ test_that("points are labelled with specified justification", {
 		),
 		"label.*should contain at least 'textLabel'"
 	)
+			
+})
+
+test_that("An error is generated if the text for the label for the points is not an expression", {
 	
-	# and expressions
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(4, 5)
+	)
 	expect_error(
 		subjectProfileSummaryPlot(
 			data = summaryTable, 
@@ -329,18 +334,26 @@ test_that("points are labelled with specified justification", {
 		"label.*should be a list of expressions"
 	)
 	
+})
+
+test_that("Points are correctly labelled with a text justified based on data variables", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(4, 5)
+	)
+	
 	labelExpr <- list(
 		textLabel = bquote(paste("Mean:", round(statMean, 2))),
 		textHjust = bquote(ifelse(visit == 1, -1, 1)),
 		textVjust = bquote(ifelse(statMean == 4, 1, -1))
 	)
-	expect_silent(
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			label = labelExpr
-		)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		label = labelExpr
 	)
+	
 	# extract data behind the text
 	isGeomText <- sapply(gg$layers, function(l) 
 		inherits(l$geom, "GeomText"))
@@ -373,7 +386,7 @@ test_that("points are labelled with specified justification", {
 	
 })
 
-test_that("padding between point and label is specified", {
+test_that("The padding between points and labels is correctly set when specified", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 

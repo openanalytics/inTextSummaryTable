@@ -79,7 +79,7 @@ test_that("Summary tables with only one variable and with similar layout are cor
 	
 })
 
-test_that("Summary tables with a variable to summarize, row and column variable and with similar layout are correctly combined", {
+test_that("Summary tables with a variable to summarize, row and column variables and with similar layout are correctly combined", {
 			
 	data <- data.frame(
 		USUBJID = c("1", "2", "1", "2"),
@@ -336,7 +336,7 @@ test_that("The origin of the table is correctly included in the combined table a
 			
 })
 
-test_that("The column total is discarded in the combine table if it differs between tables", {
+test_that("The column total is discarded in the combined table if it differs between tables", {
 			
 	data1 <- data.frame(
 		USUBJID = c("1", "2"),

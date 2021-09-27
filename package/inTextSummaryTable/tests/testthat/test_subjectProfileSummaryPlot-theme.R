@@ -1,8 +1,8 @@
-context("Create a subject profile summary plot: specify theme")
+context("Create a subject profile summary plot with specific theme")
 
 library(ggplot2)
 
-test_that("point size is specified", {
+test_that("The point size is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -21,7 +21,7 @@ test_that("point size is specified", {
 			
 })
 
-test_that("line size is specified", {
+test_that("The line size is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -40,7 +40,7 @@ test_that("line size is specified", {
 	
 })
 
-test_that("label size is specified", {
+test_that("The label size is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 

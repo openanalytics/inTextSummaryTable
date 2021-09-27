@@ -2,7 +2,7 @@ context("Create a subject profile summary plot")
 
 library(ggplot2)
 
-test_that("plot fails if variable is not available", {
+test_that("An error is generated if the default variable for the plot is not available in the data", {
 			
 	expect_error(
 		subjectProfileSummaryPlot(data = data.frame()),
@@ -11,7 +11,7 @@ test_that("plot fails if variable is not available", {
 			
 })
 
-test_that("plot is facetted", {
+test_that("The plot is correctly facetted based on a variable", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(
@@ -48,7 +48,7 @@ test_that("plot is facetted", {
 			
 })
 
-test_that("facet scale is specified", {
+test_that("The scale of the facet is correctly set", {
 			
 	summaryTable <- data.frame(
 		PARAM = c("AAA", "AAA", "ZZZ", "ZZZ"),
@@ -74,7 +74,7 @@ test_that("facet scale is specified", {
 			
 })
 
-test_that("horizontal lines are specified", {
+test_that("Horizontal lines are correctly set", {
 			
 	hLine <- c(1, 3)
 	hLineColor <- c("blue", "red")
@@ -100,7 +100,7 @@ test_that("horizontal lines are specified", {
 	
 })
 
-test_that("horizontal lines are specified by facet", {
+test_that("Horizontal lines are correctly set by facet", {
 			
 	summaryTable <- data.frame(
 		PARAM = factor(
@@ -132,7 +132,7 @@ test_that("horizontal lines are specified by facet", {
 	
 })
 
-test_that("vertical lines are specified", {
+test_that("Vertical lines are correctly set", {
 			
 	vLine <- c(1, 2)
 	vLineColor <- c("green", "yellow")
@@ -158,53 +158,64 @@ test_that("vertical lines are specified", {
 	
 })
 
-test_that("plot is created with a table", {
+test_that("A table is successfully included in a plot", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = rnorm(2),
-		n = c(10, 20)
+		n = c(10, 20),
+		TRT = c("A", "B")
 	)
 			
-	gg <- subjectProfileSummaryPlot(
-		data = summaryTable, 
-		xVar = "visit",
-		tableText = "n"
+	# ggplot2: a (expected) warning is created
+	# because geom_point is used with size = NA to 
+	# avoid the 'a' in the legend
+	withCallingHandlers(
+		expr = {
+			gg <- subjectProfileSummaryPlot(
+				data = summaryTable, 
+				xVar = "visit",
+				tableText = "n"
+			)
+		},
+		warning = function(w){
+			if(grepl("missing values \\(geom_point\\)", conditionMessage(w)))
+				invokeRestart("muffleWarning")
+		}
 	)
 	
 	expect_s3_class(gg, "ggplot")
-	
 	ggData <- ggplot_build(gg)$data
 	expect_length(ggData, 2) # plot + table
 	
 })
 
-test_that("height is specified for the table", {
+test_that("A table with specific height is correctly included in a plot", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = rnorm(2),
 		n = c(10, 20)
 	)
-	
-	# error
-	expect_error(
-		subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			tableText = "n",
-			tableHeight = 1.5
-		),
-		"Table height should be between 0 and 1."
-	)
-			
-	# correct specification:
+
 	tableHeight <- 0.45
-	gg <- subjectProfileSummaryPlot(
-		data = summaryTable, 
-		xVar = "visit",
-		tableText = "n",
-		tableHeight = tableHeight
+	
+	# ggplot2: a (expected) warning is created
+	# because geom_point is used with size = NA to 
+	# avoid the 'a' in the legend
+	withCallingHandlers(
+		expr = {
+			gg <- subjectProfileSummaryPlot(
+				data = summaryTable, 
+				xVar = "visit",
+				tableText = "n",
+				tableHeight = tableHeight
+			)
+		},
+		warning = function(w){
+			if(grepl("missing values \\(geom_point\\)", conditionMessage(w)))
+				invokeRestart("muffleWarning")
+		}
 	)
 	
 	ggData <- ggplot_build(gg)$data
@@ -217,59 +228,33 @@ test_that("height is specified for the table", {
 	gDataYCoord <- as.list(as.data.frame(t(ggData[, c("ymin", "ymax")])))
 	gDataYCoord <- gDataYCoord[order(sapply(gDataYCoord, min))]
 	expect_setequal(
-		gDataYCoord,
-		list(c(0, 0.45), c(0.45, 1))
+		object = gDataYCoord,
+		expected = list(c(0, 0.45), c(0.45, 1))
 	)
 	
 })
 
-test_that("height is specified for the table", {
+test_that("An error is generated if the height for the table is not correctly specified", {
 			
-			summaryTable <- data.frame(
-					visit = c(1, 2), 
-					statMean = rnorm(2),
-					n = c(10, 20)
-			)
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2),
+		n = c(10, 20)
+	)
 			
-			# error
-			expect_error(
-					subjectProfileSummaryPlot(
-							data = summaryTable, 
-							xVar = "visit",
-							tableText = "n",
-							tableHeight = 1.5
-					),
-					"Table height should be between 0 and 1."
-			)
+	expect_error(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			tableText = "n",
+			tableHeight = 1.5
+		),
+		"Table height should be between 0 and 1."
+	)
 			
-			# correct specification:
-			tableHeight <- 0.45
-			gg <- subjectProfileSummaryPlot(
-					data = summaryTable, 
-					xVar = "visit",
-					tableText = "n",
-					tableHeight = tableHeight
-			)
-			
-			ggData <- ggplot_build(gg)$data
-			ggData <- do.call(rbind.fill, ggData)
-			
-			# 2 panels are created
-			expect_equal(nrow(ggData), 2)
-			
-			# check that created panels have correct height:
-			gDataYCoord <- as.list(as.data.frame(t(ggData[, c("ymin", "ymax")])))
-			gDataYCoord <- gDataYCoord[order(sapply(gDataYCoord, min))]
-			expect_setequal(
-					gDataYCoord,
-					list(c(0, 0.45), c(0.45, 1))
-			)
-			
-		})
+})
 
-
-
-test_that("facetting and text variable are not compatible", {
+test_that("A warning is generated if the facet and text variables are specified", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2),
@@ -289,4 +274,3 @@ test_that("facetting and text variable are not compatible", {
 	)
 	
 })
-

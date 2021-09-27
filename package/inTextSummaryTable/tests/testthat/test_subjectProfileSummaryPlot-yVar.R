@@ -1,22 +1,20 @@
-context("Create a subject profile summary plot: y variable")
+context("Create a subject profile summary plot with a y variable")
 
 library(ggplot2)
+library(plyr)
 
-test_that("variable for the mean is specified", {
+test_that("The mean data is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean1 = rnorm(2)
 	)	
 	
-	expect_silent(
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			meanVar = "statMean1"
-		)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		meanVar = "statMean1"
 	)
-	
 	expect_s3_class(gg, "ggplot")
 	
 	# check data is correctly retained
@@ -30,7 +28,7 @@ test_that("variable for the mean is specified", {
 })
 
 
-test_that("variable for standard error is specified", {
+test_that("The standard error data is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -38,13 +36,11 @@ test_that("variable for standard error is specified", {
 		statSE = c(1, 2)
 	)
 			
-	expect_silent(
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			meanVar = "statMean",
-			seVar = "statSE"
-		)
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		meanVar = "statMean",
+		seVar = "statSE"
 	)
 			
 	expect_s3_class(gg, "ggplot")
@@ -65,16 +61,42 @@ test_that("variable for standard error is specified", {
 			
 })
 
-test_that("variables for min/max are specified", {
-			
+test_that("The data with the minimum and maximum values are correctly set", {
+		
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = c(1, 2),
 		statMin = c(0, 1),
 		statMax = c(2, 3)
+	)		
+
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		minVar = "statMin", maxVar = "statMax"
+	)
+	isGeomErrorBar <- sapply(gg$layers, function(l) inherits(l$geom, "GeomErrorbar"))
+	expect_length(which(isGeomErrorBar), 1)
+	ggErrorBar <- layer_data(gg, which(isGeomErrorBar))
+
+	expect_identical(
+		object = ggErrorBar[, c("ymin", "ymax")],
+		expected = setNames(
+			summaryTable[, c("statMin", "statMax")],
+			c("ymin", "ymax")
+		)
+	)
+
+})
+
+test_that("A warning is generated if a variable is specified for the minimum value but not for the maximum value", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(1, 2),
+		statMin = c(0, 1)
 	)
 			
-	# warnings if min/max are not both specified
 	expect_warning(
 		gg <- subjectProfileSummaryPlot(
 			data = summaryTable, 
@@ -85,6 +107,16 @@ test_that("variables for min/max are specified", {
 	)
 	isGeomErrorBar <- sapply(gg$layers, function(l) inherits(l$geom, "GeomErrorbar"))
 	expect_length(which(isGeomErrorBar), 0)
+	
+})
+
+test_that("A warning is generated if a variable is specified for the maximum value but not for the minimum value", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(1, 2),
+		statMax = c(2, 3)
+	)
 			
 	expect_warning(
 		gg <- subjectProfileSummaryPlot(
@@ -96,53 +128,14 @@ test_that("variables for min/max are specified", {
 	)
 	isGeomErrorBar <- sapply(gg$layers, function(l) inherits(l$geom, "GeomErrorbar"))
 	expect_length(which(isGeomErrorBar), 0)
-			
-	## correct specification:
-	
-	expect_silent(
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			minVar = "statMin", maxVar = "statMax"
-		)
-	)
-	isGeomErrorBar <- sapply(gg$layers, function(l) inherits(l$geom, "GeomErrorbar"))
-	expect_length(which(isGeomErrorBar), 1)
-	ggErrorBar <- layer_data(gg, which(isGeomErrorBar))
-	
-	expect_identical(
-		ggErrorBar[, c("ymin", "ymax")],
-		setNames(
-			summaryTable[, c("statMin", "statMax")],
-			c("ymin", "ymax")
-		)
-	)
 	
 })
-
-test_that("y-axis is transformed", {
+			
+test_that("A y-axis transformation is correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = rlnorm(2)
-	)
-			
-	# transformation should be specified as a character
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			yTrans = log
-		)
-	)
-			
-	# only 'log10' transformation is supported currently
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			yTrans = 'sqrt'
-		)
 	)
 			
 	gg <- subjectProfileSummaryPlot(
@@ -159,19 +152,56 @@ test_that("y-axis is transformed", {
 		by.y = "x",
 		all = TRUE
 	)	
-	with(ggDataWithInput, expect_equal(y, log10(statMean)))		
+	with(ggDataWithInput, 
+		expect_equal(
+			object = y, 
+			expected = log10(statMean)
+		)
+	)		
 	
 })
 
-test_that("negative y values are transformed with a log10 transformation", {
+test_that("A warning is generated if the y-axis transformation is not set as a character", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rlnorm(2)
+	)
+
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yTrans = log
+		)
+	)
+	
+})
+
+test_that("A warning is generated if the y-axis transformation is not available", {
+	
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rlnorm(2)
+	)	
+	
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yTrans = 'sqrt'
+		)
+	)
+	
+})
+
+test_that("Negative values are correctly set to a default minimum value with a log10 transformation with a warning", {
 		
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
 		statMean = c(1, 2),
 		statSE = c(0.5, 3)
 	)
-	
-	## default: set negative values to a minimum value
 	
 	expect_warning(
 		gg <- subjectProfileSummaryPlot(
@@ -182,15 +212,26 @@ test_that("negative y values are transformed with a log10 transformation", {
 		"1 negative value\\(s\\) in the error bars"
 	)
 	
-	
 	# extract data behind the error bars
 	isGeomEB <- sapply(gg$layers, function(l) inherits(l$geom, "GeomErrorbar"))
 	ggDataEB <- layer_data(gg, which(isGeomEB))
 
-	expect_equal(subset(ggDataEB, x == 2)$ymin, log10(0.5/10))
+	expect_equal(
+		object = subset(ggDataEB, x == 2)$ymin, 
+		expected = log10(0.5/10)
+	)
+	
+})
+
+test_that("Negative values are correctly set to a specified minimum value with a log10 transformation with a warning", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = c(1, 2),
+		statSE = c(0.5, 3)
+	)
 	
 	## set negative values to lower limit of y if specified
-	
 	expect_warning(
 		gg <- subjectProfileSummaryPlot(
 			data = summaryTable, 
@@ -209,7 +250,7 @@ test_that("negative y values are transformed with a log10 transformation", {
 			
 })
 
-test_that("limit is specified for the y-axis", {
+test_that("The limits are correctly set for the y-axis", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -217,20 +258,19 @@ test_that("limit is specified for the y-axis", {
 	)
 	
 	yLim <- c(-1, 1)
-	expect_equal({
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			yLim = yLim
-		)
-		ggplot_build(gg)$layout$coord$limits$y
-		}, 
-		yLim
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		yLim = yLim
+	)
+	expect_equal(
+		object = ggplot_build(gg)$layout$coord$limits$y, 
+		expected = yLim
 	)		
 	
 })
 
-test_that("y-axis is expanded", {
+test_that("The y-axis is correctly expanded", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -238,18 +278,6 @@ test_that("y-axis is expanded", {
 	)
 	
 	yAxisExpand <- expansion(mult = 0, add = 2)
-	
-	# yLimExpand -> yAxisExpand for consistency
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			yLimExpand = yAxisExpand
-		),
-		"'yLimExpand' is deprecated."
-	)
-		
-	# correct specification
 	gg <- subjectProfileSummaryPlot(
 		data = summaryTable, 
 		xVar = "visit",
@@ -261,6 +289,27 @@ test_that("y-axis is expanded", {
 	isScaleY <- sapply(ggScales, function(x) 
 		"y" %in% x[["aesthetics"]]
 	)
-	expect_equal(ggScales[[which(isScaleY)]]$expand, yAxisExpand)
+	expect_equal(
+		object = ggScales[[which(isScaleY)]]$expand, 
+		expected = yAxisExpand
+	)
 			
+})
+
+test_that("A warning is generated if the old specification to expand the y-axis is used", {
+			
+	summaryTable <- data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+	yAxisExpand <- expansion(mult = 0, add = 2)
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable, 
+			xVar = "visit",
+			yLimExpand = yAxisExpand
+			),
+		"'yLimExpand' is deprecated."
+	)
+	
 })

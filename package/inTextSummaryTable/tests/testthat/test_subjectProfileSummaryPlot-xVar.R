@@ -1,9 +1,9 @@
-context("Create a subject profile summary plot: x variable")
+context("Create a subject profile summary plot with a x variable")
 
 library(ggplot2)
 library(plyr)
 
-test_that("plot is created with a continuous x variable", {
+test_that("A plot is correctly created with a continuous x variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -21,11 +21,15 @@ test_that("plot is created with a continuous x variable", {
 	ggDataAll <- do.call(plyr::rbind.fill, ggData)
 	ggDataAll <- unique(ggDataAll[, c("x", "y")])
 	
-	expect_equal(ggDataAll, summaryTable, check.attributes = FALSE)
+	expect_equal(
+		object = ggDataAll, 
+		expected = summaryTable, 
+		check.attributes = FALSE
+	)
 	
 })
 
-test_that("plot is created with a continuous x variable with only one element", {
+test_that("A plot is successfully created with a continuous x variable with only one element", {
 			
 	expect_s3_class(
 		subjectProfileSummaryPlot(
@@ -40,7 +44,7 @@ test_that("plot is created with a continuous x variable with only one element", 
 			
 })
 
-test_that("plot is created with a discrete x variable", {
+test_that("A plot is correctly created with a discrete x variable", {
 			
 	summaryTable <- data.frame(
 		visit = factor(c("B", "A")), 
@@ -62,14 +66,14 @@ test_that("plot is created with a discrete x variable", {
 	summaryTable <- summaryTable[order(summaryTable$visitN), ]
 	ggDataAll$x <- as.numeric(ggDataAll$x) # x is also of type: 'mapped_discrete'
 	expect_equal(
-		ggDataAll, 
-		summaryTable[, c("visitN", "statMean")], 
+		object = ggDataAll, 
+		expected = summaryTable[, c("visitN", "statMean")], 
 		check.attributes = FALSE
 	)
 		
 })
 
-test_that("labels are specified for the x-axis elements", {
+test_that("The x-axis labels are correctly set", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -90,51 +94,15 @@ test_that("labels are specified for the x-axis elements", {
 	)
 	ggScaleX <- gg$scales$scales[[which(isScaleX)]]
 	ggXAxisLabs <- setNames(ggScaleX$breaks, ggScaleX$labels)
-	expect_equal(ggXAxisLabs, xAxisLabs)
+	expect_equal(
+		object = ggXAxisLabs, 
+		expected = xAxisLabs
+	)
 	
 })
 
-test_that("gap is specified in the x-axis ", {
-			
-	# uncorrect specifications:
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = data.frame(
-				visit = c("1", "2"), 
-				statMean = rnorm(2)
-			),
-			xVar = "visit",
-			xGap = c(1, 2)
-		),
-		"'xGap' should only be specified for continuous x-variable"
-	)
-	
-	# xGap is specified but not xVar
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = data.frame(
-				visit = c("1", "2"), 
-				statMean = rnorm(2)
-			),
-			colorVar = "visit",
-			xGap = c(1, 2)
-		),
-		"'xGap' should only be specified if 'xVar' is specified"
-	)
-	
-	expect_warning(
-		subjectProfileSummaryPlot(
-			data = data.frame(
-				visit = c(1, 2), 
-				statMean = rnorm(2)
-			),
-			xVar = "visit",
-			xGap = 1
-		),
-		"'xGap' should be of length 2"
-	)	
-	
-	# correct specification:
+test_that("A x-axis gap is correctly set", {
+
 	summaryTable <- data.frame(
 		visit = c(1, 2, 3), 
 		statMean = rnorm(3)
@@ -176,13 +144,65 @@ test_that("gap is specified in the x-axis ", {
 	
 })
 
-test_that("new gap is specified in the x-axis", {
+test_that("A warning is generated if a gap is requested for the x-axis but the x variable is not continuous", {
+
+	summaryTable <- data.frame(
+		visit = c("1", "2"), 
+		statMean = rnorm(2)
+	)			
+	
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit",
+			xGap = c(1, 2)
+		),
+		"'xGap' should only be specified for continuous x-variable"
+	)
+	
+})
+
+test_that("A warning is generated if a gap is requested for the x-axis but the x variable is not specified", {
+
+	summaryTable <- data.frame(
+		visit = c("1", "2"), 
+		statMean = rnorm(2)
+	)
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable,
+			colorVar = "visit",
+			xGap = c(1, 2)
+		),
+		"'xGap' should only be specified if 'xVar' is specified"
+	)		
+
+})
+
+test_that("A warning is generated if a x-axis gap is not of length 2", {
+
+	summaryTable <-  data.frame(
+		visit = c(1, 2), 
+		statMean = rnorm(2)
+	)
+	expect_warning(
+		subjectProfileSummaryPlot(
+			data = summaryTable,
+			xVar = "visit",
+			xGap = 1
+		),
+		"'xGap' should be of length 2"
+	)	
+
+})
+
+test_that("The range of the x-axis gap is correctly set to a specified value", {
 	
 	summaryTable <- data.frame(
 		visit = c(1, 2, 3), 
 		statMean = rnorm(3)
 	)
-	xGap <- c(1, 3)
+	xGap <- c(1, 2)
 	gg <- subjectProfileSummaryPlot(
 		data = summaryTable,
 		xVar = "visit", 
@@ -207,12 +227,12 @@ test_that("new gap is specified in the x-axis", {
 	ggDataX <- unique(unlist(ggDataX))
 	expect_equal(
 		object = ggDataX,
-		expected = c(1, 1.5)
+		expected = c(1, 1.5, 2.5)
 	)
 	
 })
 		
-test_that("jitter is specified for the x-axis ", {
+test_that("A jitter is correctly set for the x-axis ", {
 		
 	summaryTable <- data.frame(
 		visit = c(1, 1, 2, 2), 
@@ -230,11 +250,14 @@ test_that("jitter is specified for the x-axis ", {
 		
 	ggDataAll <- do.call(plyr::rbind.fill, ggplot_build(gg)$data)
 	ggXJitter <- unique(with(ggDataAll, xmax-xmin)*2)
-	expect_equal(ggXJitter, jitter)
+	expect_equal(
+		object = ggXJitter, 
+		expected = jitter
+	)
 		
 })
 		
-test_that("limit is specified for the x-axis", {
+test_that("The limits are correctly set for the x-axis", {
 	
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -242,20 +265,19 @@ test_that("limit is specified for the x-axis", {
 	)
 	
 	xLim <- c(1, 10)
-	expect_equal({
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable, 
-			xVar = "visit",
-			xLim = xLim
-		)
-		ggplot_build(gg)$layout$coord$limits$x
-		}, 
-		xLim
+	gg <- subjectProfileSummaryPlot(
+		data = summaryTable, 
+		xVar = "visit",
+		xLim = xLim
+	)
+	expect_equal(
+		object = ggplot_build(gg)$layout$coord$limits$x, 
+		expected = xLim
 	)		
 	
 })
 
-test_that("x-axis is expanded", {
+test_that("The x-axis is correctly expanded", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2), 
@@ -274,6 +296,9 @@ test_that("x-axis is expanded", {
 	isScaleX <- sapply(ggScales, function(x) 
 		"x" %in% x[["aesthetics"]]
 	)
-	expect_equal(ggScales[[which(isScaleX)]]$expand, xAxisExpand)
+	expect_equal(
+		object = ggScales[[which(isScaleX)]]$expand, 
+		expected = xAxisExpand
+	)
 	
 })

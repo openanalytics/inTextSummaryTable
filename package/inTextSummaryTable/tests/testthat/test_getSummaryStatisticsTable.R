@@ -1,6 +1,6 @@
-context("Get summary statistics table")
+context("Get a summary statistics table")
 
-test_that("Get summary table is identical to computation+export step", {
+test_that("Getting a summary table is identical to computing and exporting a summary table", {
 		
 	data <- data.frame(
 		PARAM = c("a", "b", "a", "b"),
@@ -27,7 +27,7 @@ test_that("Get summary table is identical to computation+export step", {
 			
 })
 
-test_that("no output if data is empty", {
+test_that("No output and a message is generated if the data is empty", {
 
 	expect_message(
 		res <- getSummaryStatisticsTable(data = data.frame())
@@ -36,7 +36,7 @@ test_that("no output if data is empty", {
 	
 })
 
-test_that("a variable with subgroups and a flag variable are correctly combined when multiple statistics are set", {
+test_that("A variable with subgroups and a flag variable are correctly combined when multiple statistics are set", {
 			
 	data <- data.frame(
 		TRTEMFL = c("Y", "Y", "N", "N"),

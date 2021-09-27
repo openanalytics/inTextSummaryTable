@@ -1,18 +1,12 @@
 context("Export summary statistics table as data frame")
 
-test_that("summary table is exported to multiple format", {
+test_that("The summary table is correctly exported to a text file in base format by default", {
 			
-	summaryTable <- data.frame(
-		PARAM = c("A", "B"),
-		n = c(9, 10)
-	)	
-	
-	fileTable <- "table.txt"
-	if(file.exists(fileTable))
-		tmp <- file.remove(fileTable)
+	summaryTable <- data.frame(PARAM = c("A", "B"), n = c(9, 10))	
 	
 	# by default, if a text file is specified,
 	# format is set to 'data.frame-base'
+	fileTable <- tempfile(pattern = "table", fileext = ".txt")
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
 		rowVar = "PARAM", statsVar = "n",
@@ -20,35 +14,32 @@ test_that("summary table is exported to multiple format", {
 	)
 	
 	expect_true(file.exists(fileTable))
-	
 	fileCnt <- read.table(fileTable, header = TRUE, sep = "\t")
 	expect_equal(fileCnt, summaryTable)
 	
-	# format specified explicitly
-	tmp <- file.remove(fileTable)
+})
+
+test_that("The summary table is correctly exported to a text file in base format as specified", {
+			
+	summaryTable <- data.frame(PARAM = c("A", "B"), n = c(9, 10))			
+			
+	fileTable <- tempfile(pattern = "table", fileext = ".txt")
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
 		rowVar = "PARAM", statsVar = "n",
 		file = c(`data.frame-base` = fileTable)
 	)
 	expect_true(file.exists(fileTable))
-	
-	fileCntExplicit <- read.table(fileTable, header = TRUE, sep = "\t")
-	expect_equal(fileCntExplicit, fileCnt)
+	fileCnt <- read.table(fileTable, header = TRUE, sep = "\t")
+	expect_equal(fileCnt, summaryTable)
 	
 })
 
-test_that("summary table in long format is exported to a text file", {
+test_that("The summary table is correctly exported to a text file in in-text format as specified", {
 			
-	summaryTable <- data.frame(
-		PARAM = c("A", "B"),
-		n = c(9, 10)
-	)	
+	summaryTable <- data.frame(PARAM = c("A", "B"),n = c(9, 10))	
 	
-	fileTable <- "table.txt"
-	if(file.exists(fileTable))
-		tmp <- file.remove(fileTable)
-	
+	fileTable <- tempfile(pattern = "table", fileext = ".txt")
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
 		rowVar = "PARAM", statsVar = "n",
@@ -56,7 +47,6 @@ test_that("summary table in long format is exported to a text file", {
 	)
 	
 	expect_true(file.exists(fileTable))
-	
 	fileCnt <- readLines(fileTable)
 	expect_equal(
 		fileCnt, 

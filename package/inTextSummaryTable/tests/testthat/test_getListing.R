@@ -1,178 +1,186 @@
-context("Get a listing")
+context("Create a listing")
 
 data <- head(mtcars)
 
 library(flextable)
 
-test_that("a data or flextable object should be specified", {
-      
-      expect_error(ft <- getListing())
-      
-    })
+test_that("An error is generated if no data or flextable object is specified for a listing", {
+	expect_error(ft <- getListing())
+})
 
-test_that("a flextable is created in report style", {
-      
-      expect_silent(ft <- getListing(data = data, style = "report"))
-      
-      expect_is(ft, "flextable")
-      
-      expect_setequal(ft$body$styles$text$font.size$data, 8)
-      
-      expect_setequal(ft$body$styles$text$font.family$data, "Times")
-      
-    })
+test_that("A listing is correctly styled for a report", {
+	ft <- getListing(data = data, style = "report")
+	expect_is(ft, "flextable")
+	expect_setequal(ft$body$styles$text$font.size$data, 8)
+	expect_setequal(ft$body$styles$text$font.family$data, "Times")
+})
 
-test_that("table is created in presentation style", {
+test_that("A listing is correctly styled for a presentation", {
       
-      expect_silent(ftPres <- getListing(data = data, style = "presentation"))
-      expect_is(ftPres, "flextable")
+	ftPres <- getListing(data = data, style = "presentation")
+	expect_is(ftPres, "flextable")
+	expect_setequal(ftPres$body$styles$text$font.size$data, 10)
+	expect_setequal(ftPres$body$styles$text$font.family$data, "Tahoma")
       
-      expect_setequal(ftPres$body$styles$text$font.size$data, 10)
-      
-      expect_setequal(ftPres$body$styles$text$font.family$data, "Tahoma")
-      
-    })
+})
 
-test_that("columns and rows are highlighted", {
-      
-      ### highlight columns	
-      
-      idxHighlight <- c(2, 3)
-      
-      # missing color
-      expect_warning(
-          ftHighlight <- getListing(
-              data = data, 
-              highlight = idxHighlight, 
-              style = "presentation",
-              colorTable = NULL
-          )
-      )
-      
-      # correct spec
-      expect_silent(
-          ftHighlight <- getListing(
-              data = data, 
-              highlight = idxHighlight, 
-              style = "presentation",
-              includeRownames = FALSE
-          )
-      )
-      
-      # check if background colors in highlighted columns are different in non highlighted columns
-      
-      for(el in c("header", "body")){		
+test_that("A warning is generated if columns should be highlighted but no color is specified for the listing", {
+
+	idxHighlight <- c(2, 3)
+	expect_warning(
+		ftHighlight <- getListing(
+			data = data, 
+			highlight = idxHighlight, 
+			style = "presentation",
+			colorTable = NULL
+		)
+	)
+	
+})
+
+test_that("Specified columns are correctly highlighted in a listing", {
+	
+	idxHighlight <- c(2, 3)
+	ftHighlight <- getListing(
+		data = data, 
+		highlight = idxHighlight, 
+		style = "presentation",
+		includeRownames = FALSE
+	)
+	# check if background colors in highlighted columns are different in non highlighted columns
+	for(el in c("header", "body")){		
         
-        bgColors <- ftHighlight[[el]]$styles$cells$background.color$data
-        tmp <- apply(bgColors, 1, function(row){
-              expect_false(unique(row[idxHighlight]) == unique(row[-idxHighlight]))
-            })
+		bgColors <- ftHighlight[[el]]$styles$cells$background.color$data
+		tmp <- apply(bgColors, 1, function(row){
+			expect_false(unique(row[idxHighlight]) == unique(row[-idxHighlight]))
+		})
         
-      }
+	}
+	
+})
+
+test_that("A warning is generated if rownames should be highlighted but rownames should not be included in a listing", {
       
-      ### highlight rows
+	dataNoRn <- data
+	rownames(dataNoRn) <- NULL
+	expect_warning(
+		ftHighlight <- getListing(
+			data = dataNoRn, 
+			highlight = 0, 
+			style = "presentation",
+			includeRownames = FALSE
+		)
+	)
       
-      # no rownames -> warning
-      dataNoRn <- data
-      rownames(dataNoRn) <- NULL
-      expect_warning(
-          ftHighlight <- getListing(
-              data = dataNoRn, 
-              highlight = 0, 
-              style = "presentation",
-              includeRownames = FALSE
-          )
-      )
+})
+
+test_that("Rownames are correctly highlighted in a listing", {
+
+	dataWithRn <- data
+	rownames(dataWithRn) <- seq_len(nrow(dataWithRn))
+	ftHighlight <- getListing(
+		data = dataWithRn, 
+		highlight = 0, 
+		style = "presentation",
+		includeRownames = TRUE
+	)
       
-      # highlight rownames
-      dataWithRn <- data
-      rownames(dataWithRn) <- seq_len(nrow(dataWithRn))
-      expect_silent(
-          ftHighlight <- getListing(
-              data = dataWithRn, 
-              highlight = 0, 
-              style = "presentation",
-              includeRownames = TRUE
-          )
-      )
-      
-      for(el in c("header", "body")){		
+	for(el in c("header", "body")){		
         
-        bgColors <- ftHighlight[[el]]$styles$cells$background.color$data
+		bgColors <- ftHighlight[[el]]$styles$cells$background.color$data
         
-        # are rows included?
+		# are rows included?
         expect_equal(ncol(bgColors), ncol(dataWithRn) + 1)
         tmp <- apply(bgColors, 1, function(row){
-              expect_false(unique(row[1]) == unique(row[-1]))
-            })
+			expect_false(unique(row[1]) == unique(row[-1]))
+		})
         
-      }
+	}
       
-    })
+})
 
-test_that("table is created in landscape format", {
+test_that("A listing is correctly created in landscape format", {
       
-      ftPortrait <- getListing(data = data, landscape = FALSE)
-      ftLandscape <- getListing(data = data, landscape = TRUE)
+	ftPortrait <- getListing(data = data, landscape = FALSE)
+	ftLandscape <- getListing(data = data, landscape = TRUE)
       
-      expect_gte(sum(ftLandscape$body$colwidths), sum(ftPortrait$body$colwidths))
-      expect_gte(sum(ftLandscape$header$colwidths), sum(ftPortrait$header$colwidths))
+	expect_gte(
+		object = sum(ftLandscape$body$colwidths), 
+		expected = sum(ftPortrait$body$colwidths)
+	)
+	expect_gte(
+		object = sum(ftLandscape$header$colwidths), 
+		expected = sum(ftPortrait$header$colwidths)
+	)
       
-    })
+})
 
-test_that("table width is properly adjusted", {
+test_that("Column widths are properly adjusted depending on page dimensions in a listing", {
       
-      widths <- c(2, 50)
-      tableWidths <- numeric()
-      for(wid in widths){
+	widths <- c(2, 50)
+	tableWidths <- numeric()
+	for(wid in widths){
         
-        ft <- getListing(
-            data = data, 
-            pageDim = c(wid, 50), margin = 0,
-            adjustWidth = TRUE
-        )
-        expect_equal(sum(ft$body$colwidths), wid)
+		ft <- getListing(
+			data = data, 
+ 			pageDim = c(wid, 50), margin = 0,
+			adjustWidth = TRUE
+		)
+		expect_equal(sum(ft$body$colwidths), wid)
         
-      }
+	}
       
-    })
+})
 
-test_that("a title is specified", {
+test_that("A title is correctly included in a listing", {
       
-      title <- "Subset of the cars dataset"
-      ft <- getListing(data = data, title = title)
-      expect_setequal(
-          ft$header$dataset[1, ],
-          title
-      )
-      # a border
-      expect_setequal(
-          ft$header$styles$cells$border.color.bottom$data[1, ],
-          c("#000000", "black")
-      )
+	title <- "Subset of the cars dataset"
+	ft <- getListing(data = data, title = title)
+	expect_setequal(
+		ft$header$dataset[1, ],
+		title
+	)
+	# a border
+	expect_setequal(
+		ft$header$styles$cells$border.color.bottom$data[1, ],
+		c("#000000", "black")
+	)
       
-    })
+})
 
 
-test_that("a vector is converted to a binary vector", {
+test_that("A character vector is correctly converted to a binary vector", {
       
-      x <- c("group1", "group1", "group1", "group2", "group2", "group3", "group4", "group4")			
-      expect_equivalent(
-          convertVectToBinary(x = x),
-          c(0, 0, 0, 1, 1, 0, 1, 1)
-      )
+	x <- c("group1", "group1", "group1", "group2", "group2", "group3", "group4", "group4")			
+	expect_equivalent(
+		convertVectToBinary(x = x),
+		c(0, 0, 0, 1, 1, 0, 1, 1)
+	)
       
-    })
+})
 
-test_that("Alternate background color", {
+test_that("Background colors are correctly set based on a variable in a listing", {
       
-      ft <- getListing(
-          data = data, bgVar = "cyl",
-          style = "presentation"
-      )
-      expect_identical(
-          ft$body$content$content$default[[1]]$`shading.color`,
-          NA_character_
-      )
+	data <- data.frame(
+		x = c("A", "B", "C", "C"),
+		y = seq.int(4)
+	)
+	colorTable <- getColorPaletteTable(style = "presentation")
+	colorTable["bodyBackground1"] <- "#FFFFFF"
+	colorTable["bodyBackground2"] <- "#D9D9D9"
+	ft <- getListing(
+		data = data, bgVar = "x",
+		colorTable = colorTable
+	)
+	
+	expect_setequal(
+		object = ft$body$styles$cells$background.color$data[c(1, 3, 4), ],
+		expected = "#FFFFFF"
+	)
+	
+	expect_setequal(
+		object = ft$body$styles$cells$background.color$data[2, ],
+		expected = "#D9D9D9"
+	)
       
-    })
+})
