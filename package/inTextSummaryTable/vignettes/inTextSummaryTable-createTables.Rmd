@@ -905,7 +905,7 @@ This variable is either:
 	# set order of SOC to reverse alphabetical order
 	dataAEInterest$AESOC <- factor(
 		dataAEInterest$AESOC, 
-		levels = rev(sort(unique(dataAEInterest$AESOC)))
+		levels = rev(sort(unique(as.character(dataAEInterest$AESOC))))
 	)
 	# AEDECOD is not a factor -> sort alphabetically by default
 	getSummaryStatisticsTable(

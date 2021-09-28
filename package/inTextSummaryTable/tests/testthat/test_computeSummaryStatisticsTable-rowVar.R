@@ -176,8 +176,7 @@ test_that("Row elements are ordered alphabetically when requested", {
 			
 	data <- data.frame(
 		USUBJID = seq.int(6),
-		SEX = factor(rep(c("M", "F"), times = 3), levels = c("M", "F")),
-		stringsAsFactors = FALSE
+		SEX = factor(rep(c("M", "F"), times = 3), levels = c("M", "F"))
 	)
 	
 	expect_silent(

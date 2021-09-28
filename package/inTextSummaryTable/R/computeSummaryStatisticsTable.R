@@ -1204,7 +1204,7 @@ convertVarToFactorWithOrder <- function(
 			'alphabetical' = {
 				varLevels <- c(
 					intersect("Total", data[, var]),
-					sort(setdiff(unique(data[, var]), c(catLast, "Total")), decreasing = FALSE),
+					sort(setdiff(unique(as.character(data[, var])), c(catLast, "Total")), decreasing = FALSE),
 					intersect(catLast, data[, var])
 				)
 				factor(data[, var], levels = varLevels)
