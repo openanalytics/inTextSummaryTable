@@ -24,8 +24,8 @@ testCreationPowerPoint.R
 test.Rmd
 
 tests
-!/package/inTextSummaryTable/tests
+!/inTextSummaryTable/tests
 
 *.png
-!/package/inTextSummaryTable/vignettes/images/*.png
+!/inTextSummaryTable/vignettes/images/*.png
 report/

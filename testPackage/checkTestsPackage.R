@@ -3,7 +3,7 @@
 # Author: Laure Cougnaud
 ###############################################################################
 
-packagePath <- "../package/inTextSummaryTable/"
+packagePath <- "../inTextSummaryTable/"
 
 ## create reference figures for vdiffr::expect_doppelganger
 
