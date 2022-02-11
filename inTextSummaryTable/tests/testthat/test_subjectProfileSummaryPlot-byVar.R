@@ -70,7 +70,10 @@ test_that("Titles are correctly set by group of a variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
-		TRT = c("A", "A", "B", "B"),
+		TRT = factor(
+			c("A", "A", "B", "B"),
+			levels = c("B", "A")
+		),
 		statMean = rnorm(4)
 	)
 
@@ -92,7 +95,10 @@ test_that("Labels for the y-axis are correctly set by group of a variable", {
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
-		TRT = c("A", "A", "B", "B"),
+		TRT = factor(
+			c("A", "A", "B", "B"),
+			levels = c("B", "A")
+		),
 		statMean = rnorm(4)
 	)
 			
@@ -164,7 +170,10 @@ test_that("Extra ggplot specifications are correctly set by group of a variable"
 			
 	summaryTable <- data.frame(
 		visit = c(1, 2, 1, 2), 
-		TRT = c("A", "A", "B", "B"),
+		TRT = factor(
+			c("A", "A", "B", "B"),
+			levels = c("B", "A")
+		),
 		statMean = rnorm(4)
 	)
 		

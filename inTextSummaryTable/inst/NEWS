@@ -1,3 +1,5 @@
+3.1.1
+  o unit tests: extra fix stringsAsFactors (R >= 4.0.0)
 3.1.0
   o computeSummaryStatisticsTable: output is S3 class: 'summaryTable'
   o functionality to combine 'summaryTable'
