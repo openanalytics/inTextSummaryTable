@@ -167,6 +167,9 @@ subjectProfileSummaryPlot <- function(data,
     legendPosition = ifelse(!is.null(tableText), "none", "bottom"),
     ...){
   
+	if(class(data)[1] != "data.frame")
+		data <- as.data.frame(data)
+		
   if(!is.null(yLimExpand)){
     .Deprecated(new = "yAxisExpand", old = "yLimExpand")
     yAxisExpand <- yLimExpand

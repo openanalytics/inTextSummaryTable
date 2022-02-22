@@ -197,6 +197,9 @@ computeSummaryStatisticsTable <- function(
 	if(!inherits(data, "data.frame"))
 		stop("A data.frame should be specified in 'data'.")
 	
+	if(class(data)[1] != "data.frame")
+		data <- as.data.frame(data)
+	
 	if(nrow(data) == 0){
 		message("No data to report.")
 		return(invisible())

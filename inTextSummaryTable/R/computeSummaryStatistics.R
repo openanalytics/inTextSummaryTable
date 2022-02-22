@@ -71,6 +71,9 @@ computeSummaryStatistics <- function(data,
 	msgLabel = NULL, msgVars = NULL){
 	
 	checkVarDiffBySubj <- match.arg(checkVarDiffBySubj)
+	
+	if(class(data)[1] != "data.frame")
+		data <- as.data.frame(data)
 
 	## checks parameters
 	

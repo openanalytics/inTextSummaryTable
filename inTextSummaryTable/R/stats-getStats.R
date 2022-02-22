@@ -60,6 +60,9 @@ getStatsData <- function(
 	extra = NULL, 
 	args = NULL,
 	...){
+
+	if(!missing(data) && class(data)[1] != "data.frame")
+		data <- as.data.frame(data)
 	
 	argsGeneral <- list(...)
 	getArgsGetStats <- function(var = NULL){

@@ -2,7 +2,7 @@ Package: inTextSummaryTable
 Type: Package
 Title: Creation of in-Text Summary Table
 Version: 3.1.1
-Date: 2022-02-03
+Date: 2022-02-14
 Authors@R: c(
   person(given = "Laure", family = "Cougnaud", role = c("aut", "cre"),
   email = "laure.cougnaud@openanalytics.eu"),
@@ -38,7 +38,8 @@ Suggests:
   testthat,
   xml2,
   tools,
-  dplyr
+  dplyr,
+  tibble
 URL: https://github.com/openanalytics/inTextSummaryTable
 BugReports: https://github.com/openanalytics/inTextSummaryTable/issues
 License: MIT + file LICENSE

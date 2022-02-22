@@ -1,5 +1,7 @@
 context("Get set of statistics from data")
 
+library(tibble)
+
 test_that("Count statistics are extracted by default if the data and type of statistics are not specified", {
 			
 	expect_identical(
@@ -180,4 +182,18 @@ test_that("General parameters are correctly passed to the generic statistic extr
 		getStats(type = "Mean", nDecCont = 3)
 	)
 		
+})
+
+test_that("Statistics are correctly extracted for a numeric variable for a tibble", {
+		
+	data <- data.frame(value = rnorm(10))
+	data <- tibble::as_tibble(data)
+	typeStats <- c(cont = "Median", cat = "n")
+	stats <- getStatsData(
+		data = data, 
+		var = "value",
+		type = typeStats
+	)
+	expect_named(stats[["value"]], "Median")
+			
 })

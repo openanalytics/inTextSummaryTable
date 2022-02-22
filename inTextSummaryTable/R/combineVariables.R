@@ -61,6 +61,9 @@ combineVariables <- function(
 	data, paramsList, newVar, 
 	labelVars = NULL, fctTest = "==",
 	includeAll = FALSE, labelAll = "Any"){
+
+	if(class(data)[1] != "data.frame")
+		data <- as.data.frame(data)
 	
 	if(!all(sapply(paramsList, is.list)))
 		stop("'paramsList' should be a nested list.")

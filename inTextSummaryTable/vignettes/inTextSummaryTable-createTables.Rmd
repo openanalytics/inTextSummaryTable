@@ -431,7 +431,7 @@ Note that the 'Standard statistics set' is formatted internally via the
     getSummaryStatisticsTable(
 	    data = dataSL,
 	    var = "SEX",
-	    stats = getStatsData(type = "count")
+	    stats = getStats(type = "count")
     )
 
     # this summary table...
