@@ -11,7 +11,6 @@
 #' @importFrom utils head
 #' @importFrom clinUtils getLabelVar getClinDT
 #' @importFrom tools file_path_sans_ext file_ext
-#' @export
 exportSummaryStatisticsTableToDT <- function(
 	summaryTable, 
 	rowVar = getAttribute(summaryTable, "rowVar"), 

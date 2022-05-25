@@ -1,3 +1,7 @@
+3.1.2
+  o no exports of:
+    - exportSummaryStatisticsTableToFlextable & exportSummaryStatisticsTableToDT -> exportSummaryStatisticsTable can be used instead
+    - convertSummaryStatisticsTableToFlextable
 3.1.1
   o unit tests: extra fix stringsAsFactors (R >= 4.0.0)
   o fixes for tibble input

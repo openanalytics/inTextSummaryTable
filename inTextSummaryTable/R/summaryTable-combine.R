@@ -47,7 +47,6 @@ combine <- function(...) UseMethod("combine")
 #' @author Laure Cougnaud
 #' @importFrom plyr rbind.fill
 #' @method combine summaryTable
-#' @example inst/examples/summaryTable-combine.R
 #' @export
 combine.summaryTable <- function(..., 
 	summaryTables, 

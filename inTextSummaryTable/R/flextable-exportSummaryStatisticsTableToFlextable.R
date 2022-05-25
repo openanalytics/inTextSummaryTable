@@ -7,7 +7,6 @@
 #' @inherit convertSummaryStatisticsTableToFlextable return
 #' @author Laure Cougnaud
 #' @importFrom clinUtils getLabelVar
-#' @export
 exportSummaryStatisticsTableToFlextable <- function(
 	# for 'format' function
 	summaryTable,

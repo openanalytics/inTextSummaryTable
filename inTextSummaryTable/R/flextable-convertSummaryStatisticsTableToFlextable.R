@@ -8,7 +8,6 @@
 #' @importFrom officer fp_border
 #' @importFrom stats setNames
 #' @author Laure Cougnaud
-#' @export
 convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
 	landscape = (style == "presentation"), 
