@@ -68,6 +68,8 @@ data(dataADaMCDISCP01)
 dataAll <- dataADaMCDISCP01
 labelVars <- attr(dataAll, "labelVars")
 
+dataADSL <- dataADaMCDISCP01$ADSL
+
 ```
 
 
@@ -154,25 +156,112 @@ information on the different export types available.
 
 # Combine summary statistics table
 
+## Via the `combine` function
+
 Summary statistics tables can be combined with the `combine` function.
 
 ```{r combine}
 tableDemoCat <- computeSummaryStatisticsTable(
-	data = dataADaMCDISCP01$ADSL,
+	data = dataADSL,
 	var = c("SEX", "AGE"), varInclude0 = TRUE,
 	colVar = "TRT01P",
 	stats = getStats("n (%)", includeName = FALSE),
 	labelVars = labelVars
 )
 tableDemoCont <- computeSummaryStatisticsTable(
-	data = dataADaMCDISCP01$ADSL,
+	data = dataADSL,
 	var = c("HEIGHTBL", "WEIGHTBL"),
 	colVar = "TRT01P",
-	stats = getStats(c("n", "median (range)")),
+	stats = getStats(c("n", "Mean")),
 	labelVars = labelVars
 )
 tableDemo <- combine(tableDemoCat, tableDemoCont)
 export(tableDemo)
+```
+
+## Manually
+
+The tables created via the `inTextSummaryTable` are simple R `data.frame` objects,
+so these can be combined/update to include extra statistics of interest.
+
+The general workflow is to:
+
+* create a table of descriptive statistics with the package 
+(via the `computeSummaryStatisticsTable` function)
+* create a `data.frame` with your statistics of relevance - in a similar format 
+* combine your table with a table created by the package
+* export it (via the `exportSummaryStatisticsTable` function)
+
+For example, we combine the descriptive statistics table created above
+with a set of pre-computed statistics (e.g. p-values of the difference between the treatment
+groups).
+
+```{r combine-manually}
+dataADSL$TRT01P <- with(dataADSL, reorder(TRT01P, TRT01PN))
+
+# check format of table created with the package:
+descTable <- tableDemoCont
+descTable[, c("variable", "TRT01P", "isTotal", "n", "Mean")]
+```
+
+### Statistics in rows
+
+```{r combine-manually-rows}
+# add p-values in an extra row
+infTable <- unique(subset(descTable, !isTotal)[, c("variable", "TRT01P"), drop = FALSE])
+infTable[which(infTable$variable == "Baseline Height (cm)"), "pValue"] <- 1e-10
+infTable[which(infTable$variable == "Baseline Weight (kg)"), "pValue"] <- 1e-9
+summaryTable <- plyr::rbind.fill(descTable, infTable)
+
+exportSummaryStatisticsTable(
+	summaryTable = summaryTable, 
+	rowVar = "variable", 
+	colVar = "TRT01P", 
+	statsVar = c("n", "Mean", "pValue") 
+)
+```
+
+### Statistics in rows, in an extra column
+
+```{r combine-manually-columns}
+compLab <- "Comparison between treatments (p-value)"
+
+# add p-values in a new column - in an extra row
+infTable <- unique(subset(descTable, !isTotal)[, "variable", drop = FALSE])
+infTable$TRT01P <- compLab
+infTable[which(infTable$variable == "Baseline Height (cm)"), "pValue"] <- 1e-10
+infTable[which(infTable$variable == "Baseline Weight (kg)"), "pValue"] <- 1e-9 
+summaryTable <- plyr::rbind.fill(descTable, infTable) 
+
+# order columns to have comparison column as last 
+summaryTable$TRT01P <- factor(summaryTable$TRT01P, levels = c(levels(dataADSL$TRT01P), compLab))
+exportSummaryStatisticsTable(
+	summaryTable = summaryTable,  
+	rowVar = "variable",  
+	colVar = "TRT01P",  
+	statsVar = c("n", "Mean", "pValue")
+)
+```
+
+### Statistics in an extra column
+
+```{r combine-manually-columns-rows}
+infTable <- unique(subset(descTable, !isTotal)[, "variable", drop = FALSE])
+infTable$TRT01P <- compLab
+infTable[which(infTable$variable == "Baseline Height (cm)"), "Mean"] <- 1e-10
+infTable[which(infTable$variable == "Baseline Weight (kg)"), "Mean"] <- 1e-9
+
+summaryTable <- plyr::rbind.fill(descTable, infTable) 
+
+# order columns to have comparison column as last 
+summaryTable$TRT01P <- factor(summaryTable$TRT01P, levels = c(levels(dataADSL$TRT01P), compLab)) 
+
+exportSummaryStatisticsTable(
+	summaryTable = summaryTable,
+	rowVar = "variable",
+	colVar = "TRT01P",
+	statsVar = c("n", "Mean")
+)
 ```
 
 # Data pre-processing
@@ -180,7 +269,7 @@ export(tableDemo)
 The variables used for the row and columns of the summary statistics tables
 should be present in a long format in the input data for the
 `getSummaryStatisticsTable` function.
-s
+
 In case the grouping of the rows/columns is more complex and no grouping
 variable is yet available in the data, the function `combineVariables` offers
 simpler functionalities to create the input data.
