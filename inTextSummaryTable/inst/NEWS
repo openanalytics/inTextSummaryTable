@@ -1,3 +1,5 @@
+3.1.3
+  o fix unit test for pandoc >= 2.19
 3.1.2
   o no exports of:
     - exportSummaryStatisticsTableToFlextable & exportSummaryStatisticsTableToDT -> exportSummaryStatisticsTable can be used instead

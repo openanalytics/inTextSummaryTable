@@ -25,14 +25,22 @@ test_that("A summary table is correctly exported to multiple formats", {
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
 		rowVar = "PARAM", statsVar = "n",
-		file = files
+		file = files,
+		outputType = "DT"
 	)
 	
 	importTableFromFile <- function(file){
 		switch(tools::file_ext(file),
 			txt = readLines(file),
 			docx = officer::docx_summary(officer::read_docx(file)),
-			html = gsub("htmlwidget-\\w+", "\\1", readLines(file))
+			html = {
+				x <- readLines(file)
+				x <- gsub("htmlwidget-\\w+", "\\1", x)
+				# fix for pandoc >= 2.19
+				x <- paste(x, collapse = "")
+				x <- gsub("\\s", "", x)
+				x
+			}
 		)
 	}
 	
@@ -54,7 +62,8 @@ test_that("A summary table is correctly exported to multiple formats", {
 				)
 				importTableFromFile(fileTest)
 			},
-			check.attributes = FALSE
+			check.attributes = FALSE,
+			label = outputType
 		)
 		
 	}
