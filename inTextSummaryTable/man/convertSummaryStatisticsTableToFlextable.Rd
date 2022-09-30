@@ -17,7 +17,8 @@ convertSummaryStatisticsTableToFlextable(
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   fontsize = switch(style, report = 8, presentation = 10),
   file = NULL,
-  pageDim = NULL
+  pageDim = NULL,
+  columnsWidth = NULL
 )
 }
 \arguments{
@@ -68,6 +69,11 @@ Depending on \code{outputType}:
 \item{'DT': }{in number of rows in the table.\cr
 Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
+
+\item{columnsWidth}{(expert mode) Column widths of the table. This is only used 
+for flextable and DT tables.\cr
+For flextable, note that the widths should be set to fit into the document page
+(see \code{\link{getDimPage}}).}
 }
 \value{
 \code{\link[flextable]{flextable}} object with summary table

@@ -104,6 +104,7 @@ exportSummaryStatisticsTable <- function(
 	title = NULL,
 	outputType = "flextable",
 	pageDim = NULL,
+	columnsWidth = NULL,
 	# flextable-specific
 	landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 14.4,
@@ -187,7 +188,7 @@ exportSummaryStatisticsTable <- function(
 			file = summaryTableFtFile,
 			fontname = fontname,
 			colorTable = colorTable,
-			pageDim = pageDim,
+			pageDim = pageDim, columnsWidth = columnsWidth,
 			labelVars = labelVars
 		)
 			
@@ -212,6 +213,7 @@ exportSummaryStatisticsTable <- function(
 			pageDim = pageDim,
 			title = title,
 			file = summaryTableDTFile,
+			columnsWidth = columnsWidth,
 			labelVars = labelVars,
 			...
 		)

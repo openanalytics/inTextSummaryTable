@@ -1,7 +1,8 @@
-3.1.2.9000
+3.2.0
   o add extra doc (vignette) combining tables descriptive and inferential stats
   o fix unit test for pandoc >= 2.19
   o support multiple (consecutive) text formatting in one table cell
+  o flextable: specification of columns width (columnsWidth)
 3.1.2
   o no exports of:
     - exportSummaryStatisticsTableToFlextable & exportSummaryStatisticsTableToDT -> exportSummaryStatisticsTable can be used instead

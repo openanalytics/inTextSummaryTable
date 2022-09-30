@@ -80,4 +80,36 @@ test_that("A variable with subgroups and a flag variable are correctly combined 
 	)
 			
 })
+
+test_that("The width of the columns is correctly set", {
+			
+	data <- data.frame(
+		TRT = c("A", "B"),
+		USUBJID = c("1", "2"),
+		stringsAsFactors = FALSE
+	)
+	columnsWidth <- c(0.5, 2, 8)
+	ft <- getSummaryStatisticsTable(data = data, colVar = "TRT", columnsWidth = columnsWidth)
+			
+	expect_equal(object = ft$body$colwidths, expected = columnsWidth)
+			
+})
+
+test_that("A warning is generated if the width of the columns is not correctly set", {
+			
+	data <- data.frame(
+		TRT = c("A", "B"),
+		USUBJID = c("1", "2"),
+		stringsAsFactors = FALSE
+	)
+	columnsWidth <- c(2, 8)
+	expect_warning(
+		object = getSummaryStatisticsTable(
+			data = data, 
+			colVar = "TRT", 
+			columnsWidth = columnsWidth
+		)
+	)
+
+})
 			

@@ -126,6 +126,11 @@ Depending on \code{outputType}:
 Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
 
+\item{columnsWidth}{(expert mode) Column widths of the table. This is only used 
+for flextable and DT tables.\cr
+For flextable, note that the widths should be set to fit into the document page
+(see \code{\link{getDimPage}}).}
+
 \item{labelVars}{(optional) Named character vector with label for
 the row, column variable(s) or variable(s) to summarize. \cr
 Labels specified via dedicated parameter: e.g. 

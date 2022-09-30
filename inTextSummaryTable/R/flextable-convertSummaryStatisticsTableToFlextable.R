@@ -18,7 +18,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 	colorTable = getColorPaletteTable(style = style),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
-	file = NULL, pageDim = NULL
+	file = NULL, 
+	pageDim = NULL, columnsWidth = NULL
 ) {
 	
 	style <- match.arg(style, choices = c("report", "presentation"))
@@ -241,18 +242,20 @@ convertSummaryStatisticsTableToFlextable <- function(
 	)
 	
 	# adjust to fit in document:
-	widthPage <- getDimPage(
-		type = "width", landscape = landscape, margin = margin,
-		pageDim = pageDim,
-		style = style
-	)
-#	varFixed <- getNewCol(intersect(c("Statistic"), colsDataFt))
-#	varFixedWidth <- 0.5
-#	ft <- width(ft, j = varFixed, width = 0.5)
-#	varsOther <- setdiff(names(colsDataFt), varFixed)
-#	varsOtherWidth <- (widthPage - length(varFixed) * varFixedWidth)/length(varsOther)
-	widthCol <- widthPage/length(colsDataFt)
-	ft <- width(ft, j = names(colsDataFt), width = widthCol)
+	if(!is.null(columnsWidth) && length(columnsWidth) != length(colsDataFt)){
+		warning("The width is not specified for all columns of the table,",
+			"so the specified 'columnsWidth' is ignored.")
+		columnsWidth <- NULL
+	}
+	if(is.null(columnsWidth)){
+		widthPage <- getDimPage(
+			type = "width", landscape = landscape, margin = margin,
+			pageDim = pageDim,
+			style = style
+		)
+		columnsWidth <- widthPage/length(colsDataFt)
+	}
+	ft <- width(ft, j = names(colsDataFt), width = columnsWidth)
 	
 	if(!is.null(file))
 		exportFlextableToDocx(object = ft, file = file, landscape = landscape)

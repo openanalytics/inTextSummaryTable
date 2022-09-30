@@ -64,7 +64,7 @@ getSummaryStatisticsTable <- function(
 	fontsize = switch(style, 'report' = 8, 'presentation' = 10),
 	fontname = switch(style, 'report' = "Times", 'presentation' = "Tahoma"),
 	vline = "none", hline = "auto", 
-	pageDim = NULL,
+	pageDim = NULL, columnsWidth = NULL,
 	# DT
 	expandVar = NULL, noEscapeVar = NULL, barVar = NULL,
 	...){
@@ -136,7 +136,7 @@ getSummaryStatisticsTable <- function(
 		fontsize = fontsize,
 		fontname = fontname,
 		vline = vline, hline = hline,
-		pageDim = pageDim,
+		pageDim = pageDim, columnsWidth = columnsWidth,
 		...
 	)
 	

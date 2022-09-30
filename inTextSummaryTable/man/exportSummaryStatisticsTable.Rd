@@ -33,6 +33,7 @@ exportSummaryStatisticsTable(
   title = NULL,
   outputType = "flextable",
   pageDim = NULL,
+  columnsWidth = NULL,
   landscape = (style == "presentation"),
   margin = 1,
   rowPadBase = 14.4,
@@ -187,6 +188,11 @@ Depending on \code{outputType}:
 \item{'DT': }{in number of rows in the table.\cr
 Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
+
+\item{columnsWidth}{(expert mode) Column widths of the table. This is only used 
+for flextable and DT tables.\cr
+For flextable, note that the widths should be set to fit into the document page
+(see \code{\link{getDimPage}}).}
 
 \item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
 By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}

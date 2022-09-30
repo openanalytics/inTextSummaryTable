@@ -74,6 +74,7 @@ getSummaryStatisticsTable(
   vline = "none",
   hline = "auto",
   pageDim = NULL,
+  columnsWidth = NULL,
   expandVar = NULL,
   noEscapeVar = NULL,
   barVar = NULL,
@@ -513,6 +514,11 @@ Depending on \code{outputType}:
 \item{'DT': }{in number of rows in the table.\cr
 Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
+
+\item{columnsWidth}{(expert mode) Column widths of the table. This is only used 
+for flextable and DT tables.\cr
+For flextable, note that the widths should be set to fit into the document page
+(see \code{\link{getDimPage}}).}
 
 \item{expandVar}{(DT output) Character vector with variables of the summary table which
 should be expanded in the data.}
