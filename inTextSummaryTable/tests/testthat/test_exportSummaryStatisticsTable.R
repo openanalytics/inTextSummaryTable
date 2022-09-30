@@ -25,8 +25,7 @@ test_that("A summary table is correctly exported to multiple formats", {
 	ft <- exportSummaryStatisticsTable(
 		summaryTable = summaryTable,
 		rowVar = "PARAM", statsVar = "n",
-		file = files,
-		outputType = "DT"
+		file = files
 	)
 	
 	importTableFromFile <- function(file){
