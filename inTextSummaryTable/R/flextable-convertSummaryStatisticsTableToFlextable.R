@@ -290,64 +290,145 @@ formatCustomFlextable <- function(
 	iBase = 0,
 	bold = FALSE) {
 
-	patterns <- c(
-		"bold" = "(.*)bold\\{(.+)\\}(.*)",
-		"superscript" = "(.+)\\^\\{(.+)\\}(.*)", 
-		"subscript" = "(.+)_\\{(.+)\\}(.*)"
+	startPatterns <- c(
+		"bold" = "bold\\{",
+		"superscript" = "\\^\\{", 
+		"subscript" = "\\_\\{"
 	)
+	endPattern <- "\\}"
 	
-	for(patternName in names(patterns)) {
+	# extract indices with pattern
+	dataTableMat <- as.matrix(dataTable)
+	startRegex <- paste(paste0("(", startPatterns, ")"), collapse = "|")
+	pattern <- paste0(startRegex, ".+", endPattern)
+	idxPatternMat <- grep(pattern, dataTableMat)
+	
+	if(length(idxPatternMat) > 0) {
 		
-		pattern <- patterns[patternName]
+		# for each cell with special formatting
+		for(idx in seq_along(idxPatternMat)) {
+			
+			# extract text
+			text <- dataTableMat[idxPatternMat[idx]]
+			endText <- nchar(text)
+			
+			# get start/end positions of a match
+			positions <- lapply(names(startPatterns), function(fmt)
+				getPatternPosition(
+					x = text, 
+					startPattern = startPatterns[fmt], 
+					endPattern = endPattern,
+					format = fmt
+				)
+			)
+			positions <- do.call(rbind, positions)
+			positions <- positions[order(positions$start), ]
+			
+			nMatches <- nrow(positions)
+			
+			xPars <- list()
+				
+			for(iMatch in seq_len(nMatches)){
+				
+				positionMatch <- positions[iMatch, ]
+				start <- positionMatch[, "start"]
+				end <- positionMatch[, "end"]
+				pattern <- positionMatch[, "pattern"]
+				format <-  positionMatch[, "format"]
+				
+				startPattern <- startPatterns[format]
+				
+				# get flextable fct for the pattern
+				fctFm <- switch(format,
+					bold = flextable::as_b,
+					superscript = flextable::as_sup, 
+					subscript = flextable::as_sub
+				)
 
-		# extract indices with superscript
-		dataTableMat <- as.matrix(dataTable)
-		idxPatternMat <- grep(pattern, dataTableMat)
-		
-		# if any
-		if(length(idxPatternMat) > 0) {
-			
-			# convert matrix indices to [row, col]
-			idxPatternAI <- arrayInd(idxPatternMat, .dim = dim(dataTableMat))
-			
-			# for each element with superscript
-			for(idx in seq_along(idxPatternMat)) {
-				
-				textInit <- dataTableMat[idxPatternMat[idx]]
-				# split text with before/after superscript
-				idxMatches <- regexec(pattern = pattern, textInit)
-				textSplit <- regmatches(textInit, idxMatches)
-				
-				# for each superscript (in case multiple for the same text)
-				for(el in textSplit) {
-			
-					iEl <- idxPatternAI[idx, 1] + iBase
-					jEl <- idxPatternAI[idx, 2]
-						
-					fctFm <- switch(patternName,
-						bold = flextable::as_b,
-						superscript = flextable::as_sup, 
-						subscript = flextable::as_sub
-					)
-					listValues <- c(
-						if(el[2] != "")	list(as_chunk(el[2])),
-						list(fctFm(el[3])),
-						if(el[4] != "")	list(as_chunk(el[4]))
-					)
-					para <- do.call(flextable::as_paragraph, listValues)
-					ft <- ft %>% flextable::compose(
-						i = iEl, j = jEl,
-						value = para,
-						part = part
-					)
-					
+				# include part before matched string (if any)
+				if(iMatch == 1 && start != 1){
+					x <- substr(x = text, start = 1, stop = start + 1)
+					x <- sub(startPattern, "", x)
+					xPars <- c(xPars, list(as_chunk(x)))
 				}
+					
+				# include special formatting for matched string
+				x <- substr(x = text, start = start, stop = end)
+				x <- sub(pattern, "\\1", x)
+				xPars <- c(xPars, list(fctFm(x)))
+					
+				# include part after matched string (if any)
+				if(end != endText){
+						
+					startNextMatch <- positions[iMatch+1, "start"] - 1
+					if(!(!is.na(startNextMatch) && end == startNextMatch)){
+					
+						if(iMatch == nMatches){
+							endNext <- endText
+						}else{
+							endNext <- startNextMatch
+						}
+						startNext <- end + 1
+						x <- substr(x = text, start = startNext, stop = endNext)
+						xPars <- c(xPars, list(as_chunk(x)))
+					}
+				}
+					
+			}
+				
+			if(length(xPars) > 0){
+					
+				# convert matrix indices to [row, col]
+				idxPatternAI <- arrayInd(idxPatternMat, .dim = dim(dataTableMat))
+					
+				# extract row/columns in input table
+				iEl <- idxPatternAI[idx, 1] + iBase
+				jEl <- idxPatternAI[idx, 2]
+					
+				ft <- ft %>% flextable::compose(
+					i = iEl, j = jEl,
+					value = do.call(flextable::as_paragraph, xPars),
+					part = part
+				)
+			
 			}
 		}
 	}
 	
 	return(ft)
 
+}
+
+#' Get position(s) (start, end) of a pattern in a string.
+#' @param x String.
+#' @param startPattern String with start pattern.
+#' @param endPattern String with end pattern.
+#' @param format String with type of formatting
+#' @return Matrix with columns: 'start' and 'end' with
+#' start and end position(x) of the pattern, 'format' with
+#' the \code{format} and 'pattern' with the regex pattern for the full match. 
+#' NULL if no match.
+#' @author Laure Cougnaud
+getPatternPosition <- function(x, startPattern, endPattern = "\\}", format){
+	
+	# split text before/after pattern
+	pattern <-  paste0(startPattern, "([^}]+)", endPattern)
+	matches <- gregexpr(pattern = pattern, text = x)[[1]]
+	
+	isNoMatch <- length(matches) == 1 && matches == (-1)
+	res <- if(!isNoMatch){
+	
+		start <- as.integer(matches)
+		end <- matches + attr(matches, "match.length") - 1
+		
+		idx <- data.frame(start = start, end = end)
+		idx <- cbind(idx, format = format, pattern = pattern)
+		idx
+		
+	}
+		
+	return(res)
+	
 }
 
 #' Export flextable to docx file

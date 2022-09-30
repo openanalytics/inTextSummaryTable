@@ -1492,6 +1492,60 @@ test_that("A cell is correctly formatted in bold in a flextable summary table", 
 			
 })
 
+test_that("A cell is correctly formatted with multiple same text formatting in a flextable summary table", {
+			
+	# Example with row/col vars specification in specific cell
+	data <- data.frame(
+		pValue = c("0.05", "1", "1", "0.89"),
+		TRT = rep(c("A", "B"), each = 2),
+		PARAM = rep(c("Actual Value^{test} of the measurement^{test2} in data", 
+			"Change from Baseline"), times = 2)
+	)
+	ft <- exportSummaryStatisticsTable(
+		data, 
+		rowVar = "PARAM", colVar = "TRT",
+		statsVar = "pValue"
+	)
+	
+	idxSps <- which(grepl("Actual Value", ft$body$dataset))
+	ftBodyCnt <- ft$body$content$content$data
+	cntDataSps <- ftBodyCnt[idxSps][[1]]
+	
+	expect_equal(
+		object = cntDataSps[, "txt"], 
+		expected = c("Actual Value", "test", " of the measurement", "test2",
+			" in data")
+	)
+	expect_equal(
+		object = cntDataSps[, "vertical.align"], 
+		expected = c(NA_character_, "superscript", NA_character_, 
+			"superscript", NA_character_)
+	)
+	
+})
+
+test_that("A cell is correctly formatted with multiple and different text formatting in a flextable summary table", {
+			
+	# Example with row/col vars specification in specific cell
+	x <- "^{test}bold{<0.001}"
+	data <- data.frame(
+		pValue = c("0.05", x, "1", "0.89"),
+		TRT = rep(c("A", "B"), each = 2),
+		PARAM = rep(c("Actual Value", "Change from Baseline"), times = 2)
+	)
+	ft <- exportSummaryStatisticsTable(
+		data, 
+		rowVar = "PARAM", colVar = "TRT",
+		statsVar = "pValue"
+	)
+	cntData <- ft$body$content$content$data[2, 2][[1]]
+	
+	expect_equal(object = cntData[, "txt"], expected = c("test", "<0.001"))
+	expect_equal(object = cntData[1, "vertical.align"], expected = "superscript")
+	expect_true(object = cntData[2, "bold"])	
+	
+})
+
 test_that("A summary table is correctly exported to a docx file", {
 
 	data <- data.frame(
