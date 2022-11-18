@@ -36,7 +36,8 @@ test_that("The line size is correctly set", {
 	# extract data behind the lines
 	isGeomLine <- sapply(gg$layers, function(l) inherits(l$geom, "GeomLine"))
 	ggDataLine <- layer_data(gg, which(isGeomLine))
-	expect_setequal(ggDataLine$size, sizeLine)
+	aesLineSize <- ifelse(packageVersion("ggplot2") >= "3.4.0", "linewidth", "size")
+	expect_setequal(ggDataLine[[aesLineSize]], sizeLine)
 	
 })
 

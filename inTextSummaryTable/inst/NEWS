@@ -1,3 +1,6 @@
+3.2.1
+  o subjectProfileSummaryPlot - updates for ggplot2 >= 3.4.0: 
+    - geom line/error bar: switch from size -> linewidth
 3.2.0
   o add extra doc (vignette) combining tables descriptive and inferential stats
   o fix unit test for pandoc >= 2.19

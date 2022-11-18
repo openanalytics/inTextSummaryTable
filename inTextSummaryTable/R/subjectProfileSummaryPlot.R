@@ -426,11 +426,17 @@ subjectProfileSummaryPlot <- function(data,
           )),
       if(!is.null(colorVar) & useLinetype)	list(linetype = "colorVar")
   )
-  gg <- gg +
-      geom_line(
-          mapping = do.call(aes_string, aesLine), 
-          position = pd, size = sizeLine, data = data
-      )
+  
+  # line
+  aesLineSize <- ifelse(packageVersion("ggplot2") >= "3.4.0", "linewidth", "size")
+  argsGeomLine <- list(
+	mapping = do.call(aes_string, aesLine), 
+	position = pd, data = data
+  )
+  argsGeomLine[[aesLineSize]] <- sizeLine
+  gg <- gg + do.call(geom_line, argsGeomLine)
+  
+  # point
   gg <- gg +
       geom_point(
           mapping = do.call(aes_string, 
@@ -473,13 +479,15 @@ subjectProfileSummaryPlot <- function(data,
     gg <- gg + do.call(geomTextFct, geomTextArgs)
   }
   
-  if(includeEB)
-    gg <- gg + geom_errorbar(
-        mapping = do.call(aes_string, c(aesBase, list(ymin = "ymin", ymax = "ymax"))), 
-        data = data,
-        size = sizeLine,
-        position = pd, width = widthErrorBar
+  if(includeEB){
+	argsGeomEB <- list(
+	  mapping = do.call(aes_string, c(aesBase, list(ymin = "ymin", ymax = "ymax"))), 
+	  data = data,
+      position = pd, width = widthErrorBar
     )
+	argsGeomEB[[aesLineSize]] <- sizeLine
+    gg <- gg + do.call(geom_errorbar, argsGeomEB)
+  }
   
   # facetting
   if(!is.null(facetVar))
