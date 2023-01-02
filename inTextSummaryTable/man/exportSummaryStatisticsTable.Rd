@@ -163,7 +163,8 @@ The names should correspond to the options in \code{outputType}:}{
 }
 If NULL (by default), the summary table is not exported but only returned as output.
 If \code{byVar} is specified, each table is exported to a separated
-file with the suffix: 'file_[i].[ext]' with i the index of the file.}
+file with the suffix: 'file_[i].[ext]' with i the index of the file
+(and [ext] the file extension).}
 
 \item{title}{Character vector with title(s) for the table.
 Set to NULL (by default) if no title should be included.
@@ -266,11 +267,11 @@ The use of \code{export} is recommended.\cr
 \code{exportSummaryStatisticsTable} is retained for
 back-compatibility.
 }
-\section{Functions}{
+\section{Methods (by generic)}{
 \itemize{
-\item \code{export(summaryTable)}: export \code{\link{summaryTable}} object
-
+\item \code{export}: export \code{\link{summaryTable}} object
 }}
+
 \author{
 Laure Cougnaud
 }

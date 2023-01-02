@@ -363,17 +363,27 @@ checkVar <- function(
 #' \item{no quoting}
 #' \item{tab separator}
 #' }
-#' @param x Data.frame to export to the table.
+#' @param x Data.frame to export to the table, or list of such tables.
 #' @param file String with text file to export to.
 #' @param ... Any parameters passed to the \code{\link[utils]{write.table}} function.
 #' @return No returned value, the object \code{x} is exported to the specified \code{file}.
 #' @importFrom utils write.table
-#' @importFrom tools file_ext
+#' @importFrom tools file_ext file_path_sans_ext
 #' @author Laure Cougnaud
 writeTable <- function(x, file, ...){
-	if(length(file) > 1)
-		stop("'file' should be of length 1.")
-	if(file_ext(file) != "txt")
-		stop("'file' should be of 'txt' extension.")
-	write.table(x, file, quote = FALSE, sep = "\t", row.names = FALSE, ...)
+  
+  if(length(file) > 1)
+    stop("'file' should be of length 1.")
+  if(file_ext(file) != "txt")
+    stop("'file' should be of 'txt' extension.")
+  
+  if(!is.data.frame(x)) {
+    tmp <- sapply(seq_along(x), function(i){
+      fileI <- paste0(file_path_sans_ext(file), "_", i, ".", file_ext(file))
+      writeTable(x = x[[i]], file = fileI, ...)
+    })
+  }else{
+	  write.table(x, file, quote = FALSE, sep = "\t", row.names = FALSE, ...)
+  }
+	
 }

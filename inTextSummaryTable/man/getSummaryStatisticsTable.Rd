@@ -474,7 +474,8 @@ The names should correspond to the options in \code{outputType}:}{
 }
 If NULL (by default), the summary table is not exported but only returned as output.
 If \code{byVar} is specified, each table is exported to a separated
-file with the suffix: 'file_[i].[ext]' with i the index of the file.}
+file with the suffix: 'file_[i].[ext]' with i the index of the file
+(and [ext] the file extension).}
 
 \item{style}{(flextable output) String with table style,
  either 'report' or 'presentation'.

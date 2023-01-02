@@ -1,3 +1,5 @@
+3.2.1.9000
+  o support export of a list of tables to txt files
 3.2.1
   o subjectProfileSummaryPlot - updates for ggplot2 >= 3.4.0: 
     - geom line/error bar: switch from size -> linewidth

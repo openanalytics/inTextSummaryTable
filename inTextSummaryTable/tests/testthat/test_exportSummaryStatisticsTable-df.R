@@ -35,6 +35,34 @@ test_that("The summary table is correctly exported to a text file in base format
 	
 })
 
+test_that("A list of summary tables is successfully exported to text files in base format", {
+  
+  summaryTables <- list(
+    A = data.frame(PARAM = "A", n = 10),
+    B = data.frame(PARAM = "B", n = 9)
+  )
+  
+  file <- tempfile(pattern = "table", fileext = ".txt")
+  ft <- exportSummaryStatisticsTable(
+    summaryTable = summaryTables,
+    rowVar = "PARAM", statsVar = "n",
+    file = c(`data.frame-base` = file)
+  )
+  for(i in seq_along(summaryTables)){
+    expect_equal(
+      object = read.table(
+        file = paste0(
+          tools::file_path_sans_ext(file), 
+          "_", !!i, ".txt"
+        ),
+        header = TRUE, sep = "\t"
+      ),
+      expected = summaryTables[[!!i]]
+    )
+  }
+  
+})
+
 test_that("The summary table is correctly exported to a text file in in-text format as specified", {
 			
 	summaryTable <- data.frame(PARAM = c("A", "B"),n = c(9, 10))	
@@ -53,4 +81,36 @@ test_that("The summary table is correctly exported to a text file in in-text for
 		c("PARAM\tn", "(N=NA)", "A\t9", "B\t10")
 	)
 	
+})
+
+test_that("A list of summary tables is successfully exported to text files in in-text format", {
+  
+  summaryTables <- list(
+    A = data.frame(PARAM = "A", n = 10),
+    B = data.frame(PARAM = "B", n = 9)
+  )
+  
+  file <- tempfile(pattern = "table", fileext = ".txt")
+  ft <- exportSummaryStatisticsTable(
+    summaryTable = summaryTables,
+    rowVar = "PARAM", statsVar = "n",
+    file = c('data.frame' = file)
+  )
+  
+  for(i in seq_along(summaryTables)){
+    expect_equal(
+      object = readLines(
+        con = paste0(
+          tools::file_path_sans_ext(file), 
+          "_", !!i, ".txt"
+        )
+      ),
+      expected = c(
+        "PARAM\tn", 
+        "(N=NA)", 
+        paste(summaryTables[[!!i]], collapse = "\t")
+      )
+    )
+  }
+  
 })

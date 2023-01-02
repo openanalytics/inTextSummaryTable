@@ -7,7 +7,7 @@
 writeTable(x, file, ...)
 }
 \arguments{
-\item{x}{Data.frame to export to the table.}
+\item{x}{Data.frame to export to the table, or list of such tables.}
 
 \item{file}{String with text file to export to.}
 
