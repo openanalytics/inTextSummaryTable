@@ -1609,6 +1609,22 @@ test_that("A summary table is correctly exported to a docx file in landscape for
 			
 })
 
+test_that("A summary table is correctly exported to a docx file in landscape format without additional empty pages", {
+  
+  file <- tempfile(pattern = "table", fileext = ".docx")
+  ft <- exportSummaryStatisticsTable(
+    summaryTable = data.frame(n = 10),
+    file = file,
+    landscape = TRUE
+  )
+  
+  # check that document doesn't contain any extra paragraph (i.e. empty page)
+  doc <- officer::read_docx(file)
+  docCntType <- officer::docx_summary(doc)[, "content_type"]
+  expect_false("paragraph" %in% docCntType)
+  
+})
+
 test_that("A list of summary tables is correctly exported to docx files", {
 			
 	summaryTables <- list(

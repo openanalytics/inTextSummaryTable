@@ -441,7 +441,8 @@ getPatternPosition <- function(x, startPattern, endPattern = "\\}", format){
 #' be included in the final document.
 #' @inheritParams inTextSummaryTable-flextable-args
 #' @return no returned value, the \code{object} is exported to a docx file.
-#' @import officer
+#' @importFrom officer prop_section page_size body_set_default_section body_add_break
+#' @importFrom flextable body_add_flextable
 #' @importFrom magrittr "%>%"
 #' @author Laure Cougnaud
 #' @export
@@ -454,23 +455,23 @@ exportFlextableToDocx <- function(
 	
 	if(!dir.exists(dirname(file)))	dir.create(dirname(file), recursive = TRUE)
 	
-	doc <- read_docx()
-	if(landscape)	doc <- doc %>% body_end_section_landscape()
+	doc <- officer::read_docx()
+	
+	if(landscape){
+	  secLandscape <- officer::prop_section(
+	    page_size = officer::page_size(orient = "landscape")
+	  )
+	  doc <- doc %>% officer::body_set_default_section(value = secLandscape)
+	}
 	
 	if(isListTables) {
 		for(i in seq_along(object)) {
-			doc <- doc %>% body_add_flextable(value = object[[i]]) 
+			doc <- doc %>% flextable::body_add_flextable(value = object[[i]]) 
 			if(i %in% breaksAfter)	
-				doc <- doc %>% body_add_break()
+				doc <- doc %>% officer::body_add_break()
 		}
-	}else	doc <- doc %>% body_add_flextable(value = object)
-	
-	if(landscape) {
-		doc <- doc %>%
-			# a paragraph needs to be included after the table otherwise the layout is not landscape
-			body_add_par(value = "", style = "Normal") %>%
-			body_end_section_landscape()
-	}
+	}else	doc <- doc %>% flextable::body_add_flextable(value = object)
+
 	print(doc, target = file)
 	
 }
