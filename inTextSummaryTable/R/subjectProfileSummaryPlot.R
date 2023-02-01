@@ -90,7 +90,10 @@
 #' @param shapePalette Named vector with shape palette for \code{colorVar}.
 #' @param themeIncludeVerticalGrid Logical, if TRUE (by default)
 #' include theme vertical grid lines (if present in \code{themeFct}).
-#' @param ggExtra Extra \code{ggplot} call to be added in main plot.
+#' @param ggExtra Extra \code{ggplot} call of function generating such call(s)
+#' to be added in main plot.\cr
+#' Multiple calls are set via a function, e.g. 
+#' \code{ggExtra = function(gg){gg + geom_vline(...) + geom_hline(...)}}.\cr
 #' If different calls should be used for different elements of the 
 #' \code{byVar} variable, the vector should be named
 #' with each corresponding element (collapsed with '.' if multiple).
@@ -116,6 +119,7 @@
 #' @import cowplot
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom scales trans_new
+#' @importFrom plyr rbind.fill
 #' @export
 subjectProfileSummaryPlot <- function(data,
     xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars), 
@@ -520,7 +524,7 @@ subjectProfileSummaryPlot <- function(data,
           palette = getOption("inTextSummaryTable.shapes.plot")
       )
     gg <- gg + scale_shape_manual(name = colorLab, values = shapePalette)			
-  }	
+  }
   
   # labels for the axes/title
   argsLab <- list(
@@ -546,6 +550,14 @@ subjectProfileSummaryPlot <- function(data,
   )
   gg <- gg + themeFct() + do.call(theme, argsTheme)
   
+  if(!is.null(ggExtra)){
+    if(is.function(ggExtra)){
+      gg <- ggExtra(gg)
+    }else{
+      gg <- gg + ggExtra
+    }
+  }
+  
   # y-axis:
   argsYScale <- c(
       if(!is.null(yAxisExpand))	list(expand = yAxisExpand),
@@ -567,7 +579,7 @@ subjectProfileSummaryPlot <- function(data,
   # even if not specified, to have correct alignment with table
   if(is.null(xAxisLabs)){
     xAxisLabs <- if(is.factor(data[, xVar]))
-          levels(data[, xVar])	else	unique(data[, xVar])
+      levels(data[, xVar])	else	unique(data[, xVar])
     names(xAxisLabs) <- xAxisLabs
   }
   fctScaleX <- if(is.numeric(data[, xVar])){
@@ -575,10 +587,18 @@ subjectProfileSummaryPlot <- function(data,
         # limits should take the jitter into account!
         scaleXLim <- max(jitter, GeomErrorbar$default_aes$width/2)
         
+        limits <- range(xAxisLabs) + c(-1, 1)*scaleXLim
+        
+        # fix in case ggExtra contains data with a different range
+        ggData <- do.call(plyr::rbind.fill, ggplot_build(gg)$data)
+        ggDataRange <- range(ggData$x, na.rm = TRUE)
+      
+        limits <- range(c(limits, ggDataRange), na.rm = TRUE)
+          
         argsScaleXCont <- c(
             list(
                 breaks = unname(xAxisLabs), 
-                limits = range(xAxisLabs) + c(-1, 1)*scaleXLim, 
+                limits = limits, 
                 labels = names(xAxisLabs),
                 expand = xAxisExpand
             ),
@@ -594,8 +614,6 @@ subjectProfileSummaryPlot <- function(data,
         )
       }
   gg <- gg + fctScaleX
-  
-  if(!is.null(ggExtra))	gg <- gg + ggExtra
   
   res <- if(!is.null(tableText)){
         
@@ -819,7 +837,6 @@ subjectProfileSummaryTable <- function(
   if(packageVersion("ggplot2") >= 3.3) {
     ggTable <- ggTable + scale_y_discrete(expand = expansion(add = 0.2))
   } else ggTable <- ggTable + scale_y_discrete(expand = expand_scale(add = 0.2))
-  
   
   # theme
   argsTheme <- c(

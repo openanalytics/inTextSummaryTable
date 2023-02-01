@@ -274,3 +274,54 @@ test_that("A warning is generated if the facet and text variables are specified"
 	)
 	
 })
+
+test_that("Extra ggplot with a data point outside the plot range is correctly included", {
+  
+  summaryTable <- data.frame(
+    visit = c(1, 2), 
+    statMean = c(2, 3),
+    statSE = c(0.1, 0.2)
+  )
+  
+  dataExtra <- data.frame(visit = 4, y = 2)
+  ggExtra <- ggplot2::geom_point(ggplot2::aes(x = visit, y = y), data = dataExtra)
+  gg <- subjectProfileSummaryPlot(
+    data = summaryTable,
+    xVar = "visit", 
+    ggExtra = ggExtra
+  )
+  xScales <- ggplot_build(gg)$layout$panel_scales_x[[1]]
+  # test that the data point from ggExtra is included inside plot limits
+  expect_gte(object = max(xScales$limits), expected = 4)
+  
+})
+
+test_that("Extra ggplot specified as a function is correctly included", {
+  
+  summaryTable <- data.frame(
+    visit = c(1, 2), 
+    statMean = c(2, 3),
+    statSE = c(0.1, 0.2)
+  )
+  
+  ggExtra <- function(gg){
+    gg <- gg + 
+      ggplot2::geom_vline(xintercept = 1) +
+      ggplot2::geom_hline(yintercept = 2)
+    return(gg)
+  }
+  gg <- subjectProfileSummaryPlot(
+    data = summaryTable,
+    xVar = "visit", 
+    ggExtra = ggExtra
+  )
+  
+  getDataGeom <- function(geom){
+    isGeom <- sapply(gg$layers, function(l) inherits(l$geom, geom))
+    data <- do.call(rbind, ggplot_build(gg)$data[isGeom])
+    return(data)
+  }
+  expect_equal(getDataGeom(geom = "GeomVline")$xintercept, 1)
+  expect_equal(getDataGeom(geom = "GeomHline")$yintercept, 2)
+  
+})
