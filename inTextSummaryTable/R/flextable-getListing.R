@@ -267,6 +267,7 @@ convertVectToBinary <- function(x) {
 #' Set to NULL (by default) if no title should be included.
 #' @param includeRownames Logical, if TRUE (by default)
 #' rownames are included in the \code{\link[flextable]{flextable}} object.
+#' @inheritParams inTextSummaryTable-flextable-args
 #' @return list with:
 #' \itemize{
 #' \item{'ft': }{\code{\link[flextable]{flextable}}}
@@ -279,8 +280,9 @@ convertVectToBinary <- function(x) {
 #' @importFrom stats setNames
 #' @export
 createFlextableWithHeader <- function(data, 
-    headerDf = NULL, title = NULL,
-    includeRownames = TRUE) {
+  headerDf = NULL, title = NULL,
+  includeRownames = TRUE,
+  colHeaderMerge = TRUE) {
   
   # bind rownames with data (not included in flextable by default)
   if(includeRownames) {
@@ -323,11 +325,124 @@ createFlextableWithHeader <- function(data,
   # base flextable
   ft <- flextable(data)
   
-  ft <- set_header_df(x = ft, mapping = mapping) %>%
-      merge_h(part = "header") %>%
-      merge_v(part = "header")
+  ft <- set_header_df(x = ft, mapping = mapping)
+  
+  # merge cells with similar content in the header
+  if(colHeaderMerge)
+    ft <- mergeHeaderCols(x = ft, mapping = mapping)
   
   res <- list(ft = ft, colsData = colsDataFt)
   return(res)
+  
+}
+
+#' Merge columns and rows in the header of a flextable object.
+#' 
+#' This:
+#' \itemize{
+#' \item{(1) for each row: checks that subsequent columns are identical (and corresponding
+#' sub-header overlap), so should be merged}
+#' \item{(2) for each column: checks that subsequent rows are identical, so should be
+#' merged}
+#' \item{filters cells planned to be merged across rows (2) if they are already
+#' merged across columns (1)}
+#' }
+#' @inheritParams flextable::set_header_df
+#' @return Updated flextable object with merged cells in the header.
+#' @importFrom flextable set_header_df
+#' @keywords internal
+mergeHeaderCols <- function(x, mapping){
+  
+  headerCnt <- mapping[, setdiff(colnames(mapping), "col_keys"), drop = FALSE]
+  headerCnt <- t(headerCnt)
+  nRows <- nrow(headerCnt)
+  nCols <- ncol(headerCnt)
+  
+  # get indices of replicated elements in a vector
+  getDuplEl <- function(x){
+    xRle <- rle(x)$lengths
+    end <- cumsum(xRle)
+    start <- end - xRle + 1
+    idx <- mapply(FUN = c, start, end, SIMPLIFY = FALSE)
+    idx <- idx[which(start != end)]
+    if(length(x) > 0){
+      # add intermediate indices
+      idx <- lapply(idx, function(x) seq(from = x[1], to = x[2]))
+    }
+    return(idx)
+  }
+  
+  ## column merging
+  idxColToMerge <- lapply(seq_len(nRows), function(iRow){
+    # consider the current and previous column headers
+    xColHead <- apply(headerCnt[seq_len(iRow), , drop = FALSE], 2, paste, collapse = ".")
+    lapply(getDuplEl(xColHead), function(x) list(row = iRow, col = x))
+  })
+  idxColToMerge <- unlist(idxColToMerge, recursive = FALSE)
+  
+  # if columns to be merged are identical across consecutive rows
+  # merge the rows together into one single merging item
+  colsToMerge <- sapply(idxColToMerge, function(x) paste(x[["col"]], collapse = "."))
+  idxToRemove <- c()
+  for(colComb in unique(colsToMerge)){
+    idxCols <- which(colsToMerge == colComb)
+    if(length(idxCols) > 1){
+      rows <- unique(unlist(lapply(idxColToMerge[idxCols], `[[`, "row")))
+      cols <- unique(unlist(lapply(idxColToMerge[idxCols], `[[`, "col")))
+      for(row in rows){
+        # if last row contains the same columns to merge...
+        if( (row-1) %in% rows){
+          # ... and the same elements
+          if(length(unique(c(headerCnt[rows, cols]))) == 1){
+            # combine the two mergings
+            idx1 <- idxCols[which(rows == (row-1))]
+            idx2 <- idxCols[which(rows == row)]
+            idxColToMerge[[idx1]][["row"]] <- c(idxColToMerge[[idx1]][["row"]], idxColToMerge[[idx2]][["row"]])
+            idxToRemove <- c(idxToRemove, idx2)
+          }
+        }
+      }
+    }
+  }
+  if(length(idxToRemove) > 0)
+    idxColToMerge <- idxColToMerge[-idxToRemove]
+  
+  ## row merging
+  idxRowToMerge <- lapply(seq_len(nCols), function(iCol){
+    idxRowToMerge <- lapply(seq_len(nRows), function(iRow){
+      if(iRow != 1){
+        # consider the current and previous column headers
+        xColHead <- c(headerCnt[seq_len(iRow), iCol, drop = FALSE])
+        lapply(getDuplEl(xColHead), function(x) list(row = x, col = iCol))
+      }
+    })
+    idxRowToMerge <- unlist(idxRowToMerge, recursive = FALSE)
+  })
+  idxRowToMerge <- unlist(idxRowToMerge, recursive = FALSE)
+  
+  ## remove row to merge which are already included in column merging
+  
+  # get cell index
+  getCellIdx <- function(x){
+    xGrid <- do.call(expand.grid, x)
+    xInteract <- do.call(interaction, c(xGrid, list(drop = FALSE)))
+    return(levels(xInteract))
+  }
+  idxColCells <- unlist(lapply(idxColToMerge, getCellIdx))
+  idxRowToMerge <- lapply(idxRowToMerge, function(x){
+    if(!any(getCellIdx(x) %in% idxColCells))
+      x
+  })
+  
+  # index of cells to be merged across rows or columns
+  idxMerge <- c(idxColToMerge, idxRowToMerge)
+  idxMerge <- idxMerge[!sapply(idxMerge, is.null)]
+  
+  # merge cells in flextable
+  for(idx in idxMerge){
+    x <- x %>% flextable::merge_at(i = idx[["row"]], j = idx[["col"]], part = "header")
+  }
+
+  return(x)
   
 }

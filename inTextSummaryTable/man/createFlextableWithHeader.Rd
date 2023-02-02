@@ -9,7 +9,8 @@ createFlextableWithHeader(
   data,
   headerDf = NULL,
   title = NULL,
-  includeRownames = TRUE
+  includeRownames = TRUE,
+  colHeaderMerge = TRUE
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ Set to NULL (by default) if no title should be included.}
 
 \item{includeRownames}{Logical, if TRUE (by default)
 rownames are included in the \code{\link[flextable]{flextable}} object.}
+
+\item{colHeaderMerge}{(flextable output) Logical, if TRUE (FALSE by default) 
+the column header is merged.}
 }
 \value{
 list with:

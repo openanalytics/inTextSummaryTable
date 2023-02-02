@@ -90,6 +90,7 @@ exportSummaryStatisticsTable <- function(
 	colVar = getAttribute(summaryTable, "colVar"), 
 	colTotalLab = getAttribute(summaryTable, "colTotalLab", default = "Total"),
 	colHeaderTotalInclude = TRUE,
+	colHeaderMerge = TRUE,
 	# stats
 	statsVar = getAttribute(summaryTable, "statsVar"),
 	statsLayout = getAttribute(
@@ -183,6 +184,7 @@ exportSummaryStatisticsTable <- function(
 			rowVarFormat = rowVarFormat,
 			rowTotalLab = rowTotalLab,
 			# for 'convert' function
+			colHeaderMerge = colHeaderMerge,
 			landscape = landscape, margin = margin, rowPadBase = rowPadBase,
 			title = title, footer = footer,
 			style = style, fontsize = fontsize,

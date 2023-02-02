@@ -69,6 +69,7 @@ getSummaryStatisticsTable(
   style = "report",
   colorTable = getColorPaletteTable(style = style),
   colHeaderTotalInclude = TRUE,
+  colHeaderMerge = TRUE,
   fontsize = switch(style, report = 8, presentation = 10),
   fontname = switch(style, report = "Times", presentation = "Tahoma"),
   vline = "none",
@@ -487,6 +488,9 @@ e.g. created with the \code{\link{getColorPaletteTable}} function.}
 
 \item{colHeaderTotalInclude}{Logical, if TRUE include the total of number of patients
 (\code{'statN'}) in the column header.}
+
+\item{colHeaderMerge}{(flextable output) Logical, if TRUE (FALSE by default) 
+the column header is merged.}
 
 \item{fontsize}{(flextable output) Integer with font size, by default:
 8 if \code{style} is 'report' and 10 if \code{style} is 'presentation'.}

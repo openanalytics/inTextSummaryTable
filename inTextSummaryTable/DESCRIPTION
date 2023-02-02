@@ -2,7 +2,7 @@ Package: inTextSummaryTable
 Type: Package
 Title: Creation of in-Text Summary Table
 Version: 3.2.1.9000
-Date: 2023-01-16
+Date: 2022-02-02
 Authors@R: c(
   person(given = "Laure", family = "Cougnaud", role = c("aut", "cre"),
   email = "laure.cougnaud@openanalytics.eu"),

@@ -1724,3 +1724,104 @@ test_that("A flextable summary table is correctly styled for a presentation", {
 	)
 			
 })
+
+test_that("Column headers of a summary table with identical elements across consecutive columns or rows are correctly merged", {
+  
+  # Example with:
+  # - column that should not be merged based on previous column header:
+  # [TRT1, TRT1, Placebo] and [TRT2, Placebo, Placebo]
+  # - nesting of > 2 cells: Placebo (rows) and TRT1 (columns)
+  summaryTable <- data.frame(
+    TRT01P = factor(c("TRT1", "TRT1", "TRT1", "TRT2", "TRT2"), 
+      levels = c("TRT1", "TRT2")),
+    TRT02P = factor(c("TRT1", "TRT1", "Placebo", "TRT1", "TRT1"), 
+        levels = c("TRT1", "Placebo")),
+    TRT03P = factor(
+      c("TRT1", "Placebo", "Placebo", "TRT1", "TRT2"),
+      levels = c("TRT1", "TRT2", "Placebo")
+    ),
+    variable = "A",
+    n = as.character(1:5),
+    stringsAsFactors = FALSE
+  )		
+  
+  ft <- exportSummaryStatisticsTable(
+    summaryTable = summaryTable,
+    statsVar = "n",
+    colVar = c("TRT01P", "TRT02P", "TRT03P"),
+    rowVar = "variable",
+    style = "presentation"
+  )
+  # columns are correctly merged
+  expect_equal(
+    ft$header$spans$rows,
+    rbind(
+      c(1, 3, 0, 0, 2, 0), # TRT01P
+      c(1, 2, 0, 1, 2, 0), # TRT02P
+      c(1, 1, 1, 1, 1, 1) # TRT03P
+    )
+  )
+  # rows are correctly merged:
+  expect_equal(
+    ft$header$spans$columns,
+    cbind(c(3, 0, 0), c(1, 1, 1), c(1, 1, 1), c(1, 2, 0), c(1, 1, 1), c(1, 1, 1))
+  )
+  
+})
+
+test_that("Column headers of a summary table with identical elements across consecutive columns and rows are correctly merged", {
+  
+  summaryTable <- data.frame(
+    TRT01P = c("TRT1", "TRT1"),
+    TRT02P = c("TRT1", "TRT1"),
+    AVISIT = factor(c("Baseline", "Week 10"), levels = c("Baseline", "Week 10")),
+    n = as.character(1:2),
+    stringsAsFactors = FALSE
+  )		
+  
+  ft <- exportSummaryStatisticsTable(
+    summaryTable = summaryTable,
+    statsVar = "n",
+    colVar = c("TRT01P", "TRT02P", "AVISIT"),
+  )
+  # columns are correctly merged
+  expect_equal(
+    ft$header$spans$rows,
+    rbind(
+      c(2, 0), # TRT01P
+      c(2, 0), # TRT02P
+      c(1, 1) # AVISIT
+    )
+  )
+  # rows are correctly merged:
+  expect_setequal(
+    ft$header$spans$columns,
+    c(c(2, 2), c(2, 0), c(1, 2))
+  )
+  
+})
+
+test_that("Column headers of a summary table are not merged if specified", {
+  
+  summaryTable <- data.frame(
+    TRT01P = c("TRTX", "TRTX", "Placebo"),
+    TRT02P = c("TRTX", "Placebo", "Placebo"),
+    variable = "A",
+    n = c("1", "2", "3"),
+    stringsAsFactors = FALSE
+  )		
+  
+  ft <- exportSummaryStatisticsTable(
+    summaryTable = summaryTable,
+    rowVar = "variable",
+    statsVar = "n",
+    colVar = c("TRT01P", "TRT02P"),
+    colHeaderMerge = FALSE
+  )
+  # columns are correctly merged
+  expect_setequal(object = ft$header$spans$rows, expected = 1)
+  
+  # rows are correctly merged:
+  expect_setequal(object = ft$header$spans$columns, expected = 1)
+  
+})

@@ -7,6 +7,7 @@
 \usage{
 convertSummaryStatisticsTableToFlextable(
   summaryTable,
+  colHeaderMerge = TRUE,
   landscape = (style == "presentation"),
   margin = 1,
   rowPadBase = 14.4,
@@ -23,6 +24,9 @@ convertSummaryStatisticsTableToFlextable(
 }
 \arguments{
 \item{summaryTable}{A \code{\link{summaryTable}} object.}
+
+\item{colHeaderMerge}{(flextable output) Logical, if TRUE (FALSE by default) 
+the column header is merged.}
 
 \item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
 By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}

@@ -23,6 +23,7 @@ exportSummaryStatisticsTableToFlextable(
   rowAutoMerge = TRUE,
   rowVarFormat = NULL,
   rowTotalLab = NULL,
+  colHeaderMerge = TRUE,
   landscape = (style == "presentation"),
   margin = 1,
   rowPadBase = 14.4,
@@ -115,6 +116,9 @@ list(var1 = "bold").
 (Use 'variable' for \code{var} or 'variableGroup' for group within categorical variables.)}
 
 \item{rowTotalLab}{(flextable output) string with label for the row with total.}
+
+\item{colHeaderMerge}{(flextable output) Logical, if TRUE (FALSE by default) 
+the column header is merged.}
 
 \item{landscape}{(flextable output) Logical, if TRUE the file is in landscape format.\cr
 By default: FALSE if \code{style} is 'report' and TRUE if \code{style} is 'presentation'.}

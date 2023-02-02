@@ -10,6 +10,7 @@
 #' @author Laure Cougnaud
 convertSummaryStatisticsTableToFlextable <- function(
 	summaryTable, 
+	colHeaderMerge = TRUE,
 	landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 14.4,
 	title = NULL, 
@@ -60,7 +61,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 		data = summaryTable, 
 		headerDf = headerDf,
 		title = title,
-		includeRownames = FALSE
+		includeRownames = FALSE,
+		colHeaderMerge = colHeaderMerge
 	)
 	ft <- ftWithHeader$ft
 	colsDataFt <- ftWithHeader$colsData

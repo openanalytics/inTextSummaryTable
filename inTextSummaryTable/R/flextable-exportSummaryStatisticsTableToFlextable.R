@@ -24,6 +24,7 @@ exportSummaryStatisticsTableToFlextable <- function(
 	rowVarFormat = NULL,
 	rowTotalLab = NULL,
 	# for 'convert' function
+	colHeaderMerge = TRUE,
 	landscape = (style == "presentation"), 
 	margin = 1, rowPadBase = 14.4,
 	title = NULL, 
@@ -62,7 +63,8 @@ exportSummaryStatisticsTableToFlextable <- function(
 		file = file,
 		fontname = fontname,
 		colorTable = colorTable,
-		pageDim = pageDim, columnsWidth = columnsWidth
+		pageDim = pageDim, columnsWidth = columnsWidth,
+		colHeaderMerge = colHeaderMerge
 	)
 	
 	return(summaryTableFt)
