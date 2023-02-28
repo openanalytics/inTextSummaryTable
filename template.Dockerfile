@@ -3,6 +3,16 @@
 #include packamon.from
 
 #include packamon.system-dependencies
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    texinfo \ 
+    texlive-latex-base \
+    texlive-latex-recommended \  
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    libxt6 
+    
+RUN pandoc --version
 
 #include packamon.r-repos
 
