@@ -11,7 +11,7 @@ getStats(
   nDecCont = getMaxNDecimals,
   nDecN = 0,
   nDecm = nDecN,
-  formatPercentage = inTextSummaryTable:::formatPercentage
+  formatPercentage = inTextSummaryTable::formatPercentage
 )
 }
 \arguments{

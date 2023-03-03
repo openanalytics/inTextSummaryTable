@@ -8,6 +8,7 @@
     o fix vertical/horizontal merging header for columns with identical elements
     o option to not merge header (colHeaderMerge)
   o subjectProfileSummaryTable: use :: for .pt (ggplot2)
+  o getStats - formatPercentage parameter: remove unnecessary :::
 3.2.1
   o subjectProfileSummaryPlot - updates for ggplot2 >= 3.4.0: 
     - geom line/error bar: switch from size -> linewidth
