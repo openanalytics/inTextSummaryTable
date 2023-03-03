@@ -736,7 +736,7 @@ subjectProfileSummaryTable <- function(
     fontsize = switch(style, 'report' = 8, 'presentation' = 10), # pt
     pointSize = 1.5,
     themeFct = switch(style, 'report' = theme_classic, 'presentation' = theme_bw),
-    textSize = fontsize/ggplot2:::.pt,
+    textSize = fontsize/ggplot2::.pt,
     xTrans = NULL
 ){
   
