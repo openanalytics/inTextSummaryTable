@@ -352,12 +352,18 @@ test_that("The size of the points (in the legend) is correctly set", {
 		colorVar = "TRT",
 		pointSize = pointSize
 	)
-			
-	expect_equal(
-		object = gg$guides$colour$override.aes$size, 
-		expected = pointSize
-	) 
-			
+
+	if (utils::packageVersion("ggplot2") <= "3.4.2") {
+	  expect_equal(
+	    object = gg$guides$colour$override.aes$size,
+	    expected = pointSize
+	  )
+	} else {
+	  expect_equal(
+	    object = gg$guides$guides$colour$params$override.aes$size,
+	    expected = pointSize
+	  )
+	}
 })
 
 test_that("The variable labels are correctly extracted from the labels of all variables", {
