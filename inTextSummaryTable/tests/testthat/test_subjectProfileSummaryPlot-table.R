@@ -353,7 +353,7 @@ test_that("The size of the points (in the legend) is correctly set", {
 		pointSize = pointSize
 	)
 
-	if (utils::packageVersion("ggplot2") <= "3.4.2") {
+	if (!inherits(ggplot2::guide_none(), "Guide")) {
 	  expect_equal(
 	    object = gg$guides$colour$override.aes$size,
 	    expected = pointSize
