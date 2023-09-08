@@ -271,11 +271,11 @@ The use of \code{export} is recommended.\cr
 \code{exportSummaryStatisticsTable} is retained for
 back-compatibility.
 }
-\section{Methods (by generic)}{
+\section{Functions}{
 \itemize{
-\item \code{export}: export \code{\link{summaryTable}} object
-}}
+\item \code{export(summaryTable)}: export \code{\link{summaryTable}} object
 
+}}
 \author{
 Laure Cougnaud
 }

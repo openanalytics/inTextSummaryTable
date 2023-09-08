@@ -15,8 +15,10 @@ subjectProfileSummaryPlot(
   seVar = if ("statSE" \%in\% colnames(data)) "statSE",
   minVar = NULL,
   maxVar = NULL,
-  yLab = paste(c(sub("^stat", "", meanVar), if (!is.null(minVar) & !is.null(maxVar)) { 
-       paste0("(", sub("^stat", "", minVar), ", ", sub("^stat", "", maxVar), ")") } else
+  yLab = paste(c(sub("^stat", "", meanVar), if (!is.null(minVar) & !is.null(maxVar)) {
+  
+      paste0("(", sub("^stat", "", minVar), ", ", sub("^stat", "", maxVar), ")")
+ } else
     if (!is.null(seVar)) paste("+-", sub("^stat", "", seVar))), collapse = " "),
   facetVar = NULL,
   facetScale = "free_y",
