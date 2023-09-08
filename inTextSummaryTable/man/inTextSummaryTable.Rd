@@ -3,6 +3,7 @@
 \docType{package}
 \name{inTextSummaryTable}
 \alias{inTextSummaryTable}
+\alias{inTextSummaryTable-package}
 \title{inTextSummaryTable: creation of in-text summary table}
 \description{
 Tables of summary statistics or count tables are created. 
