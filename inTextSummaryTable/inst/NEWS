@@ -1,4 +1,4 @@
-3.3.0.9000
+3.3.1
   o compare package version with character (for R > 4.3.1)
   o package overview help: add alias 'inTextSummaryTable-package'
 3.3.0
