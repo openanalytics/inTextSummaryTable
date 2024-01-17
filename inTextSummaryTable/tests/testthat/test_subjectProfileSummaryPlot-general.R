@@ -21,15 +21,14 @@ test_that("The plot is correctly facetted based on a variable", {
 		visit = c(1, 2, 1, 2), 
 		statMean = rnorm(4)
 	)
-	
-	expect_silent(
-		gg <- subjectProfileSummaryPlot(
-			data = summaryTable,
-			xVar = "visit", 
-			facetVar = "PARAM"
-		)
+
+	gg <- subjectProfileSummaryPlot(
+	  data = summaryTable,
+	  xVar = "visit",
+	  facetVar = "PARAM"
 	)
-	
+	expect_s3_class(gg, "ggplot2")
+
 	# check that the plots is facetted
 	# and that facetted are ordered according to levels of factor
 	ggData <- lapply(ggplot_build(gg)$data, `[`, c("x", "y", "PANEL"))
