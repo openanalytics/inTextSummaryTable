@@ -17,4 +17,5 @@
 #' }
 #' @docType package
 #' @name inTextSummaryTable
+#' @aliases inTextSummaryTable-package
 NULL

@@ -120,6 +120,7 @@
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom scales trans_new
 #' @importFrom plyr rbind.fill
+#' @importFrom utils packageVersion
 #' @export
 subjectProfileSummaryPlot <- function(data,
     xVar = NULL, xLab = getLabelVar(xVar, labelVars = labelVars), 
@@ -834,7 +835,7 @@ subjectProfileSummaryTable <- function(
   
   # default: expand by 0.6 units on each side
   # cowplot cut labels if change expand_scale
-  if(packageVersion("ggplot2") >= 3.3) {
+  if(packageVersion("ggplot2") >= "3.3") {
     ggTable <- ggTable + scale_y_discrete(expand = expansion(add = 0.2))
   } else ggTable <- ggTable + scale_y_discrete(expand = expand_scale(add = 0.2))
   

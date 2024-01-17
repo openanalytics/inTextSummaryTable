@@ -284,7 +284,6 @@ convertSummaryStatisticsTableToFlextable <- function(
 #' @importFrom stats as.formula
 #' @importFrom officer fp_text
 #' @importFrom flextable compose as_b as_sup as_sub as_paragraph
-#' @importFrom utils packageVersion
 #' @author Laure Cougnaud
 #' @keywords internal
 formatCustomFlextable <- function(
