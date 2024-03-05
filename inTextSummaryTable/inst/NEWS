@@ -1,3 +1,5 @@
+3.3.1.9000
+  o fix when percentage computed by variable and only one variable is specified
 3.3.1
   o compare package version with character (for R > 4.3.1)
   o package overview help: add alias 'inTextSummaryTable-package'

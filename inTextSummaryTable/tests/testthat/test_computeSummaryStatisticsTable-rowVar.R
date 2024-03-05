@@ -700,3 +700,26 @@ test_that("A warning is generated if row percentages should be computed by the v
 	
 })
 
+test_that("The row percentages are correctly computed by the variable to summarize if only one variable is specified.", {
+  
+  data <- data.frame(
+    USUBJID = c("a", "b", "c", "d", "a", "b"),
+    AESEV = c("Mild", "Moderate", "Moderate", "Severe", "Moderate", "Mild"),
+    stringsAsFactors = FALSE
+  )
+  
+  # variable not included in summary table:
+  expect_silent(
+    summaryTable <- computeSummaryStatisticsTable(
+      data = data, 
+      var = "AESEV", varLabInclude = TRUE,
+      rowVarTotalPerc = "variable"
+    )
+  )
+  
+  expect_setequal(
+    object = na.omit(summaryTable$statPercTotalN),
+    expect = length(unique(data$USUBJID))
+  )
+  
+})

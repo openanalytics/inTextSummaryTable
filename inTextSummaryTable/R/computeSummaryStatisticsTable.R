@@ -881,7 +881,7 @@ computeSummaryStatisticsTableTotal <- function(
 		# - 'attributes are not identical across measure variables; they will be dropped'
 		# - cannot avoid coercion of factors when measure attributes not identical
 		if(!is.null(var))
-			data[, var] <- lapply(data[, var], as.character)
+			data[, var] <- lapply(data[, var, drop = FALSE], as.character)
 		
 		data <- melt(
 			data = data, 
