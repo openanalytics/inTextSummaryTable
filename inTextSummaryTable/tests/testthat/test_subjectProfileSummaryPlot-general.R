@@ -219,7 +219,7 @@ test_that("A table with specific height is correctly included in a plot", {
 	)
 	
 	ggData <- ggplot_build(gg)$data
-	ggData <- do.call(rbind.fill, ggData)
+	ggData <- do.call(plyr::rbind.fill, ggData)
 	
 	# 2 panels are created
 	expect_equal(nrow(ggData), 2)

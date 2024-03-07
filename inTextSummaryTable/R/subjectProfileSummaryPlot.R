@@ -510,20 +510,26 @@ subjectProfileSummaryPlot <- function(data,
   }
   
   if(useLinetype){
-    if(is.null(linetypePalette))     
+    if(is.null(linetypePalette)){     
       linetypePalette <- getLinetypePalette(
           x = data[, colorVar],
           palette = getOption("inTextSummaryTable.linetypes.plot")
       )
+	  if(length(linetypePalette) == 0)
+		  linetypePalette <- NULL
+  	}
     gg <- gg + scale_linetype_manual(name = colorLab, values = linetypePalette)			
   }
   
   if(useShape){
-    if(is.null(shapePalette))
+    if(is.null(shapePalette)){
       shapePalette <- getShapePalette(
           x = data[, colorVar],
           palette = getOption("inTextSummaryTable.shapes.plot")
       )
+	  if(length(shapePalette) == 0)
+		  shapePalette <- NULL
+  	}
     gg <- gg + scale_shape_manual(name = colorLab, values = shapePalette)			
   }
   
