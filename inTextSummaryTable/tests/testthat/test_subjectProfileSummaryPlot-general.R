@@ -1,6 +1,7 @@
 context("Create a subject profile summary plot")
 
 library(ggplot2)
+library(plyr)
 
 test_that("An error is generated if the default variable for the plot is not available in the data", {
 			

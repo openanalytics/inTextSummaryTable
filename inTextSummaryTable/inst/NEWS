@@ -2,6 +2,8 @@
   o fix when percentage computed by variable and only one variable is specified
   o subjectProfileSummaryPlot: 
     - fix when linetype/shape requested but no color variable
+    - tests: fix for ggplot2 >= 3.5.0 (new implementation guide system)
+  o tests
 3.3.1
   o compare package version with character (for R > 4.3.1)
   o package overview help: add alias 'inTextSummaryTable-package'
