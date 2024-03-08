@@ -7,10 +7,10 @@
 #'
 #' @details
 #' \itemize{
-#' \item{To get started with the package, see:\cr}{
+#' \item{To get started with the package, see:\cr
 #' \code{vignette("inTextSummaryTable-introduction", package = "inTextSummaryTable")}}
 #' \item{To get example code for standard in-text tables created with the package, 
-#' see:\cr}{
+#' see:\cr
 #' \code{vignette("inTextSummaryTable-standardTables", package = "inTextSummaryTable")}}
 #' \item{The main function: \code{\link{getSummaryStatisticsTable}} enables
 #' to create ready in-text table.}

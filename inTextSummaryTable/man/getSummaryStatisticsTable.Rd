@@ -163,11 +163,11 @@ if the elements should be ordered in the final table.}
 
 \item{rowOrder}{Specify how the rows should be ordered in the final table, either a:
 \itemize{
-\item{String among:}{
+\item{String among:
 \itemize{
-\item{'auto' (by default): }{if the variable is a factor, keep its order, otherwise order alphabetically}
-\item{'alphabetical': }{order alphabetically}
-\item{'total': }{order rows in decreasing order of the total number of subjects
+\item{'auto' (by default): if the variable is a factor, keep its order, otherwise order alphabetically}
+\item{'alphabetical': order alphabetically}
+\item{'total': order rows in decreasing order of the total number of subjects
 across all columns for this specific category.}
 }}
 \item{Function with input the summary table and output the ordered elements of the \code{rowVar}}
@@ -300,7 +300,7 @@ by naming each element of the list:
 statistics to be computed.\cr
 Each function:
 \itemize{
-\item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+\item{has as parameter, either: 'x': the variable (\code{var}) to compute
 the summary statistic on or 'data': the entire dataset}
 \item{returns the corresponding summary statistic as a numeric vector}
 }
@@ -308,15 +308,15 @@ For example, to additionally compute the coefficient of variation, this can be s
 \code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).}
 
 \item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
-which the statistics should be computed by.
+which the statistics should be computed by.\cr
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}
 
 \item{statsPerc}{String with 'base statistical variable' used to compute the 
 percentage, either: 
 \itemize{
-\item{'statN' (by default): }{the number of subjects}
-\item{'statm': }{the number of records}
+\item{'statN' (by default): the number of subjects}
+\item{'statm': the number of records}
 }}
 
 \item{statsGeneralLab}{String with general label for statistics, 'Statistic' by default.
@@ -370,11 +370,11 @@ or list of such data.frame for each \code{rowVar} variable.\cr
 If the dataset is specified by row variable, the list should be named with:
 with:
 \itemize{
-\item{last row variable: }{for the dataset used in the total column for 
+\item{last row variable: for the dataset used in the total column for 
 the most nested row variable}
-\item{higher row variable (X+1): }{for the dataset used for the total column
+\item{higher row variable (X+1): for the dataset used for the total column
 and row total of X}
-\item{'total': }{for the dataset used for the total column and general row total}
+\item{'total': for the dataset used for the total column and general row total}
 }
 If only a subset of the variables is specified in this list, 
 \code{data} is used for the remaining variable(s) (or 'total') if needed.\cr
@@ -389,9 +389,9 @@ By default, \code{data} is used.}
 
 \item{type}{String with type of table: 
 \itemize{
-\item{'summaryTable': }{summary table with statistics for numeric variable}
-\item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+\item{'summaryTable': summary table with statistics for numeric variable}
+\item{'countTable': count table}
+\item{'auto' (by default): 'summaryTable' if the variable is numeric,
 'countTable' otherwise}
 }}
 
@@ -415,25 +415,25 @@ have priority on this parameter.}
 
 \item{outputType}{String with output type:
 \itemize{
-\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
+\item{'flextable' (by default): \code{\link[flextable]{flextable}} object, with format for
 CSR, compatible with Word/PowerPoint export}
-\item{'DT': }{\code{\link[DT]{datatable}} interactive table,
+\item{'DT': \code{\link[DT]{datatable}} interactive table,
 compatible with html export}
-\item{'data.frame': }{data.frame in wide format (with elements in 
+\item{'data.frame': data.frame in wide format (with elements in 
 \code{colVar} in different columns)}
-\item{'data.frame-base'}{data.frame in long format (with elements in 
+\item{'data.frame-base': data.frame in long format (with elements in 
 \code{colVar} in different rows), useful for QC}
 }}
 
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row (by default for 'flextable' output): }{All statistics are
+\item{row (by default for 'flextable' output): \cr All statistics are
  included in different rows in the first column of the table (after the row variable(s))}
-\item{'col' (by default for 'DT' output): }{Statistics are included 
+\item{'col' (by default for 'DT' output): \cr Statistics are included 
 in separated columns (last row of the header).\cr
 This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in different rows, 
+\item{'rowInSepCol': \cr Statistics are included in different rows, 
 but in a separated column than the \code{rowVar} variable(s)}
 }}
 
@@ -459,18 +459,18 @@ Set to NULL (by default) if no footer should be included.}
 either:
 \itemize{
 \item{string (of length 1). In this case, depending on the
-file extension, the following is exported: }{
+file extension, the following is exported: 
 \itemize{
 \item{'txt': summary table in long format ('data.frame-base' \code{outputType})}
 \item{'docx': summary table in final format is exported ('flextable' \code{outputType})}
 \item{'html': interactive summary table is exported ('DT' \code{outputType})}
 }}
 \item{named character vector in case of multiple exports.
-The names should correspond to the options in \code{outputType}:}{
+The names should correspond to the options in \code{outputType}:
 \itemize{
-\item{for 'data.frame-base' and 'data.frame': }{filename with 'txt' extension}
-\item{for 'flextable': }{filename with 'docx' extension}
-\item{for 'DT': }{filename with 'html' extension}
+\item{for 'data.frame-base' and 'data.frame': filename with 'txt' extension}
+\item{for 'flextable': filename with 'docx' extension}
+\item{for 'DT': filename with 'html' extension}
 }}
 }
 If NULL (by default), the summary table is not exported but only returned as output.
@@ -501,22 +501,22 @@ the column header is merged.}
 \item{vline}{(flextable output) String mentioning how vertical lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none' (default): }{no vertical lines included}
-\item{'auto': }{vertical lines included between sub-groups}
+\item{'none' (default): no vertical lines included}
+\item{'auto': vertical lines included between sub-groups}
 }}
 
 \item{hline}{(flextable output) String mentioning how horizontal lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none': }{no horizontal lines included}
-\item{'auto' (default): }{horizontal lines included between sub-groups}
+\item{'none': no horizontal lines included}
+\item{'auto' (default): horizontal lines included between sub-groups}
 }}
 
 \item{pageDim}{Numeric vector of length 2 with page width and height.\cr
 Depending on \code{outputType}:
 \itemize{
-\item{'flextable': }{in inches}
-\item{'DT': }{in number of rows in the table.\cr
+\item{'flextable': in inches}
+\item{'DT': in number of rows in the table.\cr
 Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
 
@@ -540,13 +540,13 @@ that should be represented as a bar.}
 \value{
 Depending on the \code{outputType}:
 \itemize{
-\item{'data.frame-base': }{input summary table in a long format with
+\item{'data.frame-base': input summary table in a long format with
 all computed statistics}
-\item{'data.frame': }{summary table in a wide format (
+\item{'data.frame': summary table in a wide format (
 different columns for each \code{colVar}), with specified labels}
-\item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
+\item{'flextable' (by default): \code{\link[flextable]{flextable}}
  object with summary table}
-\item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
+\item{'DT': \code{\link[DT]{datatable}} object with summary table}
 }
 If multiple \code{outputType} are specified, a list of those objects, named
 by \code{outputType}.\cr

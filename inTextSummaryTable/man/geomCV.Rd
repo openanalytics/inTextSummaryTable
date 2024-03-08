@@ -20,8 +20,8 @@ geometric coefficient of variation.
 The geometric coefficient of variation is computed as:
 \eqn{\sqrt{\exp(\sigma(log(x))^2)-1}*100}, with:
 \itemize{
-\item{log: }{natural logarithm}
-\item{\eqn{\sigma}: }{standard deviation}
+\item{log: natural logarithm}
+\item{\eqn{\sigma}: standard deviation}
 }
 }
 \examples{

@@ -19,8 +19,8 @@ geometric standard error of the mean.
 The geometric standard error of the mean is computed as:
 \eqn{\exp(se(log(x)}, with:
 \itemize{
-\item{log: }{natural logarithm}
-\item{\eqn{se}: }{standard error of the mean, as computed with \code{\link{se}}}
+\item{log: natural logarithm}
+\item{\eqn{se}: standard error of the mean, as computed with \code{\link{se}}}
 }
 }
 \examples{

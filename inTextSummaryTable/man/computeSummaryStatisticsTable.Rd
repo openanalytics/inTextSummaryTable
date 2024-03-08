@@ -165,11 +165,11 @@ label for the \code{rowVar} variable(s).}
 
 \item{rowOrder}{Specify how the rows should be ordered in the final table, either a:
 \itemize{
-\item{String among:}{
+\item{String among:
 \itemize{
-\item{'auto' (by default): }{if the variable is a factor, keep its order, otherwise order alphabetically}
-\item{'alphabetical': }{order alphabetically}
-\item{'total': }{order rows in decreasing order of the total number of subjects
+\item{'auto' (by default): if the variable is a factor, keep its order, otherwise order alphabetically}
+\item{'alphabetical': order alphabetically}
+\item{'total': order rows in decreasing order of the total number of subjects
 across all columns for this specific category.}
 }}
 \item{Function with input the summary table and output the ordered elements of the \code{rowVar}}
@@ -220,9 +220,9 @@ of the \code{rowVar} (assuming nested variable(s)).}
 
 \item{type}{String with type of table: 
 \itemize{
-\item{'summaryTable': }{summary table with statistics for numeric variable}
-\item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+\item{'summaryTable': summary table with statistics for numeric variable}
+\item{'countTable': count table}
+\item{'auto' (by default): 'summaryTable' if the variable is numeric,
 'countTable' otherwise}
 }}
 
@@ -252,11 +252,11 @@ or list of such data.frame for each \code{rowVar} variable.\cr
 If the dataset is specified by row variable, the list should be named with:
 with:
 \itemize{
-\item{last row variable: }{for the dataset used in the total column for 
+\item{last row variable: for the dataset used in the total column for 
 the most nested row variable}
-\item{higher row variable (X+1): }{for the dataset used for the total column
+\item{higher row variable (X+1): for the dataset used for the total column
 and row total of X}
-\item{'total': }{for the dataset used for the total column and general row total}
+\item{'total': for the dataset used for the total column and general row total}
 }
 If only a subset of the variables is specified in this list, 
 \code{data} is used for the remaining variable(s) (or 'total') if needed.\cr
@@ -297,7 +297,7 @@ by naming each element of the list:
 }}
 
 \item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
-which the statistics should be computed by.
+which the statistics should be computed by.\cr
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}
 
@@ -305,7 +305,7 @@ to specify the statistics for each element in \code{statsVarBy}.}
 statistics to be computed.\cr
 Each function:
 \itemize{
-\item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+\item{has as parameter, either: 'x': the variable (\code{var}) to compute
 the summary statistic on or 'data': the entire dataset}
 \item{returns the corresponding summary statistic as a numeric vector}
 }
@@ -318,8 +318,8 @@ Only included if no \code{statsVar} if longer than 1.}
 \item{statsPerc}{String with 'base statistical variable' used to compute the 
 percentage, either: 
 \itemize{
-\item{'statN' (by default): }{the number of subjects}
-\item{'statm': }{the number of records}
+\item{'statN' (by default): the number of subjects}
+\item{'statm': the number of records}
 }}
 
 \item{filterFct}{(optional) Function taking as input

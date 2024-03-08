@@ -18,8 +18,8 @@ Numeric vector of length 1 with geometric mean.
 The geometric standard deviation is computed as:
 \eqn{\exp(\sigma(log(x)))}, with:
 \itemize{
-\item{log: }{natural logarithm}
-\item{\eqn{\sigma}: }{standard deviation}
+\item{log: natural logarithm}
+\item{\eqn{\sigma}: standard deviation}
 }
 }
 \examples{

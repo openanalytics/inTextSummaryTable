@@ -18,8 +18,8 @@ Numeric vector of length 1 with geometric mean.
 The geometric mean is computed as:
 \eqn{\exp(\bar{log(x)})}, with:
 \itemize{
-\item{log: }{natural logarithm}
-\item{\eqn{\bar{log(x)}}: }{arithmetic mean of log(x)}
+\item{log: natural logarithm}
+\item{\eqn{\bar{log(x)}}: arithmetic mean of log(x)}
 }
 }
 \examples{

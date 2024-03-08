@@ -127,8 +127,9 @@ getAttribute <- function(summaryTable, name, default = NULL){
 #' If not specified, only the combinations of variable(s) available in the data are retained.
 #' @return list with:
 #' \itemize{
-#' \item{'x': }{factor with interaction between the input \code{var}}
-#' \item{'dataLevels': }{dtaa.frame with mapping between the \code{var} variable(s) and the new factor levels}
+#' \item{'x': factor with interaction between the input \code{var}}
+#' \item{'dataLevels': data.frame with mapping between the \code{var} 
+#' variable(s) and the new factor levels}
 #' }
 #' @author Laure Cougnaud
 #' @keywords internal
@@ -304,11 +305,11 @@ checkVarLabInclude <- function(var, varLabInclude = length(var) > 1){
 #' or an error.
 #' @return Depending on \code{msgType}:
 #' \itemize{
-#' \item{\code{warning}: }{warning is printed in the console, and a 
+#' \item{\code{warning}: warning is printed in the console, and a 
 #' \code{var} filtered with element not in \code{data}
 #' or in \code{refSet} is returned.
 #' If filtered \code{var} is empty, NULL is returned.}
-#' \item{\code{error}: }{an error is triggered.}
+#' \item{\code{error}: an error is triggered.}
 #' }
 #' @author Laure Cougnaud
 checkVar <- function(

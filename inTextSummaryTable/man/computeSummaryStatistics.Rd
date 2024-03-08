@@ -37,7 +37,7 @@ Only used if \code{var} is a categorical variable.}
 statistics to be computed.\cr
 Each function:
 \itemize{
-\item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+\item{has as parameter, either: 'x': the variable (\code{var}) to compute
 the summary statistic on or 'data': the entire dataset}
 \item{returns the corresponding summary statistic as a numeric vector}
 }
@@ -52,17 +52,17 @@ if the variable is empty, otherwise return 0 for the counts and NA for summary
 statistics.
 Criterias to consider a variable empty are:
 \itemize{
-\item{for a continuous variable: }{all missing (NA)}
-\item{for a categorical variable: }{all missing or **category is included in the 
+\item{for a continuous variable: all missing (NA)}
+\item{for a categorical variable: all missing or **category is included in the 
 factor levels but not available in \code{data}**}
 }
 By default, an empty variable are filtered.}
 
 \item{type}{String with type of table: 
 \itemize{
-\item{'summaryTable': }{summary table with statistics for numeric variable}
-\item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+\item{'summaryTable': summary table with statistics for numeric variable}
+\item{'countTable': count table}
+\item{'auto' (by default): 'summaryTable' if the variable is numeric,
 'countTable' otherwise}
 }}
 
@@ -83,23 +83,23 @@ that should be included in the message/warning for checks.}
 Data.frame with summary statistics in columns,
 depending if \code{type} is:
 \itemize{
-\item{'summary': }{
+\item{'summary': 
 \itemize{
-\item{'statN': }{number of subjects}
-\item{'statm': }{number of records}
-\item{'statMean': }{mean of \code{var}}
-\item{'statSD': }{standard deviation of \code{var}}
-\item{'statSE': }{standard error the mean of \code{var}}
-\item{'statMedian': }{median of \code{var}}
-\item{'statMin': }{minimum of \code{var}}
-\item{'statMax': }{maximum of \code{var}}
+\item{'statN': number of subjects}
+\item{'statm': number of records}
+\item{'statMean': mean of \code{var}}
+\item{'statSD': standard deviation of \code{var}}
+\item{'statSE': standard error the mean of \code{var}}
+\item{'statMedian': median of \code{var}}
+\item{'statMin': minimum of \code{var}}
+\item{'statMax': maximum of \code{var}}
 }
 }
-\item{'count': }{
+\item{'count': 
 \itemize{
-\item{'variableGroup': }{factor with groups of \code{var} for which counts are reported}
-\item{'statN': }{number of subjects}
-\item{'statm': }{number of records}
+\item{'variableGroup': factor with groups of \code{var} for which counts are reported}
+\item{'statN': number of subjects}
+\item{'statm': number of records}
 }
 }
 }

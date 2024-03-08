@@ -22,8 +22,9 @@ If not specified, only the combinations of variable(s) available in the data are
 \value{
 list with:
 \itemize{
-\item{'x': }{factor with interaction between the input \code{var}}
-\item{'dataLevels': }{dtaa.frame with mapping between the \code{var} variable(s) and the new factor levels}
+\item{'x': factor with interaction between the input \code{var}}
+\item{'dataLevels': data.frame with mapping between the \code{var} 
+variable(s) and the new factor levels}
 }
 }
 \description{

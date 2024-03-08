@@ -53,12 +53,12 @@ For the export, these variable(s) are formatted as factor with
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row (by default for 'flextable' output): }{All statistics are
+\item{row (by default for 'flextable' output): \cr All statistics are
  included in different rows in the first column of the table (after the row variable(s))}
-\item{'col' (by default for 'DT' output): }{Statistics are included 
+\item{'col' (by default for 'DT' output): \cr Statistics are included 
 in separated columns (last row of the header).\cr
 This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in different rows, 
+\item{'rowInSepCol': \cr Statistics are included in different rows, 
 but in a separated column than the \code{rowVar} variable(s)}
 }}
 
@@ -81,15 +81,15 @@ Otherwise (by default) the total is included in the header row of each category.
 \item{vline}{(flextable output) String mentioning how vertical lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none' (default): }{no vertical lines included}
-\item{'auto': }{vertical lines included between sub-groups}
+\item{'none' (default): no vertical lines included}
+\item{'auto': vertical lines included between sub-groups}
 }}
 
 \item{hline}{(flextable output) String mentioning how horizontal lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none': }{no horizontal lines included}
-\item{'auto' (default): }{horizontal lines included between sub-groups}
+\item{'none': no horizontal lines included}
+\item{'auto' (default): horizontal lines included between sub-groups}
 }}
 
 \item{rowAutoMerge}{(flextable output) Logical, if TRUE (by default) automatically merge rows,
@@ -112,17 +112,17 @@ have priority on this parameter.}
 \value{
 summaryTable reformatted in long format, with extra attributes:
 \itemize{
-\item{'header': }{data.frame with header for each column}
-\item{'padParams': }{list of list of parameters to be passed to the 
+\item{'header': data.frame with header for each column}
+\item{'padParams': list of list of parameters to be passed to the 
 \code{\link[flextable]{padding}} function}
-\item{'rowVar': }{column of output with row variable}
-\item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
-\item{'vlineParams' and 'hlineParams': }{
+\item{'rowVar': column of output with row variable}
+\item{'rowVarInSepCol': column(s) of output with row variable in separated column(s)}
+\item{'vlineParams' and 'hlineParams': 
 list of list with correspondingly parameters for
 vertical and horizontal lines
 }
-\item{'vline': }{\code{vline} parameter}
-\item{'formatParams': }{list of list with special formatting for the table,
+\item{'vline': \code{vline} parameter}
+\item{'formatParams': list of list with special formatting for the table,
 currently only used if \code{rowVarFormat} if specified.}
 }
 If \code{summaryTable} is a list of summary tables,

@@ -6,9 +6,10 @@
 #' and formatted with the default rules implemented in the package.
 #' @param type Character vector with type of statistics to extract, among:
 #' \itemize{
-#' \item{'default': }{default sets of statistics, 
+#' \item{'default': default sets of statistics, 
 #' see types: 'summary-default' and 'count-default' in \code{\link{getStats}}}
-#' \item{'all': }{all computed statistics, see types: 'summary' and 'count' in \code{\link{getStats}}}
+#' \item{'all': all computed statistics, see types: 'summary' and 'count' in 
+#' \code{\link{getStats}}}
 #' \item{any formatted statistics as implemented in \code{\link{getStats}}, 
 #' see section 'Formatted statistics' in
 #' \code{\link[=inTextSummaryTable-stats]{in-text table statistics}}.

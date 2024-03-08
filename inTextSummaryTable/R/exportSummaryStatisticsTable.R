@@ -21,31 +21,31 @@ export.summaryTable <- function(...){
 #' back-compatibility.
 #' @param outputType String with output type:
 #' \itemize{
-#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
+#' \item{'flextable' (by default): \code{\link[flextable]{flextable}} object, with format for
 #' CSR, compatible with Word/PowerPoint export}
-#' \item{'DT': }{\code{\link[DT]{datatable}} interactive table,
+#' \item{'DT': \code{\link[DT]{datatable}} interactive table,
 #' compatible with html export}
-#' \item{'data.frame': }{data.frame in wide format (with elements in 
+#' \item{'data.frame': data.frame in wide format (with elements in 
 #' \code{colVar} in different columns)}
-#' \item{'data.frame-base'}{data.frame in long format (with elements in 
+#' \item{'data.frame-base': data.frame in long format (with elements in 
 #' \code{colVar} in different rows), useful for QC}
 #' }
 #' @param file (Optional) Name of the file the table should be exported to, 
 #' either:
 #' \itemize{
 #' \item{string (of length 1). In this case, depending on the
-#' file extension, the following is exported: }{
+#' file extension, the following is exported: 
 #' \itemize{
 #' \item{'txt': summary table in long format ('data.frame-base' \code{outputType})}
 #' \item{'docx': summary table in final format is exported ('flextable' \code{outputType})}
 #' \item{'html': interactive summary table is exported ('DT' \code{outputType})}
 #' }}
 #' \item{named character vector in case of multiple exports.
-#' The names should correspond to the options in \code{outputType}:}{
+#' The names should correspond to the options in \code{outputType}:
 #' \itemize{
-#' \item{for 'data.frame-base' and 'data.frame': }{filename with 'txt' extension}
-#' \item{for 'flextable': }{filename with 'docx' extension}
-#' \item{for 'DT': }{filename with 'html' extension}
+#' \item{for 'data.frame-base' and 'data.frame': filename with 'txt' extension}
+#' \item{for 'flextable': filename with 'docx' extension}
+#' \item{for 'DT': filename with 'html' extension}
 #' }}
 #' }
 #' If NULL (by default), the summary table is not exported but only returned as output.
@@ -58,13 +58,13 @@ export.summaryTable <- function(...){
 #' @inheritParams exportSummaryStatisticsTableToDT
 #' @return Depending on the \code{outputType}:
 #' \itemize{
-#' \item{'data.frame-base': }{input summary table in a long format with
+#' \item{'data.frame-base': input summary table in a long format with
 #' all computed statistics}
-#' \item{'data.frame': }{summary table in a wide format (
+#' \item{'data.frame': summary table in a wide format (
 #' different columns for each \code{colVar}), with specified labels}
-#' \item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
+#' \item{'flextable' (by default): \code{\link[flextable]{flextable}}
 #'  object with summary table}
-#' \item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
+#' \item{'DT': \code{\link[DT]{datatable}} object with summary table}
 #' }
 #' If multiple \code{outputType} are specified, a list of those objects, named
 #' by \code{outputType}.\cr

@@ -15,14 +15,14 @@ getNDecimals(x, useRule = TRUE, rule = "1", useData = TRUE)
 the number of parameters.
 Currently only: '1' is implemented.
 \itemize{
-\item{'1': }{standard rule for the number of 
+\item{'1': standard rule for the number of 
 decimals for individual values for a 
 continuous variable:
 \itemize{
-\item{value < 1 ('very small values'): }{3}
-\item{value < 10: }{2}
-\item{value in [10, 1000[: }{1}
-\item{value >= 1000: }{0}
+\item{value < 1 ('very small values'): 3}
+\item{value < 10: 2}
+\item{value in [10, 1000[: 1}
+\item{value >= 1000: 0}
 }
 }
 }}
@@ -37,12 +37,12 @@ with the number of decimals.
 \description{
 The number of decimals is extracted either:
 \itemize{
-\item{from specific implemented rule :}{
+\item{from specific implemented rule :
 see \code{\link{getNDecimalsRule}} for further details}
-\item{from the data itself: }{
+\item{from the data itself: 
 see \code{\link{getNDecimalsData}} for further details
 }
-\item{both criterias: }{in this case the minimum of 
+\item{both criterias: in this case the minimum of 
 the number of decimals for both criterias is used}
 }
 }

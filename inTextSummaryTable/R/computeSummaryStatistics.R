@@ -13,8 +13,8 @@
 #' statistics.
 #' Criterias to consider a variable empty are:
 #' \itemize{
-#' \item{for a continuous variable: }{all missing (NA)}
-#' \item{for a categorical variable: }{all missing or **category is included in the 
+#' \item{for a continuous variable: all missing (NA)}
+#' \item{for a categorical variable: all missing or **category is included in the 
 #' factor levels but not available in \code{data}**}
 #' }
 #' By default, an empty variable are filtered.
@@ -36,23 +36,23 @@
 #' @return Data.frame with summary statistics in columns,
 #' depending if \code{type} is:
 #' \itemize{
-#' \item{'summary': }{
+#' \item{'summary': 
 #' \itemize{
-#' \item{'statN': }{number of subjects}
-#' \item{'statm': }{number of records}
-#' \item{'statMean': }{mean of \code{var}}
-#' \item{'statSD': }{standard deviation of \code{var}}
-#' \item{'statSE': }{standard error the mean of \code{var}}
-#' \item{'statMedian': }{median of \code{var}}
-#' \item{'statMin': }{minimum of \code{var}}
-#' \item{'statMax': }{maximum of \code{var}}
+#' \item{'statN': number of subjects}
+#' \item{'statm': number of records}
+#' \item{'statMean': mean of \code{var}}
+#' \item{'statSD': standard deviation of \code{var}}
+#' \item{'statSE': standard error the mean of \code{var}}
+#' \item{'statMedian': median of \code{var}}
+#' \item{'statMin': minimum of \code{var}}
+#' \item{'statMax': maximum of \code{var}}
 #' }
 #' }
-#' \item{'count': }{
+#' \item{'count': 
 #' \itemize{
-#' \item{'variableGroup': }{factor with groups of \code{var} for which counts are reported}
-#' \item{'statN': }{number of subjects}
-#' \item{'statm': }{number of records}
+#' \item{'variableGroup': factor with groups of \code{var} for which counts are reported}
+#' \item{'statN': number of subjects}
+#' \item{'statm': number of records}
 #' }
 #' }
 #' }

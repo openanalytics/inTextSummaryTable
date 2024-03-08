@@ -119,12 +119,12 @@ and 'isTotal' are considered.}
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row (by default for 'flextable' output): }{All statistics are
+\item{row (by default for 'flextable' output): \cr All statistics are
  included in different rows in the first column of the table (after the row variable(s))}
-\item{'col' (by default for 'DT' output): }{Statistics are included 
+\item{'col' (by default for 'DT' output): \cr Statistics are included 
 in separated columns (last row of the header).\cr
 This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in different rows, 
+\item{'rowInSepCol': \cr Statistics are included in different rows, 
 but in a separated column than the \code{rowVar} variable(s)}
 }}
 
@@ -151,18 +151,18 @@ have priority on this parameter.}
 either:
 \itemize{
 \item{string (of length 1). In this case, depending on the
-file extension, the following is exported: }{
+file extension, the following is exported: 
 \itemize{
 \item{'txt': summary table in long format ('data.frame-base' \code{outputType})}
 \item{'docx': summary table in final format is exported ('flextable' \code{outputType})}
 \item{'html': interactive summary table is exported ('DT' \code{outputType})}
 }}
 \item{named character vector in case of multiple exports.
-The names should correspond to the options in \code{outputType}:}{
+The names should correspond to the options in \code{outputType}:
 \itemize{
-\item{for 'data.frame-base' and 'data.frame': }{filename with 'txt' extension}
-\item{for 'flextable': }{filename with 'docx' extension}
-\item{for 'DT': }{filename with 'html' extension}
+\item{for 'data.frame-base' and 'data.frame': filename with 'txt' extension}
+\item{for 'flextable': filename with 'docx' extension}
+\item{for 'DT': filename with 'html' extension}
 }}
 }
 If NULL (by default), the summary table is not exported but only returned as output.
@@ -176,21 +176,21 @@ If multiple are specified, specified for each element of \code{byVar} (in order 
 
 \item{outputType}{String with output type:
 \itemize{
-\item{'flextable' (by default): }{\code{\link[flextable]{flextable}} object, with format for
+\item{'flextable' (by default): \code{\link[flextable]{flextable}} object, with format for
 CSR, compatible with Word/PowerPoint export}
-\item{'DT': }{\code{\link[DT]{datatable}} interactive table,
+\item{'DT': \code{\link[DT]{datatable}} interactive table,
 compatible with html export}
-\item{'data.frame': }{data.frame in wide format (with elements in 
+\item{'data.frame': data.frame in wide format (with elements in 
 \code{colVar} in different columns)}
-\item{'data.frame-base'}{data.frame in long format (with elements in 
+\item{'data.frame-base': data.frame in long format (with elements in 
 \code{colVar} in different rows), useful for QC}
 }}
 
 \item{pageDim}{Numeric vector of length 2 with page width and height.\cr
 Depending on \code{outputType}:
 \itemize{
-\item{'flextable': }{in inches}
-\item{'DT': }{in number of rows in the table.\cr
+\item{'flextable': in inches}
+\item{'DT': in number of rows in the table.\cr
 Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
 
@@ -230,15 +230,15 @@ e.g. created with the \code{\link{getColorPaletteTable}} function.}
 \item{vline}{(flextable output) String mentioning how vertical lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none' (default): }{no vertical lines included}
-\item{'auto': }{vertical lines included between sub-groups}
+\item{'none' (default): no vertical lines included}
+\item{'auto': vertical lines included between sub-groups}
 }}
 
 \item{hline}{(flextable output) String mentioning how horizontal lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none': }{no horizontal lines included}
-\item{'auto' (default): }{horizontal lines included between sub-groups}
+\item{'none': no horizontal lines included}
+\item{'auto' (default): horizontal lines included between sub-groups}
 }}
 
 \item{expandVar}{(DT output) Character vector with variables of the summary table which
@@ -253,13 +253,13 @@ that should be represented as a bar.}
 \value{
 Depending on the \code{outputType}:
 \itemize{
-\item{'data.frame-base': }{input summary table in a long format with
+\item{'data.frame-base': input summary table in a long format with
 all computed statistics}
-\item{'data.frame': }{summary table in a wide format (
+\item{'data.frame': summary table in a wide format (
 different columns for each \code{colVar}), with specified labels}
-\item{'flextable' (by default): }{\code{\link[flextable]{flextable}}
+\item{'flextable' (by default): \code{\link[flextable]{flextable}}
  object with summary table}
-\item{'DT': }{\code{\link[DT]{datatable}} object with summary table}
+\item{'DT': \code{\link[DT]{datatable}} object with summary table}
 }
 If multiple \code{outputType} are specified, a list of those objects, named
 by \code{outputType}.\cr

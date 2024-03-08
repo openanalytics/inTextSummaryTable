@@ -70,9 +70,9 @@ Either:
 
 \item{type}{String with type of table: 
 \itemize{
-\item{'summaryTable': }{summary table with statistics for numeric variable}
-\item{'countTable': }{count table}
-\item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+\item{'summaryTable': summary table with statistics for numeric variable}
+\item{'countTable': count table}
+\item{'auto' (by default): 'summaryTable' if the variable is numeric,
 'countTable' otherwise}
 }}
 
@@ -123,7 +123,7 @@ have priority on this parameter.}
 statistics to be computed.\cr
 Each function:
 \itemize{
-\item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+\item{has as parameter, either: 'x': the variable (\code{var}) to compute
 the summary statistic on or 'data': the entire dataset}
 \item{returns the corresponding summary statistic as a numeric vector}
 }
@@ -141,22 +141,22 @@ data.frame of class 'countTable' or 'summaryTable',
 depending on the 'type' parameter; with statistics in columns,
 either if \code{type} is:
 \itemize{
-\item{'summaryTable': }{
+\item{'summaryTable': 
 \itemize{
-\item{'N': }{number of subjects}
-\item{'Mean': }{mean of \code{var}}
-\item{'SD': }{standard deviation of \code{var}}
-\item{'SE': }{standard error of \code{var}}
-\item{'Median': }{median of \code{var}}
-\item{'Min': }{minimum of \code{var}}
-\item{'Max': }{maximum of \code{var}}
-\item{'m': }{number of records}
+\item{'N': number of subjects}
+\item{'Mean': mean of \code{var}}
+\item{'SD': standard deviation of \code{var}}
+\item{'SE': standard error of \code{var}}
+\item{'Median': median of \code{var}}
+\item{'Min': minimum of \code{var}}
+\item{'Max': maximum of \code{var}}
+\item{'m': number of records}
 }
 }
-\item{'countTable': }{
+\item{'countTable': 
 \itemize{
-\item{'N': }{number of subjects}
-\item{'m': }{number of records}
+\item{'N': number of subjects}
+\item{'m': number of records}
 }
 }
 }

@@ -1,11 +1,11 @@
 #' Compute summary statistics for a specific dataset and variables of interest
 #' @param rowOrder Specify how the rows should be ordered in the final table, either a:
 #' \itemize{
-#' \item{String among:}{
+#' \item{String among:
 #' \itemize{
-#' \item{'auto' (by default): }{if the variable is a factor, keep its order, otherwise order alphabetically}
-#' \item{'alphabetical': }{order alphabetically}
-#' \item{'total': }{order rows in decreasing order of the total number of subjects
+#' \item{'auto' (by default): if the variable is a factor, keep its order, otherwise order alphabetically}
+#' \item{'alphabetical': order alphabetically}
+#' \item{'total': order rows in decreasing order of the total number of subjects
 #' across all columns for this specific category.}
 #' }}
 #' \item{Function with input the summary table and output the ordered elements of the \code{rowVar}}
@@ -58,11 +58,11 @@
 #' If the dataset is specified by row variable, the list should be named with:
 #' with:
 #' \itemize{
-#' \item{last row variable: }{for the dataset used in the total column for 
+#' \item{last row variable: for the dataset used in the total column for 
 #' the most nested row variable}
-#' \item{higher row variable (X+1): }{for the dataset used for the total column
+#' \item{higher row variable (X+1): for the dataset used for the total column
 #' and row total of X}
-#' \item{'total': }{for the dataset used for the total column and general row total}
+#' \item{'total': for the dataset used for the total column and general row total}
 #' }
 #' If only a subset of the variables is specified in this list, 
 #' \code{data} is used for the remaining variable(s) (or 'total') if needed.\cr
@@ -104,8 +104,8 @@
 #' @param statsPerc String with 'base statistical variable' used to compute the 
 #' percentage, either: 
 #' \itemize{
-#' \item{'statN' (by default): }{the number of subjects}
-#' \item{'statm': }{the number of records}
+#' \item{'statN' (by default): the number of subjects}
+#' \item{'statm': the number of records}
 #' }
 #' @param stats (optional) Statistic(s) of interest to compute, either:
 #' \itemize{
@@ -136,7 +136,7 @@
 #' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
 #' Only included if no \code{statsVar} if longer than 1.
 #' @param statsVarBy String with variable in \code{rowVar}/code{colVar}
-#' which the statistics should be computed by.
+#' which the statistics should be computed by.\cr
 #' In this case, \code{stats} (nested list or not) should be additionally nested
 #' to specify the statistics for each element in \code{statsVarBy}.
 #' @param varIncludeTotal This argument is deprecated, please use: 'varTotalInclude' instead.
@@ -1001,22 +1001,22 @@ computeSummaryStatisticsTableTotal <- function(
 #' depending on the 'type' parameter; with statistics in columns,
 #' either if \code{type} is:
 #' \itemize{
-#' \item{'summaryTable': }{
+#' \item{'summaryTable': 
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'Mean': }{mean of \code{var}}
-#' \item{'SD': }{standard deviation of \code{var}}
-#' \item{'SE': }{standard error of \code{var}}
-#' \item{'Median': }{median of \code{var}}
-#' \item{'Min': }{minimum of \code{var}}
-#' \item{'Max': }{maximum of \code{var}}
-#' \item{'m': }{number of records}
+#' \item{'N': number of subjects}
+#' \item{'Mean': mean of \code{var}}
+#' \item{'SD': standard deviation of \code{var}}
+#' \item{'SE': standard error of \code{var}}
+#' \item{'Median': median of \code{var}}
+#' \item{'Min': minimum of \code{var}}
+#' \item{'Max': maximum of \code{var}}
+#' \item{'m': number of records}
 #' }
 #' }
-#' \item{'countTable': }{
+#' \item{'countTable': 
 #' \itemize{
-#' \item{'N': }{number of subjects}
-#' \item{'m': }{number of records}
+#' \item{'N': number of subjects}
+#' \item{'m': number of records}
 #' }
 #' }
 #' }
@@ -1156,11 +1156,11 @@ computeSummaryStatisticsByRowColVar <- function(
 #' considered in the specific dimension.
 #' @param method Ordering method to use, either:
 #' \itemize{
-#' \item{String among:}{
+#' \item{String among:
 #' \itemize{
-#' \item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
-#' \item{'alphabetical': }{\code{var} is order in alphabetical order}
-#' \item{'total': }{\code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
+#' \item{'auto': if \code{var} is a factor, keep its order, otherwise alphabetically}
+#' \item{'alphabetical': \code{var} is order in alphabetical order}
+#' \item{'total': \code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
 #' The total count is extracted from the rows with all \code{otherVars} equal to 'Total'.
 #' If no \code{otherVars} is specified, consider all rows.}
 #' }
@@ -1274,22 +1274,22 @@ convertVarToFactorWithOrder <- function(
 #' \itemize{
 #' \item{'summaryTable': }{
 #' \itemize{
-#' \item{'statN': }{number of subjects}
-#' \item{'statMean': }{mean of \code{var}}
-#' \item{'statSD': }{standard deviation of \code{var}}
-#' \item{'statSE': }{standard error of \code{var}}
-#' \item{'statMedian': }{median of \code{var}}
-#' \item{'statMin': }{minimum of \code{var}}
-#' \item{'statMax': }{maximum of \code{var}}
-#' \item{'statPerc': }{percentage of subjects}
-#' \item{'statm': }{number of records}
+#' \item{'statN': number of subjects}
+#' \item{'statMean': mean of \code{var}}
+#' \item{'statSD': standard deviation of \code{var}}
+#' \item{'statSE': standard error of \code{var}}
+#' \item{'statMedian': median of \code{var}}
+#' \item{'statMin': minimum of \code{var}}
+#' \item{'statMax': maximum of \code{var}}
+#' \item{'statPerc': percentage of subjects}
+#' \item{'statm': number of records}
 #' }
 #' }
-#' \item{'countTable': }{
+#' \item{'countTable': 
 #' \itemize{
-#' \item{'statN': }{number of subjects}
-#' \item{'statPercN': }{percentage of subjects}
-#' \item{'statm': }{number of records}
+#' \item{'statN': number of subjects}
+#' \item{'statPercN': percentage of subjects}
+#' \item{'statm': number of records}
 #' }
 #' }
 #' }
@@ -1306,8 +1306,8 @@ convertVarToFactorWithOrder <- function(
 #' @inheritParams inTextSummaryTable-common-args
 #' @return List with two elements:
 #' \itemize{
-#' \item{'summaryTable': }{summary table updated with statistics specified in \code{stats}}
-#' \item{'statsVar': }{Character vector with statistics names}
+#' \item{'summaryTable': summary table updated with statistics specified in \code{stats}}
+#' \item{'statsVar': Character vector with statistics names}
 #' }
 #' @author Laure Cougnaud
 #' @keywords internal

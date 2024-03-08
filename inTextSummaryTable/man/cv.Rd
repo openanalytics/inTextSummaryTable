@@ -19,8 +19,8 @@ Numeric vector of length 1 with coefficient of variation.
 The coefficient of variation is computed as:
 \eqn{\frac{\sigma(x)}{\bar{x}}*100}, with:
 \itemize{
-\item{\eqn{\sigma(x)}: }{standard deviation of \code{x}}
-\item{\eqn{\bar{x}}: }{arithmetic mean of \code{x}}
+\item{\eqn{\sigma(x)}: standard deviation of \code{x}}
+\item{\eqn{\bar{x}}: arithmetic mean of \code{x}}
 }
 }
 \examples{

@@ -69,8 +69,8 @@ file with the suffix: 'file_[i].html' with i the index of the file.}
 \item{pageDim}{Numeric vector of length 2 with page width and height.\cr
 Depending on \code{outputType}:
 \itemize{
-\item{'flextable': }{in inches}
-\item{'DT': }{in number of rows in the table.\cr
+\item{'flextable': in inches}
+\item{'DT': in number of rows in the table.\cr
 Currently only the height is used (e.g. \code{c(NA, 4)})
 }}}
 

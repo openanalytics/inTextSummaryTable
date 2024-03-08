@@ -270,8 +270,8 @@ convertVectToBinary <- function(x) {
 #' @inheritParams inTextSummaryTable-flextable-args
 #' @return list with:
 #' \itemize{
-#' \item{'ft': }{\code{\link[flextable]{flextable}}}
-#' \item{'colsData': }{Named vector with original column names,
+#' \item{'ft': \code{\link[flextable]{flextable}}}
+#' \item{'colsData': Named vector with original column names,
 #' with names set to new syntactic names.}
 #' }
 #' @author Laure Cougnaud

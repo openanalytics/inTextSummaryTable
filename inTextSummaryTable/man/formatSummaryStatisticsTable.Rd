@@ -51,12 +51,12 @@ one statistic variables are available in the table.}
 \item{statsLayout}{String with layout for the statistics names 
 (in case more than one statistic is included), among:
 \itemize{
-\item{row (by default for 'flextable' output): }{All statistics are
+\item{row (by default for 'flextable' output): \cr All statistics are
  included in different rows in the first column of the table (after the row variable(s))}
-\item{'col' (by default for 'DT' output): }{Statistics are included 
+\item{'col' (by default for 'DT' output): \cr Statistics are included 
 in separated columns (last row of the header).\cr
 This option is not compatible with categorical variable(s).}
-\item{'rowInSepCol': }{Statistics are included in different rows, 
+\item{'rowInSepCol': \cr Statistics are included in different rows, 
 but in a separated column than the \code{rowVar} variable(s)}
 }}
 

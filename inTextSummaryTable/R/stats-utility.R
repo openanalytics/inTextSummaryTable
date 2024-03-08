@@ -32,8 +32,8 @@ se <- function(x, na.rm = FALSE){
 #' The coefficient of variation is computed as:
 #' \eqn{\frac{\sigma(x)}{\bar{x}}*100}, with:
 #' \itemize{
-#' \item{\eqn{\sigma(x)}: }{standard deviation of \code{x}}
-#' \item{\eqn{\bar{x}}: }{arithmetic mean of \code{x}}
+#' \item{\eqn{\sigma(x)}: standard deviation of \code{x}}
+#' \item{\eqn{\bar{x}}: arithmetic mean of \code{x}}
 #' }
 #' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with coefficient of variation.
@@ -56,8 +56,8 @@ cv <- function(x, na.rm = FALSE){
 #' The geometric mean is computed as:
 #' \eqn{\exp(\bar{log(x)})}, with:
 #' \itemize{
-#' \item{log: }{natural logarithm}
-#' \item{\eqn{\bar{log(x)}}: }{arithmetic mean of log(x)}
+#' \item{log: natural logarithm}
+#' \item{\eqn{\bar{log(x)}}: arithmetic mean of log(x)}
 #' }
 #' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with geometric mean.
@@ -78,8 +78,8 @@ geomMean <- function(x, na.rm = FALSE){
 #' The geometric standard deviation is computed as:
 #' \eqn{\exp(\sigma(log(x)))}, with:
 #' \itemize{
-#' \item{log: }{natural logarithm}
-#' \item{\eqn{\sigma}: }{standard deviation}
+#' \item{log: natural logarithm}
+#' \item{\eqn{\sigma}: standard deviation}
 #' }
 #' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with geometric mean.
@@ -101,8 +101,8 @@ geomSD <- function(x, na.rm = FALSE){
 #' The geometric coefficient of variation is computed as:
 #' \eqn{\sqrt{\exp(\sigma(log(x))^2)-1}*100}, with:
 #' \itemize{
-#' \item{log: }{natural logarithm}
-#' \item{\eqn{\sigma}: }{standard deviation}
+#' \item{log: natural logarithm}
+#' \item{\eqn{\sigma}: standard deviation}
 #' }
 #' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with 
@@ -124,8 +124,8 @@ geomCV <- function(x, na.rm = FALSE){
 #' The geometric standard error of the mean is computed as:
 #' \eqn{\exp(se(log(x)}, with:
 #' \itemize{
-#' \item{log: }{natural logarithm}
-#' \item{\eqn{se}: }{standard error of the mean, as computed with \code{\link{se}}}
+#' \item{log: natural logarithm}
+#' \item{\eqn{se}: standard error of the mean, as computed with \code{\link{se}}}
 #' }
 #' @inheritParams inTextSummaryTable-stats-utility
 #' @return Numeric vector of length 1 with 

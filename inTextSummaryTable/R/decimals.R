@@ -2,12 +2,12 @@
 #' 
 #' The number of decimals is extracted either:
 #' \itemize{
-#' \item{from specific implemented rule :}{
+#' \item{from specific implemented rule :
 #' see \code{\link{getNDecimalsRule}} for further details}
-#' \item{from the data itself: }{
+#' \item{from the data itself: 
 #' see \code{\link{getNDecimalsData}} for further details
 #' }
-#' \item{both criterias: }{in this case the minimum of 
+#' \item{both criterias: in this case the minimum of 
 #' the number of decimals for both criterias is used}
 #' }
 #' @param useRule Logical (TRUE by default), should the \code{rule} be applied?
@@ -75,14 +75,14 @@ getMaxNDecimals <- function(x, ...)
 #' the number of parameters.
 #' Currently only: '1' is implemented.
 #' \itemize{
-#' \item{'1': }{standard rule for the number of 
+#' \item{'1': standard rule for the number of 
 #' decimals for individual values for a 
 #' continuous variable:
 #' \itemize{
-#' \item{value < 1 ('very small values'): }{3}
-#' \item{value < 10: }{2}
-#' \item{value in [10, 1000[: }{1}
-#' \item{value >= 1000: }{0}
+#' \item{value < 1 ('very small values'): 3}
+#' \item{value < 10: 2}
+#' \item{value in [10, 1000[: 1}
+#' \item{value >= 1000: 0}
 #' }
 #' }
 #' }
@@ -150,12 +150,12 @@ getMaxNDecimalsData <- function(x)
 #' 
 #' The following rules are used:
 #' \itemize{
-#' \item{percentage = 0\%: }{'0'}
-#' \item{ 0\% < percentage < 0.1\%: }{'<0.1'}
-#' \item{99.9\% < percentage < 100\%: }{'>99.9'}
-#' \item{percentage = 100\%: }{'100'}
-#' \item{missing value (NA) (class without valid data): }{'-'}
-#' \item{other: }{'x.x' (1 decimal)}
+#' \item{percentage = 0\%: '0'}
+#' \item{ 0\% < percentage < 0.1\%: '<0.1'}
+#' \item{99.9\% < percentage < 100\%: '>99.9'}
+#' \item{percentage = 100\%: '100'}
+#' \item{missing value (NA) (class without valid data): '-'}
+#' \item{other: 'x.x' (1 decimal)}
 #' }
 #' @param x Numeric vector with percentage(s)
 #' @param nDec Integer of length 1, number

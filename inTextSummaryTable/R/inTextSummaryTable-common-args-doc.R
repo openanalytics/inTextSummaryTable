@@ -57,12 +57,12 @@
 #' @param statsLayout String with layout for the statistics names 
 #' (in case more than one statistic is included), among:
 #' \itemize{
-#' \item{row (by default for 'flextable' output): }{All statistics are
+#' \item{row (by default for 'flextable' output): \cr All statistics are
 #'  included in different rows in the first column of the table (after the row variable(s))}
-#' \item{'col' (by default for 'DT' output): }{Statistics are included 
+#' \item{'col' (by default for 'DT' output): \cr Statistics are included 
 #' in separated columns (last row of the header).\cr
 #' This option is not compatible with categorical variable(s).}
-#' \item{'rowInSepCol': }{Statistics are included in different rows, 
+#' \item{'rowInSepCol': \cr Statistics are included in different rows, 
 #' but in a separated column than the \code{rowVar} variable(s)}
 #' }
 #' @param statsValueLab String with label for the statistic value, 
@@ -73,7 +73,7 @@
 #' statistics to be computed.\cr
 #' Each function:
 #' \itemize{
-#' \item{has as parameter, either: }{'x': the variable (\code{var}) to compute
+#' \item{has as parameter, either: 'x': the variable (\code{var}) to compute
 #' the summary statistic on or 'data': the entire dataset}
 #' \item{returns the corresponding summary statistic as a numeric vector}
 #' }
@@ -81,9 +81,9 @@
 #' \code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).
 #' @param type String with type of table: 
 #' \itemize{
-#' \item{'summaryTable': }{summary table with statistics for numeric variable}
-#' \item{'countTable': }{count table}
-#' \item{'auto' (by default): }{'summaryTable' if the variable is numeric,
+#' \item{'summaryTable': summary table with statistics for numeric variable}
+#' \item{'countTable': count table}
+#' \item{'auto' (by default): 'summaryTable' if the variable is numeric,
 #' 'countTable' otherwise}
 #' }
 #' @param statsLabInclude Logical, if TRUE include the statistic label
@@ -95,8 +95,8 @@
 #' @param pageDim Numeric vector of length 2 with page width and height.\cr
 #' Depending on \code{outputType}:
 #' \itemize{
-#' \item{'flextable': }{in inches}
-#' \item{'DT': }{in number of rows in the table.\cr
+#' \item{'flextable': in inches}
+#' \item{'DT': in number of rows in the table.\cr
 #' Currently only the height is used (e.g. \code{c(NA, 4)})
 #' }}
 #' @param columnsWidth (expert mode) Column widths of the table. This is only used 
@@ -145,14 +145,14 @@ NULL
 #' @param vline (flextable output) String mentioning how vertical lines 
 #' should be included in the body of the table, either: 
 #' \itemize{
-#' \item{'none' (default): }{no vertical lines included}
-#' \item{'auto': }{vertical lines included between sub-groups}
+#' \item{'none' (default): no vertical lines included}
+#' \item{'auto': vertical lines included between sub-groups}
 #' }
 #' @param hline (flextable output) String mentioning how horizontal lines 
 #' should be included in the body of the table, either: 
 #' \itemize{
-#' \item{'none': }{no horizontal lines included}
-#' \item{'auto' (default): }{horizontal lines included between sub-groups}
+#' \item{'none': no horizontal lines included}
+#' \item{'auto' (default): horizontal lines included between sub-groups}
 #' }
 #' @param file String with path of the file where the table should be exported.
 #' The file should have the extension: '.html'.

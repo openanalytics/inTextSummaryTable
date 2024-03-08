@@ -13,9 +13,9 @@ tableColorsPresentation
 \description{
 Default colors are
 \itemize{
-\item{header: }{white text on a blue background}
-\item{body: }{black text on a grey background}
-\item{footer: }{black text on a white background.}
+\item{header: white text on a blue background}
+\item{body: black text on a grey background}
+\item{footer: black text on a white background.}
 }
 }
 \keyword{datasets}

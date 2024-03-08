@@ -35,11 +35,11 @@ Use: 'variable' to include the variables to summarize: \code{var}
 
 \item{method}{Ordering method to use, either:
 \itemize{
-\item{String among:}{
+\item{String among:
 \itemize{
-\item{'auto': }{if \code{var} is a factor, keep its order, otherwise alphabetically}
-\item{'alphabetical': }{\code{var} is order in alphabetical order}
-\item{'total': }{\code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
+\item{'auto': if \code{var} is a factor, keep its order, otherwise alphabetically}
+\item{'alphabetical': \code{var} is order in alphabetical order}
+\item{'total': \code{var} is ordered based on the \code{totalVar} variable, in decreasing order.
 The total count is extracted from the rows with all \code{otherVars} equal to 'Total'.
 If no \code{otherVars} is specified, consider all rows.}
 }

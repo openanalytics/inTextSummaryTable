@@ -19,12 +19,12 @@ String with formatted percentage
 \description{
 The following rules are used:
 \itemize{
-\item{percentage = 0\%: }{'0'}
-\item{ 0\% < percentage < 0.1\%: }{'<0.1'}
-\item{99.9\% < percentage < 100\%: }{'>99.9'}
-\item{percentage = 100\%: }{'100'}
-\item{missing value (NA) (class without valid data): }{'-'}
-\item{other: }{'x.x' (1 decimal)}
+\item{percentage = 0\%: '0'}
+\item{ 0\% < percentage < 0.1\%: '<0.1'}
+\item{99.9\% < percentage < 100\%: '>99.9'}
+\item{percentage = 100\%: '100'}
+\item{missing value (NA) (class without valid data): '-'}
+\item{other: 'x.x' (1 decimal)}
 }
 }
 \examples{

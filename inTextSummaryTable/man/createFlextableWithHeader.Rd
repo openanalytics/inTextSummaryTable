@@ -34,8 +34,8 @@ the column header is merged.}
 \value{
 list with:
 \itemize{
-\item{'ft': }{\code{\link[flextable]{flextable}}}
-\item{'colsData': }{Named vector with original column names,
+\item{'ft': \code{\link[flextable]{flextable}}}
+\item{'colsData': Named vector with original column names,
 with names set to new syntactic names.}
 }
 }

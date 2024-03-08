@@ -4,17 +4,17 @@
 #' @inheritParams inTextSummaryTable-flextable-args
 #' @return summaryTable reformatted in long format, with extra attributes:
 #' \itemize{
-#' \item{'header': }{data.frame with header for each column}
-#' \item{'padParams': }{list of list of parameters to be passed to the 
+#' \item{'header': data.frame with header for each column}
+#' \item{'padParams': list of list of parameters to be passed to the 
 #' \code{\link[flextable]{padding}} function}
-#' \item{'rowVar': }{column of output with row variable}
-#' \item{'rowVarInSepCol': }{column(s) of output with row variable in separated column(s)}
-#' \item{'vlineParams' and 'hlineParams': }{
+#' \item{'rowVar': column of output with row variable}
+#' \item{'rowVarInSepCol': column(s) of output with row variable in separated column(s)}
+#' \item{'vlineParams' and 'hlineParams': 
 #' list of list with correspondingly parameters for
 #' vertical and horizontal lines
 #' }
-#' \item{'vline': }{\code{vline} parameter}
-#' \item{'formatParams': }{list of list with special formatting for the table,
+#' \item{'vline': \code{vline} parameter}
+#' \item{'formatParams': list of list with special formatting for the table,
 #' currently only used if \code{rowVarFormat} if specified.}
 #' }
 #' If \code{summaryTable} is a list of summary tables,

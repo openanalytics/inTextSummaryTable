@@ -47,15 +47,15 @@ Set to NULL (by default) if no footer should be included.}
 \item{vline}{(flextable output) String mentioning how vertical lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none' (default): }{no vertical lines included}
-\item{'auto': }{vertical lines included between sub-groups}
+\item{'none' (default): no vertical lines included}
+\item{'auto': vertical lines included between sub-groups}
 }}
 
 \item{hline}{(flextable output) String mentioning how horizontal lines 
 should be included in the body of the table, either: 
 \itemize{
-\item{'none': }{no horizontal lines included}
-\item{'auto' (default): }{horizontal lines included between sub-groups}
+\item{'none': no horizontal lines included}
+\item{'auto' (default): horizontal lines included between sub-groups}
 }}
 
 \item{file}{String with path of the file where the table should be exported.

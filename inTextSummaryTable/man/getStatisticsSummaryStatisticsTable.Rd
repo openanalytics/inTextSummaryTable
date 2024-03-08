@@ -31,22 +31,22 @@ The following variables are recognized, if the table is a:
 \itemize{
 \item{'summaryTable': }{
 \itemize{
-\item{'statN': }{number of subjects}
-\item{'statMean': }{mean of \code{var}}
-\item{'statSD': }{standard deviation of \code{var}}
-\item{'statSE': }{standard error of \code{var}}
-\item{'statMedian': }{median of \code{var}}
-\item{'statMin': }{minimum of \code{var}}
-\item{'statMax': }{maximum of \code{var}}
-\item{'statPerc': }{percentage of subjects}
-\item{'statm': }{number of records}
+\item{'statN': number of subjects}
+\item{'statMean': mean of \code{var}}
+\item{'statSD': standard deviation of \code{var}}
+\item{'statSE': standard error of \code{var}}
+\item{'statMedian': median of \code{var}}
+\item{'statMin': minimum of \code{var}}
+\item{'statMax': maximum of \code{var}}
+\item{'statPerc': percentage of subjects}
+\item{'statm': number of records}
 }
 }
-\item{'countTable': }{
+\item{'countTable': 
 \itemize{
-\item{'statN': }{number of subjects}
-\item{'statPercN': }{percentage of subjects}
-\item{'statm': }{number of records}
+\item{'statN': number of subjects}
+\item{'statPercN': percentage of subjects}
+\item{'statm': number of records}
 }
 }
 }
@@ -65,8 +65,8 @@ to specify the statistics for each element in \code{statsVarBy}.}
 \value{
 List with two elements:
 \itemize{
-\item{'summaryTable': }{summary table updated with statistics specified in \code{stats}}
-\item{'statsVar': }{Character vector with statistics names}
+\item{'summaryTable': summary table updated with statistics specified in \code{stats}}
+\item{'statsVar': Character vector with statistics names}
 }
 }
 \description{

@@ -36,11 +36,11 @@ or an error.}
 \value{
 Depending on \code{msgType}:
 \itemize{
-\item{\code{warning}: }{warning is printed in the console, and a 
+\item{\code{warning}: warning is printed in the console, and a 
 \code{var} filtered with element not in \code{data}
 or in \code{refSet} is returned.
 If filtered \code{var} is empty, NULL is returned.}
-\item{\code{error}: }{an error is triggered.}
+\item{\code{error}: an error is triggered.}
 }
 }
 \description{
