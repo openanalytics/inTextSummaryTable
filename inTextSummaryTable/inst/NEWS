@@ -3,7 +3,8 @@
   o subjectProfileSummaryPlot: 
     - fix when linetype/shape requested but no color variable
     - tests: fix for ggplot2 >= 3.5.0 (new implementation guide system)
-  o tests
+  o exportSummaryStatisticsTable:
+    - tests: fix for flextable >= 0.9.5 (refactoring data structure content)
 3.3.1
   o compare package version with character (for R > 4.3.1)
   o package overview help: add alias 'inTextSummaryTable-package'

@@ -1429,15 +1429,28 @@ test_that("A superscript is correctly formatted in a flextable summary table", {
 		statsVar = "pValue"
 	)
 	
-	idxSps <- which(ft$body$dataset == xSps)
-	ftBodyCnt <- ft$body$content$content$data
-	cntDataSps <- ftBodyCnt[idxSps][[1]]
-	expect_equal(nrow(cntDataSps), 2)
-	expect_equal(cntDataSps[, "txt"], c("<0.001", "*"))
-	expect_equal(cntDataSps[, "vertical.align"], c(NA_character_, "superscript"))
+	if(packageVersion("flextable") >= "0.9.5"){
+		
+		ftDataChunk <- flextable::information_data_chunk(ft)
+		ftDataTxtSuperscript <- subset(ftDataChunk, txt == "*")
+		expect_equal(
+			object = ftDataTxtSuperscript[, "vertical.align"], 
+			expected = "superscript"
+		)
+		
+	}else{
 	
-	alignDataOther <- unlist(lapply(ftBodyCnt[-idxSps], "[", "vertical.align"))
-	expect_setequal(alignDataOther, NA_character_)		
+		idxSps <- which(ft$body$dataset == xSps)
+		ftBodyCnt <- ft$body$content$content$data
+		cntDataSps <- ftBodyCnt[idxSps][[1]]
+		expect_equal(nrow(cntDataSps), 2)
+		expect_equal(cntDataSps[, "txt"], c("<0.001", "*"))
+		expect_equal(cntDataSps[, "vertical.align"], c(NA_character_, "superscript"))
+		
+		alignDataOther <- unlist(lapply(ftBodyCnt[-idxSps], "[", "vertical.align"))
+		expect_setequal(alignDataOther, NA_character_)
+		
+	}
 			
 })
 
@@ -1455,16 +1468,29 @@ test_that("A subscript is correctly formatted in a flextable summary table", {
 		rowVar = "PARAM", colVar = "TRT",
 		statsVar = "pValue"
 	)
+	
+	if(packageVersion("flextable") >= "0.9.5"){
+		
+		ftDataChunk <- flextable::information_data_chunk(ft)
+		ftDataSubscript <- subset(ftDataChunk, txt == "(significative)")
+		expect_equal(
+			object = ftDataSubscript[, "vertical.align"], 
+			expected = "subscript"
+		)
+		
+	}else{
 			
-	idxSbs <- which(ft$body$dataset == xSbs)
-	ftBodyCnt <- ft$body$content$content$data
-	cntDataSbs <- ftBodyCnt[idxSbs][[1]]
-	expect_equal(nrow(cntDataSbs), 2)
-	expect_equal(cntDataSbs[, "txt"], c("<0.001", "(significative)"))
-	expect_equal(cntDataSbs[, "vertical.align"], c(NA_character_, "subscript"))
-			
-	alignDataOther <- unlist(lapply(ftBodyCnt[-idxSbs], "[", "vertical.align"))
-	expect_setequal(alignDataOther, NA_character_)		
+		idxSbs <- which(ft$body$dataset == xSbs)
+		ftBodyCnt <- ft$body$content$content$data
+		cntDataSbs <- ftBodyCnt[idxSbs][[1]]
+		expect_equal(nrow(cntDataSbs), 2)
+		expect_equal(cntDataSbs[, "txt"], c("<0.001", "(significative)"))
+		expect_equal(cntDataSbs[, "vertical.align"], c(NA_character_, "subscript"))
+				
+		alignDataOther <- unlist(lapply(ftBodyCnt[-idxSbs], "[", "vertical.align"))
+		expect_setequal(alignDataOther, NA_character_)
+		
+	}
 			
 })
 
@@ -1482,13 +1508,24 @@ test_that("A cell is correctly formatted in bold in a flextable summary table", 
 		rowVar = "PARAM", colVar = "TRT",
 		statsVar = "pValue"
 	)
-	isBold <- apply(
-		ft$body$content$content$data, 
-		2, function(x) sapply(x, `[[`, "bold")	
-	)
-	idxBold <- which(ft$body$dataset == xBold)
-	expect_setequal(isBold[idxBold], TRUE)
-	expect_setequal(isBold[-idxBold], NA)			
+	
+	if(packageVersion("flextable") >= "0.9.5"){
+		
+		ftDataChunk <- flextable::information_data_chunk(ft)
+		ftDataBold <- subset(ftDataChunk, txt == "<0.001")
+		expect_true(object = ftDataBold[, "bold"])
+		
+	}else{
+	
+		isBold <- apply(
+			ft$body$content$content$data, 
+			2, function(x) sapply(x, `[[`, "bold")	
+		)
+		idxBold <- which(ft$body$dataset == xBold)
+		expect_setequal(isBold[idxBold], TRUE)
+		expect_setequal(isBold[-idxBold], NA)
+		
+	}
 			
 })
 
@@ -1507,20 +1544,36 @@ test_that("A cell is correctly formatted with multiple same text formatting in a
 		statsVar = "pValue"
 	)
 	
-	idxSps <- which(grepl("Actual Value", ft$body$dataset))
-	ftBodyCnt <- ft$body$content$content$data
-	cntDataSps <- ftBodyCnt[idxSps][[1]]
+	if(packageVersion("flextable") >= "0.9.5"){
+		
+		ftDataChunk <- flextable::information_data_chunk(ft)
+		expect_equal(
+			object = subset(ftDataChunk, txt == "test")[, "vertical.align"],
+			expected = "superscript"
+		)
+		expect_equal(
+			object = subset(ftDataChunk, txt == "test2")[, "vertical.align"],
+			expected = "superscript"
+		)
+		
+	}else{
 	
-	expect_equal(
-		object = cntDataSps[, "txt"], 
-		expected = c("Actual Value", "test", " of the measurement", "test2",
-			" in data")
-	)
-	expect_equal(
-		object = cntDataSps[, "vertical.align"], 
-		expected = c(NA_character_, "superscript", NA_character_, 
-			"superscript", NA_character_)
-	)
+		idxSps <- which(grepl("Actual Value", ft$body$dataset))
+		ftBodyCnt <- ft$body$content$content$data
+		cntDataSps <- ftBodyCnt[idxSps][[1]]
+		
+		expect_equal(
+			object = cntDataSps[, "txt"], 
+			expected = c("Actual Value", "test", " of the measurement", "test2",
+				" in data")
+		)
+		expect_equal(
+			object = cntDataSps[, "vertical.align"], 
+			expected = c(NA_character_, "superscript", NA_character_, 
+				"superscript", NA_character_)
+		)
+		
+	}
 	
 })
 
@@ -1538,11 +1591,25 @@ test_that("A cell is correctly formatted with multiple and different text format
 		rowVar = "PARAM", colVar = "TRT",
 		statsVar = "pValue"
 	)
-	cntData <- ft$body$content$content$data[2, 2][[1]]
 	
-	expect_equal(object = cntData[, "txt"], expected = c("test", "<0.001"))
-	expect_equal(object = cntData[1, "vertical.align"], expected = "superscript")
-	expect_true(object = cntData[2, "bold"])	
+	if(packageVersion("flextable") >= "0.9.5"){
+		
+		ftDataChunk <- flextable::information_data_chunk(ft)
+		expect_equal(
+			object = subset(ftDataChunk, txt == "test")[, "vertical.align"],
+			expected = "superscript"
+		)
+		expect_true(object = subset(ftDataChunk, txt == "<0.001")[, "bold"])
+		
+	}else{
+		
+		cntData <- ft$body$content$content$data[2, 2][[1]]
+		
+		expect_equal(object = cntData[, "txt"], expected = c("test", "<0.001"))
+		expect_equal(object = cntData[1, "vertical.align"], expected = "superscript")
+		expect_true(object = cntData[2, "bold"])
+		
+	}
 	
 })
 
