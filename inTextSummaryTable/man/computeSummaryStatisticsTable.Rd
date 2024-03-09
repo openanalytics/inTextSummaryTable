@@ -296,7 +296,7 @@ by naming each element of the list:
 }}
 }}
 
-\item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
+\item{statsVarBy}{String with variable in \code{rowVar}/\code{colVar}
 which the statistics should be computed by.\cr
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}

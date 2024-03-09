@@ -307,7 +307,7 @@ the summary statistic on or 'data': the entire dataset}
 For example, to additionally compute the coefficient of variation, this can be set to:
 \code{list(statCVPerc = function(x) sd(x)/mean(x)*100)} (or \code{\link{cv}}).}
 
-\item{statsVarBy}{String with variable in \code{rowVar}/code{colVar}
+\item{statsVarBy}{String with variable in \code{rowVar}/\code{colVar}
 which the statistics should be computed by.\cr
 In this case, \code{stats} (nested list or not) should be additionally nested
 to specify the statistics for each element in \code{statsVarBy}.}

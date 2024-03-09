@@ -16,7 +16,7 @@
 #' This object contains:
 #' \itemize{
 #' \item{the row and column variable(s)}
-#' \item{the computed statistic(s): }{\cr
+#' \item{the computed statistic(s): \cr
 #' If \code{type} is:
 #' \itemize{
 #' \item{'summaryTable': 

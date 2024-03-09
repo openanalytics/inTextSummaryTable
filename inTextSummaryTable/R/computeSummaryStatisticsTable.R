@@ -135,7 +135,7 @@
 #' }
 #' @param statsGeneralLab String with general label for statistics, 'Statistic' by default.
 #' Only included if no \code{statsVar} if longer than 1.
-#' @param statsVarBy String with variable in \code{rowVar}/code{colVar}
+#' @param statsVarBy String with variable in \code{rowVar}/\code{colVar}
 #' which the statistics should be computed by.\cr
 #' In this case, \code{stats} (nested list or not) should be additionally nested
 #' to specify the statistics for each element in \code{statsVarBy}.
@@ -1272,7 +1272,7 @@ convertVarToFactorWithOrder <- function(
 #' The names are reported in the header.
 #' The following variables are recognized, if the table is a: 
 #' \itemize{
-#' \item{'summaryTable': }{
+#' \item{'summaryTable': 
 #' \itemize{
 #' \item{'statN': number of subjects}
 #' \item{'statMean': mean of \code{var}}

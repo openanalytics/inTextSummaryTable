@@ -4,8 +4,8 @@
 \name{formatCustomFlextable}
 \alias{formatCustomFlextable}
 \title{Format superscript/subscripts/bold cells in a flextable.
-Superscript should be indicated as 'a^{b}',
-subscript as 'a_{b}' and bold as bold{a} in the
+Superscript should be indicated as: '\code{a^{b}}',
+subscript as '\code{a_{b}}' and bold as '\code{bold{a}}' in the
  the input summary table.}
 \usage{
 formatCustomFlextable(
@@ -41,8 +41,8 @@ be indicated in bold?}
 }
 \description{
 Format superscript/subscripts/bold cells in a flextable.
-Superscript should be indicated as 'a^{b}',
-subscript as 'a_{b}' and bold as bold{a} in the
+Superscript should be indicated as: '\code{a^{b}}',
+subscript as '\code{a_{b}}' and bold as '\code{bold{a}}' in the
  the input summary table.
 }
 \author{

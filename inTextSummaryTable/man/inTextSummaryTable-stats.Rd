@@ -22,28 +22,27 @@ then formatted to be displayed in the table
 In the in-text package, the following 'base
 statistics' are reported in the summary table:
 \itemize{
-\item{for a continuous variable: }{
+\item{for a continuous variable: 
 \itemize{
-\item{'statMean': }{variable mean}
-\item{'statSD': }{variable standard deviation}
-\item{'statSE': }{variable standard error}
-\item{'statMedian': }{variable median}
-\item{'statMin': }{variable minimum}
-\item{'statMax': }{variable maximum}
+\item{'statMean': variable mean}
+\item{'statSD': variable standard deviation}
+\item{'statSE': variable standard error}
+\item{'statMedian': variable median}
+\item{'statMin': variable minimum}
+\item{'statMax': variable maximum}
 }
 During the computation of the statistics,
 if multiple and different values are available for a specific variable
 and subject ID (by row/column): an error is triggered.
 }
-\item{for a categorical and continuous variable (or the full table): }{
+\item{for a categorical and continuous variable (or the full table): 
 \itemize{
-\item{'statN': }{number of subjects}
-\item{'statm': }{number of records}
-\item{'statPercN' (or 'statPercm'): }{percentage of subjects
+\item{'statN': number of subjects}
+\item{'statm': number of records}
+\item{'statPercN' (or 'statPercm'): percentage of subjects
 (or records) for the specific group}
-\item{'statPercTotalN' (or 'statPercTotalm'): }{number of subjects 
-(or records) considered 
-for the total (denominator) of the percentage}
+\item{'statPercTotalN' (or 'statPercTotalm'): number of subjects 
+(or records) considered for the total (denominator) of the percentage}
 }
 The percentage and denominator of the percentage are based
 on the number of subjects or records depending on
@@ -63,64 +62,64 @@ In the in-text package, the following formatted
 statistics can be reported in the final output table.
 \itemize{
 
-\item{for a continuous variable: }{
+\item{for a continuous variable: 
 \itemize{
 
-\item{base statistics: }{
+\item{base statistics: 
 \itemize{
-\item{'Mean': }{formatted mean}
-\item{'Median': }{formatted median}
-\item{'SE': }{formatted standard error}
-\item{'SD': }{formatted standard deviation}
-\item{'Min': }{formatted minimum}
-\item{'Max': }{formatted maximum}
+\item{'Mean': formatted mean}
+\item{'Median': formatted median}
+\item{'SE': formatted standard error}
+\item{'SD': formatted standard deviation}
+\item{'Min': formatted minimum}
+\item{'Max': formatted maximum}
 }}
 
-\item{multiple: }{
+\item{multiple: 
 \itemize{
-\item{'summary-default': }{default set of statistics for a continuous variable:
+\item{'summary-default': default set of statistics for a continuous variable:
  'n', 'Mean', 'SD', 'SE', 'Median', 'Min', 'Max'}
-\item{'summary': }{all statistics available for a continuous variable:
+\item{'summary': all statistics available for a continuous variable:
 'n', 'Mean', 'SD', 'SE', 'Median', 'Min', 'Max', '\%', 'm'}
 }}
 
-\item{combined statistics: }{
+\item{combined statistics: 
 \itemize{
-\item{'median (range)': }{median (minimum,maximum)}
-\item{'median\\n(range)': }{median and (minimum, maximum) below (linebreak)}
-\item{'mean (sd)': }{mean and standard deviation}
-\item{'mean (se)': }{mean and standard error}
-\item{'mean (range)': }{mean and (minimum, maximum)}
-\item{'(min, max)': }{(minimum, maximum)}
+\item{'median (range)': median (minimum,maximum)}
+\item{'median\\n(range)': median and (minimum, maximum) below (linebreak)}
+\item{'mean (sd)': mean and standard deviation}
+\item{'mean (se)': mean and standard error}
+\item{'mean (range)': mean and (minimum, maximum)}
+\item{'(min, max)': (minimum, maximum)}
 }}
 
 }}
 
-\item{for a categorical or continuous variable (or the full table): }{
+\item{for a categorical or continuous variable (or the full table): 
 \itemize{
 
-\item{base statistics: }{
+\item{base statistics: 
 \itemize{
-\item{'n': }{formatted number of subjects}
-\item{'m': }{formatted number of records}
-\item{'\%': }{formatted percentage of subjects}
-\item{'\%m': }{formatted percentage of records.\cr
+\item{'n': formatted number of subjects}
+\item{'m': formatted number of records}
+\item{'\%': formatted percentage of subjects}
+\item{'\%m': formatted percentage of records.\cr
 Note: this is only available if the percentage of records is reported
 (\code{statsPerc} set to 'statm').}
 }}
 
-\item{multiple: }{
+\item{multiple: 
 \itemize{
-\item{'count-default': }{default set of statistics for a categorical variable:
+\item{'count-default': default set of statistics for a categorical variable:
  'n', '\%'}
-\item{'count': }{all statistics available for a categorical variable: 'n', '\%', 'm'}
+\item{'count': all statistics available for a categorical variable: 'n', '\%', 'm'}
 }}
 
-\item{combined statistics: }{
+\item{combined statistics: 
 \itemize{
-\item{'n (\%)': }{number of subjects (and associated percentage)}
-\item{'n/N (\%)': }{number of subjects/total number of subjects (percentage)}
-\item{'m (\%)': }{number of records (and associated percentage).\cr
+\item{'n (\%)': number of subjects (and associated percentage)}
+\item{'n/N (\%)': number of subjects/total number of subjects (percentage)}
+\item{'m (\%)': number of records (and associated percentage).\cr
 Note: this is only available if the percentage of records is reported
 (\code{statsPerc} set to 'statm').}
 }}
@@ -140,25 +139,25 @@ and typically displayed inside the final table.
 
 \item{In general, all rounding is handled with \code{\link{roundHalfUpTextFormat}}.}
 
-\item{statistics for continuous variable: }{
+\item{statistics for continuous variable: 
 \itemize{
-\item{if the number of decimals (\code{nDecCont}) is specified: }{
+\item{if the number of decimals (\code{nDecCont}) is specified: 
 \cr statistics are rounded with the following number of decimals,
 based on:
 \itemize{
-\item{'Min', 'Max': }{\code{nDecCont}}
-\item{'Mean', 'SD', 'Median': }{\code{nDecCont} + 1}
-\item{'SE': }{\code{nDecCont} + 2}
+\item{'Min', 'Max': \code{nDecCont}}
+\item{'Mean', 'SD', 'Median': \code{nDecCont} + 1}
+\item{'SE': \code{nDecCont} + 2}
 }
 Note that the number of decimals is extracted
 from standard rules/data is the variable of interest 
 is specified (e.g. via \code{var} in \code{\link{getStatsData}}).
 }
-\item{if the number of decimals is not specified: }{
+\item{if the number of decimals is not specified: 
 \cr a default format is set via the \code{\link{formatC}} function.}
 }}
 
-\item{statistics for counts:}{
+\item{statistics for counts:
 \itemize{
 
 \item{number of subjects, records are rounded with the number of decimals
@@ -166,14 +165,14 @@ specified via \code{nDecN} or \code{nDecm} (0 by default)}
 
 \item{percentages are formatted by default with \code{\link{formatPercentage}}.}
 
-\item{'n (\%)' and 'm (\%)': }{ 
+\item{'n (\%)' and 'm (\%)':  
 \itemize{
 \item{if the percentage of subjects/records is missing, '-' is reported}
 \item{if the number of subjects/records is 0, '0' is reported instead of '0 (0\%)'}
 \item{otherwise the number and percentage of subjects/records are formatted as specified}
 }}
 
-\item{'n/N (\%)': }{
+\item{'n/N (\%)': 
 \itemize{
 \item{if the percentage of subjects is missing, '-' is reported}
 \item{if the number of subjects is 0, '0' is reported instead of '0/... (0\%)'}

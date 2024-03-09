@@ -267,8 +267,8 @@ convertSummaryStatisticsTableToFlextable <- function(
 }
 
 #' Format superscript/subscripts/bold cells in a flextable.
-#' Superscript should be indicated as 'a^{b}',
-#' subscript as 'a_{b}' and bold as bold{a} in the
+#' Superscript should be indicated as: '\code{a^{b}}',
+#' subscript as '\code{a_{b}}' and bold as '\code{bold{a}}' in the
 #'  the input summary table.
 #' @param dataTable data.frame with data used in table,
 #' summary table for body or header data.frame for the header.

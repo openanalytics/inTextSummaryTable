@@ -29,7 +29,7 @@ Missing values, if present, are filtered
 The names are reported in the header.
 The following variables are recognized, if the table is a: 
 \itemize{
-\item{'summaryTable': }{
+\item{'summaryTable': 
 \itemize{
 \item{'statN': number of subjects}
 \item{'statMean': mean of \code{var}}
