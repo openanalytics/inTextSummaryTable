@@ -59,8 +59,8 @@ getNDecimals(x, useRule = TRUE, useData = TRUE)
 \seealso{
 Other decimals: 
 \code{\link{formatPercentage}()},
-\code{\link{getMaxNDecimalsData}()},
 \code{\link{getMaxNDecimals}()},
+\code{\link{getMaxNDecimalsData}()},
 \code{\link{getNDecimalsData}()}
 }
 \author{

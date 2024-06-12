@@ -33,10 +33,10 @@ formatPercentage(x = xPerc)
 }
 \seealso{
 Other decimals: 
-\code{\link{getMaxNDecimalsData}()},
 \code{\link{getMaxNDecimals}()},
-\code{\link{getNDecimalsData}()},
-\code{\link{getNDecimals}()}
+\code{\link{getMaxNDecimalsData}()},
+\code{\link{getNDecimals}()},
+\code{\link{getNDecimalsData}()}
 }
 \author{
 Laure Cougnaud

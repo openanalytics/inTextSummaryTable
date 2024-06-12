@@ -22,3 +22,26 @@ see:\cr
 to create ready in-text table.}
 }
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/openanalytics/inTextSummaryTable}
+  \item Report bugs at \url{https://github.com/openanalytics/inTextSummaryTable/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Laure Cougnaud \email{laure.cougnaud@openanalytics.eu}
+
+Authors:
+\itemize{
+  \item Michela Pasetto \email{michela.pasetto@openanalytics.eu}
+}
+
+Other contributors:
+\itemize{
+  \item Margaux Faes (tests) [reviewer]
+  \item Open Analytics [copyright holder]
+}
+
+}

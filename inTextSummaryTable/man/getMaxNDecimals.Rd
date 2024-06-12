@@ -33,8 +33,8 @@ getMaxNDecimals(x, useRule = TRUE, useData = TRUE)
 Other decimals: 
 \code{\link{formatPercentage}()},
 \code{\link{getMaxNDecimalsData}()},
-\code{\link{getNDecimalsData}()},
-\code{\link{getNDecimals}()}
+\code{\link{getNDecimals}()},
+\code{\link{getNDecimalsData}()}
 }
 \author{
 Laure Cougnaud
