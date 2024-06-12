@@ -1,5 +1,8 @@
 3.3.2.9000
   o vignette: plot with 'presentation' style only created if Tahoma font is available
+  o fixes for ggplot2 updates: 
+    - fix tests for new warning
+    - no use of aes_string
 3.3.2
   o fix when percentage computed by variable and only one variable is specified
   o subjectProfileSummaryPlot: 

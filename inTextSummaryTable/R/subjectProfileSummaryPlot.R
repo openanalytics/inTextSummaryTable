@@ -321,6 +321,7 @@ subjectProfileSummaryPlot <- function(data,
   
   ## horizontal line(s)
   setLines <- function(gg, inputLine, typeLine = c("hline", "vline"), color, linetype){
+    
     typeLine <- match.arg(typeLine)
     paramName <- switch(typeLine, "hline" = "yintercept", "vline" = "xintercept")
     geomFct <- match.fun(paste0("geom_", typeLine))
@@ -336,16 +337,18 @@ subjectProfileSummaryPlot <- function(data,
       )
       
     }
-    for(i in seq_len(nrow(dataLine)))
+    for(i in seq_len(nrow(dataLine))){
       gg <- gg + do.call(geomFct, 
           list(
               data = dataLine[i, ], 
-              do.call(aes_string, setNames(list("line"), paramName)),
+              mapping = do.call(aes, setNames(list(sym("line")), paramName)),
               color = dataLine[i, "color"],
               linetype = dataLine[i, "linetype"]
           )
       )
+    }
     return(gg)
+    
   }
   if(!is.null(hLine))
     gg <- setLines(
@@ -401,8 +404,10 @@ subjectProfileSummaryPlot <- function(data,
 #		yGapPos <- ifelse(is.null(yLim), min(data$meanVar, na.rm = TRUE), yLim[1]) -
 #			yLimExpand[1] * ifelse(is.null(yLim), diff(range(data$meanVar, na.rm = TRUE)), diff(yLim))
     dataGapSym <- data.frame(y = -Inf, x = xGapPos, label = "//")
+    aesArgs <- list(x = sym("x"), y = sym("y"), label = sym("label"))
     gg <- gg + geom_text(
-        data = dataGapSym, aes_string(x = "x", y = "y", label = "label"),
+        data = dataGapSym, 
+        mapping = do.call(aes, aesArgs),
         show.legend = FALSE, inherit.aes = FALSE,
         size = sizeLabel,
         hjust = "center", vjust = 1
@@ -419,24 +424,24 @@ subjectProfileSummaryPlot <- function(data,
   # line + points
   # base plot
   aesBase <- c(
-      if(!is.null(xVar))	list(x = "xVar"),
-      if(!is.null(colorVar))	list(color = "colorVar")
+      if(!is.null(xVar))	list(x = sym("xVar")),
+      if(!is.null(colorVar))	list(color = sym("colorVar"))
   )
   aesLine <- c(
       aesBase,
-      list(y = "meanVar"),
+      list(y = sym("meanVar")),
       list(group = ifelse(
-              !is.null(xGap), "lineGroup",
-              ifelse(!is.null(colorVar), "colorVar", 1)
+              !is.null(xGap), sym("lineGroup"),
+              ifelse(!is.null(colorVar), sym("colorVar"), 1)
           )),
-      if(!is.null(colorVar) & useLinetype)	list(linetype = "colorVar")
+      if(!is.null(colorVar) & useLinetype)	list(linetype = sym("colorVar"))
   )
   
   # line
   aesLineSize <- ifelse(packageVersion("ggplot2") >= "3.4.0", "linewidth", "size")
   argsGeomLine <- list(
-	mapping = do.call(aes_string, aesLine), 
-	position = pd, data = data
+  	mapping = do.call(aes, aesLine), 
+	  position = pd, data = data
   )
   argsGeomLine[[aesLineSize]] <- sizeLine
   gg <- gg + do.call(geom_line, argsGeomLine)
@@ -444,11 +449,11 @@ subjectProfileSummaryPlot <- function(data,
   # point
   gg <- gg +
       geom_point(
-          mapping = do.call(aes_string, 
+          mapping = do.call(aes, 
               c(
                   aesBase, 
-                  list(y = "meanVar"),
-                  if(!is.null(colorVar) & useShape)	list(shape = "colorVar")
+                  list(y = sym("meanVar")),
+                  if(!is.null(colorVar) & useShape)	list(shape = sym("colorVar"))
               )
           ), 
           position = pd, size = sizePoint, data = data
@@ -457,9 +462,9 @@ subjectProfileSummaryPlot <- function(data,
   if(!(is.logical(label) && !label)){
     
     # aes parameters
-    aesJust <- setNames(c("textHjust", "textVjust"), c("hjust", "vjust"))
+    aesJust <- setNames(c(sym("textHjust"), sym("textVjust")), c("hjust", "vjust"))
     aesJust <- aesJust[c("textHjust", "textVjust") %in% names(label)]
-    aesArgs <- c(aesBase, list(label = "textLabel", y = "meanVar"))
+    aesArgs <- c(aesBase, list(label = sym("textLabel"), y = sym("meanVar")))
     geomTextFct <- "geom_text_repel"
     if(length(aesJust) > 0){
       geomTextFct <- "geom_text"
@@ -469,7 +474,7 @@ subjectProfileSummaryPlot <- function(data,
     # geom_text(_repel) parameters
     geomTextArgs <- c(
         list(
-            mapping = do.call(aes_string, aesArgs), 
+            mapping = do.call(aes, aesArgs), 
             data = data,
             position = pd, size = sizeLabel,
             show.legend = FALSE,
@@ -485,12 +490,14 @@ subjectProfileSummaryPlot <- function(data,
   }
   
   if(includeEB){
-	argsGeomEB <- list(
-	  mapping = do.call(aes_string, c(aesBase, list(ymin = "ymin", ymax = "ymax"))), 
-	  data = data,
+	  argsGeomEB <- list(
+	    mapping = do.call(aes, 
+	      c(aesBase, list(ymin = sym("ymin"), ymax = sym("ymax")))
+	    ), 
+	    data = data,
       position = pd, width = widthErrorBar
     )
-	argsGeomEB[[aesLineSize]] <- sizeLine
+	  argsGeomEB[[aesLineSize]] <- sizeLine
     gg <- gg + do.call(geom_errorbar, argsGeomEB)
   }
   
@@ -774,16 +781,16 @@ subjectProfileSummaryTable <- function(
   # aesthetics
   aesTablePlot <- c(
       list(
-          x = xVar,
-          y = ifelse(!is.null(colorVar), "tableY", 1),
-          label = "tableTextLabel",
+          x = sym(xVar),
+          y = ifelse(!is.null(colorVar), sym("tableY"), 1),
+          label = sym("tableTextLabel"),
           fontface = fontface
       ),
-      if(!is.null(colorVar)) list(color = colorVar)
+      if(!is.null(colorVar)) list(color = sym(colorVar))
   )
   # arguments for geom_text
   argsGeomText <- list(
-      mapping = do.call("aes_string", aesTablePlot),
+      mapping = do.call("aes", aesTablePlot),
       size = textSize,			
       show.legend = FALSE
   )
@@ -794,7 +801,7 @@ subjectProfileSummaryTable <- function(
   aesPoint <- aesTablePlot[- idxFontface]
   aesPoint[["label"]] <- NULL # remove 'label' not used for geom_point
   argsGeomPoint <- list(
-      mapping = do.call("aes_string", aesPoint),
+      mapping = do.call(aes, aesPoint),
       size = NA
   )
   

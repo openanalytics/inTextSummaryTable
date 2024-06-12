@@ -180,7 +180,7 @@ test_that("A table is successfully included in a plot", {
 			)
 		},
 		warning = function(w){
-			if(grepl("missing values \\(geom_point\\)", conditionMessage(w)))
+			if(grepl("missing values.*geom_point", conditionMessage(w)))
 				invokeRestart("muffleWarning")
 		}
 	)
@@ -214,7 +214,7 @@ test_that("A table with specific height is correctly included in a plot", {
 			)
 		},
 		warning = function(w){
-			if(grepl("missing values \\(geom_point\\)", conditionMessage(w)))
+			if(grepl("missing values.*geom_point", conditionMessage(w)))
 				invokeRestart("muffleWarning")
 		}
 	)
