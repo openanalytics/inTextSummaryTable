@@ -659,7 +659,7 @@ subjectProfileSummaryPlot <- function(data,
         ggTable <- ggTable + fctScaleX
         
         # remove legend and title x-axis for base plot (will be included in table plot)
-        plotMargin <- themeFct()$plot.margin
+        plotMargin <- calc_element("plot.margin", themeFct())
 		plotMargin[3] <- tablePlotMargin # set bottom margin
 		gg <- gg + theme(
 			legend.position = "none", 
