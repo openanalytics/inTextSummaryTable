@@ -1,3 +1,5 @@
+3.3.3.9000
+  o combine: fix in case column variable contain a missing level
 3.3.3
   o vignette: plot with 'presentation' style only created if Tahoma font is available
   o fixes for ggplot2 updates: 

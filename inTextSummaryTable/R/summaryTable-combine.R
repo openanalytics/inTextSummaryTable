@@ -227,7 +227,7 @@ combineColTotal <- function(summaryTable, attrs){
 		
 		# if the total are the same for all columns
 		# replicated rows with column total are removed
-		if(all(nDiffSubjPerCol == 1)){
+		if(all(nDiffSubjPerCol == 1, na.rm = TRUE)){
 			isTotalDupl <- which(
 				duplicated(summaryTable[isTotal, c(colVar, "statN")])
 			)
