@@ -1,7 +1,7 @@
 #' @section Statistics formatting:
 #' \itemize{
 #'
-#' \item{In general, all rounding is handled with \code{\link{roundHalfUpTextFormat}}.}
+#' \item{In general, all rounding is handled with \code{\link[clinUtils]{roundHalfUpTextFormat}}.}
 #'
 #' \item{statistics for continuous variable: 
 #' \itemize{

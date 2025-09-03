@@ -1,5 +1,6 @@
 3.3.3.9000
   o fixes for ggplot2 4.0.0
+  o doc: fix issue package reference in link
 3.3.3
   o vignette: plot with 'presentation' style only created if Tahoma font is available
   o fixes for ggplot2 updates: 
