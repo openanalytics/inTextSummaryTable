@@ -151,10 +151,10 @@ subjectProfileSummaryPlot <- function(data,
     yAxisExpand = c(0.05, 0.05),
     yLimExpand = NULL,
     xAxisLabs = NULL,
-    sizePoint = GeomPoint$default_aes$size,
-    sizeLine = GeomLine$default_aes$size,
-    sizeLabel = GeomText$default_aes$size,
-    widthErrorBar = GeomErrorbar$default_aes$width,
+    sizePoint = 1.5,
+    sizeLine = 0.5,
+    sizeLabel = 3.87,
+    widthErrorBar = 0.9,
     tableText = NULL, tableTextFontface = 1,
     tableHeight = 0.1, 
     tableYAxisLabs = !is.null(colorVar),
@@ -659,7 +659,7 @@ subjectProfileSummaryPlot <- function(data,
         ggTable <- ggTable + fctScaleX
         
         # remove legend and title x-axis for base plot (will be included in table plot)
-        plotMargin <- themeFct()$plot.margin
+        plotMargin <- calc_element("plot.margin", themeFct())
 		plotMargin[3] <- tablePlotMargin # set bottom margin
 		gg <- gg + theme(
 			legend.position = "none", 
