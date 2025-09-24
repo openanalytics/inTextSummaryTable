@@ -108,9 +108,6 @@ work. The data sets used here are available in the `clinUtils` package.
 library(inTextSummaryTable)
 library(clinUtils)
 library(pander)
-# 'Tahoma' font should be registered upfront to create plots with: 'presentation' style
-library(extrafont)
-
 ```
 
 ```{r loadData}	
@@ -176,7 +173,8 @@ subjectProfileSummaryPlot(
 The code below shows the default visualization **suitable for a
 presentation**, either in Powerpoint or ioslides.
 
-```{r visualization-presentation, eval = "Tahoma" %in% extrafont::fonts()}
+```{r visualization-presentation, eval = requireNamespace("extrafont", quietly = TRUE) && "Tahoma" %in% extrafont::fonts()}
+# 'Tahoma' font should be registered upfront to create plots with: 'presentation' style
 subjectProfileSummaryPlot(
     data = dataPlot,
     xVar = "AVISIT",
