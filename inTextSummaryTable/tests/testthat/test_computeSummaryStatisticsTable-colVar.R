@@ -1,7 +1,6 @@
 context("Compute summary statistics table with column variable")
 
 library(plyr)
-library(dplyr)
 
 test_that("A summary table is correctly computed for a continuous variable by a column variable", {
 			
@@ -389,7 +388,11 @@ test_that("All combinations of column elements are correctly included when reque
 	)
 	
 	# statistics for combinations NOT appearing in the data are empty
-	sumTableNotInData <- dplyr::anti_join(sumTableInclude0, colVarInData)
+  idxNotInData <- which(
+    !do.call(interaction, sumTableInclude0[, colnames(colVarInData)]) %in% 
+    do.call(interaction, colVarInData)
+  ) # ~ anti-join
+	sumTableNotInData <- sumTableInclude0[idxNotInData, ]
 	statsCont <- c("statMean", "statSD", "statSE", "statMedian", "statMin", "statMax")
 	expect_true(all(is.na(sumTableNotInData[, statsCont])))
 	expect_true(all(sumTableNotInData[, c("statN", "statm", "statPercTotalN")] == 0))
@@ -452,7 +455,11 @@ test_that("Specific combinations of column elements are included when requested"
 	)
 	
 	# statistics for combinations NOT appearing in the data are empty
-	sumTableNotInData <- dplyr::anti_join(sumTable, colVarInData)
+ idxNotInData <- which(
+  !do.call(interaction, sumTable[, colnames(colVarInData)]) %in% 
+  do.call(interaction, colVarInData)
+ ) # ~ anti-join
+ sumTableNotInData <- sumTable[idxNotInData, ]
 	statsCont <- c("statMean", "statSD", "statSE", "statMedian", "statMin", "statMax")
 	expect_true(all(is.na(sumTableNotInData[, statsCont])))
 	expect_true(all(sumTableNotInData[, c("statN", "statm", "statPercTotalN")] == 0))

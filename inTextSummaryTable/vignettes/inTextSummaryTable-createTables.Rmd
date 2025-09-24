@@ -47,7 +47,6 @@ the packages and the data, and get started!
 ```{r loadPackages}
 
 	library(inTextSummaryTable)
-	library(pander)
 	library(tools) # toTitleCase
 
 ```
@@ -1697,10 +1696,8 @@ used to set title case for the title of the summary statistics table.
 
 ## Session information
 
-```{r includeSessionInfo, echo = FALSE}
-
-	pander(sessionInfo())
-
+```{r includeSessionInfo, echo = FALSE, results = "asis"}
+print(sessionInfo())
 ```
 
 

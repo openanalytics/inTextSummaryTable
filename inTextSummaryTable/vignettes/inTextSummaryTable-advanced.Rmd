@@ -55,7 +55,6 @@ options(warn = 1)
 
 library(inTextSummaryTable)
 library(clinUtils)
-library(pander)
 library(tools) # toTitleCase
 
 ```
@@ -125,17 +124,14 @@ summaryTable <- computeSummaryStatisticsTable(
     rowVarLab = c('AESOC' = "TEAE by SOC and Preferred Term\nn (%)")
 )
 
-pander(head(summaryTable, 3))
-
+print(head(summaryTable, 3))
 ```	
 
 Please note the presence of the **`isTotal` column**, which flags the records
 containing the number of subjects reported in the table header.
 
 ```{r computeSummaryStatisticsTable-isTotal}
-
-pander(subset(summaryTable, isTotal))
-
+print(subset(summaryTable, isTotal))
 ```	
 
 ## Export table to the requested format
@@ -319,8 +315,6 @@ getSummaryStatisticsTable(
 
 ## Session information
 
-```{r includeSessionInfo, echo = FALSE}
-
-pander(sessionInfo())
-
+```{r includeSessionInfo, echo = FALSE, results = "asis"}
+print(sessionInfo())
 ```

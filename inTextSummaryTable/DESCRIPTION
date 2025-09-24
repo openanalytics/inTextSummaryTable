@@ -34,11 +34,9 @@ Suggests:
   htmltools,
   knitr,
   rmarkdown,
-  pander,
   testthat,
   xml2,
   tools,
-  dplyr,
   tibble,
   extrafont
 URL: https://github.com/openanalytics/inTextSummaryTable

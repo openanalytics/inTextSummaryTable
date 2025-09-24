@@ -37,7 +37,6 @@ vignette: >
 	library(clinUtils)
 	library(tools)# toTitleCase
 	library(plyr) # for ddply, rbind.fill
-	library(pander) # for session info
 	library(inTextSummaryTable)
 
 ```
@@ -626,8 +625,6 @@ subjects than the other datasets used in the vignette.
 
 ## Session information
 
-```{r includeSessionInfo, echo = FALSE}
-
-	pander(sessionInfo())
-
+```{r includeSessionInfo, echo = FALSE, results = "asis"}
+print(sessionInfo())
 ```

@@ -67,7 +67,6 @@ work. The data sets used are available in the `clinUtils` package.
 
 library(inTextSummaryTable)
 library(clinUtils)
-library(pander)
 library(tools) # toTitleCase
 
 ```
@@ -316,8 +315,7 @@ summaryTable <- getSummaryStatisticsTable(
     style = "presentation",
     outputType = "data.frame"
 )
-pander(summaryTable, split.table = Inf)
-
+print(summaryTable, split.table = Inf)
 ```
 
 ### Full table in long format
@@ -350,8 +348,7 @@ summaryTableAll <- getSummaryStatisticsTable(
     style = "presentation",
     outputType = "data.frame-base"
 )
-pander(summaryTableAll, split.table = Inf)
-
+print(summaryTableAll, split.table = Inf)
 ```
 
 ## Differences between the format
@@ -817,8 +814,6 @@ ddply(x, "AEDECOD", function(xTerm)
 
 ## Session information
 
-```{r includeSessionInfo, echo = FALSE}
-
-pander(sessionInfo())
-
+```{r includeSessionInfo, echo = FALSE, results = "asis"}
+print(sessionInfo())
 ```

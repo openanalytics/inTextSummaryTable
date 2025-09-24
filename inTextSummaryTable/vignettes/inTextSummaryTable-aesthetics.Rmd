@@ -293,9 +293,6 @@ getDimPage(type = "height", style = "presentation")
 
 ## Session information
 
-```{r includeSessionInfo, echo = FALSE}
-
-library(pander)
-pander(sessionInfo())
-
+```{r includeSessionInfo, echo = FALSE, results = "asis"}
+print(sessionInfo())
 ```

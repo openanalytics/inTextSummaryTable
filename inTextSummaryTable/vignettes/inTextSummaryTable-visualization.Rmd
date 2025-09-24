@@ -104,10 +104,8 @@ work. The data sets used here are available in the `clinUtils` package.
 # Load packages and data
 
 ```{r loadPackages}
-
 library(inTextSummaryTable)
 library(clinUtils)
-library(pander)
 ```
 
 ```{r loadData}	
@@ -512,8 +510,6 @@ subjectProfileSummaryPlot(
 
 ## Session information
 
-```{r includeSessionInfo, echo = FALSE}
-
-pander(sessionInfo())
-
+```{r includeSessionInfo, echo = FALSE, results = "asis"}
+print(sessionInfo())
 ```

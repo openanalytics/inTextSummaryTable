@@ -105,7 +105,6 @@ RUN R -q -e "options(warn = 2); \
     remotes::install_version('Matrix', version = '1.7-4', upgrade = FALSE); \
     remotes::install_version('nlme', version = '3.1-168', upgrade = FALSE)"
 RUN R -q -e "options(warn = 2); \
-    remotes::install_version('pander', version = '0.6.6', upgrade = FALSE); \
     remotes::install_version('plyr', version = '1.8.9', upgrade = FALSE); \
     remotes::install_version('processx', version = '3.8.6', upgrade = FALSE); \
     remotes::install_version('tinytex', version = '0.57', upgrade = FALSE); \
@@ -144,10 +143,8 @@ RUN R -q -e "options(warn = 2); \
     remotes::install_version('reshape2', version = '1.4.4', upgrade = FALSE); \
     remotes::install_version('rmarkdown', version = '2.29', upgrade = FALSE); \
     remotes::install_version('tibble', version = '3.3.0', upgrade = FALSE); \
-    remotes::install_version('dplyr', version = '1.1.4', upgrade = FALSE); \
     remotes::install_version('forcats', version = '1.0.0', upgrade = FALSE); \
-    remotes::install_version('pak', version = '0.9.0', upgrade = FALSE); \
-    pak::pak('tidyverse/ggplot2'); \
+    remotes::install_version('ggplot2', version = '4.0.0', upgrade = FALSE); \
     remotes::install_version('htmlwidgets', version = '1.6.4', upgrade = FALSE)"
 RUN R -q -e "options(warn = 2); \
     remotes::install_version('officer', version = '0.6.10', upgrade = FALSE); \
